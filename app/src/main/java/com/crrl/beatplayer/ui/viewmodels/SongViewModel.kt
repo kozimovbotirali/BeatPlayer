@@ -12,7 +12,7 @@ import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.repositories.AlbumRepository
 import com.crrl.beatplayer.repositories.ArtistRepository
 import com.crrl.beatplayer.repositories.PlaylistRepository
-import com.crrl.beatplayer.repositories.SongsRepositoryImpl
+import com.crrl.beatplayer.repositories.SongsRepository
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 
@@ -34,7 +34,7 @@ class SongViewModel(private val context: Context?) : ViewModel() {
             Observable.fromCallable {
                 searchData.apply {
                     songList =
-                        SongsRepositoryImpl.getInstance(context)!!.searchSongs(searchString, 10)
+                        SongsRepository.getInstance(context)!!.searchSongs(searchString, 10)
                             .toMutableList()
                     albumList = AlbumRepository.getInstance(context)!!.search(searchString, 10)
                         .toMutableList()
@@ -50,7 +50,7 @@ class SongViewModel(private val context: Context?) : ViewModel() {
 
     val liveData: LiveData<List<Song>>
         get() {
-            Observable.fromCallable { SongsRepositoryImpl.getInstance(context)!!.loadSongs() }
+            Observable.fromCallable { SongsRepository.getInstance(context)!!.loadSongs() }
                 .observeOn(Schedulers.newThread()).subscribeOn(Schedulers.newThread())
                 .subscribe { songs.postValue(it) }
             return songs

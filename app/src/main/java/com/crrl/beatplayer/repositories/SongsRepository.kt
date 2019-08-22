@@ -16,16 +16,16 @@ interface SongRepository {
     fun searchSongs(searchString: String, limit: Int): List<Song>
 }
 
-class SongsRepositoryImpl() : SongRepository {
+class SongsRepository() : SongRepository {
 
     private lateinit var contentResolver: ContentResolver
     private lateinit var settingsUtility: SettingsUtility
 
     companion object {
-        private var instance: SongsRepositoryImpl? = null
+        private var instance: SongsRepository? = null
 
-        fun getInstance(context: Context?): SongsRepositoryImpl? {
-            if (instance == null) instance = SongsRepositoryImpl(context)
+        fun getInstance(context: Context?): SongsRepository? {
+            if (instance == null) instance = SongsRepository(context)
             return instance
         }
     }

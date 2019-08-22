@@ -18,30 +18,25 @@
         android:clickable="true"
         android:focusable="true">
 
-        <LinearLayout
-            android:id="@+id/cont_cover"
-            android:layout_width="30dp"
+        <ImageView
+            android:id="@+id/cover"
+            android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_margin="8dp">
-
-            <TextView
-                android:id="@+id/track_number"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="@{song.trackNumber == 0 ? @string/no_track : String.valueOf(song.trackNumber)}"
-                android:textColor="?titleTextColor"
-                android:textSize="@dimen/text_size_16" />
-        </LinearLayout>
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="15dp"
+            android:background="@drawable/song_cover_frame"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_empty_cover" />
 
         <LinearLayout
             android:id="@+id/listViewTextContainer"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_centerVertical="true"
-            android:layout_marginStart="2dp"
+            android:layout_marginStart="10dp"
             android:layout_toStartOf="@+id/item_menu"
-            android:layout_toEndOf="@+id/cont_cover"
+            android:layout_toEndOf="@+id/cover"
             android:orientation="vertical">
 
             <RelativeLayout
