@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="songCount"
+            type="Integer" />
+
+        <variable
+            name="isPlaylist"
+            type="Boolean" />
+    </data>
+
+    <RelativeLayout
+        android:id="@+id/linearLayout3"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/btn_size">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/song_size"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:textStyle="bold"
+                android:gravity="center|start"
+                android:paddingStart="@dimen/padding_15"
+                android:paddingEnd="@dimen/padding_12"
+                android:text="@{@plurals/number_of_songs(songCount, songCount)}"
+                android:textColor="?titleTextColor"
+                android:textSize="@dimen/title_text_size"
+                android:visibility="@{isPlaylist ? View.INVISIBLE : View.VISIBLE}" />
+
+            <ImageButton
+                android:id="@+id/sort_song"
+                android:layout_width="@dimen/btn_size"
+                android:layout_height="@dimen/btn_size"
+                android:layout_marginEnd="@dimen/margin_10"
+                android:background="@drawable/btn_ripple"
+                android:contentDescription="@string/cover"
+                android:src="@drawable/ic_sort"
+                android:tint="?btnTintColor"
+                android:visibility="@{isPlaylist ? View.GONE : View.VISIBLE}" />
+
+            <ImageButton
+                android:id="@+id/shuffle_song"
+                android:layout_width="@dimen/btn_size"
+                android:layout_height="@dimen/btn_size"
+                android:layout_marginEnd="@dimen/margin_10"
+                android:background="@drawable/btn_ripple"
+                android:contentDescription="@string/cover"
+                android:src="@drawable/ic_shuffle"
+                android:tint="?btnTintColor" />
+
+            <ImageButton
+                android:id="@+id/play_all_song"
+                android:layout_width="@dimen/btn_size"
+                android:layout_height="@dimen/btn_size"
+                android:background="@drawable/btn_ripple"
+                android:contentDescription="@string/cover"
+                android:src="@drawable/ic_play"
+                android:tint="?btnTintColor" />
+        </LinearLayout>
+    </RelativeLayout>
+</layout>

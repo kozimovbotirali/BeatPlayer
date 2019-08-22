@@ -1,0 +1,108 @@
+package com.crrl.beatplayer.utils
+
+import android.content.Context
+import android.content.res.Resources
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
+import com.crrl.beatplayer.models.Song
+import java.io.ByteArrayOutputStream
+import java.io.FileInputStream
+
+
+object GeneralUtils {
+
+    val screenWidth: Int
+        get() = Resources.getSystem().displayMetrics.widthPixels
+
+    val screenHeight: Int
+        get() = Resources.getSystem().displayMetrics.heightPixels
+
+    fun formatMilliseconds(duration: Long): String {
+        val seconds = (duration / 1000).toInt() % 60
+        val minutes = (duration / (1000 * 60) % 60).toInt()
+        val hours = (duration / (1000 * 60 * 60) % 24).toInt()
+        val hh: String
+        val mm: String
+        val ss: String
+        if (hours < 10 && hours > 0) {
+            hh = "0$hours:"
+        } else {
+            if (hours >= 10) {
+                hh = "$hours:"
+            } else {
+                hh = ""
+            }
+        }
+        mm = if (minutes in 1..9) {
+            "0$minutes:"
+        } else {
+            if (minutes >= 10) {
+                "$minutes:"
+            } else {
+                "00:"
+            }
+        }
+        ss = if (seconds in 1..9) {
+            "0$seconds"
+        } else {
+            if (seconds >= 10) {
+                "" + seconds
+            } else {
+                "00"
+            }
+        }
+        return hh + mm + ss
+    }
+
+    fun getTotalTime(songList: List<Song>): Long {
+        var minutes = 0L
+        var hours = 0L
+        var seconds = 0L
+        for (song in songList) {
+            seconds += (song.duration / 1000 % 60).toLong()
+            minutes += (song.duration / (1000 * 60) % 60).toLong()
+            hours += (song.duration / (1000 * 60 * 60) % 24).toLong()
+        }
+        return hours * (1000 * 60 * 60) + minutes * (1000 * 60) + seconds * 1000
+    }
+
+
+    fun aurio2Raw(path: String): ByteArray {
+
+        val fis = FileInputStream(path)
+        val bos = ByteArrayOutputStream()
+        val b = ByteArray(1024)
+
+        var readNum = fis.read(b)
+
+        while (readNum != -1) {
+            bos.write(b, 0, readNum)
+            readNum = fis.read(b)
+        }
+
+        return bos.toByteArray()
+    }
+
+    fun toggleShowKeyBoard(context: Context?, editText: EditText, show: Boolean) {
+        if (show) {
+            editText.apply {
+                requestFocus()
+                val imm =
+                    context!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+                imm!!.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
+            }
+        } else {
+            editText.apply {
+                clearFocus()
+                val imm =
+                    context!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+                imm!!.hideSoftInputFromWindow(editText.windowToken, 0)
+            }
+        }
+    }
+
+    fun dip2px(context: Context, dpValue: Int): Int {
+        val scale = context.resources.displayMetrics.density
+        return (dpValue * scale + 0.5f).toInt()
+    }
+}

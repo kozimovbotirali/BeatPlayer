@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="song">Pista</string>
+    <string name="album">Álbum</string>
+    <string name="artist">Artista</string>
+    <string name="songs">Pistas</string>
+    <string name="albums">Álbumes</string>
+    <string name="artists">Artistas</string>
+    <string name="folders">Carpetas</string>
+    <string name="favorites">Favoritos</string>
+    <string name="equalizer">Ecualizador</string>
+    <string name="hint_msg">Buscar pistas, artistas y álbumes.</string>
+    <string name="library">Libreria</string>
+    <string name="lyrics">Letra</string>
+    <string name="no_results">Sin Resultados</string>
+    <string name="playlists">Listas de Reproducción</string>
+    <string name="search">Buscar</string>
+    <string name="settings">Ajustes</string>
+    <string name="sort_title">Ordenar</string>
+    <string name="sort_msg">Ordenar por</string>
+    <string name="sort_default">Defecto</string>
+    <string name="sort_duration">Duración</string>
+    <string name="sort_last_added">Último Agregado</string>
+    <string name="sort_year">Año</string>
+    <string name="title">Título</string>
+    <string name="unknown">Desconosido</string>
+    <string name="now_playing">Reproduciendo</string>
+    <string name="new_playlist">Nueva Lista</string>
+    <string name="no_playlist">Sin Listas de Reproducción</string>
+    <string name="no_songs">Sin Pistas</string>
+    <string name="play">Reproducir</string>
+    <string name="add">Agregar</string>
+    <string name="share">Compartir</string>
+    <string name="delete">Eliminar</string>
+    <string name="create_playlist">Creando Lista de Reproducción</string>
+    <string name="choose_playlist">Por favor, selecciona lista de reproducción.</string>
+    <string name="playlist_added_error">No se pudo crear la lista de reproducción</string>
+    <string name="playlist_added_success">Lista de reproducción agregada satisfactoriamente.</string>
+    <string name="input_hint">Ingresa el nombre</string>
+    <string name="no_permission">No se otorgaron permisos</string>
+
+    <plurals name="number_of_songs" tools:ignore="UnusedQuantity">
+        <item quantity="zero">%d Pistas</item>
+        <item quantity="one">%d Pista</item>
+        <item quantity="other">%d Pistas</item>
+    </plurals>
+
+    <plurals name="number_of_albums" tools:ignore="UnusedQuantity">
+        <item quantity="zero">%d Álbumes</item>
+        <item quantity="one">%d Álbum</item>
+        <item quantity="other">%d Álbumes</item>
+    </plurals>
+
+    <plurals name="number_of_artists" tools:ignore="UnusedQuantity">
+        <item quantity="zero">%d Artistas</item>
+        <item quantity="one">%d Artista</item>
+        <item quantity="other">%d Artistas</item>
+    </plurals>
+</resources>

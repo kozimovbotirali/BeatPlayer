@@ -1,0 +1,78 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="isPermissionsGranted"
+            type="Boolean" />
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/main_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?colorAccent">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/app_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:paddingTop="@dimen/global_padding_top"
+            app:elevation="0dp">
+
+            <include layout="@layout/app_header" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_12">
+
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/tabs_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tabIndicator="@drawable/indicator"
+                    app:tabIndicatorColor="@color/white"
+                    app:tabIndicatorFullWidth="false"
+                    app:tabIndicatorHeight="4dp"
+                    app:tabMode="fixed"
+                    app:tabRippleColor="@color/transparent"
+                    app:tabSelectedTextColor="@color/white"
+                    app:tabTextAppearance="@style/TabLayoutTextAppearance" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/global_padding_top"
+            android:background="?colorAccent" />
+
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/pager_sort_mode"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="@dimen/margin_8"
+            android:layout_marginTop="@dimen/margin_8"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:background="@drawable/album_detail_shape" />
+
+        <TextView
+            android:id="@+id/no_result"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:text="@string/no_permission"
+            android:textColor="?titleTextColor"
+            android:textSize="@dimen/text_size_18"
+            android:visibility="@{isPermissionsGranted ? View.GONE : View.VISIBLE}" />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>
+

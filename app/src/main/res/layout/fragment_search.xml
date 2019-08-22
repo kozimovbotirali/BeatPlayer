@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="viewModel"
+            type="com.crrl.beatplayer.ui.viewmodels.SongViewModel" />
+
+        <variable
+            name="status"
+            type="Boolean" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?colorAccent"
+        android:paddingTop="@dimen/global_padding_top">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/coverSize"
+            android:layout_marginStart="@dimen/margin_12"
+            android:layout_marginTop="@dimen/global_padding_top"
+            android:layout_marginEnd="@dimen/margin_12"
+            android:background="@drawable/search_text_view_frame">
+
+            <ImageButton
+                android:id="@+id/back"
+                android:layout_width="@dimen/coverSize"
+                android:layout_height="@dimen/coverSize"
+                android:background="@color/transparent"
+                android:src="@drawable/ic_back"
+                android:tint="@color/white" />
+
+            <EditText
+                android:id="@+id/search_src_text"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/transparent"
+                android:gravity="center_vertical"
+                android:hint="@string/hint_msg"
+                android:inputType="text"
+                android:paddingStart="@dimen/padding_12"
+                android:paddingEnd="@dimen/padding_12"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:theme="@style/SearchStyle" />
+
+            <ImageButton
+                android:id="@+id/close"
+                android:layout_width="@dimen/coverSize"
+                android:layout_height="@dimen/coverSize"
+                android:background="@color/transparent"
+                android:src="@drawable/ic_close"
+                android:tint="@color/white"
+                android:visibility="@{status ? View.VISIBLE : View.GONE}" />
+        </LinearLayout>
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="88dp"
+            android:paddingTop="@dimen/padding_12"
+            android:background="@drawable/album_detail_shape">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:paddingBottom="150dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="22dp"
+                    android:maxLines="1"
+                    android:text="@{@plurals/number_of_songs(viewModel.searchLiveData.songList.size, viewModel.searchLiveData.songList.size)}"
+                    android:textColor="?titleTextColor"
+                    android:textSize="@dimen/text_size_18"
+                    android:textStyle="bold"
+                    android:visibility="@{viewModel.searchLiveData.isNotSongListEmpty() ? View.VISIBLE : View.GONE}" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/songList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:paddingTop="8dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:maxLines="1"
+                    android:text="@{@plurals/number_of_albums(viewModel.searchLiveData.albumList.size, viewModel.searchLiveData.albumList.size)}"
+                    android:textColor="?titleTextColor"
+                    android:textSize="@dimen/text_size_18"
+                    android:textStyle="bold"
+                    android:visibility="@{viewModel.searchLiveData.isNotAlbumListEmpty ? View.VISIBLE : View.GONE}" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/albumList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:paddingTop="8dp"
+                    android:paddingEnd="@dimen/padding_12" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:maxLines="1"
+                    android:text="@{@plurals/number_of_artists(viewModel.searchLiveData.artistList.size, viewModel.searchLiveData.artistList.size)}"
+                    android:textColor="?titleTextColor"
+                    android:textSize="@dimen/text_size_18"
+                    android:textStyle="bold"
+                    android:visibility="@{viewModel.searchLiveData.isNotArtistListEmpty ? View.VISIBLE : View.GONE}" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/artistList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:paddingTop="8dp"
+                    android:paddingEnd="@dimen/padding_12" />
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+        <TextView
+            android:id="@+id/no_result"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:textStyle="bold"
+            android:text="@string/no_results"
+            android:textColor="?titleTextColor"
+            android:textSize="@dimen/text_size_18"
+            android:visibility="@{(viewModel.searchLiveData.isNotEmpty()) ? View.GONE : View.VISIBLE}" />
+
+    </FrameLayout>
+
+</layout>

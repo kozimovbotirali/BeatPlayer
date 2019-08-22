@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+            name="playlist"
+            type="com.crrl.beatplayer.models.Playlist" />
+    </data>
+
+    <LinearLayout
+        android:id="@+id/container"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/list_item_ripple"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:clickable="true"
+        android:focusable="true">
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="12dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_playlist"
+            android:tint="?btnTintColor" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:gravity="center_vertical"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="2"
+                android:text="@{playlist.name}"
+                android:textColor="?titleTextColor"
+                android:textSize="@dimen/title_text_size" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="3dp"
+                android:singleLine="true"
+                android:textColor="?subTitleTextColor"
+                android:textSize="@dimen/sub_title_text_size"
+                android:text="@{@plurals/number_of_songs(playlist.songCount, playlist.songCount)}" />
+
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/item_menu"
+            android:layout_width="@dimen/btn_size"
+            android:layout_height="@dimen/btn_size"
+            android:background="@drawable/btn_ripple"
+            android:src="@drawable/ic_delete"
+            android:tint="?btnTintColor" />
+    </LinearLayout>
+
+</layout>

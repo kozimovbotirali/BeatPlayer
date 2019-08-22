@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="others">
+        <attr name="colorPrimarySecondary" format="color" />
+        <attr name="colorPrimarySecondary2" format="color" />
+        <attr name="colorPrimaryOpacity" format="color" />
+        <attr name="colorAccentOpacity" format="color" />
+        <attr name="btnTintColor" format="color" />
+        <attr name="titleTextColor" format="color" />
+        <attr name="subTitleTextColor" format="color" />
+    </declare-styleable>
+</resources>

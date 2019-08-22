@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <import type="com.crrl.beatplayer.utils.GeneralUtils" />
+
+        <variable
+            name="song"
+            type="com.crrl.beatplayer.models.Song" />
+    </data>
+
+    <RelativeLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:background="@drawable/list_item_ripple"
+        android:clickable="true"
+        android:focusable="true">
+
+        <LinearLayout
+            android:id="@+id/cont_cover"
+            android:layout_width="30dp"
+            android:layout_height="50dp"
+            android:layout_margin="8dp">
+
+            <TextView
+                android:id="@+id/track_number"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="@{song.trackNumber == 0 ? @string/no_track : String.valueOf(song.trackNumber)}"
+                android:textColor="?titleTextColor"
+                android:textSize="@dimen/text_size_16" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/listViewTextContainer"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="2dp"
+            android:layout_toStartOf="@+id/item_menu"
+            android:layout_toEndOf="@+id/cont_cover"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentBottom="true"
+                    android:ellipsize="marquee"
+                    android:fadingEdge="horizontal"
+                    android:gravity="bottom"
+                    android:singleLine="true"
+                    android:text="@{song.title}"
+                    android:textColor="?titleTextColor"
+                    android:textSize="@dimen/title_text_size"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/listViewSubTextParent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/duration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:ellipsize="marquee"
+                    android:fadingEdge="horizontal"
+                    android:gravity="top"
+                    android:singleLine="true"
+                    android:text="@{GeneralUtils.INSTANCE.formatMilliseconds((long)song.duration)}"
+                    android:textColor="?subTitleTextColor"
+                    android:textSize="@dimen/sub_title_text_size" />
+
+            </RelativeLayout>
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/item_menu"
+            android:layout_width="@dimen/btn_size"
+            android:layout_height="@dimen/btn_size"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/btn_ripple"
+            android:src="@drawable/ic_more"
+            android:tint="?btnTintColor" />
+    </RelativeLayout>
+</layout>

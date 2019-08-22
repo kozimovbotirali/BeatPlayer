@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+            name="song"
+            type="com.crrl.beatplayer.models.Song" />
+    </data>
+
+    <RelativeLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:background="@drawable/list_item_ripple"
+        android:clickable="true"
+        android:focusable="true">
+
+        <ImageView
+            android:id="@+id/cover"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="15dp"
+            android:background="@drawable/song_cover_frame"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_empty_cover" />
+
+        <LinearLayout
+            android:id="@+id/listViewTextContainer"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="@dimen/margin_8"
+            android:layout_marginEnd="@dimen/margin_10"
+            android:layout_toStartOf="@+id/item_menu"
+            android:layout_toEndOf="@+id/cover"
+            android:orientation="vertical"
+            android:paddingBottom="4dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginBottom="4dp"
+                    android:maxLines="1"
+                    android:text="@{song.title}"
+                    android:textStyle="bold"
+                    android:textColor="?titleTextColor"
+                    android:textSize="@dimen/title_text_size" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/artist"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="@{song.artist}"
+                    android:textColor="?subTitleTextColor"
+                    android:textSize="@dimen/sub_title_text_size" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:singleLine="true"
+                    android:text="@string/separator"
+                    android:textColor="?subTitleTextColor"
+                    android:textSize="@dimen/sub_title_text_size" />
+
+                <TextView
+                    android:id="@+id/album"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="@{song.album}"
+                    android:textColor="?subTitleTextColor"
+                    android:textSize="@dimen/sub_title_text_size" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/item_menu"
+            android:layout_width="@dimen/btn_size"
+            android:layout_height="@dimen/btn_size"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/btn_ripple"
+            android:src="@drawable/ic_more"
+            android:tint="?btnTintColor" />
+
+    </RelativeLayout>
+</layout>
