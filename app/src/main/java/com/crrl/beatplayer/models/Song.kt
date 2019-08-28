@@ -11,14 +11,14 @@ data class Song(
     @PrimaryKey var id: Long = 0,
     var albumId: Long = 0,
     var artistId: Long = 0,
-    var title: String = "",
-    var artist: String = "",
-    var album: String = "",
+    var title: String = "Title",
+    var artist: String = "Artist",
+    var album: String = "Album",
     var duration: Int = 0,
     var trackNumber: Int = 0,
-    var path: String,
+    var path: String = "",
     var playListId: Long = 0
-) : MediaItem() {
+) : MediaItem(id) {
 
     companion object {
         fun createFromCursor(cursor: Cursor, album_id: Long = 0): Song {

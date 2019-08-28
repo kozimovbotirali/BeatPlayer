@@ -7,7 +7,7 @@ data class Playlist(
     val id: Long,
     val name: String,
     val songCount: Int
-) : MediaItem() {
+) : MediaItem(id) {
     companion object {
         fun fromCursor(cursor: Cursor, songCount: Int): Playlist {
             return Playlist(

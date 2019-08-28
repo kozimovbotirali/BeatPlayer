@@ -48,6 +48,7 @@
     <string name="playlist_added_success">Playlist added successfully</string>
     <string name="input_hint">Enter a name</string>
     <string name="no_permission">Permissions were not Granted</string>
+    <string name="no_folders">No Folders</string>
 
     <plurals name="number_of_songs">
         <item quantity="zero">%d Tracks</item>
@@ -66,4 +67,7 @@
         <item quantity="one">%d Artist</item>
         <item quantity="other">%d Artists</item>
     </plurals>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#000000</color>
-    <color name="colorPrimaryDark">#000000</color>
-    <color name="colorAccentDark">#00416A</color>
-    <color name="colorAccentDarkOpacity">#4400416A</color>
+    <color name="colorPrimary">#111111</color>
+    <color name="colorPrimaryDark">#111111</color>
+    <color name="colorAccentDark">#1E88E5</color>
+    <color name="colorAccentDarkOpacity">#441E88E5</color>
     <color name="colorPrimaryDarkSecondary">#111111</color>
-    <color name="colorPrimaryDarkSecondary2">#222222</color>
+    <color name="colorPrimaryDarkSecondary2">#000000</color>
     <color name="colorPrimaryDarkOpacity">#22FFFFFF</color>
     <color name="colorTitleTextDark">#CCCCCC</color>
 
     <color name="colorPrimaryLight">#FFFFFF</color>
     <color name="colorPrimaryDarkLight">#FFFFFF</color>
-    <color name="colorAccentLight">#00416A</color>
-    <color name="colorAccentLightOpacity">#4400416A</color>
+    <color name="colorAccentLight">#1E88E5</color>
+    <color name="colorAccentLightOpacity">#441E88E5</color>
     <color name="colorPrimaryLightSecondary">#F5F5F5</color>
     <color name="colorPrimaryLightSecondary2">#EEEEEE</color>
     <color name="colorPrimaryLightOpacity">#22000000</color>
@@ -20,4 +20,7 @@
 
     <color name="white">#ffffff</color>
     <color name="transparent">#00ffffff</color>
-</resources>
+    <color name="error">#F50238</color>
+</resources><!--#00416A
+    #0778FC
+    #386FA2-->

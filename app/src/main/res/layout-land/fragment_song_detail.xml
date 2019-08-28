@@ -8,13 +8,13 @@
 
         <variable
             name="song"
-            type="com.crrl.beatplayer.models.Song" />
+            type="com.crrl.beatplayer.ui.viewmodels.SongDetailViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?colorAccent"
+        android:background="?colorPrimarySecondary2"
         android:paddingTop="@dimen/global_padding_top"
         android:clickable="true"
         android:focusable="true">
@@ -40,7 +40,7 @@
             android:background="@drawable/btn_ripple"
             android:contentDescription="@string/cover"
             android:src="@drawable/ic_playlist_add"
-            android:tint="?colorAccent"
+            android:tint="?btnTintColor"
             app:layout_constraintBottom_toBottomOf="@+id/album_title"
             app:layout_constraintEnd_toEndOf="@id/view"
             app:layout_constraintTop_toTopOf="@+id/song_title" />
@@ -53,7 +53,7 @@
             android:background="@drawable/btn_ripple"
             android:contentDescription="@string/cover"
             android:src="@drawable/ic_no_favorite"
-            android:tint="?colorAccent"
+            android:tint="?btnTintColor"
             app:layout_constraintBottom_toBottomOf="@+id/album_title"
             app:layout_constraintStart_toStartOf="@id/view"
             app:layout_constraintTop_toTopOf="@+id/song_title" />
@@ -89,8 +89,8 @@
                 android:layout_marginTop="@dimen/margin_8"
                 android:gravity="center"
                 android:maxLines="1"
-                android:text="@{GeneralUtils.INSTANCE.formatMilliseconds((long)song.duration)}"
-                android:textColor="?colorAccent" />
+                android:text="@{GeneralUtils.INSTANCE.formatMilliseconds((long)song.getCurrentData().duration)}"
+                android:textColor="?subTitleTextColor" />
 
             <TextView
                 android:id="@+id/time_left"
@@ -102,7 +102,7 @@
                 android:gravity="center"
                 android:maxLines="1"
                 android:text="@string/def_time"
-                android:textColor="?colorAccent" />
+                android:textColor="?subTitleTextColor" />
 
 
             <rm.com.audiowave.AudioWaveView
@@ -111,7 +111,7 @@
                 android:layout_height="32dp"
                 android:layout_alignParentTop="true"
                 android:layout_marginTop="34dp"
-                app:animateExpansion="false"
+                app:animateExpansion="true"
                 app:chunkHeight="24dp"
                 app:chunkRadius="1dp"
                 app:chunkSpacing="1dp"
@@ -129,8 +129,8 @@
             android:maxLines="1"
             android:paddingStart="@dimen/margin_10"
             android:paddingEnd="@dimen/margin_10"
-            android:text="@{song.album}"
-            android:textColor="?colorAccentOpacity"
+            android:text="@{song.getCurrentData().album, default=Album}"
+            android:textColor="?subTitleTextColor"
             android:textSize="@dimen/title_text_size"
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@+id/add_playlist"
@@ -146,9 +146,9 @@
             android:maxLines="1"
             android:paddingStart="@dimen/margin_10"
             android:paddingEnd="@dimen/margin_10"
-            android:text="@{song.title}"
+            android:text="@{song.getCurrentData().title, default=Title}"
             android:textSize="20sp"
-            android:textColor="?colorAccent"
+            android:textColor="?titleTextColor"
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@+id/add_playlist"
             app:layout_constraintStart_toEndOf="@+id/add_favorites"
@@ -170,7 +170,8 @@
                 android:layout_marginStart="8dp"
                 android:background="@drawable/btn_ripple_with_background"
                 android:src="@drawable/ic_previous"
-                android:tint="?colorAccent"
+                android:tint="?btnTintColor"
+                android:onClick="previous"
                 app:layout_constraintBottom_toBottomOf="@+id/play_container"
                 app:layout_constraintEnd_toStartOf="@+id/play_container"
                 app:layout_constraintStart_toStartOf="parent"
@@ -183,7 +184,8 @@
                 android:layout_marginEnd="8dp"
                 android:background="@drawable/btn_ripple_with_background"
                 android:src="@drawable/ic_skip"
-                android:tint="?colorAccent"
+                android:tint="?btnTintColor"
+                android:onClick="next"
                 app:layout_constraintBottom_toBottomOf="@+id/play_container"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/play_container"
@@ -197,7 +199,7 @@
                 android:alpha="0.5"
                 android:background="@drawable/btn_ripple"
                 android:src="@drawable/ic_shuffle"
-                android:tint="?colorAccent"
+                android:tint="?btnTintColor"
                 app:layout_constraintBottom_toBottomOf="@+id/lyrics_container"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/lyrics_container" />
@@ -210,7 +212,7 @@
                 android:alpha="0.5"
                 android:background="@drawable/btn_ripple"
                 android:src="@drawable/ic_repeat"
-                android:tint="?colorAccent"
+                android:tint="?btnTintColor"
                 app:layout_constraintBottom_toBottomOf="@+id/lyrics_container"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/next_btn"
@@ -225,6 +227,7 @@
                 android:clickable="true"
                 android:elevation="2dp"
                 android:focusable="true"
+                android:onClick="play"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -269,7 +272,7 @@
                     android:clickable="false"
                     android:focusable="false"
                     android:text="@string/lyrics"
-                    android:textColor="?colorAccent"
+                    android:textColor="?subTitleTextColor"
                     android:textSize="@dimen/sub_title_text_size" />
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>

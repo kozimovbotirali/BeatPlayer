@@ -12,7 +12,7 @@
         android:layout_marginTop="@dimen/margin_10"
         android:contentDescription="@string/cover"
         android:onClick="back"
-        android:tint="@color/white"
+        android:tint="?btnTintColor"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_back" />
@@ -28,7 +28,7 @@
         android:maxLines="1"
         android:padding="7dp"
         android:text="@string/now_playing"
-        android:textColor="@color/white"
+        android:textColor="?titleTextColor"
         android:textSize="@dimen/title_text_size"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/back"
@@ -45,7 +45,7 @@
         android:layout_marginTop="@dimen/margin_10"
         android:onClick="menu"
         android:src="@drawable/ic_more"
-        android:tint="@color/white"
+        android:tint="?btnTintColor"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

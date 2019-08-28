@@ -1,4 +1,4 @@
-package com.crrl.beatplayer.repositories
+package com.crrl.beatplayer.repository
 
 import android.content.ContentResolver
 import android.content.Context

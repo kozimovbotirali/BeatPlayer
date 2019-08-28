@@ -1,9 +1,6 @@
 package com.crrl.beatplayer.extensions
 
-import com.crrl.beatplayer.models.Album
-import com.crrl.beatplayer.models.Artist
-import com.crrl.beatplayer.models.Playlist
-import com.crrl.beatplayer.models.Song
+import com.crrl.beatplayer.models.*
 import com.google.gson.Gson
 
 fun String?.toSong(): Song {
@@ -20,4 +17,8 @@ fun String?.toArtist(): Artist {
 
 fun String?.toPlaylist(): Playlist {
     return Gson().fromJson(this, Playlist::class.java)
+}
+
+fun String?.toFolder(): Folder {
+    return Gson().fromJson(this, Folder::class.java)
 }

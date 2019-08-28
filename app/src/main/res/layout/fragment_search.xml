@@ -19,7 +19,7 @@
         android:layout_height="match_parent"
         android:clickable="true"
         android:focusable="true"
-        android:background="?colorAccent"
+        android:background="?colorPrimarySecondary2"
         android:paddingTop="@dimen/global_padding_top">
 
         <LinearLayout
@@ -28,7 +28,8 @@
             android:layout_marginStart="@dimen/margin_12"
             android:layout_marginTop="@dimen/global_padding_top"
             android:layout_marginEnd="@dimen/margin_12"
-            android:background="@drawable/search_text_view_frame">
+            android:background="@drawable/search_text_view_frame"
+            android:elevation="10dp">
 
             <ImageButton
                 android:id="@+id/back"
@@ -36,7 +37,7 @@
                 android:layout_height="@dimen/coverSize"
                 android:background="@color/transparent"
                 android:src="@drawable/ic_back"
-                android:tint="@color/white" />
+                android:tint="?btnTintColor" />
 
             <EditText
                 android:id="@+id/search_src_text"
@@ -49,9 +50,9 @@
                 android:inputType="text"
                 android:paddingStart="@dimen/padding_12"
                 android:paddingEnd="@dimen/padding_12"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                android:theme="@style/SearchStyle" />
+                android:textColor="?titleTextColor"
+                android:textColorHint="?colorPrimaryOpacity"
+                android:textSize="16sp" />
 
             <ImageButton
                 android:id="@+id/close"
@@ -59,7 +60,7 @@
                 android:layout_height="@dimen/coverSize"
                 android:background="@color/transparent"
                 android:src="@drawable/ic_close"
-                android:tint="@color/white"
+                android:tint="?btnTintColor"
                 android:visibility="@{status ? View.VISIBLE : View.GONE}" />
         </LinearLayout>
 

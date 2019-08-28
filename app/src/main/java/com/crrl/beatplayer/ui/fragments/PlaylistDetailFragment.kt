@@ -11,15 +11,17 @@ import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentPlaylistDetailBinding
 import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.extensions.observe
+import com.crrl.beatplayer.extensions.safeActivity
 import com.crrl.beatplayer.extensions.toPlaylist
 import com.crrl.beatplayer.models.Song
+import com.crrl.beatplayer.ui.activities.MainActivity
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.modelview.SongAdapter
 import com.crrl.beatplayer.ui.viewmodels.SongViewModel
 import com.crrl.beatplayer.utils.PlayerConstants
-import com.dgreenhalgh.android.simpleitemdecoration.linear.EndOffsetItemDecoration
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
+
 
 class PlaylistDetailFragment : BaseFragment<Song>() {
 
@@ -54,12 +56,12 @@ class PlaylistDetailFragment : BaseFragment<Song>() {
         binding.songList.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = songAdapter
-            addItemDecoration(EndOffsetItemDecoration(resources.getDimensionPixelOffset(R.dimen.song_item_size)))
         }
 
         reloadAdapter()
 
         binding.let {
+            it.viewModel = viewModel
             it.lifecycleOwner = this
         }
     }
@@ -71,7 +73,7 @@ class PlaylistDetailFragment : BaseFragment<Song>() {
     }
 
     override fun onItemClick(view: View, position: Int, item: Song) {
-        Toast.makeText(context, "Song: ${item.title}", Toast.LENGTH_LONG).show()
+        (safeActivity as MainActivity).viewModel.update(item)
     }
 
     override fun onShuffleClick(view: View) {

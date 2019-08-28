@@ -12,6 +12,7 @@
         <item name="colorPrimarySecondary">@color/colorPrimaryDarkSecondary</item>
         <item name="colorPrimarySecondary2">@color/colorPrimaryDarkSecondary2</item>
         <item name="colorPrimaryOpacity">@color/colorPrimaryDarkOpacity</item>
+        <item name="colorError">@color/error</item>
         <item name="colorAccent">@color/colorAccentDark</item>
         <item name="colorAccentOpacity">@color/colorAccentDarkOpacity</item>
         <item name="android:fontFamily">@font/rubik</item>
@@ -19,6 +20,7 @@
         <item name="titleTextColor">@color/white</item>
         <item name="subTitleTextColor">@color/colorTitleTextDark</item>
         <item name="btnTintColor">@color/white</item>
+        <item name="android:windowLightStatusBar">false</item>
     </style>
 
     <style name="AppTheme.Light" parent="AppThemeParent.Light">
@@ -27,6 +29,7 @@
         <item name="colorPrimarySecondary">@color/colorPrimaryLightSecondary</item>
         <item name="colorPrimarySecondary2">@color/colorPrimaryLightSecondary2</item>
         <item name="colorPrimaryOpacity">@color/colorPrimaryLightOpacity</item>
+        <item name="colorError">@color/error</item>
         <item name="colorAccent">@color/colorAccentLight</item>
         <item name="colorAccentOpacity">@color/colorAccentLightOpacity</item>
         <item name="android:fontFamily">@font/rubik</item>
@@ -34,14 +37,15 @@
         <item name="titleTextColor">@color/colorPrimaryDark</item>
         <item name="subTitleTextColor">@color/colorTitleTextLight</item>
         <item name="btnTintColor">@color/colorPrimaryDark</item>
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 
     <style name="TabLayoutTextAppearance" parent="TextAppearance.Design.Tab">
         <item name="textAllCaps">false</item>
         <item name="android:textAllCaps">false</item>
-        <item name="android:textColor">@color/colorPrimaryLightSecondary2</item>
+        <item name="android:textColor">?subTitleTextColor</item>
         <item name="android:fontFamily">@font/rubik</item>
-        <item name="android:textSize">@dimen/text_size_16</item>
+        <item name="android:textSize">@dimen/title_text_size</item>
     </style>
 
     <style name="TitleTextAppearance" parent="TextAppearance.MaterialComponents.Headline5">
@@ -49,6 +53,6 @@
     </style>
 
     <style name="SearchStyle">
-        <item name="colorAccent">@color/white</item>
+        <item name="colorAccent">?colorAccent</item>
     </style>
 </resources>

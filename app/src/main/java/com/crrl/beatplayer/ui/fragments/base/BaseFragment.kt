@@ -18,7 +18,7 @@ import com.crrl.beatplayer.extensions.getColorByTheme
 import com.crrl.beatplayer.interfaces.ItemClickListener
 import com.crrl.beatplayer.models.Playlist
 import com.crrl.beatplayer.models.Song
-import com.crrl.beatplayer.repositories.PlaylistRepository
+import com.crrl.beatplayer.repository.PlaylistRepository
 import com.skydoves.powermenu.MenuAnimation
 import com.skydoves.powermenu.OnMenuItemClickListener
 import com.skydoves.powermenu.PowerMenu

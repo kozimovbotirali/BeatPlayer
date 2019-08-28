@@ -1,48 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
-
     <data>
-
         <import type="android.view.View" />
-
         <variable
             name="viewModel"
             type="com.crrl.beatplayer.ui.viewmodels.SongViewModel" />
     </data>
 
-    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/play_list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:paddingStart="12dp"
             android:paddingTop="16dp"
             android:paddingEnd="16dp" />
-
-        <TextView
-            android:id="@+id/createPlayList"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_marginEnd="20dp"
-            android:layout_marginBottom="140dp"
-            android:background="@drawable/btn_play_background"
-            android:drawableStart="@drawable/ic_add"
-            android:drawablePadding="8dp"
-            android:elevation="3dp"
-            android:ellipsize="end"
-            android:gravity="center_vertical"
-            android:paddingLeft="16dp"
-            android:paddingTop="12dp"
-            android:paddingRight="16dp"
-            android:paddingBottom="12dp"
-            android:singleLine="true"
-            android:text="@string/new_playlist"
-            android:textColor="@color/white"
-            android:textSize="16sp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -55,5 +30,15 @@
             android:text="@string/no_playlist"
             android:visibility="@{viewModel.playLists().size > 0 ? View.GONE : View.VISIBLE}" />
 
-    </FrameLayout>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/createPlayList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="140dp"
+            android:src="@drawable/ic_add"
+            android:elevation="3dp" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

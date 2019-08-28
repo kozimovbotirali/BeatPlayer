@@ -9,10 +9,10 @@ import com.crrl.beatplayer.models.Album
 import com.crrl.beatplayer.models.Playlist
 import com.crrl.beatplayer.models.SearchData
 import com.crrl.beatplayer.models.Song
-import com.crrl.beatplayer.repositories.AlbumRepository
-import com.crrl.beatplayer.repositories.ArtistRepository
-import com.crrl.beatplayer.repositories.PlaylistRepository
-import com.crrl.beatplayer.repositories.SongsRepository
+import com.crrl.beatplayer.repository.AlbumRepository
+import com.crrl.beatplayer.repository.ArtistRepository
+import com.crrl.beatplayer.repository.PlaylistRepository
+import com.crrl.beatplayer.repository.SongsRepository
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 
@@ -22,10 +22,10 @@ class SongViewModel(private val context: Context?) : ViewModel() {
     private val songs: MutableLiveData<List<Song>> = MutableLiveData()
     private val _songsByPlaylist: MutableLiveData<List<Song>> = MutableLiveData()
     private val _playlistLiveData: MutableLiveData<List<Playlist>> = MutableLiveData()
-    private val songsByAlbum: MutableLiveData<List<Song>> = MutableLiveData()
-    private val _artistLiveData = MutableLiveData<List<Album>>()
+    private val _songsByAlbum: MutableLiveData<List<Song>> = MutableLiveData()
+    private val _artistLiveData: MutableLiveData<List<Album>> = MutableLiveData()
     private val searchData = SearchData()
-    private val _searchLiveData = MutableLiveData<SearchData>()
+    private val _searchLiveData: MutableLiveData<SearchData> = MutableLiveData()
 
     val searchLiveData = _searchLiveData
 
@@ -33,13 +33,18 @@ class SongViewModel(private val context: Context?) : ViewModel() {
         if (searchString.length >= 3) {
             Observable.fromCallable {
                 searchData.apply {
-                    songList =
-                        SongsRepository.getInstance(context)!!.searchSongs(searchString, 10)
-                            .toMutableList()
-                    albumList = AlbumRepository.getInstance(context)!!.search(searchString, 10)
+                    val songs =
+                        SongsRepository(context).searchSongs(searchString, 10).toMutableList()
+                    val albums = AlbumRepository.getInstance(context)!!.search(searchString, 10)
                         .toMutableList()
-                    artistList = ArtistRepository.getInstance(context)!!.search(searchString, 10)
+                    val artists = ArtistRepository.getInstance(context)!!.search(searchString, 10)
                         .toMutableList()
+                    if (songs.isNotEmpty())
+                        songList = songs
+                    if (albums.isNotEmpty())
+                        albumList = albums
+                    if (artists.isNotEmpty())
+                        artistList = artists
                 }
             }.observeOn(Schedulers.newThread()).subscribeOn(Schedulers.newThread())
                 .subscribe { _searchLiveData.postValue(it) }
@@ -48,13 +53,13 @@ class SongViewModel(private val context: Context?) : ViewModel() {
         }
     }
 
-    val liveData: LiveData<List<Song>>
-        get() {
-            Observable.fromCallable { SongsRepository.getInstance(context)!!.loadSongs() }
-                .observeOn(Schedulers.newThread()).subscribeOn(Schedulers.newThread())
-                .subscribe { songs.postValue(it) }
-            return songs
-        }
+    fun liveData(): LiveData<List<Song>> = songs
+
+    fun update() {
+        Observable.fromCallable { SongsRepository(context).loadSongs() }
+            .observeOn(Schedulers.newThread()).subscribeOn(Schedulers.newThread())
+            .subscribe { songs.postValue(it) }
+    }
 
     fun songsByPlayList(id: Long): LiveData<List<Song>> {
         Observable.fromCallable { PlaylistRepository.getInstance(context)!!.getSongsInPlaylist(id) }
@@ -76,8 +81,8 @@ class SongViewModel(private val context: Context?) : ViewModel() {
 
     fun getSongsByAlbum(id: Long): LiveData<List<Song>>? {
         Observable.fromCallable { AlbumRepository.getInstance(context)!!.getSongsForAlbum(id) }
-            .subscribeOn(Schedulers.newThread()).subscribe { songsByAlbum.postValue(it) }
-        return songsByAlbum
+            .subscribeOn(Schedulers.newThread()).subscribe { _songsByAlbum.postValue(it) }
+        return _songsByAlbum
     }
 
     fun getArtistAlbums(artistId: Long): LiveData<List<Album>> {

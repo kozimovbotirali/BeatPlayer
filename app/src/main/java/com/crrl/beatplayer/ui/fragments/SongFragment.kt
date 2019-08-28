@@ -15,7 +15,9 @@ import com.crrl.beatplayer.alertdialog.stylers.AlertItemTheme
 import com.crrl.beatplayer.alertdialog.stylers.AlertType
 import com.crrl.beatplayer.extensions.getColorByTheme
 import com.crrl.beatplayer.extensions.observe
+import com.crrl.beatplayer.extensions.safeActivity
 import com.crrl.beatplayer.models.Song
+import com.crrl.beatplayer.ui.activities.MainActivity
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.modelview.SongAdapter
 import com.crrl.beatplayer.ui.viewmodels.SongViewModel
@@ -63,7 +65,11 @@ class SongFragment : BaseFragment<Song>() {
 
         dialog = buildSortModesDialog()
 
-        reloadAdapter()
+        viewModel.liveData().observe(this) { list ->
+            songAdapter.updateDataSet(list)
+        }
+
+        viewModel.update()
     }
 
     private fun buildSortModesDialog(): AlertDialog {
@@ -137,9 +143,7 @@ class SongFragment : BaseFragment<Song>() {
     }
 
     private fun reloadAdapter() {
-        viewModel.liveData.observe(this) { list ->
-            songAdapter.updateDataSet(list)
-        }
+        viewModel.update()
     }
 
     override fun addToList(playListId: Long, song: Song) {
@@ -147,7 +151,7 @@ class SongFragment : BaseFragment<Song>() {
     }
 
     override fun onItemClick(view: View, position: Int, item: Song) {
-        Toast.makeText(context, "MediaItem: ${item.title}", Toast.LENGTH_LONG).show()
+        (safeActivity as MainActivity).update(item)
     }
 
     override fun onShuffleClick(view: View) {

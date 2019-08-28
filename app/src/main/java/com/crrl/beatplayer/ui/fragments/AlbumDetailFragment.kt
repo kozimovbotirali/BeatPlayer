@@ -9,9 +9,11 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.extensions.observe
+import com.crrl.beatplayer.extensions.safeActivity
 import com.crrl.beatplayer.extensions.toAlbum
 import com.crrl.beatplayer.models.Album
 import com.crrl.beatplayer.models.Song
+import com.crrl.beatplayer.ui.activities.MainActivity
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.modelview.AlbumSongAdapter
 import com.crrl.beatplayer.ui.viewmodels.SongViewModel
@@ -68,7 +70,7 @@ class AlbumDetailFragment : BaseFragment<Song>() {
     }
 
     override fun onItemClick(view: View, position: Int, item: Song) {
-        Toast.makeText(context, "Song: ${item.title}", Toast.LENGTH_LONG).show()
+        (safeActivity as MainActivity).viewModel.update(item)
     }
 
     override fun onPlayAllClick(view: View) {

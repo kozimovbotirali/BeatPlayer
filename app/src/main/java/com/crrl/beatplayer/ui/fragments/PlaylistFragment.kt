@@ -4,11 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.alertdialog.AlertDialog
 import com.crrl.beatplayer.alertdialog.dialogs.AlertItemAction
@@ -21,7 +20,7 @@ import com.crrl.beatplayer.extensions.getColorByTheme
 import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.extensions.observe
 import com.crrl.beatplayer.models.Playlist
-import com.crrl.beatplayer.repositories.PlaylistRepository
+import com.crrl.beatplayer.repository.PlaylistRepository
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.modelview.PlaylistAdapter
 import com.crrl.beatplayer.ui.viewmodels.SongViewModel
@@ -63,7 +62,18 @@ class PlaylistFragment : BaseFragment<Playlist>() {
         binding.playList.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = playlistAdapter
-            addItemDecoration(DividerItemDecoration(context, LinearLayout.VERTICAL))
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    if (dy > 0 || dy < 0 && binding.createPlayList.isShown)
+                        binding.createPlayList.hide()
+                }
+
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    if (newState == RecyclerView.SCROLL_STATE_IDLE)
+                        binding.createPlayList.show()
+                    super.onScrollStateChanged(recyclerView, newState)
+                }
+            })
         }
 
         binding.createPlayList.setOnClickListener { createPlayList() }

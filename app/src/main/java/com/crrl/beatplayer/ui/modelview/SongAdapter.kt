@@ -10,6 +10,7 @@ import com.bumptech.glide.Glide
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.SongItemBinding
 import com.crrl.beatplayer.databinding.SongItemHeaderBinding
+import com.crrl.beatplayer.extensions.dataChanged
 import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.interfaces.ItemClickListener
 import com.crrl.beatplayer.models.Song
@@ -20,7 +21,7 @@ private const val ITEM_TYPE = 1
 
 class SongAdapter(private val context: Context?) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private var songList: List<Song> = mutableListOf()
+    var songList: MutableList<Song> = mutableListOf()
     var showHeader: Boolean = false
     var isPlaylist: Boolean = false
     var itemClickListener: ItemClickListener<Song>? = null
@@ -82,12 +83,16 @@ class SongAdapter(private val context: Context?) : RecyclerView.Adapter<Recycler
     }
 
     fun updateDataSet(songList: List<Song>) {
-        Thread {
-            this.songList = songList
-            (context as AppCompatActivity).runOnUiThread {
-                notifyDataSetChanged()
-            }
-        }.start()
+        if (!isPlaylist) {
+            Thread {
+                this.songList = songList.toMutableList()
+                (context as AppCompatActivity).runOnUiThread {
+                    notifyDataSetChanged()
+                }
+            }.start()
+        } else {
+            dataChanged(songList)
+        }
     }
 
     inner class ViewHolderSong(private val binding: SongItemBinding) :
@@ -99,15 +104,14 @@ class SongAdapter(private val context: Context?) : RecyclerView.Adapter<Recycler
                 cover.clipToOutline = true
                 container.setOnClickListener(this@ViewHolderSong)
                 itemMenu.setOnClickListener(this@ViewHolderSong)
-                cover.clipToOutline = true
+                val uri = ContentUris.withAppendedId(PlayerConstants.ARTWORK_URI, song.albumId)
+                Glide.with(context!!)
+                    .load(uri)
+                    .placeholder(R.drawable.ic_empty_cover)
+                    .error(R.drawable.ic_empty_cover)
+                    .into(cover)
                 executePendingBindings()
             }
-            val uri = ContentUris.withAppendedId(PlayerConstants.ARTWORK_URI, song.albumId)
-            Glide.with(context!!)
-                .load(uri)
-                .placeholder(R.drawable.ic_empty_cover)
-                .error(R.drawable.ic_empty_cover)
-                .into(binding.cover)
         }
 
         override fun onClick(view: View) {

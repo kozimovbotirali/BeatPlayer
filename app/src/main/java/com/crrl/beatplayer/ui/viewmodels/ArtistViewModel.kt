@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.crrl.beatplayer.models.Artist
-import com.crrl.beatplayer.repositories.ArtistRepository
+import com.crrl.beatplayer.repository.ArtistRepository
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 

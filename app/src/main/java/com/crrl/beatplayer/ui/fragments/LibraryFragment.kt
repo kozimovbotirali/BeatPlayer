@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProviders
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentLibraryBinding
 import com.crrl.beatplayer.extensions.inflateWithBinding
+import com.crrl.beatplayer.extensions.safeActivity
 import com.crrl.beatplayer.ui.activities.MainActivity
 import com.crrl.beatplayer.ui.fragments.base.BaseSongDetailFragment
 import com.crrl.beatplayer.ui.modelview.ViewPagerAdapter
@@ -33,7 +34,7 @@ class LibraryFragment : BaseSongDetailFragment() {
         if ((activity as MainActivity).isPermissionsGranted()) init()
         binding.apply {
             lifecycleOwner = this@LibraryFragment
-            isPermissionsGranted = (activity as MainActivity).isPermissionsGranted()
+            isPermissionsGranted = (safeActivity as MainActivity).isPermissionsGranted()
         }
     }
 
@@ -41,7 +42,7 @@ class LibraryFragment : BaseSongDetailFragment() {
 
         viewModel = ViewModelProviders.of(this).get(LibraryViewModel::class.java)
 
-        val listSortModeAdapter = ViewPagerAdapter(activity!!.supportFragmentManager)
+        val listSortModeAdapter = ViewPagerAdapter(safeActivity.supportFragmentManager)
 
         listSortModeAdapter.apply {
             addFragment(SongFragment(), getString(R.string.songs))
@@ -55,7 +56,7 @@ class LibraryFragment : BaseSongDetailFragment() {
             pagerSortMode.apply {
                 adapter = listSortModeAdapter
                 offscreenPageLimit = listSortModeAdapter.count
-                currentItem = SettingsUtility.getInstance(context).startPageIndexSelected
+                currentItem = SettingsUtility.getInstance(safeActivity).startPageIndexSelected
             }
             tabsContainer.apply {
                 setupWithViewPager(pagerSortMode)

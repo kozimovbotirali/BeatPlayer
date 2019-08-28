@@ -5,7 +5,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingTop="@dimen/global_padding_top"
-        android:background="?colorAccent">
+        android:background="?colorPrimarySecondary2">
 
         <ImageButton
             android:id="@+id/back"
@@ -15,7 +15,7 @@
             android:layout_marginTop="@dimen/margin_10"
             android:contentDescription="@string/cover"
             android:onClick="back"
-            android:tint="@color/white"
+            android:tint="?btnTintColor"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_back" />
@@ -31,7 +31,7 @@
             android:maxLines="1"
             android:padding="7dp"
             android:text="@string/settings"
-            android:textColor="@color/white"
+            android:textColor="?titleTextColor"
             android:textSize="@dimen/text_size_16"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/back"

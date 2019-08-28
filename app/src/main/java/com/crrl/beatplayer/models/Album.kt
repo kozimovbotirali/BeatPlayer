@@ -11,7 +11,7 @@ data class Album(
     var artistId: Long = 0,
     var songCount: Int = 0,
     var year: Int = 0
-) : MediaItem() {
+) : MediaItem(id) {
 
     companion object {
         fun createFromCursor(cursor: Cursor, artistId: Long = 0): Album {

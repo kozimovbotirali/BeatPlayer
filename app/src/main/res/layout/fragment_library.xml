@@ -14,7 +14,7 @@
         android:id="@+id/main_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?colorAccent">
+        android:background="?colorPrimarySecondary2">
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/app_bar"
@@ -39,12 +39,12 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:tabIndicator="@drawable/indicator"
-                    app:tabIndicatorColor="@color/white"
+                    app:tabIndicatorColor="?colorAccent"
                     app:tabIndicatorFullWidth="false"
                     app:tabIndicatorHeight="4dp"
                     app:tabMode="fixed"
                     app:tabRippleColor="@color/transparent"
-                    app:tabSelectedTextColor="@color/white"
+                    app:tabSelectedTextColor="?colorAccent"
                     app:tabTextAppearance="@style/TabLayoutTextAppearance" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.appbar.AppBarLayout>
@@ -52,7 +52,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="@dimen/global_padding_top"
-            android:background="?colorAccent" />
+            android:background="?colorPrimarySecondary2" />
 
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/pager_sort_mode"

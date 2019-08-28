@@ -1,32 +1,163 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main_container"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    tools:context=".ui.activities.MainActivity">
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <FrameLayout
-        android:id="@+id/nav_host_fragment"
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.crrl.beatplayer.ui.viewmodels.MainViewModel" />
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/main_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        tools:context=".ui.activities.MainActivity">
 
-    <LinearLayout
-        android:id="@+id/bottom_controls"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_marginBottom="-72dp"
-        android:elevation="30dp"
-        android:onClick="onSongInfoClick"
-        android:orientation="vertical">
-
-        <include
-            android:id="@+id/include"
-            layout="@layout/mini_player"
+        <FrameLayout
+            android:id="@+id/nav_host_fragment"
             android:layout_width="match_parent"
-            android:layout_height="70dp" />
-    </LinearLayout>
+            android:layout_height="match_parent" />
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+        <LinearLayout
+            android:id="@+id/bottom_controls"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="-72dp"
+            android:elevation="30dp"
+            android:onClick="onSongInfoClick"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/container"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:background="@drawable/mini_player_frame"
+                app:layout_constraintTop_toTopOf="parent"
+                android:elevation="30dp">
+
+                <ImageView
+                    android:id="@+id/mini_player_cover"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/mini_player_cover_frame"
+                    android:src="@drawable/ic_empty_cover"
+                    android:layout_marginStart="@dimen/margin_12"
+                    android:layout_centerVertical="true"
+                    android:transitionName="mini_cover" />
+
+                <LinearLayout
+                    android:id="@+id/listViewTextContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="@dimen/margin_8"
+                    android:layout_marginEnd="@dimen/margin_10"
+                    android:layout_toStartOf="@+id/play_container"
+                    android:layout_toEndOf="@id/mini_player_cover"
+                    android:orientation="vertical"
+                    android:paddingBottom="4dp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:id="@+id/title"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentBottom="true"
+                            android:layout_marginStart="0dp"
+                            android:layout_marginBottom="4dp"
+                            android:maxLines="1"
+                            android:gravity="center"
+                            android:text="@{viewModel.currentSong.title}"
+                            android:textStyle="bold"
+                            android:textColor="?titleTextColor"
+                            android:textSize="@dimen/title_text_size" />
+                    </RelativeLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center">
+
+                        <TextView
+                            android:id="@+id/artist"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:singleLine="true"
+                            android:text="@{viewModel.currentSong.artist}"
+                            android:textColor="?subTitleTextColor"
+                            android:textSize="@dimen/sub_title_text_size" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:paddingLeft="5dp"
+                            android:paddingRight="5dp"
+                            android:singleLine="true"
+                            android:text="@string/separator"
+                            android:textColor="?subTitleTextColor"
+                            android:textSize="@dimen/sub_title_text_size" />
+
+                        <TextView
+                            android:id="@+id/album"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:singleLine="true"
+                            android:text="@{viewModel.currentSong.album}"
+                            android:textColor="?subTitleTextColor"
+                            android:textSize="@dimen/sub_title_text_size" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:id="@+id/play_container"
+                    android:layout_width="50dp"
+                    android:layout_height="60dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="@dimen/margin_8">
+
+                    <com.budiyev.android.circularprogressbar.CircularProgressBar
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:animateProgress="true"
+                        app:backgroundStrokeColor="?colorAccentOpacity"
+                        app:backgroundStrokeWidth="2dp"
+                        app:drawBackgroundStroke="true"
+                        app:foregroundStrokeCap="butt"
+                        app:foregroundStrokeColor="?colorAccent"
+                        app:foregroundStrokeWidth="2dp"
+                        app:indeterminate="false"
+                        app:indeterminateMinimumAngle="45"
+                        app:indeterminateRotationAnimationDuration="1200"
+                        app:indeterminateSweepAnimationDuration="600"
+                        app:maximum="@{viewModel.currentSong.duration}"
+                        app:progress="0"
+                        app:progressAnimationDuration="100"
+                        app:startAngle="270" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:src="@drawable/ic_play"
+                        android:tint="?colorAccent" />
+                </RelativeLayout>
+            </RelativeLayout>
+        </LinearLayout>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

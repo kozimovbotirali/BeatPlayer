@@ -1,4 +1,4 @@
-package com.crrl.beatplayer.repositories
+package com.crrl.beatplayer.repository
 
 import android.content.*
 import android.database.Cursor
@@ -108,7 +108,7 @@ class PlaylistRepository() {
 
             if (!runCleanup && it.moveToFirst()) {
                 val playOrderCol =
-                    it.getColumnIndexOrThrow(MediaStore.Audio.Playlists.Members.PLAY_ORDER)
+                    it.getColumnIndexOrThrow(PLAY_ORDER)
                 var lastPlayOrder = -1
                 do {
                     val playOrder = it.getInt(playOrderCol)

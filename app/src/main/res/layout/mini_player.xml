@@ -56,7 +56,7 @@
                     android:gravity="center"
                     android:text="@string/title"
                     android:textStyle="bold"
-                    android:textColor="@color/white"
+                    android:textColor="?titleTextColor"
                     android:textSize="@dimen/title_text_size" />
             </RelativeLayout>
 
@@ -73,7 +73,7 @@
                     android:ellipsize="end"
                     android:singleLine="true"
                     android:text="@string/artist"
-                    android:textColor="@color/colorPrimaryLightSecondary"
+                    android:textColor="?subTitleTextColor"
                     android:textSize="@dimen/sub_title_text_size" />
 
                 <TextView
@@ -84,7 +84,7 @@
                     android:paddingRight="5dp"
                     android:singleLine="true"
                     android:text="@string/separator"
-                    android:textColor="@color/colorPrimaryLightSecondary"
+                    android:textColor="?subTitleTextColor"
                     android:textSize="@dimen/sub_title_text_size" />
 
                 <TextView
@@ -94,7 +94,7 @@
                     android:ellipsize="end"
                     android:singleLine="true"
                     android:text="@string/album"
-                    android:textColor="@color/colorPrimaryLightSecondary"
+                    android:textColor="?subTitleTextColor"
                     android:textSize="@dimen/sub_title_text_size" />
             </LinearLayout>
         </LinearLayout>
@@ -111,11 +111,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:animateProgress="true"
-                app:backgroundStrokeColor="@color/colorPrimaryDarkOpacity"
+                app:backgroundStrokeColor="?colorAccentOpacity"
                 app:backgroundStrokeWidth="2dp"
                 app:drawBackgroundStroke="true"
                 app:foregroundStrokeCap="butt"
-                app:foregroundStrokeColor="@color/white"
+                app:foregroundStrokeColor="?colorAccent"
                 app:foregroundStrokeWidth="2dp"
                 app:indeterminate="false"
                 app:indeterminateMinimumAngle="45"
@@ -131,7 +131,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:src="@drawable/ic_play"
-                android:tint="@color/white" />
+                android:tint="?colorAccent" />
         </RelativeLayout>
     </RelativeLayout>
 </layout>

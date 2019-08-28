@@ -1,4 +1,4 @@
-package com.crrl.beatplayer.repositories
+package com.crrl.beatplayer.repository
 
 import android.content.ContentResolver
 import android.content.Context
@@ -20,15 +20,6 @@ class SongsRepository() : SongRepository {
 
     private lateinit var contentResolver: ContentResolver
     private lateinit var settingsUtility: SettingsUtility
-
-    companion object {
-        private var instance: SongsRepository? = null
-
-        fun getInstance(context: Context?): SongsRepository? {
-            if (instance == null) instance = SongsRepository(context)
-            return instance
-        }
-    }
 
     constructor(context: Context?) : this() {
         contentResolver = context!!.contentResolver
@@ -66,7 +57,7 @@ class SongsRepository() : SongRepository {
         paramArrayOfString: Array<String>?,
         sortOrder: String
     ): Cursor? {
-        var selectionStatement = "is_music=1 AND title != ''"
+        var selectionStatement = "title != ''"
 
         if (!TextUtils.isEmpty(selection)) {
             selectionStatement = "$selectionStatement AND $selection"

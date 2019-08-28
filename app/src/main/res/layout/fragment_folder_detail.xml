@@ -7,12 +7,12 @@
         <import type="android.view.View" />
 
         <variable
-            name="playlist"
-            type="com.crrl.beatplayer.models.Playlist" />
+            name="folder"
+            type="com.crrl.beatplayer.models.Folder" />
 
         <variable
             name="viewModel"
-            type="com.crrl.beatplayer.ui.viewmodels.SongViewModel" />
+            type="com.crrl.beatplayer.ui.viewmodels.FolderViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -22,7 +22,7 @@
         android:background="?colorPrimarySecondary2">
 
         <LinearLayout
-            android:id="@+id/play_list_container"
+            android:id="@+id/folder_list_container"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -39,7 +39,7 @@
                 android:gravity="center"
                 android:maxLines="1"
                 android:padding="7dp"
-                android:text="@{playlist.name}"
+                android:text="@{folder.name}"
                 android:textColor="?titleTextColor"
                 android:textStyle="bold" />
 
@@ -50,7 +50,7 @@
                 android:gravity="center"
                 android:maxLines="1"
                 android:padding="7dp"
-                android:text="@{@plurals/number_of_songs(viewModel.songsByPlayList(playlist.id).size, viewModel.songsByPlayList(playlist.id).size)}"
+                android:text="@{folder.path}"
                 android:textColor="?subTitleTextColor"
                 android:textSize="@dimen/title_text_size"
                 android:textStyle="bold" />
@@ -64,7 +64,7 @@
             android:focusable="true"
             android:background="@drawable/album_detail_shape"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/play_list_container" />
+            app:layout_constraintTop_toBottomOf="@id/folder_list_container" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/song_list"
@@ -83,7 +83,7 @@
             android:textColor="?titleTextColor"
             android:textSize="@dimen/text_size_18"
             android:textStyle="bold"
-            android:visibility="@{viewModel.songsByPlayList(playlist.id).size > 0 ? View.GONE : View.VISIBLE}"
+            android:visibility="@{viewModel.getSongsByFolder(folder.songIds).size > 0 ? View.GONE : View.VISIBLE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -92,3 +92,4 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
+

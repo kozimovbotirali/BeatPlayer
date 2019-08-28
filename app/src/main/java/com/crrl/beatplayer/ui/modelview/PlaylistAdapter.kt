@@ -12,7 +12,7 @@ import com.crrl.beatplayer.models.Playlist
 
 class PlaylistAdapter : RecyclerView.Adapter<PlaylistAdapter.ViewHolder>() {
 
-    var playlists: List<Playlist> = emptyList()
+    var playlists: MutableList<Playlist> = mutableListOf()
 
     var itemClickListener: ItemClickListener<Playlist>? = null
 

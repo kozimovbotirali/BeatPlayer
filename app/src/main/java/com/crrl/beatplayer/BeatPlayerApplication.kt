@@ -12,7 +12,6 @@ class BeatPlayerApplication : Application() {
             // Android context
             androidContext(this@BeatPlayerApplication)
             modules(mainModule)
-
         }
     }
 }

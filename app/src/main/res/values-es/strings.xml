@@ -38,6 +38,7 @@
     <string name="playlist_added_success">Lista de reproducción agregada satisfactoriamente.</string>
     <string name="input_hint">Ingresa el nombre</string>
     <string name="no_permission">No se otorgaron permisos</string>
+    <string name="no_folders">Sin Carpetas</string>
 
     <plurals name="number_of_songs" tools:ignore="UnusedQuantity">
         <item quantity="zero">%d Pistas</item>

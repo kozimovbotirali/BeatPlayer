@@ -4,6 +4,7 @@ import android.app.Activity
 import android.os.Build
 import android.os.Bundle
 import android.util.TypedValue
+import android.widget.Toast
 import androidx.annotation.AttrRes
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
@@ -59,4 +60,11 @@ fun Activity?.getColorByTheme(
     val outValue = TypedValue()
     this?.theme!!.resolveAttribute(colorAttr!!, outValue, true)
     return outValue.data
+}
+
+fun Activity?.toast(
+    msg: String,
+    dur: Int
+) {
+    Toast.makeText(this, msg, dur).show()
 }

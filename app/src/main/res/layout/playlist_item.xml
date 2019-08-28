@@ -62,7 +62,7 @@
             android:layout_height="@dimen/btn_size"
             android:background="@drawable/btn_ripple"
             android:src="@drawable/ic_delete"
-            android:tint="?btnTintColor" />
+            android:tint="?colorError" />
     </LinearLayout>
 
 </layout>

@@ -6,7 +6,9 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import com.crrl.beatplayer.models.Song
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.io.FileInputStream
+import java.io.FileNotFoundException
 
 
 object GeneralUtils {
@@ -66,8 +68,10 @@ object GeneralUtils {
         return hours * (1000 * 60 * 60) + minutes * (1000 * 60) + seconds * 1000
     }
 
+    @Throws(FileNotFoundException::class)
+    fun audio2Raw(path: String): ByteArray? {
 
-    fun aurio2Raw(path: String): ByteArray {
+        if (!File(path).exists()) return null
 
         val fis = FileInputStream(path)
         val bos = ByteArrayOutputStream()

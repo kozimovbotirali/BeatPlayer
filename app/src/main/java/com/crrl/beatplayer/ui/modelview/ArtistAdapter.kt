@@ -14,7 +14,7 @@ import com.crrl.beatplayer.databinding.ArtistItemHeaderBinding
 import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.interfaces.ItemClickListener
 import com.crrl.beatplayer.models.Artist
-import com.crrl.beatplayer.repositories.ArtistRepository
+import com.crrl.beatplayer.repository.ArtistRepository
 import com.crrl.beatplayer.utils.GeneralUtils
 import com.crrl.beatplayer.utils.PlayerConstants
 

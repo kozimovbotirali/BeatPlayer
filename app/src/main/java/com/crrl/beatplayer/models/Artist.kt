@@ -8,7 +8,7 @@ data class Artist(
     var name: String = "",
     var songCount: Int = 0,
     var albumCount: Int = 0
-) : MediaItem() {
+) : MediaItem(id) {
     companion object {
         fun createFromCursor(cursor: Cursor): Artist {
             return Artist(
