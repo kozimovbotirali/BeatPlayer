@@ -188,28 +188,28 @@ class PlaylistRepository() {
         cursor: Cursor,
         closeCursorAfter: Boolean
     ) {
-        val idCol = cursor.getColumnIndexOrThrow(AUDIO_ID)
-        val uri = MediaStore.Audio.Playlists.Members.getContentUri("external", playlistId)
-        val ops = arrayListOf<ContentProviderOperation>().apply {
-            add(ContentProviderOperation.newDelete(uri).build())
-        }
-
-        if (cursor.moveToFirst() && cursor.count > 0) {
-            do {
-                val builder = ContentProviderOperation.newInsert(uri)
-                    .withValue(PLAY_ORDER, cursor.position)
-                    .withValue(AUDIO_ID, cursor.getLong(idCol))
-                if ((cursor.position + 1) % 100 == 0) {
-                    builder.withYieldAllowed(true)
-                }
-                ops.add(builder.build())
-            } while (cursor.moveToNext())
-        }
-
         try {
+            val idCol = cursor.getColumnIndexOrThrow(AUDIO_ID)
+            val uri = MediaStore.Audio.Playlists.Members.getContentUri("external", playlistId)
+            val ops = arrayListOf<ContentProviderOperation>().apply {
+                add(ContentProviderOperation.newDelete(uri).build())
+            }
+
+            if (cursor.moveToFirst() && cursor.count > 0) {
+                do {
+                    val builder = ContentProviderOperation.newInsert(uri)
+                        .withValue(PLAY_ORDER, cursor.position)
+                        .withValue(AUDIO_ID, cursor.getLong(idCol))
+                    if ((cursor.position + 1) % 100 == 0) {
+                        builder.withYieldAllowed(true)
+                    }
+                    ops.add(builder.build())
+                } while (cursor.moveToNext())
+            }
             contentResolver.applyBatch(MediaStore.AUTHORITY, ops)
         } catch (e: RemoteException) {
         } catch (e: OperationApplicationException) {
+        } catch (e: IllegalArgumentException) {
         }
 
         if (closeCursorAfter) {
@@ -235,8 +235,7 @@ class PlaylistRepository() {
 
     private fun makePlaylistSongCursor(playlistID: Long?): Cursor? {
         val selection = StringBuilder().apply {
-            append("${MediaStore.Audio.AudioColumns.IS_MUSIC}=1")
-            append(" AND ${MediaStore.Audio.AudioColumns.TITLE} != ''")
+            append("${MediaStore.Audio.AudioColumns.TITLE} != ''")
         }
         val projection = arrayOf(
             "play_order",
