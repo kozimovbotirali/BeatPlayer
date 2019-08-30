@@ -17,8 +17,6 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
-apply plugin: 'kotlin-kapt'
-
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
@@ -57,8 +55,6 @@ dependencies {
     implementation project(':alertdialog')
 
     def room_version = "2.2.0-beta01"
-
-    kapt("groupId:artifactId:version")
 
     implementation "androidx.room:room-runtime:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"
