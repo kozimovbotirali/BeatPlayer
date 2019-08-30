@@ -1,14 +1,21 @@
 language: android
 jdk: oraclejdk8
+sudo: false
+
 android:
   components:
-  - tools
-  - platform-tools
-  - build-tools-29.0.2
-  - android-29
-  - extra-android-support
-  - extra-android-m2repository
-  - extra-google-m2repository
+    - platform-tools
+    - tools
+    - build-tools-29.0.2
+    - android-29
+    - android-24
+    - sys-img-armeabi-v7a-android-24
+    - extra-android-m2repository
 
-licenses:
-  - '.+'
+before_script:
+  - echo no | android create avd --force -n test -t android-24 --abi armeabi-v7a
+  - emulator -avd test -no-window &
+  - android-wait-for-emulator
+  - adb shell input keyevent 82 &
+
+script: ./gradlew connectedAndroidTest

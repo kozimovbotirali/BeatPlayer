@@ -60,7 +60,6 @@ class MainActivity : BaseActivity() {
     private fun updateView(song: Song) {
         binding.let {
             it.viewModel = viewModel
-            it.lifecycleOwner = this
         }
         if (song.path == "") return
         binding.apply {
