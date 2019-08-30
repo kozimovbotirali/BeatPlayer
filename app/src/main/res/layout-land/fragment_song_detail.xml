@@ -73,11 +73,13 @@
             app:layout_constraintTop_toTopOf="@id/view" />
 
         <RelativeLayout
-            android:layout_width="340dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/global_padding_top"
+            android:layout_marginEnd="@dimen/global_padding_top"
             app:layout_constraintBottom_toTopOf="@id/btn_container"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/now_playing_cover"
+            app:layout_constraintEnd_toEndOf="@id/view"
+            app:layout_constraintStart_toStartOf="@id/view"
             app:layout_constraintTop_toBottomOf="@+id/album_title">
 
             <TextView
@@ -130,9 +132,8 @@
             android:paddingStart="@dimen/margin_10"
             android:paddingEnd="@dimen/margin_10"
             android:text="@{song.getCurrentData().album, default=Album}"
-            android:textColor="?subTitleTextColor"
+            android:textColor="?colorAccent"
             android:textSize="@dimen/title_text_size"
-            android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@+id/add_playlist"
             app:layout_constraintStart_toStartOf="@+id/song_title"
             app:layout_constraintTop_toBottomOf="@+id/song_title" />
@@ -149,7 +150,6 @@
             android:text="@{song.getCurrentData().title, default=Title}"
             android:textSize="20sp"
             android:textColor="?titleTextColor"
-            android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@+id/add_playlist"
             app:layout_constraintStart_toEndOf="@+id/add_favorites"
             app:layout_constraintTop_toTopOf="@+id/view" />
@@ -272,7 +272,7 @@
                     android:clickable="false"
                     android:focusable="false"
                     android:text="@string/lyrics"
-                    android:textColor="?subTitleTextColor"
+                    android:textColor="?colorAccent"
                     android:textSize="@dimen/sub_title_text_size" />
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>

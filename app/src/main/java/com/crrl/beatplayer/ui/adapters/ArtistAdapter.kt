@@ -1,8 +1,9 @@
-package com.crrl.beatplayer.ui.modelview
+package com.crrl.beatplayer.ui.adapters
 
 import android.content.ContentUris
 import android.content.Context
 import android.os.SystemClock
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
@@ -108,16 +109,22 @@ class ArtistAdapter(private val context: Context?) :
                         ArtistRepository.getInstance(context!!)!!.getAlbumsForArtist(artist.id)[0].id
                     )
                     (context as AppCompatActivity).runOnUiThread {
-                        Glide.with(context)
-                            .load(uri)
-                            .placeholder(R.drawable.ic_empty_cover)
-                            .error(R.drawable.ic_empty_cover)
-                            .into(cover)
+                        try {
+                            Glide.with(context)
+                                .load(uri)
+                                .placeholder(R.drawable.ic_empty_cover)
+                                .error(R.drawable.ic_empty_cover)
+                                .into(cover)
+                        } catch (e: IllegalArgumentException) {
+                            Log.println(Log.ERROR, "IllegalArgumentException", e.message!!)
+                        }
                     }
                 }).start()
                 showDetails.setOnClickListener(this@ViewHolderArtist)
                 container.layoutParams.height =
                     GeneralUtils.screenWidth / spanCount + GeneralUtils.dip2px(context!!, 42)
+                container.layoutParams.width =
+                    GeneralUtils.screenWidth / spanCount
                 executePendingBindings()
             }
         }

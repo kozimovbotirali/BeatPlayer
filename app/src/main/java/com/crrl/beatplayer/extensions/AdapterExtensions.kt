@@ -5,31 +5,39 @@ import com.crrl.beatplayer.models.Folder
 import com.crrl.beatplayer.models.MediaItem
 import com.crrl.beatplayer.models.Playlist
 import com.crrl.beatplayer.models.Song
-import com.crrl.beatplayer.ui.modelview.FolderAdapter
-import com.crrl.beatplayer.ui.modelview.PlaylistAdapter
-import com.crrl.beatplayer.ui.modelview.SongAdapter
+import com.crrl.beatplayer.ui.adapters.FolderAdapter
+import com.crrl.beatplayer.ui.adapters.PlaylistAdapter
+import com.crrl.beatplayer.ui.adapters.SongAdapter
 
 fun PlaylistAdapter?.dataChanged(newList: List<Playlist>): Boolean {
     this ?: return false
     when {
         newList.size > playlists.size -> {
-            findElementChanged(playlists, newList).forEach { pos ->
+            if (newList.size - playlists.size > 1) {
+                playlists = newList.toMutableList()
+                notifyDataSetChanged()
+                return true
+            } else {
+                val pos = findElementChanged(playlists, newList)
                 if (pos != -1) {
-                    if ((newList.size - playlists.size) == 1) {
-                        playlists.add(pos, newList[pos])
-                    } else {
-                        playlists = newList.toMutableList()
-                    }
+                    playlists.add(pos, newList[pos])
                     notifyItemInserted(pos)
+                    Log.println(Log.DEBUG, "Dev", "$pos")
                     return true
                 }
             }
         }
         newList.size < playlists.size -> {
-            findElementChanged(playlists, newList).forEach { pos ->
+            if (playlists.size - newList.size > 1) {
+                playlists = newList.toMutableList()
+                notifyDataSetChanged()
+                return true
+            } else {
+                val pos = findElementChanged(playlists, newList)
                 if (pos != -1) {
-                    playlists.removeAt(pos)
                     notifyItemRemoved(pos)
+                    playlists.removeAt(pos)
+                    Log.println(Log.DEBUG, "Dev", "$pos")
                     return true
                 }
             }
@@ -46,7 +54,7 @@ fun PlaylistAdapter?.dataChanged(newList: List<Playlist>): Boolean {
             newList.forEachIndexed { index, t ->
                 if (t != playlists[index]) {
                     playlists = newList.toMutableList()
-                    notifyItemMoved(playlists.indexOf(t), index)
+                    notifyDataSetChanged()
                     return true
                 }
             }
@@ -56,39 +64,54 @@ fun PlaylistAdapter?.dataChanged(newList: List<Playlist>): Boolean {
 }
 
 fun SongAdapter?.dataChanged(newList: List<Song>): Boolean {
+    /**
+     *
+     * TODO fix adding song notify
+     *
+     **/
     this ?: return false
     when {
         newList.size > songList.size -> {
-            val list = findElementChanged(songList, newList)
-            songList = newList.toMutableList()
-            list.forEach { pos ->
+            if (newList.size - songList.size > 1) {
+                songList = newList.toMutableList()
+                notifyDataSetChanged()
+                return true
+            } else {
+                val pos = findElementChanged(songList, newList)
                 if (pos != -1) {
-                    songList = newList.toMutableList()
-                    notifyItemInserted(pos)
+                    songList.add(pos, newList[pos])
+                    notifyItemInserted(pos + 1)
+                    Log.println(Log.DEBUG, "Dev", "$pos")
                     return true
                 }
             }
         }
         newList.size < songList.size -> {
-            findElementChanged(songList, newList).forEach { pos ->
+            if (songList.size - newList.size > 1) {
+                songList = newList.toMutableList()
+                notifyDataSetChanged()
+                return true
+            } else {
+                val pos = findElementChanged(songList, newList)
                 if (pos != -1) {
-                    notifyItemRemoved(pos)
+                    notifyItemRemoved(pos + 1)
                     songList.removeAt(pos)
+                    Log.println(Log.DEBUG, "Dev", "$pos")
                     return true
                 }
             }
         }
         else -> {
-            newList.forEach {
-                if (songList.indexOf(it) == -1) {
+            newList.forEachIndexed { index, playlist ->
+                if (songList.indexOf(playlist) == -1) {
                     songList = newList.toMutableList()
-                    notifyDataSetChanged()
+                    notifyItemChanged(index)
                     return true
                 }
             }
 
             newList.forEachIndexed { index, t ->
-                if (t.id != songList[index].id) {
+                if (t != songList[index]) {
                     songList = newList.toMutableList()
                     notifyDataSetChanged()
                     return true
@@ -103,36 +126,41 @@ fun FolderAdapter?.dataChanged(newList: List<Folder>): Boolean {
     this ?: return false
     when {
         newList.size > folderList.size -> {
-            findElementChanged(folderList, newList).forEach { pos ->
+            if (newList.size - folderList.size > 1) {
+                folderList = newList.toMutableList()
+                notifyDataSetChanged()
+            } else {
+                val pos = findElementChanged(folderList, newList)
                 if (pos != -1) {
-                    if ((newList.size - folderList.size) == 1) {
+                    if (folderList.size != 0) {
                         folderList.add(pos, newList[pos])
+                        notifyItemInserted(pos)
                     } else {
                         folderList = newList.toMutableList()
+                        notifyDataSetChanged()
                     }
-                    notifyItemInserted(pos)
-                    Log.println(Log.DEBUG, "Dev", "Changed 1")
                     return true
                 }
             }
         }
         newList.size < folderList.size -> {
-            findElementChanged(folderList, newList).forEach { pos ->
+            if (folderList.size - newList.size > 1) {
+                folderList = newList.toMutableList()
+                notifyDataSetChanged()
+            } else {
+                val pos = findElementChanged(folderList, newList)
                 if (pos != -1) {
                     notifyItemRemoved(pos)
                     folderList.removeAt(pos)
-                    Log.println(Log.DEBUG, "Dev", "Changed 2")
                     return true
                 }
             }
-
         }
         else -> {
             newList.forEachIndexed { i, folder ->
                 if (folder.id != folderList[i].id) {
                     folderList = newList.toMutableList()
                     notifyDataSetChanged()
-                    Log.println(Log.DEBUG, "Dev", "Changed 3")
                     return true
                 }
             }
@@ -141,32 +169,32 @@ fun FolderAdapter?.dataChanged(newList: List<Folder>): Boolean {
     return false
 }
 
-private fun findElementChanged(oldList: List<MediaItem>, newList: List<MediaItem>): List<Int> {
-    val list = mutableListOf<Int>()
+private fun findElementChanged(oldList: List<MediaItem>, newList: List<MediaItem>): Int {
     if (newList.size > oldList.size) {
         newList.forEachIndexed { index, item ->
-            if (if (item is Folder) getIndex(
+            if (getIndex(
                     oldList,
-                    item
-                ) == -1 else oldList.indexOf(item) == -1
-            ) list.add(index)
+                    item,
+                    index
+                ) == -1
+            ) return index
         }
-    }
-    if (newList.size < oldList.size) {
+    } else if (newList.size < oldList.size) {
         oldList.forEachIndexed { index, item ->
-            if (if (item is Folder) getIndex(
+            if (getIndex(
                     newList,
-                    item
-                ) == -1 else newList.indexOf(item) == -1
-            ) list.add(index)
+                    item,
+                    index
+                ) == -1
+            ) return index
         }
     }
-    return list
+    return -1
 }
 
-private fun getIndex(list: List<MediaItem>, item: MediaItem): Int {
+private fun getIndex(list: List<MediaItem>, item: MediaItem, index: Int): Int {
     for ((i, l) in list.withIndex()) {
-        if (l._id == item._id) return i
+        if (l.compare(item) && i == index) return i
     }
     return -1
 }

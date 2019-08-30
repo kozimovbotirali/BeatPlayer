@@ -22,14 +22,22 @@
         android:background="?colorPrimarySecondary2"
         android:paddingTop="@dimen/global_padding_top">
 
-        <LinearLayout
+        <View
             android:layout_width="match_parent"
             android:layout_height="@dimen/coverSize"
             android:layout_marginStart="@dimen/margin_12"
             android:layout_marginTop="@dimen/global_padding_top"
             android:layout_marginEnd="@dimen/margin_12"
             android:background="@drawable/search_text_view_frame"
-            android:elevation="10dp">
+            android:elevation="2dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/coverSize"
+            android:layout_marginStart="@dimen/margin_12"
+            android:layout_marginTop="@dimen/global_padding_top"
+            android:layout_marginEnd="@dimen/margin_12"
+            android:elevation="2dp">
 
             <ImageButton
                 android:id="@+id/back"
@@ -37,7 +45,7 @@
                 android:layout_height="@dimen/coverSize"
                 android:background="@color/transparent"
                 android:src="@drawable/ic_back"
-                android:tint="?btnTintColor" />
+                android:tint="?bodyTextColor" />
 
             <EditText
                 android:id="@+id/search_src_text"
@@ -60,7 +68,7 @@
                 android:layout_height="@dimen/coverSize"
                 android:background="@color/transparent"
                 android:src="@drawable/ic_close"
-                android:tint="?btnTintColor"
+                android:tint="?bodyTextColor"
                 android:visibility="@{status ? View.VISIBLE : View.GONE}" />
         </LinearLayout>
 
@@ -69,7 +77,8 @@
             android:layout_height="match_parent"
             android:layout_marginTop="88dp"
             android:paddingTop="@dimen/padding_12"
-            android:background="@drawable/album_detail_shape">
+            android:background="@drawable/album_detail_shape"
+            android:elevation="2dp">
 
             <LinearLayout
                 android:layout_width="match_parent"

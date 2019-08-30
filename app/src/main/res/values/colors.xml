@@ -7,7 +7,9 @@
     <color name="colorPrimaryDarkSecondary">#111111</color>
     <color name="colorPrimaryDarkSecondary2">#000000</color>
     <color name="colorPrimaryDarkOpacity">#22FFFFFF</color>
-    <color name="colorTitleTextDark">#CCCCCC</color>
+    <color name="colorTitleTextDark">#FFFFFF</color>
+    <color name="colorSubTitleTextDark">#CCCCCC</color>
+    <color name="colorBodyTextDark">#888888</color>
 
     <color name="colorPrimaryLight">#FFFFFF</color>
     <color name="colorPrimaryDarkLight">#FFFFFF</color>
@@ -16,7 +18,9 @@
     <color name="colorPrimaryLightSecondary">#F5F5F5</color>
     <color name="colorPrimaryLightSecondary2">#EEEEEE</color>
     <color name="colorPrimaryLightOpacity">#22000000</color>
-    <color name="colorTitleTextLight">#333333</color>
+    <color name="colorTitleTextLight">#000000</color>
+    <color name="colorSubTitleTextLight">#444444</color>
+    <color name="colorBodyTextLight">#666666</color>
 
     <color name="white">#ffffff</color>
     <color name="transparent">#00ffffff</color>

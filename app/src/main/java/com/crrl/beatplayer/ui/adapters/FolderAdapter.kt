@@ -1,4 +1,4 @@
-package com.crrl.beatplayer.ui.modelview
+package com.crrl.beatplayer.ui.adapters
 
 import android.content.ContentUris
 import android.content.Context
@@ -45,6 +45,7 @@ class FolderAdapter(private val context: Context?) :
             binding.apply {
                 this.folder = folder
                 itemMenu.setOnClickListener(this@ViewHolder)
+                container.setOnClickListener(this@ViewHolder)
                 cover.clipToOutline = true
                 val uri = ContentUris.withAppendedId(PlayerConstants.ARTWORK_URI, folder.albumId)
                 Glide.with(context!!)

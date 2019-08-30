@@ -1,4 +1,4 @@
-package com.crrl.beatplayer.ui.modelview
+package com.crrl.beatplayer.ui.adapters
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager

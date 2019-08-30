@@ -18,6 +18,11 @@ data class Playlist(
         }
     }
 
+    override fun compare(other: MediaItem): Boolean {
+        other as Playlist
+        return id == other.id && name == other.name && songCount == other.songCount
+    }
+
     override fun toString(): String {
         return Gson().toJson(this)
     }

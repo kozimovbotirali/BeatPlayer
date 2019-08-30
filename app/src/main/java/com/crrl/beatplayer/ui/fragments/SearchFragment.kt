@@ -15,16 +15,19 @@ import com.crrl.beatplayer.databinding.FragmentSearchBinding
 import com.crrl.beatplayer.extensions.addFragment
 import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.extensions.observe
+import com.crrl.beatplayer.extensions.safeActivity
 import com.crrl.beatplayer.interfaces.ItemClickListener
 import com.crrl.beatplayer.models.Album
 import com.crrl.beatplayer.models.Artist
 import com.crrl.beatplayer.models.MediaItem
 import com.crrl.beatplayer.models.Song
+import com.crrl.beatplayer.ui.activities.MainActivity
+import com.crrl.beatplayer.ui.adapters.AlbumAdapter
+import com.crrl.beatplayer.ui.adapters.ArtistAdapter
+import com.crrl.beatplayer.ui.adapters.SongAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
-import com.crrl.beatplayer.ui.modelview.AlbumAdapter
-import com.crrl.beatplayer.ui.modelview.ArtistAdapter
-import com.crrl.beatplayer.ui.modelview.SongAdapter
 import com.crrl.beatplayer.ui.viewmodels.SongViewModel
+import com.crrl.beatplayer.utils.GeneralUtils
 import com.crrl.beatplayer.utils.GeneralUtils.toggleShowKeyBoard
 import com.crrl.beatplayer.utils.PlayerConstants
 import kotlinx.android.synthetic.main.fragment_search.view.*
@@ -56,18 +59,20 @@ class SearchFragment : BaseFragment<MediaItem>() {
     }
 
     private fun init(view: View) {
+        val sc = if (GeneralUtils.getRotation(safeActivity) == GeneralUtils.VERTICAL) 3 else 5
+
         songAdapter = SongAdapter(activity).apply {
             itemClickListener = this@SearchFragment as ItemClickListener<Song>
         }
 
         albumAdapter = AlbumAdapter(context).apply {
             itemClickListener = this@SearchFragment as ItemClickListener<Album>
-            spanCount = 3
+            spanCount = sc
         }
 
         artistAdapter = ArtistAdapter(context).apply {
             itemClickListener = this@SearchFragment as ItemClickListener<Artist>
-            spanCount = 3
+            spanCount = sc
         }
 
         binding.apply {
@@ -101,12 +106,12 @@ class SearchFragment : BaseFragment<MediaItem>() {
             }
 
             albumList.apply {
-                layoutManager = GridLayoutManager(context, 3)
+                layoutManager = GridLayoutManager(context, sc)
                 adapter = albumAdapter
             }
 
             artistList.apply {
-                layoutManager = GridLayoutManager(context, 3)
+                layoutManager = GridLayoutManager(context, sc)
                 adapter = artistAdapter
             }
 
@@ -141,7 +146,7 @@ class SearchFragment : BaseFragment<MediaItem>() {
         super.onItemClick(view, position, item)
         toggleShowKeyBoard(context, this@SearchFragment.view!!.search_src_text, false)
         when (item) {
-            is Song -> Toast.makeText(context, "Song: ${item.title}", Toast.LENGTH_SHORT).show()
+            is Song -> (safeActivity as MainActivity).viewModel.update(item)
             is Album -> albumClicked(item)
             is Artist -> artistClicked(item)
         }

@@ -33,12 +33,13 @@
     <string name="share">Compartir</string>
     <string name="delete">Eliminar</string>
     <string name="create_playlist">Creando Lista de Reproducción</string>
-    <string name="choose_playlist">Por favor, selecciona lista de reproducción.</string>
+    <string name="choose_playlist">Por favor, selecciona una lista de reproducción.</string>
     <string name="playlist_added_error">No se pudo crear la lista de reproducción</string>
     <string name="playlist_added_success">Lista de reproducción agregada satisfactoriamente.</string>
     <string name="input_hint">Ingresa el nombre</string>
     <string name="no_permission">No se otorgaron permisos</string>
     <string name="no_folders">Sin Carpetas</string>
+    <string name="remove">Quitar</string>
 
     <plurals name="number_of_songs" tools:ignore="UnusedQuantity">
         <item quantity="zero">%d Pistas</item>

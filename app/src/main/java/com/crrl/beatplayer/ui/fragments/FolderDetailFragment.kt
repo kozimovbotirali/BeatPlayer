@@ -1,24 +1,95 @@
 package com.crrl.beatplayer.ui.fragments
 
-
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
+import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.crrl.beatplayer.R
+import com.crrl.beatplayer.databinding.FragmentFolderDetailBinding
+import com.crrl.beatplayer.extensions.inflateWithBinding
+import com.crrl.beatplayer.extensions.observe
+import com.crrl.beatplayer.extensions.safeActivity
+import com.crrl.beatplayer.extensions.toFolder
+import com.crrl.beatplayer.models.Song
+import com.crrl.beatplayer.ui.activities.MainActivity
+import com.crrl.beatplayer.ui.adapters.SongAdapter
+import com.crrl.beatplayer.ui.fragments.base.BaseFragment
+import com.crrl.beatplayer.ui.viewmodels.FolderViewModel
+import com.crrl.beatplayer.ui.viewmodels.SongViewModel
+import com.crrl.beatplayer.utils.PlayerConstants
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
-/**
- * A simple [Fragment] subclass.
- */
-class FolderDetailFragment : Fragment() {
+class FolderDetailFragment : BaseFragment<Song>() {
+
+    private lateinit var binding: FragmentFolderDetailBinding
+    private lateinit var songAdapter: SongAdapter
+
+    private val viewModel: FolderViewModel by viewModel { parametersOf(context) }
+    private val songViewModel: SongViewModel by viewModel { parametersOf(context) }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_folder_detail, container, false)
+        binding = inflater.inflateWithBinding(R.layout.fragment_folder_detail, container, false)
+        return binding.root
     }
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        init()
+    }
 
+    fun init() {
+        binding.folder = arguments!!.getString(PlayerConstants.FOLDER_KEY)!!.toFolder()
+
+        songAdapter = SongAdapter(context).apply {
+            showHeader = true
+            isPlaylist = true
+            itemClickListener = this@FolderDetailFragment
+        }
+
+        viewModel.getSongsByFolder(binding.folder!!.songIds).observe(this) {
+            songAdapter.updateDataSet(it)
+        }
+
+        binding.apply {
+            // Set up RecyclerView
+            binding.songList.apply {
+                layoutManager = LinearLayoutManager(context)
+                adapter = songAdapter
+            }
+        }
+
+        binding.let {
+            it.viewModel = viewModel
+            it.lifecycleOwner = this
+        }
+    }
+
+    override fun addToList(playListId: Long, song: Song) {
+        songViewModel.addToPlaylist(playListId, arrayOf(song.id).toLongArray())
+    }
+
+    override fun onItemClick(view: View, position: Int, item: Song) {
+        (safeActivity as MainActivity).viewModel.update(item)
+    }
+
+    override fun onShuffleClick(view: View) {
+        Toast.makeText(context, "Shuffle", Toast.LENGTH_LONG).show()
+    }
+
+    override fun onPlayAllClick(view: View) {
+        Toast.makeText(context, "Play All", Toast.LENGTH_LONG).show()
+    }
+
+    override fun onPopupMenuClick(view: View, position: Int, item: Song) {
+        powerMenu!!.showAsAnchorRightTop(view)
+        songViewModel.playLists().observe(this) {
+            buildPlaylistMenu(it, item)
+        }
+    }
 }

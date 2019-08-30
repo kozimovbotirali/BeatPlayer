@@ -10,18 +10,15 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.crrl.beatplayer.R
-import com.crrl.beatplayer.databinding.ArtistDetailFragmentBinding
-import com.crrl.beatplayer.extensions.addFragment
-import com.crrl.beatplayer.extensions.inflateWithBinding
-import com.crrl.beatplayer.extensions.observe
-import com.crrl.beatplayer.extensions.toArtist
+import com.crrl.beatplayer.databinding.FragmentArtistDetailBinding
+import com.crrl.beatplayer.extensions.*
 import com.crrl.beatplayer.interfaces.ItemClickListener
 import com.crrl.beatplayer.models.Album
 import com.crrl.beatplayer.models.Artist
 import com.crrl.beatplayer.models.MediaItem
 import com.crrl.beatplayer.models.Song
+import com.crrl.beatplayer.ui.adapters.AlbumAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
-import com.crrl.beatplayer.ui.modelview.AlbumAdapter
 import com.crrl.beatplayer.ui.viewmodels.SongViewModel
 import com.crrl.beatplayer.utils.GeneralUtils
 import com.crrl.beatplayer.utils.PlayerConstants
@@ -37,14 +34,14 @@ class ArtistDetailFragment : BaseFragment<MediaItem>() {
 
     private val viewModel: SongViewModel by viewModel { parametersOf(context) }
     private lateinit var albumAdapter: AlbumAdapter
-    private lateinit var binding: ArtistDetailFragmentBinding
+    private lateinit var binding: FragmentArtistDetailBinding
     private lateinit var artist: Artist
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = inflater.inflateWithBinding(R.layout.artist_detail_fragment, container)
+        binding = inflater.inflateWithBinding(R.layout.fragment_artist_detail, container)
         return binding.root
     }
 
@@ -54,22 +51,23 @@ class ArtistDetailFragment : BaseFragment<MediaItem>() {
     }
 
     private fun init() {
+        val sc = if (GeneralUtils.getRotation(safeActivity) == GeneralUtils.VERTICAL) 3 else 5
 
         artist = arguments!!.getString(PlayerConstants.ARTIST_KEY)!!.toArtist()
 
         albumAdapter = AlbumAdapter(context).apply {
             itemClickListener = this@ArtistDetailFragment as ItemClickListener<Album>
-            spanCount = 3
+            spanCount = sc
         }
 
         binding.apply {
             albumList.apply {
-                layoutManager = GridLayoutManager(context, 3)
+                layoutManager = GridLayoutManager(context, sc)
                 adapter = albumAdapter
                 isNestedScrollingEnabled = false
                 setHasFixedSize(true)
             }
-            cover.layoutParams.height = (GeneralUtils.screenHeight / 2.2).toInt()
+            cover.clipToOutline = true
         }
 
         viewModel.getArtistAlbums(artist.id).observe(this) {

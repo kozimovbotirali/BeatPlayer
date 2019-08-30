@@ -9,12 +9,14 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.extensions.addFragment
 import com.crrl.beatplayer.extensions.observe
+import com.crrl.beatplayer.extensions.safeActivity
 import com.crrl.beatplayer.models.Artist
+import com.crrl.beatplayer.ui.adapters.ArtistAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
-import com.crrl.beatplayer.ui.modelview.ArtistAdapter
 import com.crrl.beatplayer.ui.viewmodels.ArtistViewModel
+import com.crrl.beatplayer.utils.GeneralUtils
 import com.crrl.beatplayer.utils.PlayerConstants
-import kotlinx.android.synthetic.main.artist_fragment.view.*
+import kotlinx.android.synthetic.main.fragment_artist.view.*
 
 class ArtistFragment : BaseFragment<Artist>() {
 
@@ -29,7 +31,7 @@ class ArtistFragment : BaseFragment<Artist>() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.artist_fragment, container, false)
+        return inflater.inflate(R.layout.fragment_artist, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -38,20 +40,22 @@ class ArtistFragment : BaseFragment<Artist>() {
     }
 
     private fun init(view: View) {
+        val sc = if (GeneralUtils.getRotation(safeActivity) == GeneralUtils.VERTICAL) 2 else 5
+
         viewModel = ViewModelProviders.of(this).get(ArtistViewModel::class.java)
 
         artistAdapter = ArtistAdapter(context).apply {
             showHeader = true
             itemClickListener = this@ArtistFragment
-            spanCount = 2
+            spanCount = sc
         }
 
         view.apply {
             artist_list.apply {
-                layoutManager = GridLayoutManager(context!!, 2).apply {
+                layoutManager = GridLayoutManager(context!!, sc).apply {
                     spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                         override fun getSpanSize(position: Int): Int {
-                            return if (position == 0) 2 else 1
+                            return if (position == 0) sc else 1
                         }
                     }
                 }

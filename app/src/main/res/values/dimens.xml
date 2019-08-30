@@ -3,9 +3,9 @@
     <dimen name="margin_10">10dp</dimen>
     <dimen name="text_size_20">20sp</dimen>
     <dimen name="btn_size">56dp</dimen>
-    <dimen name="search_shape_radius">16dp</dimen>
+    <dimen name="search_shape_radius">12dp</dimen>
     <dimen name="padding_12">12dp</dimen>
-    <dimen name="btn_radius">18dp</dimen>
+    <dimen name="btn_radius">16dp</dimen>
     <dimen name="global_padding_top">24dp</dimen>
     <dimen name="mini_player_shape_radius">20dp</dimen>
     <dimen name="miniPlayerPadding">7dp</dimen>

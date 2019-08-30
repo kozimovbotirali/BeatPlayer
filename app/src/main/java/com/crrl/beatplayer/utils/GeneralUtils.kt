@@ -2,6 +2,8 @@ package com.crrl.beatplayer.utils
 
 import android.content.Context
 import android.content.res.Resources
+import android.view.Surface.*
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import com.crrl.beatplayer.models.Song
@@ -13,11 +15,25 @@ import java.io.FileNotFoundException
 
 object GeneralUtils {
 
+    const val VERTICAL = 0
+    const val HORIZONTAL = 1
+
     val screenWidth: Int
         get() = Resources.getSystem().displayMetrics.widthPixels
 
     val screenHeight: Int
         get() = Resources.getSystem().displayMetrics.heightPixels
+
+    @Throws(IllegalArgumentException::class)
+    fun getRotation(context: Context): Int {
+        val rotation =
+            (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.rotation
+        return when (rotation) {
+            ROTATION_0, ROTATION_180 -> VERTICAL
+            ROTATION_90 -> HORIZONTAL
+            else -> HORIZONTAL
+        }
+    }
 
     fun formatMilliseconds(duration: Long): String {
         val seconds = (duration / 1000).toInt() % 60
@@ -70,7 +86,6 @@ object GeneralUtils {
 
     @Throws(FileNotFoundException::class)
     fun audio2Raw(path: String): ByteArray? {
-
         if (!File(path).exists()) return null
 
         val fis = FileInputStream(path)
@@ -83,7 +98,6 @@ object GeneralUtils {
             bos.write(b, 0, readNum)
             readNum = fis.read(b)
         }
-
         return bos.toByteArray()
     }
 

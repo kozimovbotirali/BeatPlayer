@@ -40,8 +40,7 @@
                 android:maxLines="1"
                 android:padding="7dp"
                 android:text="@{playlist.name}"
-                android:textColor="?titleTextColor"
-                android:textStyle="bold" />
+                android:textColor="?titleTextColor" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -51,9 +50,8 @@
                 android:maxLines="1"
                 android:padding="7dp"
                 android:text="@{@plurals/number_of_songs(viewModel.songsByPlayList(playlist.id).size, viewModel.songsByPlayList(playlist.id).size)}"
-                android:textColor="?subTitleTextColor"
-                android:textSize="@dimen/title_text_size"
-                android:textStyle="bold" />
+                android:textColor="?colorAccent"
+                android:textSize="@dimen/title_text_size" />
         </LinearLayout>
 
         <View

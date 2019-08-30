@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -16,52 +17,101 @@
             type="Integer" />
     </data>
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="?colorPrimarySecondary2">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/app_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageButton
+                android:id="@+id/back"
+                android:layout_width="@dimen/btn_size"
+                android:layout_height="@dimen/btn_size"
+                android:background="@drawable/btn_ripple"
+                android:contentDescription="@string/cover"
+                android:onClick="back"
+                android:tint="?btnTintColor"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_back" />
+
+            <ImageButton
+                android:id="@+id/search"
+                android:layout_width="@dimen/btn_size"
+                android:layout_height="@dimen/btn_size"
+                android:background="@drawable/btn_ripple"
+                android:contentDescription="@string/cover"
+                android:onClick="search"
+                android:src="@drawable/ic_search"
+                android:tint="?btnTintColor"
+                app:layout_constraintEnd_toStartOf="@id/menu"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/menu"
+                android:layout_width="@dimen/btn_size"
+                android:layout_height="@dimen/btn_size"
+                android:background="@drawable/btn_ripple"
+                android:contentDescription="@string/cover"
+                android:onClick="menu"
+                android:src="@drawable/ic_more"
+                android:tint="?btnTintColor"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <ImageView
             android:id="@+id/cover"
-            android:layout_width="match_parent"
-            android:layout_height="270dp"
-            android:background="?colorPrimarySecondary"
-            android:src="@drawable/ic_empty_cover" />
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="@dimen/margin_12"
+            android:layout_marginStart="@dimen/global_padding_top"
+            android:background="@drawable/album_cover_frame"
+            android:src="@drawable/ic_empty_cover"
+            android:elevation="5dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/app_bar" />
 
         <LinearLayout
             android:id="@+id/info"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/global_padding_top"
+            android:layout_marginEnd="@dimen/margin_12"
             android:orientation="vertical"
-            android:background="@drawable/album_detail_shape"
-            android:paddingStart="@dimen/padding_12"
-            android:paddingTop="@dimen/padding_12"
-            android:paddingEnd="@dimen/padding_12"
-            android:layout_marginTop="-25dp"
-            android:layout_below="@id/cover">
+            app:layout_constraintBottom_toBottomOf="@+id/cover"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/cover"
+            app:layout_constraintTop_toTopOf="@id/cover">
 
             <TextView
-                style="@style/TitleTextAppearance"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@{album.title}"
                 android:textColor="?titleTextColor"
-                android:gravity="center" />
+                android:textSize="22sp" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@{album.artist}"
-                android:textColor="?subTitleTextColor"
-                android:textSize="15sp"
-                android:gravity="center" />
+                android:layout_marginTop="3dp"
+                android:textColor="?colorAccent"
+                android:textSize="@dimen/title_text_size" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@{(album.year == 0 ? @string/unknown : String.valueOf(album.year))+' '+@string/separator+' '+GeneralUtils.INSTANCE.formatMilliseconds((long)totalDuration)}"
-                android:textColor="?subTitleTextColor"
-                android:textSize="15sp"
-                android:gravity="center" />
+                android:textColor="?bodyTextColor"
+                android:layout_marginTop="3dp"
+                android:textSize="@dimen/sub_title_text_size" />
 
         </LinearLayout>
 
@@ -69,7 +119,10 @@
             android:id="@+id/linearLayout3"
             android:layout_width="match_parent"
             android:layout_height="@dimen/btn_size"
-            android:layout_below="@id/info">
+            android:layout_below="@id/info"
+            android:layout_marginTop="@dimen/global_padding_top"
+            android:background="@drawable/album_detail_shape"
+            app:layout_constraintTop_toBottomOf="@id/cover">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -82,7 +135,6 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
-                    android:textStyle="bold"
                     android:gravity="center|start"
                     android:paddingStart="@dimen/padding_15"
                     android:paddingEnd="@dimen/padding_12"
@@ -111,6 +163,5 @@
                     android:tint="?btnTintColor" />
             </LinearLayout>
         </RelativeLayout>
-
-    </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

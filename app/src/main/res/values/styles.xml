@@ -15,10 +15,11 @@
         <item name="colorError">@color/error</item>
         <item name="colorAccent">@color/colorAccentDark</item>
         <item name="colorAccentOpacity">@color/colorAccentDarkOpacity</item>
-        <item name="android:fontFamily">@font/rubik</item>
+        <item name="android:fontFamily">@font/product_sans_regular</item>
         <item name="android:windowBackground">?colorPrimary</item>
-        <item name="titleTextColor">@color/white</item>
-        <item name="subTitleTextColor">@color/colorTitleTextDark</item>
+        <item name="titleTextColor">@color/colorTitleTextDark</item>
+        <item name="subTitleTextColor">@color/colorSubTitleTextDark</item>
+        <item name="bodyTextColor">@color/colorBodyTextDark</item>
         <item name="btnTintColor">@color/white</item>
         <item name="android:windowLightStatusBar">false</item>
     </style>
@@ -32,10 +33,11 @@
         <item name="colorError">@color/error</item>
         <item name="colorAccent">@color/colorAccentLight</item>
         <item name="colorAccentOpacity">@color/colorAccentLightOpacity</item>
-        <item name="android:fontFamily">@font/rubik</item>
+        <item name="android:fontFamily">@font/product_sans_regular</item>
         <item name="android:windowBackground">?colorPrimary</item>
-        <item name="titleTextColor">@color/colorPrimaryDark</item>
-        <item name="subTitleTextColor">@color/colorTitleTextLight</item>
+        <item name="titleTextColor">@color/colorTitleTextLight</item>
+        <item name="subTitleTextColor">@color/colorSubTitleTextLight</item>
+        <item name="bodyTextColor">@color/colorBodyTextLight</item>
         <item name="btnTintColor">@color/colorPrimaryDark</item>
         <item name="android:windowLightStatusBar">true</item>
     </style>
@@ -44,12 +46,12 @@
         <item name="textAllCaps">false</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textColor">?subTitleTextColor</item>
-        <item name="android:fontFamily">@font/rubik</item>
+        <item name="android:fontFamily">@font/product_sans_regular</item>
         <item name="android:textSize">@dimen/title_text_size</item>
     </style>
 
     <style name="TitleTextAppearance" parent="TextAppearance.MaterialComponents.Headline5">
-        <item name="fontFamily">@font/rubik</item>
+        <item name="fontFamily">@font/product_sans_regular</item>
     </style>
 
     <style name="SearchStyle">

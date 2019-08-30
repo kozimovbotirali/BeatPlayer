@@ -1,4 +1,4 @@
-package com.crrl.beatplayer.ui.modelview
+package com.crrl.beatplayer.ui.adapters
 
 import android.content.ContentUris
 import android.content.Context
@@ -7,39 +7,44 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.crrl.beatplayer.R
-import com.crrl.beatplayer.databinding.SongItemBinding
-import com.crrl.beatplayer.databinding.SongItemHeaderBinding
-import com.crrl.beatplayer.extensions.dataChanged
+import com.crrl.beatplayer.databinding.AlbumDetailItemBinding
+import com.crrl.beatplayer.databinding.AlbumDetailItemHeaderBinding
 import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.interfaces.ItemClickListener
+import com.crrl.beatplayer.models.Album
 import com.crrl.beatplayer.models.Song
+import com.crrl.beatplayer.utils.GeneralUtils
 import com.crrl.beatplayer.utils.PlayerConstants
 
 private const val HEADER_TYPE = 0
 private const val ITEM_TYPE = 1
 
-class SongAdapter(private val context: Context?) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class AlbumSongAdapter(private val context: Context?) :
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    var songList: MutableList<Song> = mutableListOf()
+    private var songList: List<Song> = emptyList()
     var showHeader: Boolean = false
-    var isPlaylist: Boolean = false
     var itemClickListener: ItemClickListener<Song>? = null
+    var album = Album()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             HEADER_TYPE -> {
                 val viewBinding =
-                    parent.inflateWithBinding<SongItemHeaderBinding>(R.layout.song_item_header)
-                ViewHolderSongHeader(viewBinding)
+                    parent.inflateWithBinding<AlbumDetailItemHeaderBinding>(R.layout.album_detail_item_header)
+                ViewHolderAlbumSongHeader(viewBinding)
             }
             ITEM_TYPE -> {
-                val viewBinding = parent.inflateWithBinding<SongItemBinding>(R.layout.song_item)
-                ViewHolderSong(viewBinding)
+                val viewBinding =
+                    parent.inflateWithBinding<AlbumDetailItemBinding>(R.layout.album_detail_item)
+                ViewHolderAlbumSong(viewBinding)
             }
             else -> {
-                val viewBinding = parent.inflateWithBinding<SongItemBinding>(R.layout.song_item)
-                ViewHolderSong(viewBinding)
+                val viewBinding =
+                    parent.inflateWithBinding<AlbumDetailItemBinding>(R.layout.album_detail_item)
+                ViewHolderAlbumSong(viewBinding)
             }
         }
     }
@@ -48,10 +53,10 @@ class SongAdapter(private val context: Context?) : RecyclerView.Adapter<Recycler
         val currentSong = if (!songList.isNullOrEmpty()) getItem(position) else null
         when (getItemViewType(position)) {
             HEADER_TYPE -> {
-                (holder as ViewHolderSongHeader).bind(songList.size, isPlaylist)
+                (holder as ViewHolderAlbumSongHeader).bind()
             }
             ITEM_TYPE -> {
-                (holder as ViewHolderSong).bind(currentSong!!)
+                (holder as ViewHolderAlbumSong).bind(currentSong!!)
             }
         }
     }
@@ -83,32 +88,30 @@ class SongAdapter(private val context: Context?) : RecyclerView.Adapter<Recycler
     }
 
     fun updateDataSet(songList: List<Song>) {
-        if (!isPlaylist) {
-            Thread {
-                this.songList = songList.toMutableList()
-                (context as AppCompatActivity).runOnUiThread {
-                    notifyDataSetChanged()
-                }
-            }.start()
-        } else {
-            dataChanged(songList)
-        }
+        Thread {
+            this.songList = songList
+            (context as AppCompatActivity).runOnUiThread {
+                notifyDataSetChanged()
+            }
+        }.start()
     }
 
-    inner class ViewHolderSong(private val binding: SongItemBinding) :
+    inner class ViewHolderAlbumSong(private val binding: AlbumDetailItemBinding) :
         RecyclerView.ViewHolder(binding.root), View.OnClickListener {
 
         fun bind(song: Song) {
             binding.apply {
                 this.song = song
+                container.setOnClickListener(this@ViewHolderAlbumSong)
+                itemMenu.setOnClickListener(this@ViewHolderAlbumSong)
                 cover.clipToOutline = true
-                container.setOnClickListener(this@ViewHolderSong)
-                itemMenu.setOnClickListener(this@ViewHolderSong)
                 val uri = ContentUris.withAppendedId(PlayerConstants.ARTWORK_URI, song.albumId)
                 Glide.with(context!!)
                     .load(uri)
-                    .placeholder(R.drawable.ic_empty_cover)
+                    .placeholder(R.drawable.song_cover_frame)
                     .error(R.drawable.ic_empty_cover)
+                    .centerCrop()
+                    .transition(DrawableTransitionOptions.withCrossFade())
                     .into(cover)
                 executePendingBindings()
             }
@@ -131,16 +134,24 @@ class SongAdapter(private val context: Context?) : RecyclerView.Adapter<Recycler
         }
     }
 
-    inner class ViewHolderSongHeader(private val binding: SongItemHeaderBinding) :
+    inner class ViewHolderAlbumSongHeader(private val binding: AlbumDetailItemHeaderBinding) :
         RecyclerView.ViewHolder(binding.root), View.OnClickListener {
 
-        fun bind(songCount: Int, isPlaylist: Boolean) {
+        fun bind() {
             binding.apply {
-                shuffleSong.setOnClickListener(this@ViewHolderSongHeader)
-                sortSong.setOnClickListener(this@ViewHolderSongHeader)
-                playAllSong.setOnClickListener(this@ViewHolderSongHeader)
-                this.songCount = songCount
-                this.isPlaylist = isPlaylist
+                shuffleAlbumSong.setOnClickListener(this@ViewHolderAlbumSongHeader)
+                playAllAlbumSong.setOnClickListener(this@ViewHolderAlbumSongHeader)
+                totalDuration = GeneralUtils.getTotalTime(songList).toInt()
+                this.album = this@AlbumSongAdapter.album
+                cover.clipToOutline = true
+                val uri = ContentUris.withAppendedId(PlayerConstants.ARTWORK_URI, album!!.id)
+                Glide.with(context!!)
+                    .load(uri)
+                    .placeholder(R.drawable.song_cover_frame)
+                    .error(R.drawable.ic_empty_cover)
+                    .centerCrop()
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(cover)
                 executePendingBindings()
             }
         }
@@ -148,11 +159,10 @@ class SongAdapter(private val context: Context?) : RecyclerView.Adapter<Recycler
         override fun onClick(view: View) {
             if (itemClickListener != null)
                 when (view.id) {
-                    R.id.shuffle_song -> itemClickListener!!.onShuffleClick(view)
-                    R.id.sort_song -> itemClickListener!!.onSortClick(view)
-                    R.id.play_all_song -> itemClickListener!!.onPlayAllClick(view)
+                    R.id.shuffle_album_song -> itemClickListener!!.onShuffleClick(view)
+                    R.id.play_all_album_song -> itemClickListener!!.onPlayAllClick(view)
                 }
         }
-
     }
 }
+

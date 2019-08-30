@@ -23,7 +23,7 @@ open class BaseActivity : RequestPermissionActivity() {
 
     private var powerMenu: PowerMenu? = null
 
-    private val onMenuItemClickListener = OnMenuItemClickListener<PowerMenuItem> { position, item ->
+    private val onMenuItemClickListener = OnMenuItemClickListener<PowerMenuItem> { position, _ ->
         when (position) {
             0 -> {
             }
@@ -51,6 +51,18 @@ open class BaseActivity : RequestPermissionActivity() {
 
     fun back(view: View) {
         onBackPressed()
+    }
+
+    override fun onBackPressed() {
+        if (powerMenu != null) {
+            if (powerMenu!!.isShowing) {
+                powerMenu!!.dismiss()
+            } else {
+                super.onBackPressed()
+            }
+        } else {
+            super.onBackPressed()
+        }
     }
 
     fun menu(view: View) {

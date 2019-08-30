@@ -2,6 +2,7 @@ package com.crrl.beatplayer.ui.fragments.base
 
 import android.graphics.Typeface
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.Toast
@@ -15,10 +16,13 @@ import com.crrl.beatplayer.alertdialog.stylers.AlertItemTheme
 import com.crrl.beatplayer.alertdialog.stylers.AlertType
 import com.crrl.beatplayer.alertdialog.stylers.InputStyle
 import com.crrl.beatplayer.extensions.getColorByTheme
+import com.crrl.beatplayer.extensions.safeActivity
 import com.crrl.beatplayer.interfaces.ItemClickListener
 import com.crrl.beatplayer.models.Playlist
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.repository.PlaylistRepository
+import com.crrl.beatplayer.ui.fragments.PlaylistDetailFragment
+import com.crrl.beatplayer.utils.PlayerConstants
 import com.skydoves.powermenu.MenuAnimation
 import com.skydoves.powermenu.OnMenuItemClickListener
 import com.skydoves.powermenu.PowerMenu
@@ -29,6 +33,7 @@ open class BaseFragment<T> : Fragment(), ItemClickListener<T> {
 
     protected lateinit var dialog: AlertDialog
     private lateinit var alertPlaylists: AlertDialog
+    private var currentItem: T? = null
 
     protected var powerMenu: PowerMenu? = null
 
@@ -54,7 +59,7 @@ open class BaseFragment<T> : Fragment(), ItemClickListener<T> {
             getString(R.string.playlists),
             getString(R.string.choose_playlist),
             style,
-            AlertType.DIALOG
+            AlertType.BOTTOM_SHEET
         ).apply {
             playlists.forEach { playlist ->
                 addItem(AlertItemAction(playlist.name, false) {
@@ -113,11 +118,18 @@ open class BaseFragment<T> : Fragment(), ItemClickListener<T> {
     private fun initPopUpMenu(): PowerMenu.Builder {
         return PowerMenu.Builder(context)
             .addItem(PowerMenuItem(getString(R.string.play), false))
-            .addItem(PowerMenuItem(getString(R.string.add), false))
+            .addItem(
+                PowerMenuItem(
+                    if (tag == PlayerConstants.PLAY_LIST_DETAIL) getString(R.string.remove) else getString(
+                        R.string.add
+                    ), false
+                )
+            )
             .addItem(PowerMenuItem(getString(R.string.share), false))
             .addItem(PowerMenuItem(getString(R.string.delete), false))
             .setAnimation(MenuAnimation.SHOWUP_TOP_RIGHT)
             .setMenuRadius(this.resources.getDimension(R.dimen.popupMenuRadius))
+            .setOnBackgroundClickListener { powerMenu!!.dismiss() }
             .setMenuShadow(5f)
             .setShowBackground(false)
             .setTextColor(activity!!.getColorByTheme(R.attr.titleTextColor, "titleTextColor"))
@@ -143,12 +155,19 @@ open class BaseFragment<T> : Fragment(), ItemClickListener<T> {
         createDialog(song).show(activity as AppCompatActivity)
     }
 
-    private val onMenuItemClickListener = OnMenuItemClickListener<PowerMenuItem> { position, item ->
+    private val onMenuItemClickListener = OnMenuItemClickListener<PowerMenuItem> { position, _ ->
         when (position) {
             0 -> {
             }
             1 -> {
-                alertPlaylists.show(activity as AppCompatActivity)
+                try {
+                    if (this is PlaylistDetailFragment) removeFromList(
+                        binding.playlist!!.id,
+                        currentItem
+                    ) else alertPlaylists.show(safeActivity as AppCompatActivity)
+                } catch (ex: IllegalStateException) {
+                    Log.println(Log.ERROR, "Exception", ex.message!!)
+                }
             }
             2 -> {
             }
@@ -158,9 +177,25 @@ open class BaseFragment<T> : Fragment(), ItemClickListener<T> {
         powerMenu!!.dismiss()
     }
 
+    open fun onBackPressed(): Boolean {
+        return if (powerMenu != null) {
+            if (powerMenu!!.isShowing) {
+                powerMenu!!.dismiss()
+                false
+            } else {
+                true
+            }
+        } else {
+            true
+        }
+    }
+
     open fun addToList(playListId: Long, song: Song) {}
+    open fun removeFromList(playListId: Long, item: T?) {}
     override fun onItemClick(view: View, position: Int, item: T) {}
-    override fun onPopupMenuClick(view: View, position: Int, item: T) {}
+    override fun onPopupMenuClick(view: View, position: Int, item: T) {
+        currentItem = item
+    }
     override fun onShuffleClick(view: View) {}
     override fun onSortClick(view: View) {}
     override fun onPlayAllClick(view: View) {}

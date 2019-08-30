@@ -10,8 +10,8 @@ import com.crrl.beatplayer.databinding.FragmentLibraryBinding
 import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.extensions.safeActivity
 import com.crrl.beatplayer.ui.activities.MainActivity
+import com.crrl.beatplayer.ui.adapters.ViewPagerAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseSongDetailFragment
-import com.crrl.beatplayer.ui.modelview.ViewPagerAdapter
 import com.crrl.beatplayer.ui.viewmodels.LibraryViewModel
 import com.crrl.beatplayer.utils.SettingsUtility
 

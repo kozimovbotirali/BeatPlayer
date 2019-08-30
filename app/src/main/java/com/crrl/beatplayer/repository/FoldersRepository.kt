@@ -89,7 +89,7 @@ class FoldersRepository() : FolderRepository {
         paramArrayOfString: Array<String>?,
         sortOrder: String = ""
     ): Cursor? {
-        var selectionStatement = "is_music=1 AND title != ''"
+        var selectionStatement = "title != ''"
 
         if (!TextUtils.isEmpty(selection)) {
             selectionStatement = "$selectionStatement AND $selection"

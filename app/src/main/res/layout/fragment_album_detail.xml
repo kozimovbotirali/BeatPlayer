@@ -1,13 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?colorPrimary">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="?colorPrimarySecondary2">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/album_song_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:listitem="@layout/album_detail_item" />
-</androidx.appcompat.widget.LinearLayoutCompat>
+        tools:listitem="@layout/album_detail_item"
+        android:background="?colorPrimary" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/global_padding_top"
+        android:background="?colorPrimarySecondary2"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

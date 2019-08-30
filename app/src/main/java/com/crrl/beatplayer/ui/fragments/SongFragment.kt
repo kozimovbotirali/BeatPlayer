@@ -18,13 +18,13 @@ import com.crrl.beatplayer.extensions.observe
 import com.crrl.beatplayer.extensions.safeActivity
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.ui.activities.MainActivity
+import com.crrl.beatplayer.ui.adapters.SongAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
-import com.crrl.beatplayer.ui.modelview.SongAdapter
 import com.crrl.beatplayer.ui.viewmodels.SongViewModel
 import com.crrl.beatplayer.utils.SettingsUtility
 import com.crrl.beatplayer.utils.SortModes
 import com.dgreenhalgh.android.simpleitemdecoration.linear.EndOffsetItemDecoration
-import kotlinx.android.synthetic.main.song_fragment.view.*
+import kotlinx.android.synthetic.main.fragment_song.view.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -42,7 +42,7 @@ class SongFragment : BaseFragment<Song>() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? = inflater.inflate(R.layout.song_fragment, container, false)
+    ): View? = inflater.inflate(R.layout.fragment_song, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -83,7 +83,7 @@ class SongFragment : BaseFragment<Song>() {
             getString(R.string.sort_title),
             getString(R.string.sort_msg),
             style,
-            AlertType.DIALOG
+            AlertType.BOTTOM_SHEET
         )
         alert.addItem(AlertItemAction(
             context!!.getString(R.string.sort_default),
@@ -152,6 +152,7 @@ class SongFragment : BaseFragment<Song>() {
 
     override fun onItemClick(view: View, position: Int, item: Song) {
         (safeActivity as MainActivity).update(item)
+        (safeActivity as MainActivity).update(songAdapter.songList)
     }
 
     override fun onShuffleClick(view: View) {

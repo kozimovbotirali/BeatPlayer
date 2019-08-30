@@ -16,14 +16,17 @@ import com.crrl.beatplayer.alertdialog.stylers.AlertType
 import com.crrl.beatplayer.extensions.addFragment
 import com.crrl.beatplayer.extensions.getColorByTheme
 import com.crrl.beatplayer.extensions.observe
+import com.crrl.beatplayer.extensions.safeActivity
 import com.crrl.beatplayer.models.Album
+import com.crrl.beatplayer.ui.adapters.AlbumAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
-import com.crrl.beatplayer.ui.modelview.AlbumAdapter
 import com.crrl.beatplayer.ui.viewmodels.AlbumViewModel
+import com.crrl.beatplayer.utils.GeneralUtils
+import com.crrl.beatplayer.utils.GeneralUtils.VERTICAL
 import com.crrl.beatplayer.utils.PlayerConstants
 import com.crrl.beatplayer.utils.SettingsUtility
 import com.crrl.beatplayer.utils.SortModes
-import kotlinx.android.synthetic.main.album_fragment.view.*
+import kotlinx.android.synthetic.main.fragment_album.view.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -41,7 +44,7 @@ class AlbumFragment : BaseFragment<Album>() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.album_fragment, container, false)
+        return inflater.inflate(R.layout.fragment_album, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -50,20 +53,21 @@ class AlbumFragment : BaseFragment<Album>() {
     }
 
     private fun init(view: View) {
+        val sc = if (GeneralUtils.getRotation(safeActivity) == VERTICAL) 2 else 5
 
         // Init Adapter
         albumAdapter = AlbumAdapter(context).apply {
             showHeader = true
             itemClickListener = this@AlbumFragment
-            spanCount = 2
+            spanCount = sc
         }
 
         // Set up RecyclerView
         view.album_list.apply {
-            layoutManager = GridLayoutManager(context, 2).apply {
+            layoutManager = GridLayoutManager(context, sc).apply {
                 spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                     override fun getSpanSize(position: Int): Int {
-                        return if (position == 0) 2 else 1
+                        return if (position == 0) sc else 1
                     }
                 }
             }
@@ -87,7 +91,7 @@ class AlbumFragment : BaseFragment<Album>() {
             getString(R.string.sort_title),
             getString(R.string.sort_msg),
             style,
-            AlertType.DIALOG
+            AlertType.BOTTOM_SHEET
         ).apply {
             addItem(AlertItemAction(
                 context!!.getString(R.string.sort_default),

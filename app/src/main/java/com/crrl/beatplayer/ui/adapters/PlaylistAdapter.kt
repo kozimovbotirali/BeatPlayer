@@ -1,4 +1,4 @@
-package com.crrl.beatplayer.ui.modelview
+package com.crrl.beatplayer.ui.adapters
 
 import android.view.View
 import android.view.ViewGroup

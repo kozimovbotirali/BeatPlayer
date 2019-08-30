@@ -17,11 +17,16 @@ class Folder(
         fun createFromCursor(cursor: Cursor): Folder {
             return Folder(
                 cursor.getLong(0),
-                File(File(cursor.getString(2)).parent!!).fixedName()!!,
+                File(File(cursor.getString(2)).parent!!).fixedName(),
                 cursor.getLong(1),
-                File(File(cursor.getString(2)).parent!!).fixedPath()!!
+                File(File(cursor.getString(2)).parent!!).fixedPath()
             )
         }
+    }
+
+    override fun compare(other: MediaItem): Boolean {
+        other as Folder
+        return id == other.id && name == other.name && albumId == other.albumId && path == other.path && songIds.size == other.songIds.size
     }
 
     override fun toString(): String {

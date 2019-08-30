@@ -65,7 +65,6 @@
                     android:layout_marginBottom="4dp"
                     android:maxLines="1"
                     android:text="@{folder.name}"
-                    android:textStyle="bold"
                     android:textColor="?titleTextColor"
                     android:textSize="@dimen/title_text_size" />
             </RelativeLayout>

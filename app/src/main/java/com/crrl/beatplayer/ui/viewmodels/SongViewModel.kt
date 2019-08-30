@@ -2,6 +2,7 @@ package com.crrl.beatplayer.ui.viewmodels
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -72,9 +73,14 @@ class SongViewModel(private val context: Context?) : ViewModel() {
         PlaylistRepository.getInstance(context)!!.addToPlaylist(playlistId, ids)
     }
 
+    fun removeFromPlaylist(playlistId: Long, id: Long) {
+        PlaylistRepository.getInstance(context)!!.removeFromPlaylist(playlistId, id)
+    }
+
     fun playLists(): LiveData<List<Playlist>> {
         Observable.fromCallable { PlaylistRepository.getInstance(context)!!.getPlaylists() }
             .observeOn(Schedulers.newThread()).subscribeOn(Schedulers.newThread())
+            .doOnError { Log.println(Log.ERROR, "Error", it.message!!) }
             .subscribe { _playlistLiveData.postValue(it) }
         return _playlistLiveData
     }

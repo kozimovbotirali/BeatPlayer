@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name" translatable="false">BeatPlayer</string>
-    <string name="hint_msg">Search for songs, artists and albums.</string>
+    <string name="hint_msg">Search for songs, artists &amp; albums.</string>
     <string name="cover" translatable="false" />
     <string name="title">Title</string>
     <string name="album">Album</string>
@@ -70,4 +70,5 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="remove">Remove</string>
 </resources>

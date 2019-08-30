@@ -15,8 +15,7 @@ import com.crrl.beatplayer.extensions.replaceFragment
 import com.crrl.beatplayer.extensions.toast
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.ui.activities.base.BaseActivity
-import com.crrl.beatplayer.ui.fragments.LibraryFragment
-import com.crrl.beatplayer.ui.fragments.SongDetailFragment
+import com.crrl.beatplayer.ui.fragments.*
 import com.crrl.beatplayer.ui.viewmodels.MainViewModel
 import com.crrl.beatplayer.utils.PlayerConstants
 import com.github.florent37.kotlin.pleaseanimate.please
@@ -41,7 +40,6 @@ class MainActivity : BaseActivity() {
                 LibraryFragment(),
                 PlayerConstants.LIBRARY
             )
-
             update(Song())
         }
     }
@@ -83,6 +81,20 @@ class MainActivity : BaseActivity() {
         )
     }
 
+    override fun onBackPressed() {
+        var isDismiss = true
+        supportFragmentManager.fragments.forEach {
+            isDismiss = when (it) {
+                is AlbumDetailFragment -> it.onBackPressed()
+                is ArtistDetailFragment -> it.onBackPressed()
+                is PlaylistDetailFragment -> it.onBackPressed()
+                is FolderDetailFragment -> it.onBackPressed()
+                else -> true
+            }
+        }
+        if (isDismiss) super.onBackPressed()
+    }
+
     fun hideMiniPlayer() {
         if (bottom_controls != null) {
             bottom_controls.isEnabled = false
@@ -119,5 +131,9 @@ class MainActivity : BaseActivity() {
 
     fun update(song: Song) {
         viewModel.update(song)
+    }
+
+    fun update(newList: List<Song>) {
+        viewModel.update(newList)
     }
 }

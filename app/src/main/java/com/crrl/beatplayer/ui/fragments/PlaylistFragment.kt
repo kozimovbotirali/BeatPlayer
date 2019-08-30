@@ -14,15 +14,15 @@ import com.crrl.beatplayer.alertdialog.dialogs.AlertItemAction
 import com.crrl.beatplayer.alertdialog.stylers.AlertItemTheme
 import com.crrl.beatplayer.alertdialog.stylers.AlertType
 import com.crrl.beatplayer.alertdialog.stylers.InputStyle
-import com.crrl.beatplayer.databinding.PlaylistFragmentBinding
+import com.crrl.beatplayer.databinding.FragmentPlaylistBinding
 import com.crrl.beatplayer.extensions.addFragment
 import com.crrl.beatplayer.extensions.getColorByTheme
 import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.extensions.observe
 import com.crrl.beatplayer.models.Playlist
 import com.crrl.beatplayer.repository.PlaylistRepository
+import com.crrl.beatplayer.ui.adapters.PlaylistAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
-import com.crrl.beatplayer.ui.modelview.PlaylistAdapter
 import com.crrl.beatplayer.ui.viewmodels.SongViewModel
 import com.crrl.beatplayer.utils.PlayerConstants
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -38,13 +38,13 @@ class PlaylistFragment : BaseFragment<Playlist>() {
     private val viewModel: SongViewModel by viewModel { parametersOf(context) }
     private lateinit var playlistAdapter: PlaylistAdapter
     private lateinit var alert: AlertDialog
-    private lateinit var binding: PlaylistFragmentBinding
+    private lateinit var binding: FragmentPlaylistBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = inflater.inflateWithBinding(R.layout.playlist_fragment, container)
+        binding = inflater.inflateWithBinding(R.layout.fragment_playlist, container)
         return binding.root
     }
 

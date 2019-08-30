@@ -9,6 +9,7 @@ import android.provider.MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI
 import android.provider.MediaStore.Audio.Playlists.Members.AUDIO_ID
 import android.provider.MediaStore.Audio.Playlists.Members.PLAY_ORDER
 import android.provider.MediaStore.Audio.PlaylistsColumns.NAME
+import android.util.Log
 import com.crrl.beatplayer.extensions.toList
 import com.crrl.beatplayer.models.Playlist
 import com.crrl.beatplayer.models.Song
@@ -133,7 +134,7 @@ class PlaylistRepository() {
         val uri = MediaStore.Audio.Playlists.Members.getContentUri("external", playlistId)
         contentResolver.delete(
             uri,
-            "$AUDIO_ID = ?",
+            "$_ID = ?",
             arrayOf(id.toString())
         )
     }
@@ -149,27 +150,37 @@ class PlaylistRepository() {
     }
 
     private fun makePlaylistCursor(): Cursor? {
-        return contentResolver.query(
-            EXTERNAL_CONTENT_URI,
-            arrayOf(_ID, NAME), null, null, MediaStore.Audio.Playlists.DEFAULT_SORT_ORDER
-        )
+        try {
+            return contentResolver.query(
+                EXTERNAL_CONTENT_URI,
+                arrayOf(_ID, NAME), null, null, MediaStore.Audio.Playlists.DEFAULT_SORT_ORDER
+            )
+        } catch (ex: SecurityException) {
+            Log.println(Log.ERROR, "Exception", ex.message!!)
+        }
+        return null
     }
 
     private fun getSongCountForPlaylist(playlistId: Long): Int {
-        val uri = MediaStore.Audio.Playlists.Members.getContentUri("external", playlistId)
-        return contentResolver.query(
-            uri,
-            arrayOf(_ID),
-            "${MediaStore.Audio.AudioColumns.IS_MUSIC}=1 AND ${MediaStore.Audio.AudioColumns.TITLE} != ''",
-            null,
-            null
-        )?.use {
-            if (it.moveToFirst()) {
-                it.count
-            } else {
-                0
-            }
-        } ?: 0
+        try {
+            val uri = MediaStore.Audio.Playlists.Members.getContentUri("external", playlistId)
+            return contentResolver.query(
+                uri,
+                arrayOf(_ID),
+                "${MediaStore.Audio.AudioColumns.TITLE} != ''",
+                null,
+                null
+            )?.use {
+                if (it.moveToFirst()) {
+                    it.count
+                } else {
+                    0
+                }
+            } ?: 0
+        } catch (ex: SecurityException) {
+            Log.println(Log.ERROR, "Exception", ex.message!!)
+        }
+        return -1
     }
 
     private fun cleanupPlaylist(

@@ -2,6 +2,7 @@ package com.crrl.beatplayer.ui.fragments
 
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,8 +16,8 @@ import com.crrl.beatplayer.extensions.safeActivity
 import com.crrl.beatplayer.extensions.toPlaylist
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.ui.activities.MainActivity
+import com.crrl.beatplayer.ui.adapters.SongAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
-import com.crrl.beatplayer.ui.modelview.SongAdapter
 import com.crrl.beatplayer.ui.viewmodels.SongViewModel
 import com.crrl.beatplayer.utils.PlayerConstants
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -25,7 +26,7 @@ import org.koin.core.parameter.parametersOf
 
 class PlaylistDetailFragment : BaseFragment<Song>() {
 
-    private lateinit var binding: FragmentPlaylistDetailBinding
+    lateinit var binding: FragmentPlaylistDetailBinding
     private val viewModel: SongViewModel by viewModel { parametersOf(context) }
     private lateinit var songAdapter: SongAdapter
 
@@ -58,7 +59,9 @@ class PlaylistDetailFragment : BaseFragment<Song>() {
             adapter = songAdapter
         }
 
-        reloadAdapter()
+        viewModel.songsByPlayList(binding.playlist!!.id).observe(this) {
+            songAdapter.updateDataSet(it)
+        }
 
         binding.let {
             it.viewModel = viewModel
@@ -66,10 +69,9 @@ class PlaylistDetailFragment : BaseFragment<Song>() {
         }
     }
 
-    private fun reloadAdapter() {
-        viewModel.songsByPlayList(binding.playlist!!.id).observe(this) {
-            songAdapter.updateDataSet(it)
-        }
+    override fun removeFromList(playListId: Long, item: Song?) {
+        Log.println(Log.DEBUG, "Dev", "$playListId, $item")
+        viewModel.removeFromPlaylist(playListId, item!!.id)
     }
 
     override fun onItemClick(view: View, position: Int, item: Song) {
@@ -85,6 +87,10 @@ class PlaylistDetailFragment : BaseFragment<Song>() {
     }
 
     override fun onPopupMenuClick(view: View, position: Int, item: Song) {
-        Toast.makeText(context, "Menu of ${item.title}", Toast.LENGTH_LONG).show()
+        super.onPopupMenuClick(view, position, item)
+        powerMenu!!.showAsAnchorRightTop(view)
+        viewModel.playLists().observe(this) {
+            buildPlaylistMenu(it, item)
+        }
     }
 }

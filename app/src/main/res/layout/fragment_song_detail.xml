@@ -34,6 +34,7 @@
             android:background="@drawable/album_detail_shape"
             android:clickable="true"
             android:focusable="true"
+            android:elevation="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/now_playing_cover" />
 
@@ -46,6 +47,7 @@
             android:contentDescription="@string/cover"
             android:src="@drawable/ic_playlist_add"
             android:tint="?btnTintColor"
+            android:elevation="10dp"
             app:layout_constraintBottom_toBottomOf="@+id/album_title"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/song_title" />
@@ -59,6 +61,7 @@
             android:contentDescription="@string/cover"
             android:src="@drawable/ic_no_favorite"
             android:tint="?btnTintColor"
+            android:elevation="10dp"
             app:layout_constraintBottom_toBottomOf="@+id/album_title"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/song_title" />
@@ -83,6 +86,7 @@
             android:layout_marginTop="18dp"
             android:layout_marginStart="@dimen/global_padding_top"
             android:layout_marginEnd="@dimen/global_padding_top"
+            android:elevation="10dp"
             app:layout_constraintBottom_toBottomOf="@+id/view2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -138,9 +142,10 @@
             android:paddingStart="@dimen/margin_10"
             android:paddingEnd="@dimen/margin_10"
             android:text="@{song.getCurrentData().album, default=Album}"
-            android:textColor="?subTitleTextColor"
+            android:textColor="?colorAccent"
             android:textSize="@dimen/title_text_size"
-            android:textStyle="bold"
+            android:elevation="10dp"
+            android:layout_marginTop="3dp"
             app:layout_constraintEnd_toStartOf="@+id/add_playlist"
             app:layout_constraintStart_toStartOf="@+id/song_title"
             app:layout_constraintTop_toBottomOf="@+id/song_title" />
@@ -157,7 +162,7 @@
             android:text="@{song.getCurrentData().title, default=Title}"
             android:textSize="20sp"
             android:textColor="?titleTextColor"
-            android:textStyle="bold"
+            android:elevation="10dp"
             app:layout_constraintEnd_toStartOf="@+id/add_playlist"
             app:layout_constraintStart_toEndOf="@+id/add_favorites"
             app:layout_constraintTop_toTopOf="@+id/view" />
@@ -166,6 +171,7 @@
             android:id="@+id/constraintLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:elevation="10dp"
             app:layout_constraintBottom_toTopOf="@+id/btn_container"
             app:layout_constraintTop_toTopOf="@+id/view2">
 
@@ -233,6 +239,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginBottom="8dp"
+            android:elevation="10dp"
             app:layout_constraintBottom_toBottomOf="@+id/view"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
@@ -286,7 +293,7 @@
                     android:clickable="false"
                     android:focusable="false"
                     android:text="@string/lyrics"
-                    android:textColor="?subTitleTextColor"
+                    android:textColor="?colorAccent"
                     android:textSize="@dimen/sub_title_text_size" />
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>

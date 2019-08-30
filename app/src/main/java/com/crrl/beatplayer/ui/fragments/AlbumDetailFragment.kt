@@ -14,8 +14,8 @@ import com.crrl.beatplayer.extensions.toAlbum
 import com.crrl.beatplayer.models.Album
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.ui.activities.MainActivity
+import com.crrl.beatplayer.ui.adapters.AlbumSongAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
-import com.crrl.beatplayer.ui.modelview.AlbumSongAdapter
 import com.crrl.beatplayer.ui.viewmodels.SongViewModel
 import com.crrl.beatplayer.utils.PlayerConstants
 import com.dgreenhalgh.android.simpleitemdecoration.linear.EndOffsetItemDecoration

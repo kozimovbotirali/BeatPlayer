@@ -8,5 +8,6 @@
         <attr name="btnTintColor" format="color" />
         <attr name="titleTextColor" format="color" />
         <attr name="subTitleTextColor" format="color" />
+        <attr name="bodyTextColor" format="color" />
     </declare-styleable>
 </resources>

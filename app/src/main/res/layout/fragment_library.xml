@@ -42,7 +42,7 @@
                     app:tabIndicatorColor="?colorAccent"
                     app:tabIndicatorFullWidth="false"
                     app:tabIndicatorHeight="4dp"
-                    app:tabMode="fixed"
+                    app:tabMode="scrollable"
                     app:tabRippleColor="@color/transparent"
                     app:tabSelectedTextColor="?colorAccent"
                     app:tabTextAppearance="@style/TabLayoutTextAppearance" />
@@ -58,10 +58,9 @@
             android:id="@+id/pager_sort_mode"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@drawable/album_detail_shape"
             android:paddingTop="@dimen/margin_8"
-            android:layout_marginTop="@dimen/margin_8"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            android:background="@drawable/album_detail_shape" />
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
         <TextView
             android:id="@+id/no_result"
