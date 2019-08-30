@@ -24,9 +24,8 @@
         android:padding="16dp"
         android:textColorHint="#aaa"
         android:textColor="#fff"
-        android:fontFamily="@font/rubik"
         android:textSize="14sp"
-        android:hint="Entera text"
+        android:hint="@string/hint"
         android:background="@drawable/input_item_shape" />
 
 </LinearLayout>

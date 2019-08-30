@@ -22,7 +22,6 @@ import android.view.WindowManager
 import android.widget.Button
 import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.DialogFragment
 import com.crrl.beatplayer.alertdialog.R
 import com.crrl.beatplayer.alertdialog.dialogs.AlertItemAction
 import com.crrl.beatplayer.alertdialog.listeners.ItemListener
@@ -40,11 +39,11 @@ class InputDialog(
     private val bottomActions: ArrayList<AlertItemAction>,
     private val style: InputStyle,
     private val inputText: String
-) : DialogFragment(), ItemListener {
+) : BottomSheetDialogFragment(), ItemListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setStyle(BottomSheetDialogFragment.STYLE_NORMAL, R.style.BottomSheetAlertTheme)
+        setStyle(STYLE_NORMAL, R.style.BottomSheetAlertTheme)
     }
 
     override fun onCreateView(

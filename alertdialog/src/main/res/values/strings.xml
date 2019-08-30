@@ -12,6 +12,8 @@
   -->
 
 <resources>
-    <string name="app_name">AlertDialog</string>
+    <string name="app_name" translatable="false">AlertDialog</string>
     <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="hint">Enter a text</string>
 </resources>

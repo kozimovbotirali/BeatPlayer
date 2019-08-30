@@ -13,4 +13,6 @@
 
 <resources>
     <string name="cancel">Cancelar</string>
+    <string name="delete">Eliminar</string>
+    <string name="hint">Ingrese un text</string>
 </resources>
