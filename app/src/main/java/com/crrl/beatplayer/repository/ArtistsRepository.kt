@@ -54,6 +54,11 @@ class ArtistsRepository() : ArtistRepository {
     override fun getAllArtist(): List<Artist> {
         val albumList =
             makeArtistCursor(null, null).toList(true, Artist.Companion::createFromCursor)
+        getArtists(albumList)
+        return albumList
+    }
+
+    private fun getArtists(albumList: MutableList<Artist>){
         val artistList = mutableListOf<Artist>()
         albumList.sortBy { it.name.toLowerCase(Locale.ROOT) }
         for ((i, album) in albumList.withIndex()) {
@@ -70,7 +75,8 @@ class ArtistsRepository() : ArtistRepository {
             }
         }
         SortModes.sortArtistList(artistList, settingsUtility.artistSortOrder)
-        return artistList
+        albumList.clear()
+        albumList.addAll(artistList)
     }
 
 
@@ -83,9 +89,12 @@ class ArtistsRepository() : ArtistRepository {
             results += moreArtists
         }
         return if (results.size < limit) {
+            getArtists(results)
             results
         } else {
-            results.subList(0, limit)
+            val res = results.subList(0, limit)
+            getArtists(res)
+            res
         }
     }
 
