@@ -29,7 +29,7 @@
         <item name="colorAccent">@color/colorAccentDark</item>
         <item name="colorAccentOpacity">@color/colorAccentDarkOpacity</item>
         <item name="android:fontFamily">@font/product_sans_regular</item>
-        <item name="android:windowBackground">?colorPrimary</item>
+        <item name="android:windowBackground">@color/colorPrimaryDark</item>
         <item name="titleTextColor">@color/colorTitleTextDark</item>
         <item name="subTitleTextColor">@color/colorSubTitleTextDark</item>
         <item name="bodyTextColor">@color/colorBodyTextDark</item>
@@ -47,7 +47,7 @@
         <item name="colorAccent">@color/colorAccentLight</item>
         <item name="colorAccentOpacity">@color/colorAccentLightOpacity</item>
         <item name="android:fontFamily">@font/product_sans_regular</item>
-        <item name="android:windowBackground">?colorPrimary</item>
+        <item name="android:windowBackground">@color/colorPrimaryLight</item>
         <item name="titleTextColor">@color/colorTitleTextLight</item>
         <item name="subTitleTextColor">@color/colorSubTitleTextLight</item>
         <item name="bodyTextColor">@color/colorBodyTextLight</item>

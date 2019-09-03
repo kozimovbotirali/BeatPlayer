@@ -12,8 +12,8 @@
   -->
 
 <resources>
-    <color name="colorPrimary">#111111</color>
-    <color name="colorPrimaryDark">#111111</color>
+    <color name="colorPrimary">#222222</color>
+    <color name="colorPrimaryDark">#222222</color>
     <color name="colorAccentDark">#1E88E5</color>
     <color name="colorAccentDarkOpacity">#441E88E5</color>
     <color name="colorPrimaryDarkSecondary">#111111</color>
@@ -28,7 +28,7 @@
     <color name="colorAccentLight">#1E88E5</color>
     <color name="colorAccentLightOpacity">#441E88E5</color>
     <color name="colorPrimaryLightSecondary">#F5F5F5</color>
-    <color name="colorPrimaryLightSecondary2">#EEEEEE</color>
+    <color name="colorPrimaryLightSecondary2">#E5E5E5</color>
     <color name="colorPrimaryLightOpacity">#22000000</color>
     <color name="colorTitleTextLight">#000000</color>
     <color name="colorSubTitleTextLight">#444444</color>
@@ -37,6 +37,4 @@
     <color name="white">#ffffff</color>
     <color name="transparent">#00ffffff</color>
     <color name="error">#F50238</color>
-</resources><!--#00416A
-    #0778FC
-    #386FA2-->
+</resources>
