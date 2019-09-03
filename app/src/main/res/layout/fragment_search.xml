@@ -31,8 +31,7 @@
         android:layout_height="match_parent"
         android:clickable="true"
         android:focusable="true"
-        android:background="?colorPrimarySecondary2"
-        android:paddingTop="@dimen/global_padding_top">
+        android:background="?colorPrimary">
 
         <View
             android:layout_width="match_parent"
@@ -172,6 +171,7 @@
             android:text="@string/no_results"
             android:textColor="?titleTextColor"
             android:textSize="@dimen/text_size_18"
+            android:elevation="10dp"
             android:visibility="@{(viewModel.searchLiveData.isNotEmpty()) ? View.GONE : View.VISIBLE}" />
 
     </FrameLayout>

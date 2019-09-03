@@ -27,14 +27,13 @@
         android:id="@+id/main_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?colorPrimarySecondary2">
+        android:background="?colorPrimary">
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/app_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/transparent"
-            android:paddingTop="@dimen/global_padding_top"
             app:elevation="0dp">
 
             <include layout="@layout/app_header" />
@@ -62,10 +61,6 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.appbar.AppBarLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/global_padding_top"
-            android:background="?colorPrimarySecondary2" />
 
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/pager_sort_mode"

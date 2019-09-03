@@ -23,7 +23,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?colorPrimary"
+        android:background="?colorPrimarySecondary2"
         android:clickable="true"
         android:focusable="true">
 
@@ -40,7 +40,7 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="?colorPrimarySecondary2">
+                    android:background="?colorPrimary">
 
                     <View
                         android:layout_width="match_parent"
@@ -91,7 +91,7 @@
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:orientation="vertical"
-                    android:background="?colorPrimary">
+                    android:background="?colorPrimarySecondary2">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -115,10 +115,5 @@
 
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/global_padding_top"
-            android:background="?colorPrimarySecondary2" />
     </FrameLayout>
 </layout>

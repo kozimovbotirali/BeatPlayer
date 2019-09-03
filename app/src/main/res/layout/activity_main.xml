@@ -26,7 +26,6 @@
         android:id="@+id/main_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
         tools:context=".ui.activities.MainActivity">
 
         <FrameLayout
@@ -44,7 +43,7 @@
 
             <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="70dp"
+                android:layout_height="72dp"
                 android:background="@drawable/mini_player_frame"
                 android:elevation="10dp"
                 app:layout_constraintBottom_toBottomOf="@+id/container" />

@@ -31,8 +31,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="@dimen/global_padding_top"
-        android:background="?colorPrimarySecondary2">
+        android:background="?colorPrimary">
 
         <LinearLayout
             android:id="@+id/play_list_container"

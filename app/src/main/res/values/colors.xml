@@ -12,23 +12,23 @@
   -->
 
 <resources>
-    <color name="colorPrimary">#222222</color>
-    <color name="colorPrimaryDark">#222222</color>
+    <color name="colorPrimary">#000000</color>
+    <color name="colorPrimaryDark">#000000</color>
     <color name="colorAccentDark">#1E88E5</color>
     <color name="colorAccentDarkOpacity">#441E88E5</color>
     <color name="colorPrimaryDarkSecondary">#111111</color>
-    <color name="colorPrimaryDarkSecondary2">#000000</color>
+    <color name="colorPrimaryDarkSecondary2">#222222</color>
     <color name="colorPrimaryDarkOpacity">#22FFFFFF</color>
     <color name="colorTitleTextDark">#FFFFFF</color>
     <color name="colorSubTitleTextDark">#CCCCCC</color>
     <color name="colorBodyTextDark">#888888</color>
 
-    <color name="colorPrimaryLight">#FFFFFF</color>
-    <color name="colorPrimaryDarkLight">#FFFFFF</color>
+    <color name="colorPrimaryLight">#E5E5E5</color>
+    <color name="colorPrimaryDarkLight">#E5E5E5</color>
     <color name="colorAccentLight">#1E88E5</color>
     <color name="colorAccentLightOpacity">#441E88E5</color>
     <color name="colorPrimaryLightSecondary">#F5F5F5</color>
-    <color name="colorPrimaryLightSecondary2">#E5E5E5</color>
+    <color name="colorPrimaryLightSecondary2">#FFFFFF</color>
     <color name="colorPrimaryLightOpacity">#22000000</color>
     <color name="colorTitleTextLight">#000000</color>
     <color name="colorSubTitleTextLight">#444444</color>
