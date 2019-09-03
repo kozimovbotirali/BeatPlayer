@@ -17,10 +17,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import com.crrl.beatplayer.R
+import com.crrl.beatplayer.alertdialog.AlertDialog
+import com.crrl.beatplayer.alertdialog.dialogs.AlertItemAction
+import com.crrl.beatplayer.alertdialog.stylers.AlertItemStyle
+import com.crrl.beatplayer.alertdialog.stylers.AlertItemTheme
+import com.crrl.beatplayer.alertdialog.stylers.AlertType
 import com.crrl.beatplayer.extensions.addFragment
+import com.crrl.beatplayer.extensions.getColorByTheme
 import com.crrl.beatplayer.extensions.observe
 import com.crrl.beatplayer.extensions.safeActivity
 import com.crrl.beatplayer.models.Artist
@@ -29,6 +36,8 @@ import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.viewmodels.ArtistViewModel
 import com.crrl.beatplayer.utils.GeneralUtils
 import com.crrl.beatplayer.utils.PlayerConstants
+import com.crrl.beatplayer.utils.SettingsUtility
+import com.crrl.beatplayer.utils.SortModes
 import kotlinx.android.synthetic.main.fragment_artist.view.*
 
 class ArtistFragment : BaseFragment<Artist>() {
@@ -76,7 +85,56 @@ class ArtistFragment : BaseFragment<Artist>() {
             }
         }
 
+        dialog = buildSortModesDialog()
+
         reloadAdapter()
+    }
+
+    private fun buildSortModesDialog(): AlertDialog {
+        val style = AlertItemStyle()
+        style.apply {
+            textColor = activity?.getColorByTheme(R.attr.titleTextColor, "titleTextColor")!!
+            selectedTextColor = activity?.getColorByTheme(R.attr.colorAccent, "colorAccent")!!
+            backgroundColor =
+                activity?.getColorByTheme(R.attr.colorPrimarySecondary, "colorPrimarySecondary")!!
+        }
+        return AlertDialog(
+            getString(R.string.sort_title),
+            getString(R.string.sort_msg),
+            style,
+            AlertType.BOTTOM_SHEET
+        ).apply {
+            addItem(AlertItemAction(
+                context!!.getString(R.string.sort_default),
+                SettingsUtility.getInstance(context).artistSortOrder == SortModes.ArtistModes.ARTIST_DEFAULT,
+                AlertItemTheme.DEFAULT
+            ) { action ->
+                action.selected = true
+                SettingsUtility.getInstance(context).artistSortOrder =
+                    SortModes.ArtistModes.ARTIST_DEFAULT
+                reloadAdapter()
+            })
+            addItem(AlertItemAction(
+                context!!.getString(R.string.sort_az),
+                SettingsUtility.getInstance(context).artistSortOrder == SortModes.ArtistModes.ARTIST_A_Z,
+                AlertItemTheme.DEFAULT
+            ) { action ->
+                action.selected = true
+                SettingsUtility.getInstance(context).artistSortOrder =
+                    SortModes.ArtistModes.ARTIST_A_Z
+                reloadAdapter()
+            })
+            addItem(AlertItemAction(
+                context!!.getString(R.string.sort_za),
+                SettingsUtility.getInstance(context).artistSortOrder == SortModes.ArtistModes.ARTIST_Z_A,
+                AlertItemTheme.DEFAULT
+            ) { action ->
+                action.selected = true
+                SettingsUtility.getInstance(context).artistSortOrder =
+                    SortModes.ArtistModes.ARTIST_Z_A
+                reloadAdapter()
+            })
+        }
     }
 
     private fun reloadAdapter() {
@@ -95,5 +153,9 @@ class ArtistFragment : BaseFragment<Artist>() {
             true,
             extras
         )
+    }
+
+    override fun onSortClick(view: View) {
+        dialog.show(activity as AppCompatActivity)
     }
 }

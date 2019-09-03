@@ -82,12 +82,8 @@ object SortModes {
 
     fun sortArtistList(artistList: MutableList<Artist>, sortMode: String) {
         when (sortMode) {
-            ArtistModes.ARTIST_A_Z -> artistList.sortWith(Comparator { a, b ->
-                a.name.toUpperCase().compareTo(b.name.toUpperCase())
-            })
-            ArtistModes.ARTIST_Z_A -> artistList.sortWith(Comparator { a, b ->
-                b.name.toUpperCase().compareTo(a.name.toUpperCase())
-            })
+            ArtistModes.ARTIST_A_Z -> artistList.sortBy { it.name.toLowerCase() }
+            ArtistModes.ARTIST_Z_A -> artistList.sortByDescending { it.name.toLowerCase() }
         }
     }
 }

@@ -23,21 +23,25 @@ import com.crrl.beatplayer.models.Artist
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.utils.SettingsUtility
 import com.crrl.beatplayer.utils.SortModes
+import java.util.*
 
-class ArtistRepository() {
+interface ArtistRepository {
+    fun getAllArtist(): List<Artist>
+    fun getSongsForArtist(artistId: Long): List<Song>
+    fun getAlbumsForArtist(artistId: Long): List<Album>
+}
+
+class ArtistsRepository() : ArtistRepository {
 
     private lateinit var contentResolver: ContentResolver
     private lateinit var settingsUtility: SettingsUtility
 
-    val currentArtistList: List<Artist>
-        get() = getArtist()
-
     companion object {
-        private var instance: ArtistRepository? = null
+        private var instance: ArtistsRepository? = null
 
-        fun getInstance(context: Context?): ArtistRepository? {
+        fun getInstance(context: Context?): ArtistsRepository? {
             if (instance == null)
-                instance = ArtistRepository(context)
+                instance = ArtistsRepository(context)
             return instance
         }
     }
@@ -47,11 +51,26 @@ class ArtistRepository() {
         settingsUtility = SettingsUtility.getInstance(context)
     }
 
-    private fun getArtist(): List<Artist> {
-        val sl = makeArtistCursor(null, null)
-            .toList(true) { Artist.createFromCursor(this) }
-        SortModes.sortArtistList(sl, settingsUtility.artistSortOrder)
-        return sl
+    override fun getAllArtist(): List<Artist> {
+        val albumList =
+            makeArtistCursor(null, null).toList(true, Artist.Companion::createFromCursor)
+        val artistList = mutableListOf<Artist>()
+        albumList.sortBy { it.name.toLowerCase(Locale.ROOT) }
+        for ((i, album) in albumList.withIndex()) {
+            if (i == 0) {
+                artistList.add(album)
+                artistList[artistList.size - 1].albumCount++
+            } else {
+                if (album.name != albumList[i - 1].name) {
+                    artistList.add(album)
+                    artistList[artistList.size - 1].albumCount++
+                } else {
+                    artistList[artistList.size - 1].albumCount++
+                }
+            }
+        }
+        SortModes.sortArtistList(artistList, settingsUtility.artistSortOrder)
+        return artistList
     }
 
 
@@ -70,12 +89,12 @@ class ArtistRepository() {
         }
     }
 
-    fun getSongsForArtist(artistId: Long): List<Song> {
+    override fun getSongsForArtist(artistId: Long): List<Song> {
         return makeArtistSongCursor(artistId)
             .toList(true) { Song.createFromCursor(this) }
     }
 
-    fun getAlbumsForArtist(artistId: Long): List<Album> {
+    override fun getAlbumsForArtist(artistId: Long): List<Album> {
         return makeAlbumForArtistCursor(artistId)
             .toList(true) { Album.createFromCursor(this, artistId) }
     }
@@ -94,13 +113,16 @@ class ArtistRepository() {
         )
     }
 
-    private fun makeArtistCursor(selection: String?, paramArrayOfString: Array<String>?): Cursor? {
+    private fun makeArtistCursor(
+        selection: String?,
+        paramArrayOfString: Array<String>?
+    ): Cursor? {
         return contentResolver.query(
-            MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI,
-            arrayOf("_id", "artist", "number_of_tracks", "number_of_albums"),
+            MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+            arrayOf("artist_id", "_id", "artist", "numsongs"),
             selection,
             paramArrayOfString,
-            ""
+            "artist_id"
         )
     }
 

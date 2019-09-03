@@ -24,7 +24,7 @@ import com.crrl.beatplayer.models.Playlist
 import com.crrl.beatplayer.models.SearchData
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.repository.AlbumRepository
-import com.crrl.beatplayer.repository.ArtistRepository
+import com.crrl.beatplayer.repository.ArtistsRepository
 import com.crrl.beatplayer.repository.PlaylistRepository
 import com.crrl.beatplayer.repository.SongsRepository
 import io.reactivex.Observable
@@ -51,7 +51,7 @@ class SongViewModel(private val context: Context?) : ViewModel() {
                         SongsRepository(context).searchSongs(searchString, 10).toMutableList()
                     val albums = AlbumRepository.getInstance(context)!!.search(searchString, 10)
                         .toMutableList()
-                    val artists = ArtistRepository.getInstance(context)!!.search(searchString, 10)
+                    val artists = ArtistsRepository.getInstance(context)!!.search(searchString, 10)
                         .toMutableList()
                     if (songs.isNotEmpty())
                         songList = songs
@@ -106,7 +106,7 @@ class SongViewModel(private val context: Context?) : ViewModel() {
 
     fun getArtistAlbums(artistId: Long): LiveData<List<Album>> {
         Observable.fromCallable {
-            ArtistRepository.getInstance(context)!!.getAlbumsForArtist(artistId)
+            ArtistsRepository.getInstance(context)!!.getAlbumsForArtist(artistId)
         }.observeOn(Schedulers.newThread()).subscribeOn(Schedulers.newThread())
             .subscribe { _artistLiveData.postValue(it) }
         return _artistLiveData

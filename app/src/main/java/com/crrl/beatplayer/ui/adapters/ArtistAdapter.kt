@@ -16,7 +16,6 @@ package com.crrl.beatplayer.ui.adapters
 import android.content.ContentUris
 import android.content.Context
 import android.os.SystemClock
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
@@ -28,7 +27,6 @@ import com.crrl.beatplayer.databinding.ArtistItemHeaderBinding
 import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.interfaces.ItemClickListener
 import com.crrl.beatplayer.models.Artist
-import com.crrl.beatplayer.repository.ArtistRepository
 import com.crrl.beatplayer.utils.GeneralUtils
 import com.crrl.beatplayer.utils.PlayerConstants
 
@@ -116,26 +114,15 @@ class ArtistAdapter(private val context: Context?) :
             binding.apply {
                 this.artist = artist
                 cover.clipToOutline = true
-                Thread(Runnable {
-                    val uri = ContentUris.withAppendedId(
-                        PlayerConstants.ARTWORK_URI,
-                        ArtistRepository.getInstance(context!!)!!.getAlbumsForArtist(artist.id)[0].id
-                    )
-                    (context as AppCompatActivity).runOnUiThread {
-                        try {
-                            Glide.with(context)
-                                .load(uri)
-                                .placeholder(R.drawable.ic_empty_cover)
-                                .error(R.drawable.ic_empty_cover)
-                                .into(cover)
-                        } catch (e: IllegalArgumentException) {
-                            Log.println(Log.ERROR, "IllegalArgumentException", e.message!!)
-                        }
-                    }
-                }).start()
+                val uri = ContentUris.withAppendedId(PlayerConstants.ARTWORK_URI, artist.albumId)
+                Glide.with(context!!)
+                    .load(uri)
+                    .placeholder(R.drawable.ic_empty_cover)
+                    .error(R.drawable.ic_empty_cover)
+                    .into(cover)
                 showDetails.setOnClickListener(this@ViewHolderArtist)
                 container.layoutParams.height =
-                    GeneralUtils.screenWidth / spanCount + GeneralUtils.dip2px(context!!, 42)
+                    GeneralUtils.screenWidth / spanCount + GeneralUtils.dip2px(context, 42)
                 container.layoutParams.width =
                     GeneralUtils.screenWidth / spanCount
                 executePendingBindings()
