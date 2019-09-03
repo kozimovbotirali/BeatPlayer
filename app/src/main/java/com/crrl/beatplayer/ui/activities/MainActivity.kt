@@ -14,6 +14,7 @@
 package com.crrl.beatplayer.ui.activities
 
 import android.content.ContentUris
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -40,6 +41,7 @@ class MainActivity : BaseActivity() {
 
     val viewModel: MainViewModel by viewModel { parametersOf(this) }
     private lateinit var binding: ActivityMainBinding
+    private var placeholder: Drawable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,14 +67,16 @@ class MainActivity : BaseActivity() {
         binding.apply {
             miniPlayerCover.clipToOutline = true
             val uri = ContentUris.withAppendedId(PlayerConstants.ARTWORK_URI, song.albumId)
+            placeholder = miniPlayerCover.drawable
             Glide.with(applicationContext)
                 .load(uri)
                 .override(150)
                 .transition(DrawableTransitionOptions.withCrossFade())
-                .placeholder(miniPlayerCover.drawable)
+                .placeholder(placeholder)
                 .error(R.drawable.ic_empty_cover)
                 .into(miniPlayerCover)
         }
+        placeholder = null
     }
 
     fun isPermissionsGranted(): Boolean {
