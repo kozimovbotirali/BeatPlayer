@@ -31,29 +31,24 @@
         <FrameLayout
             android:id="@+id/nav_host_fragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"/>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <androidx.cardview.widget.CardView
             android:id="@+id/bottom_controls"
             android:layout_width="match_parent"
-            android:layout_height="75dp"
+            android:layout_height="72dp"
             android:layout_gravity="bottom"
             android:onClick="onSongInfoClick"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="72dp"
-                android:background="@drawable/mini_player_frame"
-                android:elevation="10dp"
-                app:layout_constraintBottom_toBottomOf="@+id/container" />
+            android:orientation="vertical"
+            android:backgroundTint="@color/transparent"
+            app:cardElevation="25dp">
 
             <RelativeLayout
                 android:id="@+id/container"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:elevation="10dp"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toTopOf="parent"
+                android:background="@drawable/mini_player_frame">
 
                 <ImageView
                     android:id="@+id/mini_player_cover"
@@ -62,8 +57,7 @@
                     android:background="@drawable/mini_player_cover_frame"
                     android:src="@drawable/ic_empty_cover"
                     android:layout_marginStart="@dimen/margin_12"
-                    android:layout_centerVertical="true"
-                    android:transitionName="mini_cover" />
+                    android:layout_centerVertical="true"/>
 
                 <LinearLayout
                     android:id="@+id/listViewTextContainer"
@@ -173,7 +167,7 @@
                         android:tint="?colorAccent" />
                 </RelativeLayout>
             </RelativeLayout>
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>
