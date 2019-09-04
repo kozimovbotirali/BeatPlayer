@@ -14,13 +14,25 @@
 package com.crrl.beatplayer.ui.viewmodels
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.ui.activities.MainActivity
+import com.crrl.beatplayer.utils.GeneralUtils
 
 class SongDetailViewModel(private val mainActivity: MainActivity) : ViewModel() {
 
+    private val timeLiveData: MutableLiveData<Int> = MutableLiveData()
+
     fun getCurrentData(): LiveData<Song> {
         return mainActivity.viewModel.getCurrentSong()
+    }
+
+    fun getTime() : LiveData<Int>{
+        return timeLiveData
+    }
+
+    fun updateTime(newTime: Int){
+        timeLiveData.postValue(newTime)
     }
 }

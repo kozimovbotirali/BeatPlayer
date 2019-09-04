@@ -28,6 +28,7 @@ import com.crrl.beatplayer.extensions.observe
 import com.crrl.beatplayer.extensions.replaceFragment
 import com.crrl.beatplayer.extensions.toast
 import com.crrl.beatplayer.models.Song
+import com.crrl.beatplayer.playback.MusicService
 import com.crrl.beatplayer.ui.activities.base.BaseActivity
 import com.crrl.beatplayer.ui.fragments.*
 import com.crrl.beatplayer.ui.viewmodels.MainViewModel
@@ -48,6 +49,9 @@ class MainActivity : BaseActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         viewModel.getCurrentSong().observe(this) {
             updateView(it)
+        }
+        viewModel.getCurrentSongList().observe(this) {
+            viewModel.musicService.updateData(it)
         }
         if (savedInstanceState == null) {
             replaceFragment(
@@ -131,18 +135,6 @@ class MainActivity : BaseActivity() {
                 }
             }.start()
         }
-    }
-
-    fun play(view: View) {
-
-    }
-
-    fun next(view: View) {
-        toast("Next", Toast.LENGTH_SHORT)
-    }
-
-    fun previous(view: View) {
-        toast("Previous", Toast.LENGTH_SHORT)
     }
 
     fun update(song: Song) {
