@@ -37,7 +37,7 @@ private const val ITEM_TYPE = 1
 class AlbumSongAdapter(private val context: Context?) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private var songList: List<Song> = emptyList()
+    var songList: List<Song> = emptyList()
     var showHeader: Boolean = false
     var itemClickListener: ItemClickListener<Song>? = null
     var album = Album()

@@ -89,6 +89,7 @@ class PlaylistDetailFragment : BaseFragment<Song>() {
 
     override fun onItemClick(view: View, position: Int, item: Song) {
         (safeActivity as MainActivity).viewModel.update(item)
+        (safeActivity as MainActivity).viewModel.update(songAdapter.songList)
     }
 
     override fun onShuffleClick(view: View) {

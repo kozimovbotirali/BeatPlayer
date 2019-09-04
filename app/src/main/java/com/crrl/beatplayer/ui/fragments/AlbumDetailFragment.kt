@@ -84,6 +84,7 @@ class AlbumDetailFragment : BaseFragment<Song>() {
 
     override fun onItemClick(view: View, position: Int, item: Song) {
         (safeActivity as MainActivity).viewModel.update(item)
+        (safeActivity as MainActivity).viewModel.update(albumSongAdapter.songList)
     }
 
     override fun onPlayAllClick(view: View) {

@@ -39,7 +39,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import rm.com.audiowave.OnSamplingListener
 
-class SongDetailFragment : BaseSongDetailFragment() {
+class SongDetailFragment : BaseSongDetailFragment(){
 
     private lateinit var binding: FragmentSongDetailBinding
     private val viewModel: SongDetailViewModel by viewModel { parametersOf(safeActivity as MainActivity) }
@@ -60,7 +60,11 @@ class SongDetailFragment : BaseSongDetailFragment() {
     private fun init() {
         viewModel.getCurrentData().observe(this) {
             updateViewComponents(it)
+            viewModel.getTime().observe(this){
+
+            }
         }
+
         binding.let {
             it.song = viewModel
             it.lifecycleOwner = this
@@ -85,6 +89,7 @@ class SongDetailFragment : BaseSongDetailFragment() {
                     safeActivity.runOnUiThread {
                         if (data == null) {
                             safeActivity.toast("File Not Found", Toast.LENGTH_SHORT)
+                            (safeActivity as MainActivity).viewModel.next(song)
                             return@runOnUiThread
                         }
                         seekBar.setRawData(data, object : OnSamplingListener {
@@ -97,7 +102,26 @@ class SongDetailFragment : BaseSongDetailFragment() {
                     Log.println(Log.ERROR, "IllegalStateException", e.message!!)
                 }
             }.start()
+
+            playBtn.setOnClickListener { safeActivity.toast("Play", Toast.LENGTH_SHORT) }
+            nextBtn.setOnClickListener { (safeActivity as MainActivity).viewModel.next(song) }
+            previousBtn.setOnClickListener { (safeActivity as MainActivity).viewModel.previous(song) }
+        }
+        binding.seekBar.apply {
+            onStopTracking = {
+                viewModel.updateTime((it * song.duration / 100).toInt())
+                Log.println(Log.DEBUG,"wave", "Progress set: ${(it * song.duration / 100).toInt()}")
+            }
+
+            onStartTracking = {
+                viewModel.updateTime((it * song.duration / 100).toInt())
+                Log.println(Log.DEBUG,"wave", "Progress set: ${(it * song.duration / 100).toInt()}")
+            }
+
+            onProgressChanged = {progress, byUser ->
+                viewModel.updateTime((progress * song.duration / 100).toInt())
+                Log.println(Log.DEBUG,"wave", "Progress set: ${(progress * song.duration / 100)}, and it's $byUser that user did this")
+            }
         }
     }
-
 }

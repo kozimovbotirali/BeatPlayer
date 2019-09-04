@@ -15,6 +15,7 @@ package com.crrl.beatplayer.utils
 
 import android.content.Context
 import android.content.res.Resources
+import android.util.Log
 import android.view.Surface.*
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
@@ -55,13 +56,13 @@ object GeneralUtils {
         val hh: String
         val mm: String
         val ss: String
-        if (hours < 10 && hours > 0) {
-            hh = "0$hours:"
+        hh = if (hours in 1..9) {
+            "0$hours:"
         } else {
             if (hours >= 10) {
-                hh = "$hours:"
+                "$hours:"
             } else {
-                hh = ""
+                ""
             }
         }
         mm = if (minutes in 1..9) {

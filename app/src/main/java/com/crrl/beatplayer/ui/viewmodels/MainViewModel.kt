@@ -17,12 +17,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.crrl.beatplayer.models.Song
+import com.crrl.beatplayer.playback.MusicService
 import com.crrl.beatplayer.ui.activities.MainActivity
 
 class MainViewModel(val safeActivity: MainActivity?) : ViewModel() {
 
     private val liveSongData: MutableLiveData<Song> = MutableLiveData()
     private val currentSongList: MutableLiveData<List<Song>> = MutableLiveData()
+    var musicService = MusicService()
 
     fun getCurrentSong(): LiveData<Song> {
         return liveSongData
@@ -38,5 +40,15 @@ class MainViewModel(val safeActivity: MainActivity?) : ViewModel() {
 
     fun update(newList: List<Song>) {
         currentSongList.value = newList
+    }
+
+    // Update the current song for the next one
+    fun next(currentSong: Song) {
+        update(musicService.next(currentSong))
+    }
+
+    // Update the current song for the previous one
+    fun previous(currentSong: Song) {
+        update(musicService.previous(currentSong))
     }
 }
