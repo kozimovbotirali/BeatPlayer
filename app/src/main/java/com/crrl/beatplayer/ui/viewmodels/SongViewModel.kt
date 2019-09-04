@@ -23,7 +23,7 @@ import com.crrl.beatplayer.models.Album
 import com.crrl.beatplayer.models.Playlist
 import com.crrl.beatplayer.models.SearchData
 import com.crrl.beatplayer.models.Song
-import com.crrl.beatplayer.repository.AlbumRepository
+import com.crrl.beatplayer.repository.AlbumsRepository
 import com.crrl.beatplayer.repository.ArtistsRepository
 import com.crrl.beatplayer.repository.PlaylistRepository
 import com.crrl.beatplayer.repository.SongsRepository
@@ -49,7 +49,7 @@ class SongViewModel(private val context: Context?) : ViewModel() {
                 searchData.apply {
                     val songs =
                         SongsRepository(context).searchSongs(searchString, 10).toMutableList()
-                    val albums = AlbumRepository.getInstance(context)!!.search(searchString, 10)
+                    val albums = AlbumsRepository.getInstance(context)!!.search(searchString, 10)
                         .toMutableList()
                     val artists = ArtistsRepository.getInstance(context)!!.search(searchString, 10)
                         .toMutableList()
@@ -99,7 +99,7 @@ class SongViewModel(private val context: Context?) : ViewModel() {
     }
 
     fun getSongsByAlbum(id: Long): LiveData<List<Song>>? {
-        Observable.fromCallable { AlbumRepository.getInstance(context)!!.getSongsForAlbum(id) }
+        Observable.fromCallable { AlbumsRepository.getInstance(context)!!.getSongsForAlbum(id) }
             .subscribeOn(Schedulers.newThread()).subscribe { _songsByAlbum.postValue(it) }
         return _songsByAlbum
     }

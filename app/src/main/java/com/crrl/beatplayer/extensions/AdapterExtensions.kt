@@ -77,11 +77,6 @@ fun PlaylistAdapter?.dataChanged(newList: List<Playlist>): Boolean {
 }
 
 fun SongAdapter?.dataChanged(newList: List<Song>): Boolean {
-    /**
-     *
-     * TODO fix adding song notify
-     *
-     **/
     this ?: return false
     when {
         newList.size > songList.size -> {

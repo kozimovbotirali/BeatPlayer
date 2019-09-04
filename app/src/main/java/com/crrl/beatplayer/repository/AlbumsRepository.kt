@@ -24,20 +24,22 @@ import com.crrl.beatplayer.utils.PlayerConstants
 import com.crrl.beatplayer.utils.SettingsUtility
 import com.crrl.beatplayer.utils.SortModes
 
+interface AlbumRepository {
+    fun getAlbum(id: Long): Album
+    fun getSongsForAlbum(albumId: Long): List<Song>
+    fun getAlbums(): List<Album>
+}
 
-class AlbumRepository() {
+class AlbumsRepository() : AlbumRepository {
 
     private lateinit var contentResolver: ContentResolver
     private lateinit var settingsUtility: SettingsUtility
 
-    val currentAlbumList: List<Album>
-        get() = getAlbums()
-
     companion object {
-        private var instance: AlbumRepository? = null
+        private var instance: AlbumsRepository? = null
 
-        fun getInstance(context: Context?): AlbumRepository? {
-            if (instance == null) instance = AlbumRepository(context)
+        fun getInstance(context: Context?): AlbumsRepository? {
+            if (instance == null) instance = AlbumsRepository(context)
             return instance
         }
     }
@@ -45,10 +47,6 @@ class AlbumRepository() {
     constructor(context: Context? = null) : this() {
         contentResolver = context!!.contentResolver
         settingsUtility = SettingsUtility.getInstance(context)
-    }
-
-    fun getAlbum(id: Long): Album {
-        return getAlbum(makeAlbumCursor("_id=?", arrayOf(id.toString())))
     }
 
     private fun getAlbum(cursor: Cursor?): Album {
@@ -61,14 +59,18 @@ class AlbumRepository() {
         } ?: Album()
     }
 
-    fun getSongsForAlbum(albumId: Long): List<Song> {
+    override fun getAlbum(id: Long): Album {
+        return getAlbum(makeAlbumCursor("_id=?", arrayOf(id.toString())))
+    }
+
+    override fun getSongsForAlbum(albumId: Long): List<Song> {
         val list = makeAlbumSongCursor(albumId)
             .toList(true) { Song.createFromCursor(this, albumId) }
         SortModes.sortAlbumSongList(list)
         return list
     }
 
-    private fun getAlbums(): List<Album> {
+    override fun getAlbums(): List<Album> {
         val sl = makeAlbumCursor(null, null)
             .toList(true) { Album.createFromCursor(this) }
         SortModes.sortAlbumList(sl, settingsUtility.albumSortOrder)

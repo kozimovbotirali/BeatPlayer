@@ -19,7 +19,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.crrl.beatplayer.models.Album
-import com.crrl.beatplayer.repository.AlbumRepository
+import com.crrl.beatplayer.repository.AlbumsRepository
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.Callable
@@ -29,7 +29,7 @@ class AlbumViewModel(private val context: Context) : ViewModel() {
     private val albums: MutableLiveData<List<Album>>? = MutableLiveData()
 
     private fun getAlbumData(context: Context) =
-        Callable { AlbumRepository.getInstance(context)!!.currentAlbumList }
+        Callable { AlbumsRepository.getInstance(context)!!.getAlbums() }
 
     @SuppressLint("CheckResult")
     fun getAlbums(): LiveData<List<Album>>? {

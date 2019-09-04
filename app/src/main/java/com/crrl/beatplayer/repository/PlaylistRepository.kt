@@ -28,7 +28,17 @@ import com.crrl.beatplayer.models.Playlist
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.utils.SettingsUtility
 
-class PlaylistRepository() {
+interface PlayListRepository {
+    @Throws(IllegalStateException::class)
+    fun createPlaylist(name: String?): Long
+
+    fun getPlaylists(): List<Playlist>
+    fun getSongsInPlaylist(playlistId: Long): List<Song>
+    fun removeFromPlaylist(playlistId: Long, id: Long)
+    fun deletePlaylist(playlistId: Long): Int
+}
+
+class PlaylistRepository() : PlayListRepository {
 
 
     private lateinit var contentResolver: ContentResolver
@@ -50,9 +60,7 @@ class PlaylistRepository() {
         settingsUtility = SettingsUtility.getInstance(context)
     }
 
-
-    @Throws(IllegalStateException::class)
-    fun createPlaylist(name: String?): Long {
+    override fun createPlaylist(name: String?): Long {
         if (name.isNullOrEmpty()) {
             return -1
         }
@@ -80,7 +88,7 @@ class PlaylistRepository() {
             ?: throw IllegalStateException("Unable to query $EXTERNAL_CONTENT_URI, because system returned null.")
     }
 
-    fun getPlaylists(): List<Playlist> {
+    override fun getPlaylists(): List<Playlist> {
         return makePlaylistCursor().toList(true) {
             val id: Long = getLong(0)
             val songCount = getSongCountForPlaylist(id)
@@ -111,7 +119,7 @@ class PlaylistRepository() {
         return numInserted
     }
 
-    fun getSongsInPlaylist(playlistId: Long): List<Song> {
+    override fun getSongsInPlaylist(playlistId: Long): List<Song> {
         val playlistCount = countPlaylist(playlistId)
 
         makePlaylistSongCursor(playlistId)?.use {
@@ -143,7 +151,7 @@ class PlaylistRepository() {
             .toList(true, Song.Companion::createFromPlaylistCursor)
     }
 
-    fun removeFromPlaylist(playlistId: Long, id: Long) {
+    override fun removeFromPlaylist(playlistId: Long, id: Long) {
         val uri = MediaStore.Audio.Playlists.Members.getContentUri("external", playlistId)
         contentResolver.delete(
             uri,
@@ -152,7 +160,7 @@ class PlaylistRepository() {
         )
     }
 
-    fun deletePlaylist(playlistId: Long): Int {
+    override fun deletePlaylist(playlistId: Long): Int {
         val localUri = EXTERNAL_CONTENT_URI
         val localStringBuilder = StringBuilder().apply {
             append("_id IN (")
