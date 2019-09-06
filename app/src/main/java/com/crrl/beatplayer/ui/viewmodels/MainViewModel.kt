@@ -44,11 +44,11 @@ class MainViewModel(val safeActivity: MainActivity?) : ViewModel() {
 
     // Update the current song for the next one
     fun next(currentSong: Song) {
-        update(musicService.next(currentSong))
+        if(!currentSongList.value.isNullOrEmpty()) update(musicService.next(currentSong))
     }
 
     // Update the current song for the previous one
     fun previous(currentSong: Song) {
-        update(musicService.previous(currentSong))
+        if(!currentSongList.value.isNullOrEmpty()) update(musicService.previous(currentSong))
     }
 }

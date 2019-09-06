@@ -80,19 +80,10 @@ class ArtistDetailFragment : BaseFragment<MediaItem>() {
                 isNestedScrollingEnabled = false
                 setHasFixedSize(true)
             }
-            cover.clipToOutline = true
         }
 
         viewModel.getArtistAlbums(artist.id).observe(this) {
             albumAdapter.updateDataSet(it)
-            val uri = ContentUris.withAppendedId(PlayerConstants.ARTWORK_URI, it[0].id)
-            Glide.with(context!!)
-                .load(uri)
-                .centerCrop()
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .placeholder(R.drawable.song_cover_frame)
-                .error(R.drawable.ic_empty_cover)
-                .into(binding.cover)
         }
 
         binding.artist = artist

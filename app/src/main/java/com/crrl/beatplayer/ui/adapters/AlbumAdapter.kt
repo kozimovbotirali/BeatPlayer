@@ -115,13 +115,7 @@ class AlbumAdapter(private val context: Context?) :
             binding.apply {
                 this.album = album
                 width = GeneralUtils.screenWidth / spanCount - GeneralUtils.dip2px(context!!, 22)
-                cover.clipToOutline = true
-                val uri = ContentUris.withAppendedId(PlayerConstants.ARTWORK_URI, album.id)
-                Glide.with(context)
-                    .load(uri)
-                    .placeholder(R.drawable.ic_empty_cover)
-                    .error(R.drawable.ic_empty_cover)
-                    .into(cover)
+
                 showDetails.setOnClickListener(this@ViewHolderAlbum)
                 container.layoutParams.height =
                     GeneralUtils.screenWidth / spanCount + GeneralUtils.dip2px(context, 42)

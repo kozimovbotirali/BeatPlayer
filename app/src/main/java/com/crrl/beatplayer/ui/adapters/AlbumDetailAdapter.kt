@@ -117,15 +117,6 @@ class AlbumSongAdapter(private val context: Context?) :
                 this.song = song
                 container.setOnClickListener(this@ViewHolderAlbumSong)
                 itemMenu.setOnClickListener(this@ViewHolderAlbumSong)
-                cover.clipToOutline = true
-                val uri = ContentUris.withAppendedId(PlayerConstants.ARTWORK_URI, song.albumId)
-                Glide.with(context!!)
-                    .load(uri)
-                    .placeholder(R.drawable.song_cover_frame)
-                    .error(R.drawable.ic_empty_cover)
-                    .centerCrop()
-                    .transition(DrawableTransitionOptions.withCrossFade())
-                    .into(cover)
                 executePendingBindings()
             }
         }

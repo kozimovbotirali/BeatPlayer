@@ -14,15 +14,12 @@
 package com.crrl.beatplayer.ui.fragments
 
 
-import android.content.ContentUris
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentSongDetailBinding
 import com.crrl.beatplayer.extensions.inflateWithBinding
@@ -33,13 +30,10 @@ import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.ui.activities.MainActivity
 import com.crrl.beatplayer.ui.fragments.base.BaseSongDetailFragment
 import com.crrl.beatplayer.ui.viewmodels.SongDetailViewModel
-import com.crrl.beatplayer.utils.GeneralUtils
-import com.crrl.beatplayer.utils.PlayerConstants
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
-import rm.com.audiowave.OnSamplingListener
 
-class SongDetailFragment : BaseSongDetailFragment(){
+class SongDetailFragment : BaseSongDetailFragment() {
 
     private lateinit var binding: FragmentSongDetailBinding
     private val viewModel: SongDetailViewModel by viewModel { parametersOf(safeActivity as MainActivity) }
@@ -60,7 +54,7 @@ class SongDetailFragment : BaseSongDetailFragment(){
     private fun init() {
         viewModel.getCurrentData().observe(this) {
             updateViewComponents(it)
-            viewModel.getTime().observe(this){
+            viewModel.getTime().observe(this) {
 
             }
         }
@@ -74,53 +68,42 @@ class SongDetailFragment : BaseSongDetailFragment(){
     private fun updateViewComponents(song: Song) {
         if (song.path == "") return
         binding.apply {
-            nowPlayingCover.clipToOutline = true
-            val uri = ContentUris.withAppendedId(PlayerConstants.ARTWORK_URI, song.albumId)
-            Glide.with(context!!)
-                .load(uri)
-                .transition(withCrossFade())
-                .placeholder(R.drawable.ic_empty_cover)
-                .error(R.drawable.ic_empty_cover)
-                .into(nowPlayingCover)
-            if (isDetached) return
-            Thread {
-                val data = GeneralUtils.audio2Raw(song.path)
-                try {
-                    safeActivity.runOnUiThread {
-                        if (data == null) {
-                            safeActivity.toast("File Not Found", Toast.LENGTH_SHORT)
-                            (safeActivity as MainActivity).viewModel.next(song)
-                            return@runOnUiThread
-                        }
-                        seekBar.setRawData(data, object : OnSamplingListener {
-                            override fun onComplete() {
-
-                            }
-                        })
-                    }
-                } catch (e: IllegalStateException) {
-                    Log.println(Log.ERROR, "IllegalStateException", e.message!!)
+            playContainer.setOnClickListener { safeActivity.toast("Play", Toast.LENGTH_SHORT) }
+            nextBtn.setOnClickListener {
+                (safeActivity as MainActivity).viewModel.next(song)
+                viewModel.updateTime(0)
+            }
+            previousBtn.setOnClickListener {
+                (safeActivity as MainActivity).viewModel.previous(song)
+                viewModel.updateTime(0)
+            }
+            seekBar.apply {
+                onStopTracking = {
+                    viewModel.updateTime((it * song.duration / 100).toInt())
+                    Log.println(
+                        Log.DEBUG,
+                        "wave",
+                        "Progress set: ${(it * song.duration / 100).toInt()}"
+                    )
                 }
-            }.start()
 
-            playBtn.setOnClickListener { safeActivity.toast("Play", Toast.LENGTH_SHORT) }
-            nextBtn.setOnClickListener { (safeActivity as MainActivity).viewModel.next(song) }
-            previousBtn.setOnClickListener { (safeActivity as MainActivity).viewModel.previous(song) }
-        }
-        binding.seekBar.apply {
-            onStopTracking = {
-                viewModel.updateTime((it * song.duration / 100).toInt())
-                Log.println(Log.DEBUG,"wave", "Progress set: ${(it * song.duration / 100).toInt()}")
-            }
+                onStartTracking = {
+                    viewModel.updateTime((it * song.duration / 100).toInt())
+                    Log.println(
+                        Log.DEBUG,
+                        "wave",
+                        "Progress set: ${(it * song.duration / 100).toInt()}"
+                    )
+                }
 
-            onStartTracking = {
-                viewModel.updateTime((it * song.duration / 100).toInt())
-                Log.println(Log.DEBUG,"wave", "Progress set: ${(it * song.duration / 100).toInt()}")
-            }
-
-            onProgressChanged = {progress, byUser ->
-                viewModel.updateTime((progress * song.duration / 100).toInt())
-                Log.println(Log.DEBUG,"wave", "Progress set: ${(progress * song.duration / 100)}, and it's $byUser that user did this")
+                onProgressChanged = { progress, byUser ->
+                    viewModel.updateTime((progress * song.duration / 100).toInt())
+                    Log.println(
+                        Log.DEBUG,
+                        "wave",
+                        "Progress set: ${(progress * song.duration / 100)}, and it's $byUser that user did this"
+                    )
+                }
             }
         }
     }

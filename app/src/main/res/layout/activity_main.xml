@@ -54,6 +54,8 @@
                     android:id="@+id/mini_player_cover"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
+                    app:albumId="@{viewModel.currentSong.albumId}"
+                    app:recycled="@{true}"
                     android:background="@drawable/mini_player_cover_frame"
                     android:src="@drawable/ic_empty_cover"
                     android:layout_marginStart="@dimen/margin_12"

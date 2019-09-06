@@ -44,6 +44,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/album_cover_frame"
                 android:scaleType="centerCrop"
+                app:albumId="@{artist.albumId}"
                 android:src="@drawable/ic_empty_cover" />
 
             <LinearLayout

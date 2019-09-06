@@ -14,8 +14,8 @@
 <resources>
     <color name="colorPrimary">#000000</color>
     <color name="colorPrimaryDark">#000000</color>
-    <color name="colorAccentDark">#1E88E5</color>
-    <color name="colorAccentDarkOpacity">#441E88E5</color>
+    <color name="colorAccentDark">#D0365C</color>
+    <color name="colorAccentDarkOpacity">#44D0365C</color>
     <color name="colorPrimaryDarkSecondary">#050505</color>
     <color name="colorPrimaryDarkSecondary2">#111111</color>
     <color name="colorPrimaryDarkOpacity">#22FFFFFF</color>
@@ -25,8 +25,8 @@
 
     <color name="colorPrimaryLight">#F5F5F5</color>
     <color name="colorPrimaryDarkLight">#F5F5F5</color>
-    <color name="colorAccentLight">#1E88E5</color>
-    <color name="colorAccentLightOpacity">#441E88E5</color>
+    <color name="colorAccentLight">#D0365C</color>
+    <color name="colorAccentLightOpacity">#44D0365C</color>
     <color name="colorPrimaryLightSecondary">#E5E5E5</color>
     <color name="colorPrimaryLightSecondary2">#FFFFFF</color>
     <color name="colorPrimaryLightOpacity">#22000000</color>

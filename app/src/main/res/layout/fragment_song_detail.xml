@@ -87,9 +87,11 @@
             android:elevation="5dp"
             android:src="@drawable/ic_empty_cover"
             android:transitionName="now_cover"
+            app:albumId="@{song.currentData.albumId}"
+            app:recycled="@{true}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+            app:layout_constraintTop_toBottomOf="@+id/toolbar"/>
 
         <RelativeLayout
             android:layout_width="0dp"
@@ -141,7 +143,8 @@
                 app:chunkWidth="3dp"
                 app:minChunkHeight="2dp"
                 app:touchable="true"
-                app:waveColor="?colorAccent" />
+                app:waveColor="?colorAccent"
+                app:data="@{song.currentData}"/>
         </RelativeLayout>
 
         <TextView

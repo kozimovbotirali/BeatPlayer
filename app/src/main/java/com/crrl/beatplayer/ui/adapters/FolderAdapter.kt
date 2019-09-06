@@ -59,13 +59,6 @@ class FolderAdapter(private val context: Context?) :
                 this.folder = folder
                 itemMenu.setOnClickListener(this@ViewHolder)
                 container.setOnClickListener(this@ViewHolder)
-                cover.clipToOutline = true
-                val uri = ContentUris.withAppendedId(PlayerConstants.ARTWORK_URI, folder.albumId)
-                Glide.with(context!!)
-                    .load(uri)
-                    .placeholder(R.drawable.ic_empty_cover)
-                    .error(R.drawable.ic_empty_cover)
-                    .into(binding.cover)
                 executePendingBindings()
             }
         }

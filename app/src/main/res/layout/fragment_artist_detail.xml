@@ -11,7 +11,8 @@
   ~ limitations under the License.
   -->
 
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -58,6 +59,7 @@
                         android:background="@drawable/album_cover_frame"
                         android:src="@drawable/ic_empty_cover"
                         android:layout_marginTop="48dp"
+                        app:albumId="@{artist.albumId}"
                         android:layout_centerHorizontal="true"
                         android:layout_alignParentTop="true"
                         android:elevation="10dp" />

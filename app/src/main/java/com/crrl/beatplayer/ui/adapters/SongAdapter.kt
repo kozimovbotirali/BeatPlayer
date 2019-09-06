@@ -114,15 +114,8 @@ class SongAdapter(private val context: Context?) : RecyclerView.Adapter<Recycler
         fun bind(song: Song) {
             binding.apply {
                 this.song = song
-                cover.clipToOutline = true
                 container.setOnClickListener(this@ViewHolderSong)
                 itemMenu.setOnClickListener(this@ViewHolderSong)
-                val uri = ContentUris.withAppendedId(PlayerConstants.ARTWORK_URI, song.albumId)
-                Glide.with(context!!)
-                    .load(uri)
-                    .placeholder(R.drawable.ic_empty_cover)
-                    .error(R.drawable.ic_empty_cover)
-                    .into(cover)
                 executePendingBindings()
             }
         }

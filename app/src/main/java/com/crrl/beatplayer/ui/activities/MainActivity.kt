@@ -67,20 +67,6 @@ class MainActivity : BaseActivity() {
         binding.let {
             it.viewModel = viewModel
         }
-        if (song.path == "") return
-        binding.apply {
-            miniPlayerCover.clipToOutline = true
-            val uri = ContentUris.withAppendedId(PlayerConstants.ARTWORK_URI, song.albumId)
-            placeholder = miniPlayerCover.drawable
-            Glide.with(applicationContext)
-                .load(uri)
-                .override(150)
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .placeholder(placeholder)
-                .error(R.drawable.ic_empty_cover)
-                .into(miniPlayerCover)
-        }
-        placeholder = null
     }
 
     fun isPermissionsGranted(): Boolean {

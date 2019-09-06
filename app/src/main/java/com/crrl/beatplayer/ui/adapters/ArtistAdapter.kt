@@ -113,16 +113,9 @@ class ArtistAdapter(private val context: Context?) :
         fun bind(artist: Artist) {
             binding.apply {
                 this.artist = artist
-                cover.clipToOutline = true
-                val uri = ContentUris.withAppendedId(PlayerConstants.ARTWORK_URI, artist.albumId)
-                Glide.with(context!!)
-                    .load(uri)
-                    .placeholder(R.drawable.ic_empty_cover)
-                    .error(R.drawable.ic_empty_cover)
-                    .into(cover)
                 showDetails.setOnClickListener(this@ViewHolderArtist)
                 container.layoutParams.height =
-                    GeneralUtils.screenWidth / spanCount + GeneralUtils.dip2px(context, 42)
+                    GeneralUtils.screenWidth / spanCount + GeneralUtils.dip2px(context!!, 42)
                 container.layoutParams.width =
                     GeneralUtils.screenWidth / spanCount
                 executePendingBindings()

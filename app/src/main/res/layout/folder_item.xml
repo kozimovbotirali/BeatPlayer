@@ -11,7 +11,8 @@
   ~ limitations under the License.
   -->
 
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -37,6 +38,7 @@
             android:layout_marginStart="15dp"
             android:background="@drawable/song_cover_frame"
             android:scaleType="centerCrop"
+            app:albumId="@{folder.albumId}"
             android:src="@drawable/ic_empty_cover" />
 
         <ImageView

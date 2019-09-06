@@ -79,6 +79,8 @@
             android:elevation="5dp"
             android:src="@drawable/ic_empty_cover"
             android:transitionName="now_cover"
+            app:albumId="@{song.currentData.albumId}"
+            app:recycled="@{true}"
             app:layout_constraintBottom_toBottomOf="@+id/view"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/view" />
@@ -131,7 +133,8 @@
                 app:chunkWidth="3dp"
                 app:minChunkHeight="2dp"
                 app:touchable="true"
-                app:waveColor="?colorAccent" />
+                app:waveColor="?colorAccent"
+                app:data="@{song.currentData}"/>
         </RelativeLayout>
 
         <TextView
@@ -182,7 +185,6 @@
                 android:background="@drawable/btn_ripple_with_background"
                 android:src="@drawable/ic_previous"
                 android:tint="?btnTintColor"
-                android:onClick="previous"
                 app:layout_constraintBottom_toBottomOf="@+id/play_container"
                 app:layout_constraintEnd_toStartOf="@+id/play_container"
                 app:layout_constraintStart_toStartOf="parent"
@@ -196,7 +198,6 @@
                 android:background="@drawable/btn_ripple_with_background"
                 android:src="@drawable/ic_skip"
                 android:tint="?btnTintColor"
-                android:onClick="next"
                 app:layout_constraintBottom_toBottomOf="@+id/play_container"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/play_container"
@@ -238,7 +239,6 @@
                 android:clickable="true"
                 android:elevation="2dp"
                 android:focusable="true"
-                android:onClick="play"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
