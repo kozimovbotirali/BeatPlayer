@@ -28,6 +28,7 @@ import com.crrl.beatplayer.extensions.getColorByTheme
 import com.crrl.beatplayer.ui.activities.SettingsActivity
 import com.crrl.beatplayer.ui.fragments.SearchFragment
 import com.crrl.beatplayer.utils.PlayerConstants
+import com.crrl.beatplayer.utils.SettingsUtility
 import com.skydoves.powermenu.MenuAnimation
 import com.skydoves.powermenu.OnMenuItemClickListener
 import com.skydoves.powermenu.PowerMenu
@@ -35,6 +36,8 @@ import com.skydoves.powermenu.PowerMenuItem
 
 
 open class BaseActivity : RequestPermissionActivity() {
+
+    private var currentTheme: String? = null
 
     private var powerMenu: PowerMenu? = null
 
@@ -56,17 +59,6 @@ open class BaseActivity : RequestPermissionActivity() {
         init()
     }
 
-    private fun init() {
-
-
-        powerMenu = initPopUpMenu().setOnMenuItemClickListener(onMenuItemClickListener).build()
-    }
-
-
-    fun back(view: View) {
-        onBackPressed()
-    }
-
     override fun onBackPressed() {
         if (powerMenu != null) {
             if (powerMenu!!.isShowing) {
@@ -77,6 +69,25 @@ open class BaseActivity : RequestPermissionActivity() {
         } else {
             super.onBackPressed()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (SettingsUtility.getInstance(this).currentTheme != currentTheme) {
+            recreate()
+        }
+    }
+
+    private fun init() {
+        currentTheme = SettingsUtility.getInstance(this).currentTheme
+        setAppTheme(currentTheme!!)
+
+        powerMenu = initPopUpMenu().setOnMenuItemClickListener(onMenuItemClickListener).build()
+    }
+
+
+    fun back(view: View) {
+        onBackPressed()
     }
 
     fun menu(view: View) {
@@ -107,7 +118,7 @@ open class BaseActivity : RequestPermissionActivity() {
             .setTextSize(16)
             .setTextTypeface(Typeface.createFromAsset(assets, "fonts/rubik.ttf"))
             .setSelectedTextColor(getColorByTheme(R.attr.colorAccent, "colorAccent"))
-            .setMenuColor(getColorByTheme(R.attr.colorPrimarySecondary, "colorPrimarySecondary"))
+            .setMenuColor(getColorByTheme(R.attr.colorPrimarySecondary2, "colorPrimarySecondary2"))
             .setSelectedMenuColor(
                 getColorByTheme(
                     R.attr.colorPrimarySecondary,
@@ -115,5 +126,14 @@ open class BaseActivity : RequestPermissionActivity() {
                 )
             )
     }
+
+    private fun setAppTheme(current_theme: String) {
+        if (current_theme == PlayerConstants.DARK_THEME) {
+            setTheme(R.style.AppTheme_Dark)
+        } else {
+            setTheme(R.style.AppTheme_Light)
+        }
+    }
+
 }
 

@@ -33,10 +33,6 @@ import org.koin.core.parameter.parametersOf
 
 class FolderFragment : BaseFragment<Folder>() {
 
-    companion object {
-        fun newInstance() = FolderFragment()
-    }
-
     private val viewModel: FolderViewModel by viewModel { parametersOf(context) }
     private lateinit var folderAdapter: FolderAdapter
     private lateinit var binding: FragmentFolderBinding

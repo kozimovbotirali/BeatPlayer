@@ -81,8 +81,6 @@ class SongFragment : BaseFragment<Song>() {
         viewModel.liveData().observe(this) { list ->
             songAdapter.updateDataSet(list)
         }
-
-        viewModel.update()
     }
 
     private fun buildSortModesDialog(): AlertDialog {
@@ -90,7 +88,7 @@ class SongFragment : BaseFragment<Song>() {
             textColor = activity?.getColorByTheme(R.attr.titleTextColor, "titleTextColor")!!
             selectedTextColor = activity?.getColorByTheme(R.attr.colorAccent, "colorAccent")!!
             backgroundColor =
-                activity?.getColorByTheme(R.attr.colorPrimarySecondary, "colorPrimarySecondary")!!
+                activity?.getColorByTheme(R.attr.colorPrimarySecondary2, "colorPrimarySecondary2")!!
         }
         val alert = AlertDialog(
             getString(R.string.sort_title),
@@ -164,8 +162,8 @@ class SongFragment : BaseFragment<Song>() {
     }
 
     override fun onItemClick(view: View, position: Int, item: Song) {
-        (safeActivity as MainActivity).update(item)
-        (safeActivity as MainActivity).update(songAdapter.songList)
+        (safeActivity as MainActivity).viewModel.update(item)
+        (safeActivity as MainActivity).viewModel.update(songAdapter.songList)
     }
 
     override fun onShuffleClick(view: View) {

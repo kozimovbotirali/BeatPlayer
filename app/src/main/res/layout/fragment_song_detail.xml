@@ -45,7 +45,7 @@
             android:background="@drawable/album_detail_shape"
             android:clickable="true"
             android:focusable="true"
-            android:elevation="10dp"
+            android:elevation="2dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/now_playing_cover" />
 
@@ -133,18 +133,17 @@
             <rm.com.audiowave.AudioWaveView
                 android:id="@+id/seek_bar"
                 android:layout_width="match_parent"
-                android:layout_height="32dp"
+                android:layout_height="38dp"
                 android:layout_alignParentTop="true"
                 android:layout_marginTop="34dp"
                 app:animateExpansion="true"
-                app:chunkHeight="24dp"
+                app:chunkHeight="30dp"
                 app:chunkRadius="1dp"
                 app:chunkSpacing="1dp"
                 app:chunkWidth="3dp"
                 app:minChunkHeight="2dp"
                 app:touchable="true"
-                app:waveColor="?colorAccent"
-                app:data="@{song.currentData}"/>
+                app:waveColor="?colorAccent"/>
         </RelativeLayout>
 
         <TextView

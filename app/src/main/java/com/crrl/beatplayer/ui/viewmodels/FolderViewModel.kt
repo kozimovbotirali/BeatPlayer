@@ -26,17 +26,18 @@ import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 
 @SuppressLint("CheckResult")
-class FolderViewModel(private val context: Context) : ViewModel() {
+class FolderViewModel(private val context: Context?) : ViewModel() {
 
     private val albums: MutableLiveData<List<Folder>> = MutableLiveData()
     private val songByFolder: MutableLiveData<List<Song>> = MutableLiveData()
 
+    init {
+        Thread{
+            albums.postValue(FoldersRepository(context).getFolders())
+        }.start()
+    }
+
     fun getFolders(): LiveData<List<Folder>> {
-        Observable.fromCallable { FoldersRepository(context).getFolders() }
-            .observeOn(Schedulers.newThread())
-            .subscribeOn(Schedulers.newThread())
-            .doOnError { Log.println(Log.ERROR, "Error", it.message!!) }
-            .subscribe { albums.postValue(it) }
         return albums
     }
 

@@ -18,6 +18,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProviders
+import androidx.viewpager.widget.ViewPager
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentLibraryBinding
 import com.crrl.beatplayer.extensions.inflateWithBinding
@@ -70,6 +71,13 @@ class LibraryFragment : BaseSongDetailFragment() {
                 adapter = listSortModeAdapter
                 offscreenPageLimit = listSortModeAdapter.count
                 currentItem = SettingsUtility.getInstance(safeActivity).startPageIndexSelected
+                addOnPageChangeListener(object : ViewPager.OnPageChangeListener{
+                    override fun onPageScrollStateChanged(state: Int) = Unit
+                    override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) = Unit
+                    override fun onPageSelected(position: Int) {
+                        SettingsUtility.getInstance(safeActivity).startPageIndexSelected = position
+                    }
+                })
             }
             tabsContainer.apply {
                 setupWithViewPager(pagerSortMode)

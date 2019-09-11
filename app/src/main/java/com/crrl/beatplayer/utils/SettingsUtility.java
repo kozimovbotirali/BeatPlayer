@@ -142,14 +142,6 @@ public final class SettingsUtility {
         setPreference(PlayerConstants.SONG_KEY, value);
     }
 
-    public boolean isLightThemeActive() {
-        return sPreferences.getBoolean(LIGHT_THEME_KEY, true);
-    }
-
-    public void setLightThemeActive(boolean state) {
-        setPreference(LIGHT_THEME_KEY, state);
-    }
-
     private void setPreference(String key, String value) {
         SharedPreferences.Editor editor = sPreferences.edit();
         editor.putString(key, value);

@@ -13,7 +13,6 @@
 
 package com.crrl.beatplayer.ui.viewmodels
 
-import android.annotation.SuppressLint
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -24,17 +23,18 @@ import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.Callable
 
-class AlbumViewModel(private val context: Context) : ViewModel() {
+class AlbumViewModel(private val context: Context?) : ViewModel() {
 
     private val albums: MutableLiveData<List<Album>>? = MutableLiveData()
 
-    private fun getAlbumData(context: Context) =
-        Callable { AlbumsRepository.getInstance(context)!!.getAlbums() }
+    init {
+        Thread{
+            albums!!.postValue(AlbumsRepository.getInstance(context)!!.getAlbums())
+        }.start()
+    }
 
-    @SuppressLint("CheckResult")
+
     fun getAlbums(): LiveData<List<Album>>? {
-        Observable.fromCallable(getAlbumData(context)).observeOn(Schedulers.newThread())
-            .subscribeOn(Schedulers.newThread()).subscribe { albums!!.postValue(it) }
         return albums
     }
 }

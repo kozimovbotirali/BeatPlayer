@@ -98,7 +98,7 @@ class AlbumFragment : BaseFragment<Album>() {
             textColor = activity?.getColorByTheme(R.attr.titleTextColor, "titleTextColor")!!
             selectedTextColor = activity?.getColorByTheme(R.attr.colorAccent, "colorAccent")!!
             backgroundColor =
-                activity?.getColorByTheme(R.attr.colorPrimarySecondary, "colorPrimarySecondary")!!
+                activity?.getColorByTheme(R.attr.colorPrimarySecondary2, "colorPrimarySecondary2")!!
         }
         return AlertDialog(
             getString(R.string.sort_title),

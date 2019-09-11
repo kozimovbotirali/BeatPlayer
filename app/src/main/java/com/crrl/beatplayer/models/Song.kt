@@ -18,7 +18,7 @@ import com.crrl.beatplayer.extensions.fix
 import com.google.gson.Gson
 
 data class Song(
-    val id: Long = 0,
+    val id: Long = -1,
     val albumId: Long = 0,
     val artistId: Long = 0,
     val title: String = "Title",

@@ -13,22 +13,15 @@
 
 package com.crrl.beatplayer.ui.activities
 
-import android.content.ContentUris
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.ActivityMainBinding
 import com.crrl.beatplayer.extensions.addFragment
 import com.crrl.beatplayer.extensions.observe
 import com.crrl.beatplayer.extensions.replaceFragment
-import com.crrl.beatplayer.extensions.toast
 import com.crrl.beatplayer.models.Song
-import com.crrl.beatplayer.playback.MusicService
 import com.crrl.beatplayer.ui.activities.base.BaseActivity
 import com.crrl.beatplayer.ui.fragments.*
 import com.crrl.beatplayer.ui.viewmodels.MainViewModel
@@ -41,32 +34,39 @@ import org.koin.core.parameter.parametersOf
 class MainActivity : BaseActivity() {
 
     val viewModel: MainViewModel by viewModel { parametersOf(this) }
-    private lateinit var binding: ActivityMainBinding
-    private var placeholder: Drawable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        init(savedInstanceState)
+    }
+
+    private fun init(savedInstanceState: Bundle?){
         viewModel.getCurrentSong().observe(this) {
             updateView(it)
         }
         viewModel.getCurrentSongList().observe(this) {
             viewModel.musicService.updateData(it)
         }
+
+        viewModel.binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+
         if (savedInstanceState == null) {
             replaceFragment(
                 R.id.nav_host_fragment,
                 LibraryFragment(),
                 PlayerConstants.LIBRARY
             )
-            update(Song())
+            viewModel.update(Song())
+        }
+
+        viewModel.binding.let {
+            it.viewModel = viewModel
+            it.lifecycleOwner = this
         }
     }
 
     private fun updateView(song: Song) {
-        binding.let {
-            it.viewModel = viewModel
-        }
+        viewModel.update(song)
     }
 
     fun isPermissionsGranted(): Boolean {
@@ -121,13 +121,5 @@ class MainActivity : BaseActivity() {
                 }
             }.start()
         }
-    }
-
-    fun update(song: Song) {
-        viewModel.update(song)
-    }
-
-    fun update(newList: List<Song>) {
-        viewModel.update(newList)
     }
 }

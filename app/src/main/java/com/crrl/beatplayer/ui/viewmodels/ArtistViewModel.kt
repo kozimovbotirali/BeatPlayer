@@ -23,16 +23,17 @@ import com.crrl.beatplayer.repository.ArtistsRepository
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 
-class ArtistViewModel : ViewModel() {
+class ArtistViewModel(context: Context) : ViewModel() {
 
     private val artists: MutableLiveData<List<Artist>>? = MutableLiveData()
 
+    init {
+        Thread{
+            artists!!.postValue(ArtistsRepository.getInstance(context)!!.getAllArtist())
+        }.start()
+    }
 
-    @SuppressLint("CheckResult")
-    fun getArtists(context: Context): LiveData<List<Artist>>? {
-        Observable.fromCallable { ArtistsRepository.getInstance(context)!!.getAllArtist() }
-            .observeOn(Schedulers.newThread()).subscribeOn(Schedulers.newThread())
-            .subscribe { artists!!.postValue(it) }
+    fun getArtists(): LiveData<List<Artist>>? {
         return artists
     }
 }

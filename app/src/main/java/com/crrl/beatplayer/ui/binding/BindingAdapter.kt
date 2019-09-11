@@ -13,72 +13,66 @@
 
 package com.crrl.beatplayer.ui.binding
 
-import android.app.Activity
 import android.content.ContentUris
-import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
-import android.util.Log
+import android.graphics.drawable.GradientDrawable
 import android.widget.ImageView
-import android.widget.Toast
-import androidx.constraintlayout.widget.Placeholder
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.crrl.beatplayer.R
-import com.crrl.beatplayer.extensions.toast
 import com.crrl.beatplayer.models.Song
-import com.crrl.beatplayer.ui.activities.MainActivity
-import com.crrl.beatplayer.utils.GeneralUtils
 import com.crrl.beatplayer.utils.PlayerConstants
+import kotlinx.android.synthetic.main.activity_settings.view.*
 import rm.com.audiowave.AudioWaveView
-import rm.com.audiowave.OnSamplingListener
 
-var placeholder: Drawable ? = null
+var placeholder: Drawable? = GradientDrawable()
 
+/**
+ * @param view is the target view.
+ * @param albumId is the id that will be used to get the image form the DB.
+ * @param recyclerPlaceholder, if it is true the placeholder will be the last image setted.
+ * */
 @BindingAdapter("app:albumId", "app:recycled", requireAll = false)
-fun setAlbumId(view: ImageView, albumId: Long, recyclerPlaceholder: Boolean = false){
+fun setAlbumId(view: ImageView, albumId: Long, recyclerPlaceholder: Boolean = false) {
     view.clipToOutline = true
     val uri = ContentUris.withAppendedId(PlayerConstants.ARTWORK_URI, albumId)
-    if(recyclerPlaceholder){
-        placeholder = view.drawable
+    if (recyclerPlaceholder) {
         Glide.with(view)
             .load(uri)
-            .transition(DrawableTransitionOptions.withCrossFade())
             .placeholder(placeholder)
+            .addListener(object : RequestListener<Drawable> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    placeholder = view.resources.getDrawable(R.drawable.ic_empty_cover, view.context.theme)
+                    return false
+                }
+
+                override fun onResourceReady(
+                    resource: Drawable?, model: Any?,
+                    target: Target<Drawable>?,
+                    dataSource: DataSource?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    placeholder = resource
+                    return false
+                }
+
+            })
             .error(R.drawable.ic_empty_cover)
             .into(view)
-    }else{
+    } else {
         Glide.with(view)
             .load(uri)
-            .transition(DrawableTransitionOptions.withCrossFade())
             .placeholder(R.drawable.ic_empty_cover)
             .error(R.drawable.ic_empty_cover)
             .into(view)
     }
-}
-
-@BindingAdapter("app:data")
-fun setData(view: AudioWaveView, song: Song){
-    Thread{
-        (view.context as MainActivity).runOnUiThread{
-            view.progress = 0F
-            view.setRawData(ByteArray(Int.SIZE_BYTES))
-        }
-        val data = GeneralUtils.audio2Raw(song.path)
-        try {
-            (view.context as MainActivity).runOnUiThread {
-                if (data == null) {
-                    (view.context as Activity).toast("File Not Found", Toast.LENGTH_SHORT)
-                    (view.context as MainActivity).viewModel.next(song)
-                    return@runOnUiThread
-                }else{
-                    view.setRawData(data, object : OnSamplingListener {
-                        override fun onComplete() = Unit
-                    })
-                }
-            }
-        } catch (e: IllegalStateException) {
-            Log.println(Log.ERROR, "IllegalStateException", e.message!!)
-        }
-    }.start()
 }

@@ -83,7 +83,6 @@ class PlaylistDetailFragment : BaseFragment<Song>() {
     }
 
     override fun removeFromList(playListId: Long, item: Song?) {
-        Log.println(Log.DEBUG, "Dev", "$playListId, $item")
         viewModel.removeFromPlaylist(playListId, item!!.id)
     }
 

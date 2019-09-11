@@ -62,6 +62,12 @@
     <string name="input_hint">Enter a name</string>
     <string name="no_permission">Permissions were not Granted</string>
     <string name="no_folders">No Folders</string>
+    <string name="remove">Remove</string>
+    <string name="theme_title">Themes</string>
+    <string name="light_theme">Light Theme</string>
+    <string name="dark_theme">Dark Theme</string>
+    <string name="appearance">Appearance</string>
+    <string name="theme_description">Choose how you want the application will look.</string>
 
     <plurals name="number_of_songs">
         <item quantity="zero">%d Tracks</item>
@@ -80,6 +86,4 @@
         <item quantity="one">%d Artist</item>
         <item quantity="other">%d Artists</item>
     </plurals>
-
-    <string name="remove">Remove</string>
 </resources>

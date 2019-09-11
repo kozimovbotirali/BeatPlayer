@@ -35,7 +35,6 @@ fun PlaylistAdapter?.dataChanged(newList: List<Playlist>): Boolean {
                 if (pos != -1) {
                     playlists.add(pos, newList[pos])
                     notifyItemInserted(pos)
-                    Log.println(Log.DEBUG, "Dev", "$pos")
                     return true
                 }
             }
@@ -50,7 +49,6 @@ fun PlaylistAdapter?.dataChanged(newList: List<Playlist>): Boolean {
                 if (pos != -1) {
                     notifyItemRemoved(pos)
                     playlists.removeAt(pos)
-                    Log.println(Log.DEBUG, "Dev", "$pos")
                     return true
                 }
             }
@@ -89,7 +87,6 @@ fun SongAdapter?.dataChanged(newList: List<Song>): Boolean {
                 if (pos != -1) {
                     songList.add(pos, newList[pos])
                     notifyItemInserted(pos + 1)
-                    Log.println(Log.DEBUG, "Dev", "$pos")
                     return true
                 }
             }
@@ -104,7 +101,6 @@ fun SongAdapter?.dataChanged(newList: List<Song>): Boolean {
                 if (pos != -1) {
                     notifyItemRemoved(pos + 1)
                     songList.removeAt(pos)
-                    Log.println(Log.DEBUG, "Dev", "$pos")
                     return true
                 }
             }

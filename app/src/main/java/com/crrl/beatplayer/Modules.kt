@@ -30,6 +30,10 @@ val mainModule = module {
     }
 
     viewModel { (context: Context) ->
+        ArtistViewModel(context)
+    }
+
+    viewModel { (context: Context) ->
         FolderViewModel(context)
     }
 

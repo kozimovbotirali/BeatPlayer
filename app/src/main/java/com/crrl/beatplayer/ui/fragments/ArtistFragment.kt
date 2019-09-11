@@ -39,14 +39,12 @@ import com.crrl.beatplayer.utils.PlayerConstants
 import com.crrl.beatplayer.utils.SettingsUtility
 import com.crrl.beatplayer.utils.SortModes
 import kotlinx.android.synthetic.main.fragment_artist.view.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class ArtistFragment : BaseFragment<Artist>() {
 
-    companion object {
-        fun newInstance() = ArtistFragment()
-    }
-
-    private lateinit var viewModel: ArtistViewModel
+    private val viewModel: ArtistViewModel by viewModel { parametersOf(safeActivity) }
     private lateinit var artistAdapter: ArtistAdapter
 
     override fun onCreateView(
@@ -63,8 +61,6 @@ class ArtistFragment : BaseFragment<Artist>() {
 
     private fun init(view: View) {
         val sc = if (GeneralUtils.getRotation(safeActivity) == GeneralUtils.VERTICAL) 2 else 5
-
-        viewModel = ViewModelProviders.of(this).get(ArtistViewModel::class.java)
 
         artistAdapter = ArtistAdapter(context).apply {
             showHeader = true
@@ -96,7 +92,7 @@ class ArtistFragment : BaseFragment<Artist>() {
             textColor = activity?.getColorByTheme(R.attr.titleTextColor, "titleTextColor")!!
             selectedTextColor = activity?.getColorByTheme(R.attr.colorAccent, "colorAccent")!!
             backgroundColor =
-                activity?.getColorByTheme(R.attr.colorPrimarySecondary, "colorPrimarySecondary")!!
+                activity?.getColorByTheme(R.attr.colorPrimarySecondary2, "colorPrimarySecondary2")!!
         }
         return AlertDialog(
             getString(R.string.sort_title),
@@ -138,7 +134,7 @@ class ArtistFragment : BaseFragment<Artist>() {
     }
 
     private fun reloadAdapter() {
-        viewModel.getArtists(context!!)!!.observe(this) { list ->
+        viewModel.getArtists()!!.observe(this) { list ->
             artistAdapter.updateDataSet(list)
         }
     }

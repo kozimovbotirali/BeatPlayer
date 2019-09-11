@@ -52,6 +52,11 @@
     <string name="no_permission">No se otorgaron permisos</string>
     <string name="no_folders">Sin Carpetas</string>
     <string name="remove">Quitar</string>
+    <string name="theme_title">Temas</string>
+    <string name="light_theme">Tema Claro</string>
+    <string name="dark_theme">Tema Obscuro</string>
+    <string name="appearance">Apariencia</string>
+    <string name="theme_description">Elija cómo desea que se vea la aplicación.</string>
 
     <plurals name="number_of_songs" tools:ignore="UnusedQuantity">
         <item quantity="zero">%d Pistas</item>

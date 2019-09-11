@@ -43,6 +43,10 @@ class SongViewModel(private val context: Context?) : ViewModel() {
 
     val searchLiveData = _searchLiveData
 
+    init {
+        update()
+    }
+
     fun search(searchString: String) {
         if (searchString.length >= 3) {
             Observable.fromCallable {
