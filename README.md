@@ -1,3 +1,4 @@
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/3e8e29e3b85a49fbb21e98903627403e)](https://www.codacy.com/manual/Charlieras262/BeatPlayer?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Charlieras262/BeatPlayer&amp;utm_campaign=Badge_Grade)
 [![Build Status](https://travis-ci.org/Charlieras262/BeatPlayer.svg?branch=master)](https://travis-ci.org/Charlieras262/BeatPlayer)
 
 # BeatPlayer
