@@ -34,13 +34,6 @@ class AlbumViewModel(private val context: Context?) : ViewModel() {
         }.start()
     }
 
-    fun update() {
-        Thread {
-            albums!!.postValue(AlbumsRepository.getInstance(context)!!.getAlbums())
-        }.start()
-    }
-
-
     fun getAlbums(): LiveData<List<Album>>? {
         return albums
     }
