@@ -28,17 +28,17 @@ import com.crrl.beatplayer.models.Playlist
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.utils.SettingsUtility
 
-interface PlayListRepository {
+interface PlaylistRepositoryInterface {
     @Throws(IllegalStateException::class)
     fun createPlaylist(name: String?): Long
 
-    fun getPlaylists(): List<Playlist>
+    fun getPlayLists(): List<Playlist>
     fun getSongsInPlaylist(playlistId: Long): List<Song>
     fun removeFromPlaylist(playlistId: Long, id: Long)
     fun deletePlaylist(playlistId: Long): Int
 }
 
-class PlaylistRepository() : PlayListRepository {
+class PlaylistRepository() : PlaylistRepositoryInterface {
 
 
     private lateinit var contentResolver: ContentResolver
@@ -88,7 +88,7 @@ class PlaylistRepository() : PlayListRepository {
             ?: throw IllegalStateException("Unable to query $EXTERNAL_CONTENT_URI, because system returned null.")
     }
 
-    override fun getPlaylists(): List<Playlist> {
+    override fun getPlayLists(): List<Playlist> {
         return makePlaylistCursor().toList(true) {
             val id: Long = getLong(0)
             val songCount = getSongCountForPlaylist(id)

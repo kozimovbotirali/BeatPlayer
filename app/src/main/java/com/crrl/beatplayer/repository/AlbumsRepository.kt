@@ -24,13 +24,13 @@ import com.crrl.beatplayer.utils.PlayerConstants
 import com.crrl.beatplayer.utils.SettingsUtility
 import com.crrl.beatplayer.utils.SortModes
 
-interface AlbumRepository {
+interface AlbumsRepositoryInterface {
     fun getAlbum(id: Long): Album
     fun getSongsForAlbum(albumId: Long): List<Song>
     fun getAlbums(): List<Album>
 }
 
-class AlbumsRepository() : AlbumRepository {
+class AlbumsRepository() : AlbumsRepositoryInterface {
 
     private lateinit var contentResolver: ContentResolver
     private lateinit var settingsUtility: SettingsUtility

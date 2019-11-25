@@ -25,13 +25,13 @@ import com.crrl.beatplayer.utils.SettingsUtility
 import com.crrl.beatplayer.utils.SortModes
 import java.util.*
 
-interface ArtistRepository {
+interface ArtistsRepositoryInterface {
     fun getAllArtist(): List<Artist>
     fun getSongsForArtist(artistId: Long): List<Song>
     fun getAlbumsForArtist(artistId: Long): List<Album>
 }
 
-class ArtistsRepository() : ArtistRepository {
+class ArtistsRepository() : ArtistsRepositoryInterface {
 
     private lateinit var contentResolver: ContentResolver
     private lateinit var settingsUtility: SettingsUtility

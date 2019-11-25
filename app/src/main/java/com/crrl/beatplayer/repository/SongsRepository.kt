@@ -23,13 +23,13 @@ import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.utils.SettingsUtility
 import com.crrl.beatplayer.utils.SortModes
 
-interface SongRepository {
+interface SongsRepositoryInterface {
     fun loadSongs(): List<Song>
     fun getSongForId(id: Long): Song
     fun searchSongs(searchString: String, limit: Int): List<Song>
 }
 
-class SongsRepository() : SongRepository {
+class SongsRepository() : SongsRepositoryInterface {
 
     private lateinit var contentResolver: ContentResolver
     private lateinit var settingsUtility: SettingsUtility

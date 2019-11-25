@@ -95,7 +95,7 @@ class SongViewModel(private val context: Context?) : ViewModel() {
     }
 
     fun playLists(): LiveData<List<Playlist>> {
-        Observable.fromCallable { PlaylistRepository.getInstance(context)!!.getPlaylists() }
+        Observable.fromCallable { PlaylistRepository.getInstance(context)!!.getPlayLists() }
             .observeOn(Schedulers.newThread()).subscribeOn(Schedulers.newThread())
             .doOnError { Log.println(Log.ERROR, "Error", it.message!!) }
             .subscribe { _playlistLiveData.postValue(it) }

@@ -24,12 +24,12 @@ import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.utils.SettingsUtility
 import java.util.*
 
-interface FolderRepository {
+interface FoldersRepositoryInterface {
     fun getFolders(): List<Folder>
     fun getSongsForIds(idList: LongArray): List<Song>
 }
 
-class FoldersRepository() : FolderRepository {
+class FoldersRepository() : FoldersRepositoryInterface {
 
     private lateinit var contentResolver: ContentResolver
     private lateinit var settingsUtility: SettingsUtility

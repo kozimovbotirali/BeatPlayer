@@ -133,11 +133,11 @@
             <rm.com.audiowave.AudioWaveView
                 android:id="@+id/seek_bar"
                 android:layout_width="match_parent"
-                android:layout_height="38dp"
+                android:layout_height="48dp"
                 android:layout_alignParentTop="true"
                 android:layout_marginTop="34dp"
                 app:animateExpansion="true"
-                app:chunkHeight="30dp"
+                app:chunkHeight="40dp"
                 app:chunkRadius="1dp"
                 app:chunkSpacing="1dp"
                 app:chunkWidth="3dp"
