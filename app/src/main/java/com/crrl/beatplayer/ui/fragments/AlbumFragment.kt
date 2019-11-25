@@ -89,7 +89,9 @@ class AlbumFragment : BaseFragment<Album>() {
 
         dialog = buildSortModesDialog()
 
-        reloadAdapter()
+        viewModel.getAlbums()!!.observe(this) { list ->
+            albumAdapter.updateDataSet(list)
+        }
     }
 
     private fun buildSortModesDialog(): AlertDialog {
@@ -148,9 +150,7 @@ class AlbumFragment : BaseFragment<Album>() {
     }
 
     private fun reloadAdapter() {
-        viewModel.getAlbums()!!.observe(this) { list ->
-            albumAdapter.updateDataSet(list)
-        }
+        viewModel.update()
     }
 
     override fun onItemClick(view: View, position: Int, item: Album) {

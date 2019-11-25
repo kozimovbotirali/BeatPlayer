@@ -19,9 +19,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.crrl.beatplayer.models.Album
 import com.crrl.beatplayer.repository.AlbumsRepository
-import io.reactivex.Observable
-import io.reactivex.schedulers.Schedulers
-import java.util.concurrent.Callable
 
 class AlbumViewModel(private val context: Context?) : ViewModel() {
 
@@ -29,6 +26,12 @@ class AlbumViewModel(private val context: Context?) : ViewModel() {
 
     init {
         Thread{
+            albums!!.postValue(AlbumsRepository.getInstance(context)!!.getAlbums())
+        }.start()
+    }
+
+    fun update() {
+        Thread {
             albums!!.postValue(AlbumsRepository.getInstance(context)!!.getAlbums())
         }.start()
     }
