@@ -13,21 +13,22 @@
 
 package com.crrl.beatplayer.ui.viewmodels
 
-import android.annotation.SuppressLint
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.crrl.beatplayer.models.Artist
 import com.crrl.beatplayer.repository.ArtistsRepository
-import io.reactivex.Observable
-import io.reactivex.schedulers.Schedulers
 
-class ArtistViewModel(context: Context) : ViewModel() {
+class ArtistViewModel(private val context: Context) : ViewModel() {
 
     private val artists: MutableLiveData<List<Artist>>? = MutableLiveData()
 
     init {
+        update()
+    }
+
+    fun update() {
         Thread{
             artists!!.postValue(ArtistsRepository.getInstance(context)!!.getAllArtist())
         }.start()

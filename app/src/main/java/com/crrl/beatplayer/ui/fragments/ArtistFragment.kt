@@ -18,7 +18,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.alertdialog.AlertDialog
@@ -83,7 +82,9 @@ class ArtistFragment : BaseFragment<Artist>() {
 
         dialog = buildSortModesDialog()
 
-        reloadAdapter()
+        viewModel.getArtists()!!.observe(this) { list ->
+            artistAdapter.updateDataSet(list)
+        }
     }
 
     private fun buildSortModesDialog(): AlertDialog {
@@ -134,9 +135,7 @@ class ArtistFragment : BaseFragment<Artist>() {
     }
 
     private fun reloadAdapter() {
-        viewModel.getArtists()!!.observe(this) { list ->
-            artistAdapter.updateDataSet(list)
-        }
+        viewModel.update()
     }
 
     override fun onItemClick(view: View, position: Int, item: Artist) {
