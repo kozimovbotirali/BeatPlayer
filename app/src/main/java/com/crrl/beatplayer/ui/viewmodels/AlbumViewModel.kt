@@ -19,16 +19,17 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.crrl.beatplayer.models.Album
 import com.crrl.beatplayer.repository.AlbumsRepository
-import io.reactivex.Observable
-import io.reactivex.schedulers.Schedulers
-import java.util.concurrent.Callable
 
 class AlbumViewModel(private val context: Context?) : ViewModel() {
 
     private val albums: MutableLiveData<List<Album>>? = MutableLiveData()
 
     init {
-        Thread{
+        update()
+    }
+
+    fun update() {
+        Thread {
             albums!!.postValue(AlbumsRepository.getInstance(context)!!.getAlbums())
         }.start()
     }
