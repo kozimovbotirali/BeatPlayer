@@ -103,7 +103,7 @@ public final class SettingsUtility {
     }
 
     public String getCurrentTheme() {
-        return sPreferences.getString(CURRENT_THEME_KEY, PlayerConstants.LIGHT_THEME);
+        return sPreferences.getString(CURRENT_THEME_KEY, PlayerConstants.AUTO_THEME);
     }
 
     public void setCurrentTheme(String value) {

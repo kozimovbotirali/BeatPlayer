@@ -19,9 +19,6 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
-import android.view.View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-import android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-import android.view.WindowManager
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.extensions.addFragment
 import com.crrl.beatplayer.extensions.getColorByTheme
@@ -128,10 +125,10 @@ open class BaseActivity : RequestPermissionActivity() {
     }
 
     private fun setAppTheme(current_theme: String) {
-        if (current_theme == PlayerConstants.DARK_THEME) {
-            setTheme(R.style.AppTheme_Dark)
-        } else {
-            setTheme(R.style.AppTheme_Light)
+        when (current_theme) {
+            PlayerConstants.DARK_THEME -> setTheme(R.style.AppTheme_Dark)
+            PlayerConstants.LIGHT_THEME -> setTheme(R.style.AppTheme_Light)
+            else -> setTheme(R.style.AppTheme_Auto)
         }
     }
 

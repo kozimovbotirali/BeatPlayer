@@ -13,14 +13,12 @@
 
 package com.crrl.beatplayer.ui.adapters
 
-import android.content.ContentUris
 import android.content.Context
 import android.os.SystemClock
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.AlbumItemBinding
 import com.crrl.beatplayer.databinding.AlbumItemHeaderBinding
@@ -28,7 +26,6 @@ import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.interfaces.ItemClickListener
 import com.crrl.beatplayer.models.Album
 import com.crrl.beatplayer.utils.GeneralUtils
-import com.crrl.beatplayer.utils.PlayerConstants
 
 private const val HEADER_TYPE = 0
 private const val ITEM_TYPE = 1
@@ -117,10 +114,10 @@ class AlbumAdapter(private val context: Context?) :
                 width = GeneralUtils.screenWidth / spanCount - GeneralUtils.dip2px(context!!, 22)
 
                 showDetails.setOnClickListener(this@ViewHolderAlbum)
-                container.layoutParams.height =
-                    GeneralUtils.screenWidth / spanCount + GeneralUtils.dip2px(context, 42)
-                container.layoutParams.width =
-                    GeneralUtils.screenWidth / spanCount - GeneralUtils.dip2px(context, 6)
+                container.layoutParams.apply {
+                    height = GeneralUtils.screenWidth / spanCount + GeneralUtils.dip2px(context, 42)
+                    width = GeneralUtils.screenWidth / spanCount - GeneralUtils.dip2px(context, 6)
+                }
                 executePendingBindings()
             }
         }

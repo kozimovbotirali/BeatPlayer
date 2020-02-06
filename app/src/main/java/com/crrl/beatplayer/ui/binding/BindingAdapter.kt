@@ -14,22 +14,15 @@
 package com.crrl.beatplayer.ui.binding
 
 import android.content.ContentUris
+import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
-import android.graphics.drawable.GradientDrawable
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.crrl.beatplayer.R
-import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.utils.PlayerConstants
-import kotlinx.android.synthetic.main.activity_settings.view.*
-import rm.com.audiowave.AudioWaveView
-
-var placeholder: Drawable? = GradientDrawable()
 
 /**
  * @param view is the target view.
@@ -42,37 +35,33 @@ fun setAlbumId(view: ImageView, albumId: Long, recyclerPlaceholder: Boolean = fa
     val uri = ContentUris.withAppendedId(PlayerConstants.ARTWORK_URI, albumId)
     if (recyclerPlaceholder) {
         Glide.with(view)
+            .asBitmap()
             .load(uri)
-            .placeholder(placeholder)
-            .addListener(object : RequestListener<Drawable> {
-                override fun onLoadFailed(
-                    e: GlideException?,
-                    model: Any?,
-                    target: Target<Drawable>?,
-                    isFirstResource: Boolean
-                ): Boolean {
-                    placeholder = view.resources.getDrawable(R.drawable.ic_empty_cover, view.context.theme)
-                    return false
-                }
-
-                override fun onResourceReady(
-                    resource: Drawable?, model: Any?,
-                    target: Target<Drawable>?,
-                    dataSource: DataSource?,
-                    isFirstResource: Boolean
-                ): Boolean {
-                    placeholder = resource
-                    return false
-                }
-
-            })
             .error(R.drawable.ic_empty_cover)
-            .into(view)
+            .into(object : CustomTarget<Bitmap>() {
+                override fun onLoadCleared(placeholder: Drawable?) = Unit
+                override fun onResourceReady(
+                    resource: Bitmap,
+                    transition: Transition<in Bitmap>?
+                ) {
+                    view.setImageBitmap(resource)
+                }
+            })
     } else {
         Glide.with(view)
+            .asBitmap()
             .load(uri)
             .placeholder(R.drawable.ic_empty_cover)
             .error(R.drawable.ic_empty_cover)
             .into(view)
     }
+}
+
+@BindingAdapter("app:width", "app:height", requireAll = true)
+fun setImageSize(view: ImageView, width: Int, height: Int) {
+    view.layoutParams.apply {
+        this.width = width
+        this.height = height
+    }
+    view.scaleType = ImageView.ScaleType.CENTER_CROP
 }

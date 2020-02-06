@@ -68,6 +68,7 @@
     <string name="dark_theme">Dark Theme</string>
     <string name="appearance">Appearance</string>
     <string name="theme_description">Choose how you want the application will look.</string>
+    <string name="default_theme">Automatic</string>
 
     <plurals name="number_of_songs">
         <item quantity="zero">%d Tracks</item>

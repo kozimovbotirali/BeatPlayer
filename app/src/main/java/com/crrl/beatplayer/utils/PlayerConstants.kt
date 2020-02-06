@@ -31,6 +31,7 @@ object PlayerConstants {
     val SONG_URI: Uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
     const val LIGHT_THEME = "light_theme"
     const val DARK_THEME = "dark_theme"
+    const val AUTO_THEME = "auto_theme"
     const val SONG_KEY = "song_key"
     const val NO_DATA = "no_data"
 }
@@ -45,4 +46,11 @@ enum class Repeat {
 enum class Shuffle {
     ON,
     OFF
+}
+
+enum class Size {
+    XL,
+    MD,
+    SM,
+    XS
 }

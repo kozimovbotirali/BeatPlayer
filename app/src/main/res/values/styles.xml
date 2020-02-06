@@ -55,6 +55,24 @@
         <item name="android:windowLightStatusBar">true</item>
     </style>
 
+    <style name="AppTheme.Auto" parent="AppThemeParent.Light">
+        <item name="colorPrimary">@color/colorPrimaryDarkAuto</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryAuto</item>
+        <item name="colorPrimarySecondary">@color/colorPrimaryAutoSecondary</item>
+        <item name="colorPrimarySecondary2">@color/colorPrimaryAutoSecondary2</item>
+        <item name="colorPrimaryOpacity">@color/colorPrimaryAutoOpacity</item>
+        <item name="colorError">@color/error</item>
+        <item name="colorAccent">@color/colorAccentAuto</item>
+        <item name="colorAccentOpacity">@color/colorAccentAutoOpacity</item>
+        <item name="android:fontFamily">@font/product_sans_regular</item>
+        <item name="android:windowBackground">@color/colorPrimaryAuto</item>
+        <item name="titleTextColor">@color/colorTitleTextAuto</item>
+        <item name="subTitleTextColor">@color/colorSubTitleTextAuto</item>
+        <item name="bodyTextColor">@color/colorBodyTextAuto</item>
+        <item name="btnTintColor">@color/colorTitleTextAuto</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
     <style name="TabLayoutTextAppearance" parent="TextAppearance.Design.Tab">
         <item name="textAllCaps">false</item>
         <item name="android:textAllCaps">false</item>

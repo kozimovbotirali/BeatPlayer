@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimaryAuto">#000000</color>
+    <color name="colorPrimaryDarkAuto">#000000</color>
+    <color name="colorAccentAuto">#db5151</color>
+    <color name="colorAccentAutoOpacity">#44db5151</color>
+    <color name="colorPrimaryAutoSecondary">#050505</color>
+    <color name="colorPrimaryAutoSecondary2">#111111</color>
+    <color name="colorPrimaryAutoOpacity">#22FFFFFF</color>
+    <color name="colorTitleTextAuto">#FFFFFF</color>
+    <color name="colorSubTitleTextAuto">#CCCCCC</color>
+    <color name="colorBodyTextAuto">#888888</color>
+</resources>

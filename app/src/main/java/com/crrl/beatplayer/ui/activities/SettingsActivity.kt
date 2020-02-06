@@ -55,6 +55,16 @@ class SettingsActivity : BaseActivity() {
             AlertType.BOTTOM_SHEET
         ).apply {
             addItem(AlertItemAction(
+                getString(R.string.default_theme),
+                SettingsUtility.getInstance(applicationContext).currentTheme == PlayerConstants.AUTO_THEME,
+                AlertItemTheme.DEFAULT
+            ) {
+                it.selected = true
+                SettingsUtility.getInstance(applicationContext).currentTheme =
+                    PlayerConstants.AUTO_THEME
+                recreate()
+            })
+            addItem(AlertItemAction(
                 getString(R.string.light_theme),
                 SettingsUtility.getInstance(applicationContext).currentTheme == PlayerConstants.LIGHT_THEME,
                 AlertItemTheme.DEFAULT
