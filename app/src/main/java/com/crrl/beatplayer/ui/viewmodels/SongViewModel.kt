@@ -43,13 +43,9 @@ class SongViewModel(private val context: Context?) : ViewModel() {
 
     val searchLiveData = _searchLiveData
 
-    init {
-        update()
-    }
-
     fun search(searchString: String) {
-        if (searchString.length >= 3) {
-            Observable.fromCallable {
+        if (searchString.length >= 0) {
+            Thread {
                 searchData.apply {
                     val songs =
                         SongsRepository(context).searchSongs(searchString, 10).toMutableList()
@@ -64,25 +60,32 @@ class SongViewModel(private val context: Context?) : ViewModel() {
                     if (artists.isNotEmpty())
                         artistList = artists
                 }
-            }.observeOn(Schedulers.newThread()).subscribeOn(Schedulers.newThread())
-                .subscribe { _searchLiveData.postValue(it) }
+                _searchLiveData.postValue(searchData)
+            }.start()
         } else {
             _searchLiveData.postValue(searchData.flush())
         }
     }
 
-    fun liveData(): LiveData<List<Song>> = songs
+    fun liveData(): LiveData<List<Song>> {
+        update()
+        return songs
+    }
 
     fun update() {
-        Observable.fromCallable { SongsRepository(context).loadSongs() }
-            .observeOn(Schedulers.newThread()).subscribeOn(Schedulers.newThread())
-            .subscribe { songs.postValue(it) }
+        Thread {
+            songs.postValue(SongsRepository(context).loadSongs())
+        }.start()
     }
 
     fun songsByPlayList(id: Long): LiveData<List<Song>> {
-        Observable.fromCallable { PlaylistRepository.getInstance(context)!!.getSongsInPlaylist(id) }
-            .observeOn(Schedulers.newThread()).subscribeOn(Schedulers.newThread())
-            .subscribe { _songsByPlaylist.postValue(it) }
+        Thread {
+            _songsByPlaylist.postValue(
+                PlaylistRepository.getInstance(context)!!.getSongsInPlaylist(
+                    id
+                )
+            )
+        }.start()
         return _songsByPlaylist
     }
 

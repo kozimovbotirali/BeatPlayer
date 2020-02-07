@@ -26,7 +26,9 @@ import com.crrl.beatplayer.alertdialog.dialogs.AlertItemAction
 import com.crrl.beatplayer.alertdialog.stylers.AlertItemStyle
 import com.crrl.beatplayer.alertdialog.stylers.AlertItemTheme
 import com.crrl.beatplayer.alertdialog.stylers.AlertType
+import com.crrl.beatplayer.databinding.FragmentSongBinding
 import com.crrl.beatplayer.extensions.getColorByTheme
+import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.extensions.observe
 import com.crrl.beatplayer.extensions.safeActivity
 import com.crrl.beatplayer.models.Song
@@ -41,21 +43,23 @@ import kotlinx.android.synthetic.main.fragment_song.view.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
-@Suppress("UNCHECKED_CAST")
 class SongFragment : BaseFragment<Song>() {
 
     private val viewModel: SongViewModel by viewModel { parametersOf(context) }
     private lateinit var songAdapter: SongAdapter
+    private lateinit var binding: FragmentSongBinding
 
     companion object {
         fun newInstance() = SongFragment()
-
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? = inflater.inflate(R.layout.fragment_song, container, false)
+    ): View? {
+        binding = inflater.inflateWithBinding(R.layout.fragment_song, container)
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -80,6 +84,11 @@ class SongFragment : BaseFragment<Song>() {
 
         viewModel.liveData().observe(this) { list ->
             songAdapter.updateDataSet(list)
+        }
+
+        binding.let {
+            it.viewModel = viewModel
+            it.lifecycleOwner = this
         }
     }
 
