@@ -50,6 +50,11 @@ android {
     dataBinding {
         enabled = true
     }
+
+    compileOptions {
+        targetCompatibility = "8"
+        sourceCompatibility = "8"
+    }
 }
 
 dependencies {
@@ -89,6 +94,8 @@ dependencies {
     implementation "io.reactivex.rxjava3:rxjava:3.0.0-RC1"
     implementation 'com.github.alxrm:audiowave-progressbar:0.9.2'
     implementation 'com.google.code.gson:gson:2.8.5'
+
+    implementation group: 'com.jagrosh', name: 'JLyrics', version: '0.4'
 
     implementation 'org.koin:koin-android:2.0.1'
     implementation 'org.koin:koin-androidx-viewmodel:2.0.1'

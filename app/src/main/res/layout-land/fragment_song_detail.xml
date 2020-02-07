@@ -271,6 +271,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margin_12"
                 android:background="@drawable/btn_ripple_with_stroke"
+                android:onClick="onSongLyricClick"
                 android:clickable="true"
                 android:focusable="true"
                 android:paddingStart="@dimen/padding_14"

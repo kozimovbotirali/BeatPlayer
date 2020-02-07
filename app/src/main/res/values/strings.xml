@@ -87,4 +87,8 @@
         <item quantity="one">%d Artist</item>
         <item quantity="other">%d Artists</item>
     </plurals>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="no_lyrics">Sorry, We can\'t get lyrics for this song.</string>
 </resources>

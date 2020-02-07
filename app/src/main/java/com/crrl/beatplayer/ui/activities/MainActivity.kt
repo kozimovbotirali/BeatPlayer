@@ -17,7 +17,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.databinding.DataBindingUtil
 import com.crrl.beatplayer.R
-import com.crrl.beatplayer.databinding.ActivityMainBinding
 import com.crrl.beatplayer.extensions.addFragment
 import com.crrl.beatplayer.extensions.observe
 import com.crrl.beatplayer.extensions.replaceFragment
@@ -63,6 +62,15 @@ class MainActivity : BaseActivity() {
             it.viewModel = viewModel
             it.lifecycleOwner = this
         }
+    }
+
+    fun onSongLyricClick(v: View) {
+        addFragment(
+            R.id.nav_host_fragment,
+            LyricFragment(),
+            PlayerConstants.LYRIC,
+            true
+        )
     }
 
     private fun updateView(song: Song) {

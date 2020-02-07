@@ -14,32 +14,48 @@
 package com.crrl.beatplayer.ui.viewmodels
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.crrl.beatplayer.R
+import com.crrl.beatplayer.databinding.FragmentLyricBinding
 import com.crrl.beatplayer.databinding.FragmentSongDetailBinding
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.ui.activities.MainActivity
+import com.crrl.beatplayer.utils.LyricsExtractor
 
-class SongDetailViewModel(private val mainActivity: MainActivity ?) : ViewModel() {
 
-    var binding: FragmentSongDetailBinding ? = null
+class SongDetailViewModel(private val mainActivity: MainActivity?) : ViewModel() {
 
-    fun getCurrentData(): LiveData<Song> {
-        return mainActivity?.viewModel!!.getCurrentSong()
-    }
-
-    fun getTime() : LiveData<Int>{
-        return mainActivity?.viewModel!!.getTime()
-    }
-
-    fun getRawData(): LiveData<ByteArray>{
-        return mainActivity?.viewModel!!.getRawData()
-    }
-
-    fun updateTime(newTime: Int){
-        mainActivity?.viewModel!!.update(newTime)
-    }
+    private val lyrics: MutableLiveData<String> = MutableLiveData()
+    var binding: FragmentSongDetailBinding? = null
+    var bindingLB: FragmentLyricBinding? = null
 
     fun update(raw: ByteArray?) {
         mainActivity?.viewModel!!.update(raw)
+    }
+
+    fun updateTime(newTime: Int) {
+        mainActivity?.viewModel!!.update(newTime)
+    }
+
+    private fun loadLyrics(song: Song) {
+        Thread {
+            val lyric = LyricsExtractor.getLyric(song)
+                ?: mainActivity!!.getString(R.string.no_lyrics)
+            if (mainActivity!!.viewModel.getCurrentSong().value!!.id == song.id && lyric != lyrics.value) {
+                lyrics.postValue(lyric)
+            }
+        }.start()
+    }
+
+    fun getTime() = mainActivity?.viewModel!!.getTime()
+
+    fun getRawData() = mainActivity?.viewModel!!.getRawData()
+
+    fun getCurrentData() = mainActivity?.viewModel!!.getCurrentSong()
+
+    fun getLyrics(song: Song): LiveData<String> {
+        loadLyrics(song)
+        return lyrics
     }
 }

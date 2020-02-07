@@ -58,6 +58,7 @@
     <string name="appearance">Apariencia</string>
     <string name="theme_description">Elija cómo desea que se vea la aplicación.</string>
     <string name="default_theme">Automatico</string>
+    <string name="no_lyrics">Lo sentimos, no pudimos obtener la letra de esta canción.</string>
 
     <plurals name="number_of_songs" tools:ignore="UnusedQuantity">
         <item quantity="zero">%d Pistas</item>

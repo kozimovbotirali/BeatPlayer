@@ -18,6 +18,7 @@ import android.provider.MediaStore
 
 object PlayerConstants {
 
+    const val LYRIC: String = "lyrics_fragment"
     const val PLAY_LIST_DETAIL = "play_list_detail"
     const val NOW_PLAYING = "now_playing"
     const val ARTIST_DETAIL = "artist_detail"
