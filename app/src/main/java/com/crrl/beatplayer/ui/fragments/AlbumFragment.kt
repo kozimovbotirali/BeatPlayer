@@ -37,6 +37,7 @@ import com.crrl.beatplayer.ui.viewmodels.AlbumViewModel
 import com.crrl.beatplayer.utils.GeneralUtils
 import com.crrl.beatplayer.utils.GeneralUtils.VERTICAL
 import com.crrl.beatplayer.utils.PlayerConstants
+import com.crrl.beatplayer.utils.PlayerConstants.ALBUM_KEY
 import com.crrl.beatplayer.utils.SettingsUtility
 import com.crrl.beatplayer.utils.SortModes
 import kotlinx.android.synthetic.main.fragment_album.view.*
@@ -155,13 +156,9 @@ class AlbumFragment : BaseFragment<Album>() {
 
     override fun onItemClick(view: View, position: Int, item: Album) {
         val extras = Bundle()
-        extras.putString(PlayerConstants.ALBUM_KEY, item.toString())
+        extras.putLong(ALBUM_KEY, item.id)
         activity!!.addFragment(
-            R.id.nav_host_fragment,
-            AlbumDetailFragment(),
-            PlayerConstants.ALBUM_DETAIL,
-            true,
-            extras
+            R.id.nav_host_fragment, AlbumDetailFragment(), PlayerConstants.ALBUM_DETAIL, true, extras
         )
     }
 

@@ -86,7 +86,11 @@ class ArtistDetailFragment : BaseFragment<MediaItem>() {
             albumAdapter.updateDataSet(it)
         }
 
-        binding.artist = artist
+        binding.let{
+            it.artist = artist
+            it.lifecycleOwner = this
+            it.executePendingBindings()
+        }
     }
 
     override fun addToList(playListId: Long, song: Song) {
@@ -95,7 +99,7 @@ class ArtistDetailFragment : BaseFragment<MediaItem>() {
 
     private fun albumClicked(item: Album) {
         val extras = Bundle()
-        extras.putString(PlayerConstants.ALBUM_KEY, item.toString())
+        extras.putLong(PlayerConstants.ALBUM_KEY, item.id)
         activity!!.addFragment(
             R.id.nav_host_fragment,
             AlbumDetailFragment(),

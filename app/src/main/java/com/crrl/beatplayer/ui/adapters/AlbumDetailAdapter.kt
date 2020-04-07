@@ -29,13 +29,14 @@ import com.crrl.beatplayer.interfaces.ItemClickListener
 import com.crrl.beatplayer.models.Album
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.ui.viewmodels.MainViewModel
+import com.crrl.beatplayer.ui.viewmodels.SongViewModel
 import com.crrl.beatplayer.utils.GeneralUtils
 import com.crrl.beatplayer.utils.PlayerConstants
 
 private const val HEADER_TYPE = 0
 private const val ITEM_TYPE = 1
 
-class AlbumDetailAdapter(private val context: Context?, private val mainViewModel: MainViewModel) :
+class AlbumDetailAdapter(private val context: Context?, private val songViewModel: SongViewModel) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var songList: MutableList<Song> = mutableListOf()
@@ -161,6 +162,7 @@ class AlbumDetailAdapter(private val context: Context?, private val mainViewMode
                 playAllAlbumSong.setOnClickListener(this@ViewHolderAlbumSongHeader)
                 totalDuration = GeneralUtils.getTotalTime(songList).toInt()
                 this.album = this@AlbumDetailAdapter.album
+                this.viewModel = songViewModel
                 cover.clipToOutline = true
                 val uri = ContentUris.withAppendedId(PlayerConstants.ARTWORK_URI, album!!.id)
                 Glide.with(context!!)

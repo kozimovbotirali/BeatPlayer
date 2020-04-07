@@ -17,6 +17,9 @@
     <data>
         <import type="android.view.View" />
         <variable
+            name="album"
+            type="com.crrl.beatplayer.models.Album" />
+        <variable
             name="viewModel"
             type="com.crrl.beatplayer.ui.viewmodels.SongViewModel" />
     </data>
@@ -39,7 +42,7 @@
             android:textColor="?titleTextColor"
             android:textSize="@dimen/text_size_18"
             android:textStyle="bold"
-            android:visibility="@{viewModel.liveData().size > 0 ? View.GONE : View.VISIBLE}"
+            android:visibility="@{viewModel.getSongsByAlbum(album.id).size > 0 ? View.GONE : View.VISIBLE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

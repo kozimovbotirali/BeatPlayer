@@ -81,6 +81,13 @@ class SongViewModel(private val context: Context?) : ViewModel() {
         }.start()
     }
 
+    fun update(id: Long){
+        Thread{
+            val list = AlbumsRepository.getInstance(context)!!.getSongsForAlbum(id)
+            _songsByAlbum.postValue(list)
+        }.start()
+    }
+
     fun update(list: MutableList<Long>) {
         Thread {
             songsSelected.postValue(list)
@@ -115,8 +122,7 @@ class SongViewModel(private val context: Context?) : ViewModel() {
     }
 
     fun getSongsByAlbum(id: Long): LiveData<List<Song>>? {
-        Observable.fromCallable { AlbumsRepository.getInstance(context)!!.getSongsForAlbum(id) }
-            .subscribeOn(Schedulers.newThread()).subscribe { _songsByAlbum.postValue(it) }
+        update(id)
         return _songsByAlbum
     }
 

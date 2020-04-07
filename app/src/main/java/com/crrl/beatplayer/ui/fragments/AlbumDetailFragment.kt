@@ -26,9 +26,9 @@ import com.crrl.beatplayer.databinding.FragmentAlbumDetailBinding
 import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.extensions.observe
 import com.crrl.beatplayer.extensions.safeActivity
-import com.crrl.beatplayer.extensions.toAlbum
 import com.crrl.beatplayer.models.Album
 import com.crrl.beatplayer.models.Song
+import com.crrl.beatplayer.repository.AlbumsRepository
 import com.crrl.beatplayer.ui.activities.MainActivity
 import com.crrl.beatplayer.ui.adapters.AlbumDetailAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
@@ -51,16 +51,16 @@ class AlbumDetailFragment : BaseFragment<Song>() {
         return binding.root
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         init()
     }
 
     private fun init() {
-        album = arguments!!.getString(PlayerConstants.ALBUM_KEY)!!.toAlbum()
+        val id = arguments!!.getLong(PlayerConstants.ALBUM_KEY)
+        album = AlbumsRepository.getInstance(context)?.getAlbum(id)!!
 
-        albumDetailAdapter = AlbumDetailAdapter(context, (activity as MainActivity).viewModel).apply {
+        albumDetailAdapter = AlbumDetailAdapter(context, viewModel).apply {
             showHeader = true
             itemClickListener = this@AlbumDetailFragment
             this.album = this@AlbumDetailFragment.album
@@ -81,13 +81,10 @@ class AlbumDetailFragment : BaseFragment<Song>() {
 
         binding.let{
             it.viewModel = viewModel
+            it.album = album
             it.lifecycleOwner = this
+            it.executePendingBindings()
         }
-
-    }
-
-    private fun reloadAdapter() {
-        viewModel.update()
     }
 
     override fun addToList(playListId: Long, song: Song) {
