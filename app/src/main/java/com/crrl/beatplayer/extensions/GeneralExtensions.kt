@@ -13,6 +13,10 @@
 
 package com.crrl.beatplayer.extensions
 
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import java.lang.NullPointerException
+
 fun <T> List<T>?.moveElement(fromIndex: Int, toIndex: Int): List<T> {
     if (this == null) {
         return emptyList()
@@ -22,3 +26,22 @@ fun <T> List<T>?.moveElement(fromIndex: Int, toIndex: Int): List<T> {
         add(toIndex, deleted)
     }
 }
+
+fun <E> MutableList<E>.setAll(list: List<E>) {
+    clear()
+    addAll(list)
+}
+
+fun <T> MutableList<T>.delete(idx: T){
+    idx ?: throw NullPointerException("The index can't be null.")
+
+    setAll(filterNot { it == idx }.optimizeReadOnlyList())
+}
+
+internal fun <T> List<T>.optimizeReadOnlyList() = when (size) {
+    0 -> emptyList()
+    1 -> listOf(this[0])
+    else -> this
+}
+
+inline fun <reified T> Gson.fromJson(json: String?) = this.fromJson<T>(json, object: TypeToken<T>() {}.type)
