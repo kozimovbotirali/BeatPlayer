@@ -33,7 +33,7 @@ private const val ITEM_TYPE = 1
 class AlbumAdapter(private val context: Context?) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private var albumList: List<Album> = emptyList()
+    private var albumList: MutableList<Album> = mutableListOf()
     private var lastClick = 0L
 
     var showHeader: Boolean = false
@@ -96,11 +96,23 @@ class AlbumAdapter(private val context: Context?) :
         }
     }
 
-    fun updateDataSet(albumList: List<Album>) {
+    fun updateDataSet(newList: List<Album>) {
         Thread {
-            this.albumList = albumList
-            (context as AppCompatActivity).runOnUiThread {
-                notifyDataSetChanged()
+            if (newList.isEmpty()) {
+                albumList = newList.toMutableList()
+                (context as AppCompatActivity).runOnUiThread {
+                    notifyDataSetChanged()
+                }
+            } else if (newList.size != albumList.size) {
+                albumList = newList.toMutableList()
+                (context as AppCompatActivity).runOnUiThread {
+                    notifyDataSetChanged()
+                }
+            } else if (albumList.first() != newList.first() && albumList.last() != newList.last()) {
+                albumList = newList.toMutableList()
+                (context as AppCompatActivity).runOnUiThread {
+                    notifyDataSetChanged()
+                }
             }
         }.start()
     }

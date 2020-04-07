@@ -35,6 +35,7 @@ class AlbumViewModel(private val context: Context?) : ViewModel() {
     }
 
     fun getAlbums(): LiveData<List<Album>>? {
+        update()
         return albums
     }
 }

@@ -98,4 +98,5 @@
     <string name="select_tracks">Select Tracks</string>
     <string name="all">All</string>
     <string name="done">Done</string>
+    <string name="no_albums">No Albums</string>
 </resources>

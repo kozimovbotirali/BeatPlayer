@@ -26,10 +26,8 @@ import com.crrl.beatplayer.alertdialog.dialogs.AlertItemAction
 import com.crrl.beatplayer.alertdialog.stylers.AlertItemStyle
 import com.crrl.beatplayer.alertdialog.stylers.AlertItemTheme
 import com.crrl.beatplayer.alertdialog.stylers.AlertType
-import com.crrl.beatplayer.extensions.addFragment
-import com.crrl.beatplayer.extensions.getColorByTheme
-import com.crrl.beatplayer.extensions.observe
-import com.crrl.beatplayer.extensions.safeActivity
+import com.crrl.beatplayer.databinding.FragmentAlbumBinding
+import com.crrl.beatplayer.extensions.*
 import com.crrl.beatplayer.models.Album
 import com.crrl.beatplayer.ui.adapters.AlbumAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
@@ -40,7 +38,6 @@ import com.crrl.beatplayer.utils.PlayerConstants
 import com.crrl.beatplayer.utils.PlayerConstants.ALBUM_KEY
 import com.crrl.beatplayer.utils.SettingsUtility
 import com.crrl.beatplayer.utils.SortModes
-import kotlinx.android.synthetic.main.fragment_album.view.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -48,25 +45,22 @@ class AlbumFragment : BaseFragment<Album>() {
 
     private val viewModel: AlbumViewModel by viewModel { parametersOf(context) }
     private lateinit var albumAdapter: AlbumAdapter
-
-    companion object {
-        fun newInstance() = AlbumFragment()
-
-    }
+    private lateinit var binding: FragmentAlbumBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_album, container, false)
+        binding = inflater.inflateWithBinding(R.layout.fragment_album, container)
+        return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        init(view)
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        init()
     }
 
-    private fun init(view: View) {
+    private fun init() {
         val sc = if (GeneralUtils.getRotation(safeActivity) == VERTICAL) 2 else 5
 
         // Init Adapter
@@ -77,7 +71,7 @@ class AlbumFragment : BaseFragment<Album>() {
         }
 
         // Set up RecyclerView
-        view.album_list.apply {
+        binding.albumList.apply {
             layoutManager = GridLayoutManager(context, sc).apply {
                 spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                     override fun getSpanSize(position: Int): Int {
@@ -92,6 +86,12 @@ class AlbumFragment : BaseFragment<Album>() {
 
         viewModel.getAlbums()!!.observe(this) { list ->
             albumAdapter.updateDataSet(list)
+        }
+
+        binding.let {
+            it.viewModel = viewModel
+            it.lifecycleOwner = this
+            it.executePendingBindings()
         }
     }
 

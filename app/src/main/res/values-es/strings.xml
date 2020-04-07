@@ -68,6 +68,7 @@
     <string name="select_tracks">Seleccionar Canciones</string>
     <string name="all">Todas</string>
     <string name="done">Done</string>
+    <string name="no_albums">Sin Albumes</string>
 
     <plurals name="number_of_songs" tools:ignore="UnusedQuantity">
         <item quantity="zero">%d Pistas</item>
