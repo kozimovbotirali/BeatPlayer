@@ -19,6 +19,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.SimpleItemAnimator
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentFolderDetailBinding
 import com.crrl.beatplayer.extensions.inflateWithBinding
@@ -59,7 +60,7 @@ class FolderDetailFragment : BaseFragment<Song>() {
     fun init() {
         binding.folder = arguments!!.getString(PlayerConstants.FOLDER_KEY)!!.toFolder()
 
-        songAdapter = SongAdapter(context).apply {
+        songAdapter = SongAdapter(context, (activity as MainActivity).viewModel).apply {
             showHeader = true
             isPlaylist = true
             itemClickListener = this@FolderDetailFragment
@@ -71,15 +72,17 @@ class FolderDetailFragment : BaseFragment<Song>() {
 
         binding.apply {
             // Set up RecyclerView
-            binding.songList.apply {
+            songList.apply {
                 layoutManager = LinearLayoutManager(context)
                 adapter = songAdapter
+                (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
             }
         }
 
         binding.let {
             it.viewModel = viewModel
             it.lifecycleOwner = this
+            it.executePendingBindings()
         }
     }
 
@@ -100,7 +103,8 @@ class FolderDetailFragment : BaseFragment<Song>() {
         Toast.makeText(context, "Play All", Toast.LENGTH_LONG).show()
     }
 
-    override fun onPopupMenuClick(view: View, position: Int, item: Song) {
+    override fun onPopupMenuClick(view: View, position: Int, item: Song, itemList: List<Song>) {
+        super.onPopupMenuClick(view, position, item, itemList)
         powerMenu!!.showAsAnchorRightTop(view)
         songViewModel.playLists().observe(this) {
             buildPlaylistMenu(it, item)

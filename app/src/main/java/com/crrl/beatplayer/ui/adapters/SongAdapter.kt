@@ -25,11 +25,12 @@ import com.crrl.beatplayer.extensions.dataChanged
 import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.interfaces.ItemClickListener
 import com.crrl.beatplayer.models.Song
+import com.crrl.beatplayer.ui.viewmodels.MainViewModel
 
 private const val HEADER_TYPE = 0
 private const val ITEM_TYPE = 1
 
-class SongAdapter(private val context: Context?) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class SongAdapter(private val context: Context?, private val mainViewModel: MainViewModel) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var songList: MutableList<Song> = mutableListOf()
     var showHeader: Boolean = false
@@ -55,7 +56,7 @@ class SongAdapter(private val context: Context?) : RecyclerView.Adapter<Recycler
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val currentSong = if (!songList.isNullOrEmpty()) getItem(position) else null
+        val currentSong = if (!songList.isNullOrEmpty()) getItem(position) else Song()
         when (getItemViewType(position)) {
             HEADER_TYPE -> {
                 (holder as ViewHolderSongHeader).bind(songList.size, isPlaylist)
@@ -135,7 +136,8 @@ class SongAdapter(private val context: Context?) : RecyclerView.Adapter<Recycler
                     R.id.item_menu -> itemClickListener!!.onPopupMenuClick(
                         view,
                         adapterPosition,
-                        getItem(adapterPosition)!!
+                        getItem(adapterPosition)!!,
+                        songList
                     )
                     R.id.container -> itemClickListener!!.onItemClick(
                         view,

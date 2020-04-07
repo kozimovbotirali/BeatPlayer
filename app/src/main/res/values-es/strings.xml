@@ -57,8 +57,17 @@
     <string name="dark_theme">Tema Obscuro</string>
     <string name="appearance">Apariencia</string>
     <string name="theme_description">Elija cómo desea que se vea la aplicación.</string>
-    <string name="default_theme">Automatico</string>
+    <string name="default_theme">Por defecto del Sistema</string>
     <string name="no_lyrics">Lo sentimos, no pudimos obtener la letra de esta canción.</string>
+    <string name="deleted_ok">Canción eliminada exitosamente.</string>
+    <string name="deleted_err">No se pudo eliminar la canción ahora.</string>
+    <string name="unavailable">La canción no se puede reproducir.</string>
+    <string name="playlist">Lista de Reproducción</string>
+    <string name="delete_conf">"Esta seguro que desea eliminar la canción "</string>
+    <string name="delete_conf_title">Confirmar Eliminación</string>
+    <string name="select_tracks">Seleccionar Canciones</string>
+    <string name="all">Todas</string>
+    <string name="done">Done</string>
 
     <plurals name="number_of_songs" tools:ignore="UnusedQuantity">
         <item quantity="zero">%d Pistas</item>

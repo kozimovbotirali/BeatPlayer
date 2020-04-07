@@ -68,7 +68,7 @@
     <string name="dark_theme">Dark Theme</string>
     <string name="appearance">Appearance</string>
     <string name="theme_description">Choose how you want the application will look.</string>
-    <string name="default_theme">Automatic</string>
+    <string name="default_theme">System Default</string>
 
     <plurals name="number_of_songs">
         <item quantity="zero">%d Tracks</item>
@@ -88,7 +88,14 @@
         <item quantity="other">%d Artists</item>
     </plurals>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="no_lyrics">Sorry, We can\'t get lyrics for this song.</string>
+    <string name="deleted_ok">Song deleted successfully.</string>
+    <string name="deleted_err">We can\'t delete the song now.</string>
+    <string name="unavailable">Unable to play song.</string>
+    <string name="playlist">Playlist</string>
+    <string name="delete_conf">"Are you sure you want to delete the song "</string>
+    <string name="delete_conf_title">Delete Confirmation</string>
+    <string name="select_tracks">Select Tracks</string>
+    <string name="all">All</string>
+    <string name="done">Done</string>
 </resources>

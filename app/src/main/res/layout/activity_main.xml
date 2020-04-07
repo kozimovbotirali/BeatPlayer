@@ -86,9 +86,11 @@
                             android:layout_alignParentBottom="true"
                             android:layout_marginStart="0dp"
                             android:layout_marginBottom="4dp"
-                            android:maxLines="1"
-                            android:gravity="center"
-                            android:text="@{viewModel.currentSong.title}"
+                            android:singleLine="true"
+                            android:ellipsize="marquee"
+                            android:scrollHorizontally="true"
+                            android:marqueeRepeatLimit="marquee_forever"
+                            android:text="@{viewModel.currentSong.title, default=@string/title}"
                             android:textStyle="bold"
                             android:textColor="?titleTextColor"
                             android:textSize="@dimen/title_text_size" />
@@ -98,7 +100,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:gravity="center">
+                        android:gravity="start">
 
                         <TextView
                             android:id="@+id/artist"
@@ -106,28 +108,7 @@
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
                             android:singleLine="true"
-                            android:text="@{viewModel.currentSong.artist}"
-                            android:textColor="?subTitleTextColor"
-                            android:textSize="@dimen/sub_title_text_size" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:ellipsize="end"
-                            android:paddingLeft="5dp"
-                            android:paddingRight="5dp"
-                            android:singleLine="true"
-                            android:text="@string/separator"
-                            android:textColor="?subTitleTextColor"
-                            android:textSize="@dimen/sub_title_text_size" />
-
-                        <TextView
-                            android:id="@+id/album"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:ellipsize="end"
-                            android:singleLine="true"
-                            android:text="@{viewModel.currentSong.album}"
+                            android:text="@{viewModel.currentSong.artist, default=@string/artist}"
                             android:textColor="?subTitleTextColor"
                             android:textSize="@dimen/sub_title_text_size" />
                     </LinearLayout>

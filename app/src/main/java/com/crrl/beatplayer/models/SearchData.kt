@@ -36,9 +36,6 @@ data class SearchData(
     }
 
     fun flush(): SearchData {
-        songList.clear()
-        albumList.clear()
-        artistList.clear()
-        return this
+        return SearchData()
     }
 }

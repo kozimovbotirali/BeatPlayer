@@ -20,19 +20,21 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.SimpleItemAnimator
 import com.crrl.beatplayer.R
+import com.crrl.beatplayer.databinding.FragmentAlbumDetailBinding
+import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.extensions.observe
 import com.crrl.beatplayer.extensions.safeActivity
 import com.crrl.beatplayer.extensions.toAlbum
 import com.crrl.beatplayer.models.Album
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.ui.activities.MainActivity
-import com.crrl.beatplayer.ui.adapters.AlbumSongAdapter
+import com.crrl.beatplayer.ui.adapters.AlbumDetailAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.viewmodels.SongViewModel
 import com.crrl.beatplayer.utils.PlayerConstants
 import com.dgreenhalgh.android.simpleitemdecoration.linear.EndOffsetItemDecoration
-import kotlinx.android.synthetic.main.fragment_album_detail.view.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -40,42 +42,52 @@ class AlbumDetailFragment : BaseFragment<Song>() {
 
     private val viewModel: SongViewModel by viewModel { parametersOf(context) }
     private lateinit var album: Album
-    private lateinit var albumSongAdapter: AlbumSongAdapter
+    private lateinit var albumDetailAdapter: AlbumDetailAdapter
+    private lateinit var binding: FragmentAlbumDetailBinding
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_album_detail, container, false)
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = inflater.inflateWithBinding(R.layout.fragment_album_detail, container)
+        return binding.root
     }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        init(view)
+        init()
     }
 
-    private fun init(view: View) {
+    private fun init() {
         album = arguments!!.getString(PlayerConstants.ALBUM_KEY)!!.toAlbum()
 
-        albumSongAdapter = AlbumSongAdapter(context).apply {
+        albumDetailAdapter = AlbumDetailAdapter(context, (activity as MainActivity).viewModel).apply {
             showHeader = true
             itemClickListener = this@AlbumDetailFragment
             this.album = this@AlbumDetailFragment.album
         }
 
-        view.apply {
-            album_song_list.apply {
+        binding.apply {
+            albumSongList.apply {
                 layoutManager = LinearLayoutManager(context)
-                adapter = albumSongAdapter
+                adapter = albumDetailAdapter
                 addItemDecoration(EndOffsetItemDecoration(resources.getDimensionPixelOffset(R.dimen.song_item_size)))
+                (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
             }
         }
 
         viewModel.getSongsByAlbum(album.id)!!.observe(this) { list ->
-            albumSongAdapter.updateDataSet(list)
+            albumDetailAdapter.updateDataSet(list)
         }
 
+        binding.let{
+            it.viewModel = viewModel
+            it.lifecycleOwner = this
+        }
+
+    }
+
+    private fun reloadAdapter() {
+        viewModel.update()
     }
 
     override fun addToList(playListId: Long, song: Song) {
@@ -84,7 +96,7 @@ class AlbumDetailFragment : BaseFragment<Song>() {
 
     override fun onItemClick(view: View, position: Int, item: Song) {
         (safeActivity as MainActivity).viewModel.update(item)
-        (safeActivity as MainActivity).viewModel.update(albumSongAdapter.songList)
+        (safeActivity as MainActivity).viewModel.update(albumDetailAdapter.songList)
     }
 
     override fun onPlayAllClick(view: View) {
@@ -95,7 +107,8 @@ class AlbumDetailFragment : BaseFragment<Song>() {
         Toast.makeText(context, "Shuffle", Toast.LENGTH_LONG).show()
     }
 
-    override fun onPopupMenuClick(view: View, position: Int, item: Song) {
+    override fun onPopupMenuClick(view: View, position: Int, item: Song, itemList: List<Song>) {
+        super.onPopupMenuClick(view, position, item, itemList)
         powerMenu!!.showAsAnchorRightTop(view)
         viewModel.playLists().observe(this) {
             buildPlaylistMenu(it, item)

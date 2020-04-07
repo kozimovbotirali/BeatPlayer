@@ -14,6 +14,7 @@
 package com.crrl.beatplayer.ui.activities.base
 
 import android.app.ActivityOptions
+import android.content.Context
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
@@ -71,7 +72,7 @@ open class BaseActivity : RequestPermissionActivity() {
     override fun onResume() {
         super.onResume()
         if (SettingsUtility.getInstance(this).currentTheme != currentTheme) {
-            recreate()
+            recreateActivity()
         }
     }
 
@@ -80,6 +81,12 @@ open class BaseActivity : RequestPermissionActivity() {
         setAppTheme(currentTheme!!)
 
         powerMenu = initPopUpMenu().setOnMenuItemClickListener(onMenuItemClickListener).build()
+    }
+
+    protected open fun recreateActivity(){
+        startActivity(intent)
+        finish()
+        overridePendingTransition(0, 0)
     }
 
 
@@ -113,7 +120,7 @@ open class BaseActivity : RequestPermissionActivity() {
             .setTextColor(getColorByTheme(R.attr.titleTextColor, "titleTextColor"))
             .setTextGravity(Gravity.CENTER)
             .setTextSize(16)
-            .setTextTypeface(Typeface.createFromAsset(assets, "fonts/rubik.ttf"))
+            .setTextTypeface(Typeface.createFromAsset(assets, "fonts/product_sans_regular.ttf"))
             .setSelectedTextColor(getColorByTheme(R.attr.colorAccent, "colorAccent"))
             .setMenuColor(getColorByTheme(R.attr.colorPrimarySecondary2, "colorPrimarySecondary2"))
             .setSelectedMenuColor(
@@ -132,5 +139,13 @@ open class BaseActivity : RequestPermissionActivity() {
         }
     }
 
+    open fun triggerRebirth(context: Context) {
+        val packageManager = context.packageManager
+        val intent = packageManager.getLaunchIntentForPackage(context.packageName)
+        val componentName = intent!!.component
+        val mainIntent = Intent.makeRestartActivityTask(componentName)
+        context.startActivity(mainIntent)
+        Runtime.getRuntime().exit(0)
+    }
 }
 

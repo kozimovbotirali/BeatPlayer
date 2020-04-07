@@ -28,16 +28,17 @@ import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.interfaces.ItemClickListener
 import com.crrl.beatplayer.models.Album
 import com.crrl.beatplayer.models.Song
+import com.crrl.beatplayer.ui.viewmodels.MainViewModel
 import com.crrl.beatplayer.utils.GeneralUtils
 import com.crrl.beatplayer.utils.PlayerConstants
 
 private const val HEADER_TYPE = 0
 private const val ITEM_TYPE = 1
 
-class AlbumSongAdapter(private val context: Context?) :
+class AlbumDetailAdapter(private val context: Context?, private val mainViewModel: MainViewModel) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    var songList: List<Song> = emptyList()
+    var songList: MutableList<Song> = mutableListOf()
     var showHeader: Boolean = false
     var itemClickListener: ItemClickListener<Song>? = null
     var album = Album()
@@ -100,11 +101,23 @@ class AlbumSongAdapter(private val context: Context?) :
         }
     }
 
-    fun updateDataSet(songList: List<Song>) {
+    fun updateDataSet(newList: List<Song>) {
         Thread {
-            this.songList = songList
-            (context as AppCompatActivity).runOnUiThread {
-                notifyDataSetChanged()
+            if (newList.isEmpty()) {
+                songList = newList.toMutableList()
+                (context as AppCompatActivity).runOnUiThread {
+                    notifyDataSetChanged()
+                }
+            } else if (newList.size != songList.size) {
+                songList = newList.toMutableList()
+                (context as AppCompatActivity).runOnUiThread {
+                    notifyDataSetChanged()
+                }
+            } else if (songList.first() != newList.first() && songList.last() != newList.last()) {
+                songList = newList.toMutableList()
+                (context as AppCompatActivity).runOnUiThread {
+                    notifyDataSetChanged()
+                }
             }
         }.start()
     }
@@ -127,7 +140,8 @@ class AlbumSongAdapter(private val context: Context?) :
                     R.id.item_menu -> itemClickListener!!.onPopupMenuClick(
                         view,
                         adapterPosition,
-                        getItem(adapterPosition)!!
+                        getItem(adapterPosition)!!,
+                        songList
                     )
                     R.id.container -> itemClickListener!!.onItemClick(
                         view,
@@ -146,7 +160,7 @@ class AlbumSongAdapter(private val context: Context?) :
                 shuffleAlbumSong.setOnClickListener(this@ViewHolderAlbumSongHeader)
                 playAllAlbumSong.setOnClickListener(this@ViewHolderAlbumSongHeader)
                 totalDuration = GeneralUtils.getTotalTime(songList).toInt()
-                this.album = this@AlbumSongAdapter.album
+                this.album = this@AlbumDetailAdapter.album
                 cover.clipToOutline = true
                 val uri = ContentUris.withAppendedId(PlayerConstants.ARTWORK_URI, album!!.id)
                 Glide.with(context!!)

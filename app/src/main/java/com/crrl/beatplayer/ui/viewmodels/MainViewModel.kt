@@ -13,11 +13,11 @@
 
 package com.crrl.beatplayer.ui.viewmodels
 
-import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.ActivityMainBinding
 import com.crrl.beatplayer.extensions.toast
 import com.crrl.beatplayer.models.Song
@@ -72,9 +72,8 @@ class MainViewModel(val safeActivity: MainActivity?) : ViewModel() {
         if (raw == null) {
             if(getCurrentSong().value?.id != -1L) {
                 safeActivity?.runOnUiThread {
-                    safeActivity.toast("File Not Found", Toast.LENGTH_SHORT)
+                    safeActivity.toast(safeActivity.getString(R.string.unavailable), Toast.LENGTH_SHORT)
                 }
-                next(getCurrentSong().value!!)
             }
             return
         }else{

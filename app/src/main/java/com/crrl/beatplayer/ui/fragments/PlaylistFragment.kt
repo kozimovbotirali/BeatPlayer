@@ -13,6 +13,7 @@
 
 package com.crrl.beatplayer.ui.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -28,29 +29,24 @@ import com.crrl.beatplayer.alertdialog.stylers.AlertItemTheme
 import com.crrl.beatplayer.alertdialog.stylers.AlertType
 import com.crrl.beatplayer.alertdialog.stylers.InputStyle
 import com.crrl.beatplayer.databinding.FragmentPlaylistBinding
-import com.crrl.beatplayer.extensions.addFragment
-import com.crrl.beatplayer.extensions.getColorByTheme
-import com.crrl.beatplayer.extensions.inflateWithBinding
-import com.crrl.beatplayer.extensions.observe
+import com.crrl.beatplayer.extensions.*
 import com.crrl.beatplayer.models.Playlist
 import com.crrl.beatplayer.repository.PlaylistRepository
+import com.crrl.beatplayer.ui.activities.SelectSongActivity
 import com.crrl.beatplayer.ui.adapters.PlaylistAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.viewmodels.SongViewModel
+import com.crrl.beatplayer.utils.GeneralUtils
 import com.crrl.beatplayer.utils.PlayerConstants
+import com.crrl.beatplayer.utils.PlayerConstants.PLAY_LIST_DETAIL
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
 
 class PlaylistFragment : BaseFragment<Playlist>() {
 
-    companion object {
-        fun newInstance() = PlaylistFragment()
-    }
-
     private val viewModel: SongViewModel by viewModel { parametersOf(context) }
     private lateinit var playlistAdapter: PlaylistAdapter
-    private lateinit var alert: AlertDialog
     private lateinit var binding: FragmentPlaylistBinding
 
     override fun onCreateView(
@@ -93,8 +89,6 @@ class PlaylistFragment : BaseFragment<Playlist>() {
 
         reloadAdapter()
 
-        alert = createDialog()
-
         binding.let {
             it.viewModel = viewModel
             it.lifecycleOwner = this
@@ -103,22 +97,24 @@ class PlaylistFragment : BaseFragment<Playlist>() {
 
     override fun onItemClick(view: View, position: Int, item: Playlist) {
         val extras = Bundle()
-        extras.putString(PlayerConstants.PLAY_LIST_DETAIL, item.toString())
+        extras.putLong(PLAY_LIST_DETAIL, item.id)
         activity!!.addFragment(
-            R.id.nav_host_fragment,
-            PlaylistDetailFragment(),
-            PlayerConstants.PLAY_LIST_DETAIL,
-            extras = extras
+            R.id.nav_host_fragment, PlaylistDetailFragment(), PLAY_LIST_DETAIL, extras = extras
         )
     }
 
-    override fun onPopupMenuClick(view: View, position: Int, item: Playlist) {
-        PlaylistRepository.getInstance(context)!!.deletePlaylist(item.id)
-        Toast.makeText(context, "${item.name} Deleted ", Toast.LENGTH_SHORT).show()
+    override fun onPopupMenuClick(
+        view: View,
+        position: Int,
+        item: Playlist,
+        itemList: List<Playlist>
+    ) {
+        PlaylistRepository.getInstance(context).deletePlaylist(item.id)
+        safeActivity.toast("${item.name} Deleted ", Toast.LENGTH_SHORT)
     }
 
     private fun createPlayList() {
-        alert.show(activity as AppCompatActivity)
+        createDialog().show(safeActivity as AppCompatActivity)
     }
 
     private fun createDialog(): AlertDialog {
@@ -126,8 +122,13 @@ class PlaylistFragment : BaseFragment<Playlist>() {
             activity?.getColorByTheme(R.attr.colorPrimarySecondary, "colorPrimarySecondary")!!,
             activity!!.getColorByTheme(R.attr.colorPrimarySecondary2, "colorPrimarySecondary2"),
             activity!!.getColorByTheme(R.attr.titleTextColor, "titleTextColor"),
-            activity!!.getColorByTheme(R.attr.colorPrimaryOpacity, "colorPrimaryOpacity"),
-            activity!!.getColorByTheme(R.attr.colorAccent, "colorAccent")
+            activity!!.getColorByTheme(R.attr.bodyTextColor, "bodyTextColor"),
+            safeActivity.getColorByTheme(R.attr.colorAccent, "colorAccent"),
+            "${safeActivity.getString(R.string.playlist)} ${GeneralUtils.addZeros(
+                PlaylistRepository.getInstance(
+                    context
+                ).getPlayListsCount() + 1
+            )}"
         )
         return AlertDialog(
             getString(R.string.new_playlist),
@@ -139,7 +140,13 @@ class PlaylistFragment : BaseFragment<Playlist>() {
             addItem(AlertItemAction("Cancel", false, AlertItemTheme.CANCEL) {
             })
             addItem(AlertItemAction("OK", false, AlertItemTheme.ACCEPT) {
-                PlaylistRepository.getInstance(context)!!.createPlaylist(it.input)
+                safeActivity.startActivityForResult(
+                    Intent(
+                        safeActivity,
+                        SelectSongActivity::class.java
+                    ).apply { putExtra(PLAY_LIST_DETAIL, it.input) },
+                    1
+                )
             })
         }
     }

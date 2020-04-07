@@ -50,7 +50,6 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:maxLines="1"
-                android:padding="7dp"
                 android:text="@{playlist.name}"
                 android:textColor="?titleTextColor" />
 
@@ -83,8 +82,7 @@
             android:layout_marginTop="@dimen/margin_12"
             android:layout_marginBottom="@dimen/song_item_size"
             app:layout_constraintBottom_toBottomOf="@+id/view"
-            app:layout_constraintTop_toTopOf="@+id/view"
-            tools:listitem="@layout/song_item" />
+            app:layout_constraintTop_toTopOf="@+id/view"/>
 
         <TextView
             android:layout_width="wrap_content"

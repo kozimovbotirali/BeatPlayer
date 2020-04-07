@@ -69,7 +69,8 @@ class PlaylistAdapter : RecyclerView.Adapter<PlaylistAdapter.ViewHolder>() {
                 R.id.item_menu -> if (itemClickListener != null) itemClickListener!!.onPopupMenuClick(
                     view,
                     layoutPosition,
-                    getItem(layoutPosition)
+                    getItem(layoutPosition),
+                    playlists
                 )
             }
         }

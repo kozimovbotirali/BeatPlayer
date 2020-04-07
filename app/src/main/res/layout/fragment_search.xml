@@ -70,7 +70,7 @@
                 android:paddingStart="@dimen/padding_12"
                 android:paddingEnd="@dimen/padding_12"
                 android:textColor="?titleTextColor"
-                android:textColorHint="?colorPrimaryOpacity"
+                android:textColorHint="?bodyTextColor"
                 android:textSize="16sp" />
 
             <ImageButton

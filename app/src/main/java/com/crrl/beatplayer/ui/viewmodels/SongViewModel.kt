@@ -40,11 +40,12 @@ class SongViewModel(private val context: Context?) : ViewModel() {
     private val _artistLiveData: MutableLiveData<List<Album>> = MutableLiveData()
     private val searchData = SearchData()
     private val _searchLiveData: MutableLiveData<SearchData> = MutableLiveData()
+    private val songsSelected: MutableLiveData<MutableList<Long>> = MutableLiveData()
 
     val searchLiveData = _searchLiveData
 
     fun search(searchString: String) {
-        if (searchString.length >= 0) {
+        if (searchString.isNotEmpty()) {
             Thread {
                 searchData.apply {
                     val songs =
@@ -53,12 +54,9 @@ class SongViewModel(private val context: Context?) : ViewModel() {
                         .toMutableList()
                     val artists = ArtistsRepository.getInstance(context)!!.search(searchString, 10)
                         .toMutableList()
-                    if (songs.isNotEmpty())
-                        songList = songs
-                    if (albums.isNotEmpty())
-                        albumList = albums
-                    if (artists.isNotEmpty())
-                        artistList = artists
+                    songList = songs
+                    albumList = albums
+                    artistList = artists
                 }
                 _searchLiveData.postValue(searchData)
             }.start()
@@ -72,16 +70,27 @@ class SongViewModel(private val context: Context?) : ViewModel() {
         return songs
     }
 
+    fun selectedSongs(): LiveData<MutableList<Long>>{
+        if(songsSelected.value == null) songsSelected.value = mutableListOf()
+        return songsSelected
+    }
+
     fun update() {
         Thread {
             songs.postValue(SongsRepository(context).loadSongs())
         }.start()
     }
 
+    fun update(list: MutableList<Long>) {
+        Thread {
+            songsSelected.postValue(list)
+        }.start()
+    }
+
     fun songsByPlayList(id: Long): LiveData<List<Song>> {
         Thread {
             _songsByPlaylist.postValue(
-                PlaylistRepository.getInstance(context)!!.getSongsInPlaylist(
+                PlaylistRepository.getInstance(context).getSongsInPlaylist(
                     id
                 )
             )
@@ -90,15 +99,15 @@ class SongViewModel(private val context: Context?) : ViewModel() {
     }
 
     fun addToPlaylist(playlistId: Long, ids: LongArray) {
-        PlaylistRepository.getInstance(context)!!.addToPlaylist(playlistId, ids)
+        PlaylistRepository.getInstance(context).addToPlaylist(playlistId, ids)
     }
 
     fun removeFromPlaylist(playlistId: Long, id: Long) {
-        PlaylistRepository.getInstance(context)!!.removeFromPlaylist(playlistId, id)
+        PlaylistRepository.getInstance(context).removeFromPlaylist(playlistId, id)
     }
 
     fun playLists(): LiveData<List<Playlist>> {
-        Observable.fromCallable { PlaylistRepository.getInstance(context)!!.getPlayLists() }
+        Observable.fromCallable { PlaylistRepository.getInstance(context).getPlayLists() }
             .observeOn(Schedulers.newThread()).subscribeOn(Schedulers.newThread())
             .doOnError { Log.println(Log.ERROR, "Error", it.message!!) }
             .subscribe { _playlistLiveData.postValue(it) }

@@ -10,18 +10,42 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="?colorPrimarySecondary2">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/album_song_list"
+    <data>
+        <import type="android.view.View" />
+        <variable
+            name="viewModel"
+            type="com.crrl.beatplayer.ui.viewmodels.SongViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:listitem="@layout/album_detail_item"
-        android:background="?colorPrimarySecondary2" />
+        android:background="?colorPrimarySecondary2">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/album_song_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?colorPrimarySecondary2"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_songs"
+            android:textColor="?titleTextColor"
+            android:textSize="@dimen/text_size_18"
+            android:textStyle="bold"
+            android:visibility="@{viewModel.liveData().size > 0 ? View.GONE : View.VISIBLE}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginBottom="@dimen/song_item_size"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
+

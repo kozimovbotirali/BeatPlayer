@@ -20,6 +20,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.SimpleItemAnimator
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.alertdialog.AlertDialog
 import com.crrl.beatplayer.alertdialog.dialogs.AlertItemAction
@@ -39,7 +40,6 @@ import com.crrl.beatplayer.ui.viewmodels.SongViewModel
 import com.crrl.beatplayer.utils.SettingsUtility
 import com.crrl.beatplayer.utils.SortModes
 import com.dgreenhalgh.android.simpleitemdecoration.linear.EndOffsetItemDecoration
-import kotlinx.android.synthetic.main.fragment_song.view.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -49,10 +49,6 @@ class SongFragment : BaseFragment<Song>() {
     private lateinit var songAdapter: SongAdapter
     private lateinit var binding: FragmentSongBinding
 
-    companion object {
-        fun newInstance() = SongFragment()
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -61,23 +57,23 @@ class SongFragment : BaseFragment<Song>() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        init(view)
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        init()
     }
 
-    private fun init(view: View) {
-        // Set up adapter
-        songAdapter = SongAdapter(activity).apply {
+    private fun init() {
+        songAdapter = SongAdapter(activity, (activity as MainActivity).viewModel).apply {
             showHeader = true
             itemClickListener = this@SongFragment
         }
 
         // Set up RecyclerView
-        view.song_list.apply {
+        binding.songList.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = songAdapter
             addItemDecoration(EndOffsetItemDecoration(resources.getDimensionPixelOffset(R.dimen.song_item_size)))
+            (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         }
 
         dialog = buildSortModesDialog()
@@ -85,7 +81,6 @@ class SongFragment : BaseFragment<Song>() {
         viewModel.liveData().observe(this) { list ->
             songAdapter.updateDataSet(list)
         }
-
         binding.let {
             it.viewModel = viewModel
             it.lifecycleOwner = this
@@ -187,7 +182,8 @@ class SongFragment : BaseFragment<Song>() {
         Toast.makeText(context, "Play All", Toast.LENGTH_LONG).show()
     }
 
-    override fun onPopupMenuClick(view: View, position: Int, item: Song) {
+    override fun onPopupMenuClick(view: View, position: Int, item: Song, itemList: List<Song>) {
+        super.onPopupMenuClick(view, position, item, itemList)
         powerMenu!!.showAsAnchorRightTop(view)
         viewModel.playLists().observe(this) {
             buildPlaylistMenu(it, item)

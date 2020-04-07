@@ -12,36 +12,36 @@
   -->
 
 <resources>
-    <color name="colorPrimary">#000000</color>
-    <color name="colorPrimaryDark">#000000</color>
-    <color name="colorAccentDark">#db5151</color>
-    <color name="colorAccentDarkOpacity">#44db5151</color>
-    <color name="colorPrimaryDarkSecondary">#000000</color>
-    <color name="colorPrimaryDarkSecondary2">#111111</color>
-    <color name="colorPrimaryDarkOpacity">#22FFFFFF</color>
+    <color name="colorPrimary">#181A1C</color>
+    <color name="colorPrimaryDark">#181A1C</color>
+    <color name="colorAccentDark">#427ADD</color>
+    <color name="colorAccentDarkOpacity">#80427ADD</color>
+    <color name="colorPrimaryDarkSecondary">#181A1C</color>
+    <color name="colorPrimaryDarkSecondary2">#232428</color>
+    <color name="colorPrimaryDarkOpacity">#CB181A1C</color>
     <color name="colorTitleTextDark">#FFFFFF</color>
     <color name="colorSubTitleTextDark">#CCCCCC</color>
     <color name="colorBodyTextDark">#888888</color>
 
-    <color name="colorPrimaryLight">#D0D1DB</color>
-    <color name="colorPrimaryDarkLight">#D0D1DB</color>
-    <color name="colorAccentLight">#db5151</color>
-    <color name="colorAccentLightOpacity">#44db5151</color>
-    <color name="colorPrimaryLightSecondary">#D0D1DB</color>
-    <color name="colorPrimaryLightSecondary2">#dadde5</color>
-    <color name="colorPrimaryLightOpacity">#22000000</color>
-    <color name="colorTitleTextLight">#040404</color>
+    <color name="colorPrimaryLight">#F6F8FA</color>
+    <color name="colorPrimaryDarkLight">#F6F8FA</color>
+    <color name="colorAccentLight">#427ADD</color>
+    <color name="colorAccentLightOpacity">#80427ADD</color>
+    <color name="colorPrimaryLightSecondary">#F6F8FA</color>
+    <color name="colorPrimaryLightSecondary2">#FFFFFF</color>
+    <color name="colorPrimaryLightOpacity">#CBF6F8FA</color>
+    <color name="colorTitleTextLight">#0E100F</color>
     <color name="colorSubTitleTextLight">#444444</color>
     <color name="colorBodyTextLight">#666666</color>
 
-    <color name="colorPrimaryAuto">#D0D1DB</color>
-    <color name="colorPrimaryDarkAuto">#D0D1DB</color>
-    <color name="colorAccentAuto">#db5151</color>
-    <color name="colorAccentAutoOpacity">#44db5151</color>
-    <color name="colorPrimaryAutoSecondary">#D0D1DB</color>
-    <color name="colorPrimaryAutoSecondary2">#dadde5</color>
-    <color name="colorPrimaryAutoOpacity">#22000000</color>
-    <color name="colorTitleTextAuto">#040404</color>
+    <color name="colorPrimaryAuto">#F6F8FA</color>
+    <color name="colorPrimaryDarkAuto">#F6F8FA</color>
+    <color name="colorAccentAuto">#427ADD</color>
+    <color name="colorAccentAutoOpacity">#80427ADD</color>
+    <color name="colorPrimaryAutoSecondary">#F6F8FA</color>
+    <color name="colorPrimaryAutoSecondary2">#FFFFFF</color>
+    <color name="colorPrimaryAutoOpacity">#CBF6F8FA</color>
+    <color name="colorTitleTextAuto">#1C1B20</color>
     <color name="colorSubTitleTextAuto">#444444</color>
     <color name="colorBodyTextAuto">#666666</color>
 

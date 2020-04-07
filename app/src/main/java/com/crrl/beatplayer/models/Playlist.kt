@@ -17,16 +17,16 @@ import android.database.Cursor
 import com.google.gson.Gson
 
 data class Playlist(
-    val id: Long,
-    val name: String,
-    val songCount: Int
+    val id: Long = -1,
+    val name: String = "",
+    val songCount: Int = -1
 ) : MediaItem(id) {
     companion object {
         fun fromCursor(cursor: Cursor, songCount: Int): Playlist {
             return Playlist(
-                id = cursor.getLong(0),
-                name = cursor.getString(1),
-                songCount = songCount
+                cursor.getLong(0),
+                cursor.getString(1),
+                songCount
             )
         }
     }

@@ -15,24 +15,24 @@ package com.crrl.beatplayer.ui.fragments
 
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.SimpleItemAnimator
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentPlaylistDetailBinding
 import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.extensions.observe
 import com.crrl.beatplayer.extensions.safeActivity
-import com.crrl.beatplayer.extensions.toPlaylist
 import com.crrl.beatplayer.models.Song
+import com.crrl.beatplayer.repository.PlaylistRepository
 import com.crrl.beatplayer.ui.activities.MainActivity
 import com.crrl.beatplayer.ui.adapters.SongAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.viewmodels.SongViewModel
-import com.crrl.beatplayer.utils.PlayerConstants
+import com.crrl.beatplayer.utils.PlayerConstants.PLAY_LIST_DETAIL
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -57,10 +57,12 @@ class PlaylistDetailFragment : BaseFragment<Song>() {
     }
 
     private fun init() {
-        binding.playlist = arguments!!.getString(PlayerConstants.PLAY_LIST_DETAIL)!!.toPlaylist()
+        val id = arguments!!.getLong(PLAY_LIST_DETAIL)
+
+        binding.playlist = PlaylistRepository.getInstance(context).getPlaylist(id)
 
         // Set up adapter
-        songAdapter = SongAdapter(activity).apply {
+        songAdapter = SongAdapter(activity, (activity as MainActivity).viewModel).apply {
             showHeader = true
             isPlaylist = true
             itemClickListener = this@PlaylistDetailFragment
@@ -70,6 +72,7 @@ class PlaylistDetailFragment : BaseFragment<Song>() {
         binding.songList.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = songAdapter
+            (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         }
 
         viewModel.songsByPlayList(binding.playlist!!.id).observe(this) {
@@ -99,8 +102,8 @@ class PlaylistDetailFragment : BaseFragment<Song>() {
         Toast.makeText(context, "Play All", Toast.LENGTH_LONG).show()
     }
 
-    override fun onPopupMenuClick(view: View, position: Int, item: Song) {
-        super.onPopupMenuClick(view, position, item)
+    override fun onPopupMenuClick(view: View, position: Int, item: Song, itemList: List<Song>) {
+        super.onPopupMenuClick(view, position, item, itemList)
         powerMenu!!.showAsAnchorRightTop(view)
         viewModel.playLists().observe(this) {
             buildPlaylistMenu(it, item)

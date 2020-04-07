@@ -28,11 +28,12 @@ import com.crrl.beatplayer.models.Playlist
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.utils.SettingsUtility
 
-interface PlaylistRepositoryInterface {
+private interface PlaylistRepositoryInterface {
     @Throws(IllegalStateException::class)
-    fun createPlaylist(name: String?): Long
-
+    fun createPlaylist(name: String?, ids: LongArray): Long
     fun getPlayLists(): List<Playlist>
+    fun getPlaylist(id: Long): Playlist
+    fun getPlayListsCount(): Int
     fun getSongsInPlaylist(playlistId: Long): List<Song>
     fun removeFromPlaylist(playlistId: Long, id: Long)
     fun deletePlaylist(playlistId: Long): Int
@@ -47,11 +48,11 @@ class PlaylistRepository() : PlaylistRepositoryInterface {
     companion object {
         private var instance: PlaylistRepository? = null
 
-        fun getInstance(context: Context?): PlaylistRepository? {
+        fun getInstance(context: Context?): PlaylistRepository {
             if (instance == null) {
                 instance = PlaylistRepository(context)
             }
-            return instance
+            return instance!!
         }
     }
 
@@ -60,7 +61,7 @@ class PlaylistRepository() : PlaylistRepositoryInterface {
         settingsUtility = SettingsUtility.getInstance(context)
     }
 
-    override fun createPlaylist(name: String?): Long {
+    override fun createPlaylist(name: String?, ids: LongArray): Long {
         if (name.isNullOrEmpty()) {
             return -1
         }
@@ -68,14 +69,14 @@ class PlaylistRepository() : PlaylistRepositoryInterface {
         val selection = "$NAME = ?"
         val selectionArgs = arrayOf(name)
 
-        return contentResolver.query(
+        val resp = contentResolver.query(
             EXTERNAL_CONTENT_URI,
             projection,
             selection,
             selectionArgs,
             null
         )?.use {
-            return if (it.count <= 0) {
+            if (it.count <= 0) {
                 val values = ContentValues(1).apply {
                     put(NAME, name)
                 }
@@ -86,6 +87,13 @@ class PlaylistRepository() : PlaylistRepositoryInterface {
             }
         }
             ?: throw IllegalStateException("Unable to query $EXTERNAL_CONTENT_URI, because system returned null.")
+
+
+        if(resp != -1L){
+            addToPlaylist(resp, ids).toLong()
+        }
+
+        return resp
     }
 
     override fun getPlayLists(): List<Playlist> {
@@ -95,6 +103,34 @@ class PlaylistRepository() : PlaylistRepositoryInterface {
             Playlist.fromCursor(this, songCount)
         }.filter { it.name.isNotEmpty() }
     }
+
+    override fun getPlaylist(id: Long): Playlist {
+        return contentResolver.query(
+            EXTERNAL_CONTENT_URI,
+            arrayOf(_ID, NAME),
+            "$_ID = ?",
+            arrayOf("$id"),
+            MediaStore.Audio.Playlists.DEFAULT_SORT_ORDER)?.use {
+            if(it.moveToFirst()){
+                val playlist = Playlist.fromCursor(it, getSongCountForPlaylist(id))
+                it.close()
+                playlist
+            } else{
+                val playlist = Playlist()
+                it.close()
+                playlist
+            }
+        }!!
+    }
+
+    override fun getPlayListsCount(): Int {
+        val cursor = makePlaylistCursor()
+        cursor ?: return -1
+        val count = cursor.count
+        cursor.close()
+        return count
+    }
+
 
     fun addToPlaylist(playlistId: Long, ids: LongArray): Int {
         val projection = arrayOf("max($PLAY_ORDER)")

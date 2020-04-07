@@ -16,17 +16,21 @@ package com.crrl.beatplayer.repository
 import android.content.ContentResolver
 import android.content.Context
 import android.database.Cursor
+import android.provider.BaseColumns._ID
 import android.provider.MediaStore
 import android.text.TextUtils
 import com.crrl.beatplayer.extensions.toList
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.utils.SettingsUtility
 import com.crrl.beatplayer.utils.SortModes
+import android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+import java.io.File
 
-interface SongsRepositoryInterface {
+private interface SongsRepositoryInterface {
     fun loadSongs(): List<Song>
     fun getSongForId(id: Long): Song
     fun searchSongs(searchString: String, limit: Int): List<Song>
+    fun deleteTracks(ids: LongArray): Int
 }
 
 class SongsRepository() : SongsRepositoryInterface {
@@ -65,6 +69,56 @@ class SongsRepository() : SongsRepositoryInterface {
         }
     }
 
+    // TODO a lot of operations are done here without verifying results,
+    // TODO e.g. if moveToFirst() returns true...
+    override fun deleteTracks(ids: LongArray): Int {
+        val projection = arrayOf(
+            _ID,
+            MediaStore.MediaColumns.DATA,
+            MediaStore.Audio.AudioColumns.ALBUM_ID
+        )
+        val selection = StringBuilder().apply {
+            append("$_ID IN (")
+            for (i in ids.indices) {
+                append(ids[i])
+                if (i < ids.size - 1) {
+                    append(",")
+                }
+            }
+            append(")")
+        }
+
+        contentResolver.query(
+            EXTERNAL_CONTENT_URI,
+            projection,
+            selection.toString(),
+            null,
+            null
+        )?.use {
+            it.moveToFirst()
+            // Step 2: Remove selected tracks from the database
+            contentResolver.delete(EXTERNAL_CONTENT_URI, selection.toString(), null)
+
+            // Step 3: Remove files from card
+            it.moveToFirst()
+            while (!it.isAfterLast) {
+                val name = it.getString(1)
+                val f = File(name)
+                try { // File.delete can throw a security exception
+                    if (!f.delete()) {
+                        // I'm not sure if we'd ever get here (deletion would
+                        // have to fail, but no exception thrown)
+                        print("Failed to delete file: $name")
+                    }
+                } catch (_: SecurityException) {
+                }
+                it.moveToNext()
+            }
+        }
+
+        return ids.size
+    }
+
     private fun makeSongCursor(
         selection: String?,
         paramArrayOfString: Array<String>?,
@@ -76,7 +130,7 @@ class SongsRepository() : SongsRepositoryInterface {
             selectionStatement = "$selectionStatement AND $selection"
         }
         return contentResolver.query(
-            MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+            EXTERNAL_CONTENT_URI,
             arrayOf(
                 "_id",
                 "title",

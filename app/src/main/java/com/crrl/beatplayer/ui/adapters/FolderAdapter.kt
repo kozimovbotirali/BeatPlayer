@@ -69,7 +69,8 @@ class FolderAdapter(private val context: Context?) :
                     R.id.item_menu -> itemClickListener!!.onPopupMenuClick(
                         view,
                         adapterPosition,
-                        getItem(adapterPosition)
+                        getItem(adapterPosition),
+                        folderList
                     )
                     R.id.container -> itemClickListener!!.onItemClick(
                         view,

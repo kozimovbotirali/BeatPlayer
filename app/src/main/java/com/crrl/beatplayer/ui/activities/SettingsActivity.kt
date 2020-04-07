@@ -62,7 +62,7 @@ class SettingsActivity : BaseActivity() {
                 it.selected = true
                 SettingsUtility.getInstance(applicationContext).currentTheme =
                     PlayerConstants.AUTO_THEME
-                recreate()
+                recreateActivity()
             })
             addItem(AlertItemAction(
                 getString(R.string.light_theme),
@@ -72,7 +72,7 @@ class SettingsActivity : BaseActivity() {
                 it.selected = true
                 SettingsUtility.getInstance(applicationContext).currentTheme =
                     PlayerConstants.LIGHT_THEME
-                recreate()
+                recreateActivity()
             })
             addItem(AlertItemAction(
                 getString(R.string.dark_theme),
@@ -82,7 +82,7 @@ class SettingsActivity : BaseActivity() {
                 it.selected = true
                 SettingsUtility.getInstance(applicationContext).currentTheme =
                     PlayerConstants.DARK_THEME
-                recreate()
+                recreateActivity()
             })
         }
     }

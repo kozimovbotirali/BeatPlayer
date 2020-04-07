@@ -112,7 +112,7 @@ class ArtistDetailFragment : BaseFragment<MediaItem>() {
         }
     }
 
-    override fun onPopupMenuClick(view: View, position: Int, item: MediaItem) {
+    override fun onPopupMenuClick(view: View, position: Int, item: MediaItem, itemList: List<MediaItem>) {
         item as Song
         powerMenu!!.showAsAnchorRightTop(view)
         viewModel.playLists().observe(this) {

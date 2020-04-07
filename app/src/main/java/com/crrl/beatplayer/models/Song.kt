@@ -14,6 +14,7 @@
 package com.crrl.beatplayer.models
 
 import android.database.Cursor
+import androidx.databinding.adapters.AdapterViewBindingAdapter
 import com.crrl.beatplayer.extensions.fix
 import com.google.gson.Gson
 
@@ -26,7 +27,9 @@ data class Song(
     val album: String = "Album",
     val duration: Int = 0,
     val trackNumber: Int = 0,
-    val path: String = ""
+    val path: String = "",
+    val isFav: Boolean = false,
+    var isSelected: Boolean = false
 ) : MediaItem(id) {
 
     companion object {

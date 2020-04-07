@@ -139,7 +139,7 @@
                         android:paddingBottom="150dp"
                         android:textColor="?subTitleTextColor"
                         android:text="@{viewModel.getLyrics(viewModel.currentData)}"
-                        android:textSize="15sp" />
+                        android:textSize="18sp" />
 
                 </LinearLayout>
             </ScrollView>

@@ -13,22 +13,28 @@
 
 package com.crrl.beatplayer.ui.activities
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
+import android.widget.Toast.LENGTH_SHORT
 import androidx.databinding.DataBindingUtil
 import com.crrl.beatplayer.R
-import com.crrl.beatplayer.extensions.addFragment
-import com.crrl.beatplayer.extensions.observe
-import com.crrl.beatplayer.extensions.replaceFragment
+import com.crrl.beatplayer.extensions.*
 import com.crrl.beatplayer.models.Song
+import com.crrl.beatplayer.repository.PlaylistRepository
 import com.crrl.beatplayer.ui.activities.base.BaseActivity
 import com.crrl.beatplayer.ui.fragments.*
 import com.crrl.beatplayer.ui.viewmodels.MainViewModel
 import com.crrl.beatplayer.utils.PlayerConstants
+import com.crrl.beatplayer.utils.PlayerConstants.PLAY_LIST_DETAIL
 import com.github.florent37.kotlin.pleaseanimate.please
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
+
 
 class MainActivity : BaseActivity() {
 
@@ -39,7 +45,7 @@ class MainActivity : BaseActivity() {
         init(savedInstanceState)
     }
 
-    private fun init(savedInstanceState: Bundle?){
+    private fun init(savedInstanceState: Bundle?) {
         viewModel.getCurrentSong().observe(this) {
             updateView(it)
         }
@@ -62,6 +68,8 @@ class MainActivity : BaseActivity() {
             it.viewModel = viewModel
             it.lifecycleOwner = this
         }
+
+        viewModel.binding.title.isSelected = true
     }
 
     fun onSongLyricClick(v: View) {
@@ -128,6 +136,33 @@ class MainActivity : BaseActivity() {
                     bottomOfItsParent()
                 }
             }.start()
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        data ?: return
+        data.extras ?: return
+        val name = data.extras!!.getString(PLAY_LIST_DETAIL)
+        val songs = Gson().fromJson<LongArray>(data.extras!!.getString("SONGS"))
+        if (requestCode == 1) {
+            createPlayList(name, songs)
+            if (resultCode == Activity.RESULT_CANCELED) {
+                toast(getString(R.string.playlist_added_success), LENGTH_SHORT)
+            }
+        }
+    }
+
+    private fun createPlayList(name: String?, selectedSong: LongArray) {
+
+        val id = PlaylistRepository.getInstance(this).createPlaylist(name, selectedSong)
+
+        if(id != -1L){
+            val extras = Bundle()
+            extras.putLong(PLAY_LIST_DETAIL, id)
+            addFragment(
+                R.id.nav_host_fragment, PlaylistDetailFragment(), PLAY_LIST_DETAIL, extras = extras
+            )
         }
     }
 }
