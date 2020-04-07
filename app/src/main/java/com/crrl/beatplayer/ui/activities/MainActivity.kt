@@ -17,7 +17,6 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import androidx.databinding.DataBindingUtil
 import com.crrl.beatplayer.R
@@ -28,6 +27,7 @@ import com.crrl.beatplayer.ui.activities.base.BaseActivity
 import com.crrl.beatplayer.ui.fragments.*
 import com.crrl.beatplayer.ui.viewmodels.MainViewModel
 import com.crrl.beatplayer.utils.PlayerConstants
+import com.crrl.beatplayer.utils.PlayerConstants.NOW_PLAYING
 import com.crrl.beatplayer.utils.PlayerConstants.PLAY_LIST_DETAIL
 import com.github.florent37.kotlin.pleaseanimate.please
 import com.google.gson.Gson
@@ -70,6 +70,17 @@ class MainActivity : BaseActivity() {
         }
 
         viewModel.binding.title.isSelected = true
+        hideMiniPlayer()
+        viewModel.getCurrentSong().observe(this){
+            val fragment = supportFragmentManager.findFragmentByTag(NOW_PLAYING)
+            if (it.id != -1L){
+                if(fragment == null){
+                    showMiniPlayer()
+                } else {
+                    if(!fragment.isVisible) false
+                }
+            }
+        }
     }
 
     fun onSongLyricClick(v: View) {
@@ -120,7 +131,7 @@ class MainActivity : BaseActivity() {
     fun hideMiniPlayer() {
         if (bottom_controls != null) {
             bottom_controls.isEnabled = false
-            please(100) {
+            please(190) {
                 animate(bottom_controls) {
                     belowOf(main_container)
                 }
@@ -129,14 +140,15 @@ class MainActivity : BaseActivity() {
     }
 
     fun showMiniPlayer() {
-        if (bottom_controls != null) {
-            bottom_controls.isEnabled = true
-            please(100) {
-                animate(bottom_controls) {
-                    bottomOfItsParent()
-                }
-            }.start()
-        }
+        if (viewModel.getCurrentSong().value != null && viewModel.getCurrentSong().value?.id != -1L)
+            if (bottom_controls != null) {
+                bottom_controls.isEnabled = true
+                please(190) {
+                    animate(bottom_controls) {
+                        bottomOfItsParent()
+                    }
+                }.start()
+            }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -157,7 +169,7 @@ class MainActivity : BaseActivity() {
 
         val id = PlaylistRepository.getInstance(this).createPlaylist(name, selectedSong)
 
-        if(id != -1L){
+        if (id != -1L) {
             val extras = Bundle()
             extras.putLong(PLAY_LIST_DETAIL, id)
             addFragment(
