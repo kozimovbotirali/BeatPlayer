@@ -20,20 +20,6 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
 android {
-    signingConfigs {
-        debug {
-            storeFile file('C:\\Users\\charl\\Documents\\BeatPlayerKey\\BeatPlayerKey.jks')
-            storePassword 'mgmY14dYnV4c!'
-            keyAlias = 'BeatPlayerKey'
-            keyPassword 'mgmY14dYnV4c!'
-        }
-        release {
-            storePassword 'mgmY14dYnV4c!'
-            keyAlias = 'BeatPlayerKey'
-            keyPassword 'mgmY14dYnV4c!'
-            storeFile file('C:\\Users\\charl\\Documents\\BeatPlayerKey\\BeatPlayerKey.jks')
-        }
-    }
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
     defaultConfig {
