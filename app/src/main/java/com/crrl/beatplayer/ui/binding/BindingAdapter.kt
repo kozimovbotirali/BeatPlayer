@@ -17,6 +17,7 @@ import android.content.ContentUris
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.support.v4.media.session.PlaybackStateCompat.STATE_PLAYING
+import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
@@ -101,4 +102,9 @@ fun setTextTitle(view: TextView, selectedSongs: MutableList<Long>) {
     } else {
         view.text = "${selectedSongs.size}"
     }
+}
+
+@BindingAdapter("app:clipToOutline")
+fun setClipToOutline(view: View, clipToOutline: Boolean) {
+    view.clipToOutline = true
 }
