@@ -70,6 +70,7 @@ class InputDialog(
             setTextColor(style.textColor)
         }
 
+
         view.sub_title.apply {
             if (message.isEmpty()) {
                 visibility = View.GONE
@@ -144,6 +145,8 @@ class InputDialog(
                 background =
                     drawRoundRectShape(layoutParams.width, layoutParams.height, style.inputColor)
                 requestFocus()
+                setText(style.text)
+                selectAll()
             }
         }
         actionsLayout.addView(view)

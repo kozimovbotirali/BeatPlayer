@@ -1,4 +1,4 @@
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2020. Carlos René Ramos López. All rights reserved.
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -12,8 +12,10 @@
   -->
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/thumb_small" android:state_enabled="false" />
-    <item android:drawable="@drawable/thumb_big" android:state_pressed="true" />
-    <item android:drawable="@drawable/thumb_small" android:state_selected="true" />
-    <item android:drawable="@drawable/thumb_small" />
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="?colorPrimarySecondary" />
+            <corners android:radius="@dimen/album_item_radius" />
+        </shape>
+    </item>
 </selector>

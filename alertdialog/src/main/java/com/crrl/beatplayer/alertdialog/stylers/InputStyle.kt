@@ -20,6 +20,7 @@ class InputStyle(
     val inputColor: Int = Color.parseColor("#434343"),
     val textColor: Int = Color.parseColor("#FFFFFF"),
     val hintTextColor: Int = Color.parseColor("#AAAAAA"),
-    val acceptColor: Int = Color.parseColor("#00FF00")
+    val acceptColor: Int = Color.parseColor("#00FF00"),
+    var text: String = ""
 
 ) : ItemStyle()

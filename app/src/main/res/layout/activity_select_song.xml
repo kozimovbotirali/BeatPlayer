@@ -11,11 +11,19 @@
   ~ limitations under the License.
   -->
 
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item>
-        <shape android:innerRadius="5dp" android:shape="ring" android:thickness="5dp" android:useLevel="false">
-            <solid android:color="?colorAccent" />
-            <size android:width="25dp" android:height="25dp" />
-        </shape>
-    </item>
-</selector>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.crrl.beatplayer.ui.viewmodels.MainViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
