@@ -13,9 +13,9 @@
 
 package com.crrl.beatplayer.utils
 
+import android.content.ContentUris
 import android.content.Context
 import android.content.res.Resources
-import android.util.Log
 import android.view.Surface.*
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
@@ -99,10 +99,13 @@ object GeneralUtils {
     }
 
     @Throws(FileNotFoundException::class)
-    fun audio2Raw(path: String): ByteArray? {
-        if (!File(path).exists()) return null
+    fun audio2Raw(context: Context, song: Song): ByteArray? {
+        if (!File(song.path).exists()) return null
 
-        val fis = FileInputStream(path)
+        val fileUri = ContentUris.withAppendedId(PlayerConstants.SONG_URI, song.id)
+        val parcelFileDescriptor = context.contentResolver.openFileDescriptor(fileUri, "r", null)?: return null
+
+        val fis = FileInputStream(parcelFileDescriptor.fileDescriptor)
         val bos = ByteArrayOutputStream()
         val b = ByteArray(1024)
 

@@ -58,7 +58,7 @@ class MainViewModel(val safeActivity: MainActivity?) : ViewModel() {
         if(liveSongData.value != song) {
             liveSongData.value = song
             Thread {
-                update(GeneralUtils.audio2Raw(song.path))
+                update(GeneralUtils.audio2Raw(safeActivity!!, song))
             }.start()
             update(-1)
         }
