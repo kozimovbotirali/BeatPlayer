@@ -44,6 +44,7 @@ object PlayerConstants {
     const val ARTIST_TYPE = "Artist"
     const val FOLDER_TYPE = "Folder"
     const val READ_ONLY_MODE = "r"
+    const val EOF = -1
 }
 
 enum class Repeat {

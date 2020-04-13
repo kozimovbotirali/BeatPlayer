@@ -23,9 +23,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.utils.PlayerConstants.ARTWORK_URI
-import java.io.ByteArrayOutputStream
-import java.io.FileInputStream
-import java.io.FileNotFoundException
+import java.io.*
 
 
 object GeneralUtils {
@@ -99,25 +97,40 @@ object GeneralUtils {
         return hours * (1000 * 60 * 60) + minutes * (1000 * 60) + seconds * 1000
     }
 
-    @Throws(FileNotFoundException::class)
     fun audio2Raw(context: Context, uri: Uri): ByteArray? {
         val parcelFileDescriptor = try {
-            context.contentResolver.openFileDescriptor(uri, "r", null) ?: return null
+            context.contentResolver.openFileDescriptor(uri, PlayerConstants.READ_ONLY_MODE, null)
+                ?: return null
         } catch (ex: FileNotFoundException) {
             return null
         }
-
         val fis = FileInputStream(parcelFileDescriptor.fileDescriptor)
-        val bos = ByteArrayOutputStream()
-        val b = ByteArray(1024)
-
-        var readNum = fis.read(b)
-
-        while (readNum != -1) {
-            bos.write(b, 0, readNum)
-            readNum = fis.read(b)
+        val data = try {
+            toByteArray(fis, 1024)
+        } catch (ex: Exception) {
+            audio2Raw(context, uri)
         }
-        return bos.toByteArray()
+        fis.close()
+        return data
+    }
+
+    @Throws(IOException::class, InterruptedIOException::class)
+    fun toByteArray(input: InputStream, size: Int): ByteArray? {
+        require(size >= 0) { "Size must be equal or greater than zero: $size" }
+        if (size == 0) {
+            return ByteArray(0)
+        }
+        val data = ByteArray(size)
+        var offset = 0
+        var read = input.read(data, offset, size - offset)
+        while (offset < size && read != PlayerConstants.EOF) {
+            offset += read
+            read = input.read(data, offset, size - offset)
+        }
+        if (offset != size) {
+            throw IOException("Unexpected readed size. current: $offset, excepted: $size")
+        }
+        return data
     }
 
     fun toggleShowKeyBoard(context: Context?, editText: EditText, show: Boolean) {
