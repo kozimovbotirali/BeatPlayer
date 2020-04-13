@@ -20,8 +20,6 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.crrl.beatplayer.R
@@ -112,10 +110,6 @@ class SearchFragment : BaseFragment<MediaItem>() {
                     ) = Unit
                 })
                 toggleShowKeyBoard(context, this, true)
-
-                onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
-                    toggleShowKeyBoard(context, v as EditText, hasFocus)
-                }
             }
 
             songList.apply {
@@ -153,26 +147,31 @@ class SearchFragment : BaseFragment<MediaItem>() {
             it.viewModel = viewModel
             it.lifecycleOwner = this
             it.status = false
+            it.executePendingBindings()
         }
     }
 
     override fun addToList(playListId: Long, song: Song) {
-        viewModel.addToPlaylist(playListId, arrayOf(song.id).toLongArray())
+        viewModel.addToPlaylist(playListId, listOf(song))
     }
 
     override fun onItemClick(view: View, position: Int, item: MediaItem) {
         super.onItemClick(view, position, item)
-        toggleShowKeyBoard(context, this@SearchFragment.view!!.search_src_text, false)
         when (item) {
-            is Song -> (safeActivity as MainActivity).viewModel.update(item)
+            is Song -> mainViewModel.update(item)
             is Album -> albumClicked(item)
             is Artist -> artistClicked(item)
         }
     }
 
-    override fun onPopupMenuClick(view: View, position: Int, item: MediaItem, itemList: List<MediaItem>) {
+    override fun onPopupMenuClick(
+        view: View,
+        position: Int,
+        item: MediaItem,
+        itemList: List<MediaItem>
+    ) {
         super.onPopupMenuClick(view, position, item, itemList)
-        if(item is Song) songPopup(item, view)
+        if (item is Song) songPopup(item, view)
     }
 
     private fun songPopup(song: Song, view: View) {

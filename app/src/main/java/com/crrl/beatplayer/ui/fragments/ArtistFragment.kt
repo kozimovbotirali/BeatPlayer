@@ -25,10 +25,8 @@ import com.crrl.beatplayer.alertdialog.dialogs.AlertItemAction
 import com.crrl.beatplayer.alertdialog.stylers.AlertItemStyle
 import com.crrl.beatplayer.alertdialog.stylers.AlertItemTheme
 import com.crrl.beatplayer.alertdialog.stylers.AlertType
-import com.crrl.beatplayer.extensions.addFragment
-import com.crrl.beatplayer.extensions.getColorByTheme
-import com.crrl.beatplayer.extensions.observe
-import com.crrl.beatplayer.extensions.safeActivity
+import com.crrl.beatplayer.databinding.FragmentArtistBinding
+import com.crrl.beatplayer.extensions.*
 import com.crrl.beatplayer.models.Artist
 import com.crrl.beatplayer.ui.adapters.ArtistAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
@@ -37,28 +35,29 @@ import com.crrl.beatplayer.utils.GeneralUtils
 import com.crrl.beatplayer.utils.PlayerConstants
 import com.crrl.beatplayer.utils.SettingsUtility
 import com.crrl.beatplayer.utils.SortModes
-import kotlinx.android.synthetic.main.fragment_artist.view.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
 class ArtistFragment : BaseFragment<Artist>() {
 
-    private val viewModel: ArtistViewModel by viewModel { parametersOf(safeActivity) }
+    private val viewModel: ArtistViewModel by viewModel { parametersOf(mainViewModel.artistRepository) }
+    private lateinit var binding: FragmentArtistBinding
     private lateinit var artistAdapter: ArtistAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_artist, container, false)
+        binding = inflater.inflateWithBinding(R.layout.fragment_artist, container)
+        return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        init(view)
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        init()
     }
 
-    private fun init(view: View) {
+    private fun init() {
         val sc = if (GeneralUtils.getRotation(safeActivity) == GeneralUtils.VERTICAL) 2 else 5
 
         artistAdapter = ArtistAdapter(context).apply {
@@ -67,8 +66,8 @@ class ArtistFragment : BaseFragment<Artist>() {
             spanCount = sc
         }
 
-        view.apply {
-            artist_list.apply {
+        binding.apply {
+            artistList.apply {
                 layoutManager = GridLayoutManager(context!!, sc).apply {
                     spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                         override fun getSpanSize(position: Int): Int {
@@ -84,6 +83,12 @@ class ArtistFragment : BaseFragment<Artist>() {
 
         viewModel.getArtists()!!.observe(this) { list ->
             artistAdapter.updateDataSet(list)
+        }
+
+        binding.let {
+            it.viewModel = viewModel
+            it.lifecycleOwner = this
+            it.executePendingBindings()
         }
     }
 
@@ -140,7 +145,7 @@ class ArtistFragment : BaseFragment<Artist>() {
 
     override fun onItemClick(view: View, position: Int, item: Artist) {
         val extras = Bundle()
-        extras.putString(PlayerConstants.ARTIST_KEY, item.toString())
+        extras.putLong(PlayerConstants.ARTIST_KEY, item.id)
         activity!!.addFragment(
             R.id.nav_host_fragment,
             ArtistDetailFragment(),

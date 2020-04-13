@@ -28,6 +28,7 @@ import com.crrl.beatplayer.ui.adapters.FolderAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.viewmodels.FolderViewModel
 import com.crrl.beatplayer.utils.PlayerConstants
+import com.dgreenhalgh.android.simpleitemdecoration.linear.EndOffsetItemDecoration
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -62,19 +63,31 @@ class FolderFragment : BaseFragment<Folder>() {
             }
         }
 
+        val decor =
+            EndOffsetItemDecoration(resources.getDimensionPixelOffset(R.dimen.song_item_size))
         viewModel.getFolders().observe(this) {
-            folderAdapter.updateDataSet(it)
+            binding.folderList.apply {
+                if (it.size > 1) {
+                    removeItemDecoration(decor)
+                    folderAdapter.updateDataSet(it)
+                    addItemDecoration(decor)
+                } else {
+                    removeItemDecoration(decor)
+                    folderAdapter.updateDataSet(it)
+                }
+            }
         }
 
         binding.let {
             it.viewModel = viewModel
             it.lifecycleOwner = this
+            it.executePendingBindings()
         }
     }
 
     override fun onItemClick(view: View, position: Int, item: Folder) {
         val extras = Bundle()
-        extras.putString(PlayerConstants.FOLDER_KEY, item.toString())
+        extras.putLong(PlayerConstants.FOLDER_KEY, item.id)
         activity!!.addFragment(
             R.id.nav_host_fragment,
             FolderDetailFragment(),

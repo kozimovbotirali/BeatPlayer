@@ -14,12 +14,35 @@
 package com.crrl.beatplayer.extensions
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 
-fun <T : ViewDataBinding> ViewGroup.inflateWithBinding(@LayoutRes layoutRes: Int, attachToRoot: Boolean = false): T {
+fun <T : ViewDataBinding> ViewGroup.inflateWithBinding(
+    @LayoutRes layoutRes: Int,
+    attachToRoot: Boolean = false
+): T {
     val layoutInflater = LayoutInflater.from(context)
     return DataBindingUtil.inflate(layoutInflater, layoutRes, this, attachToRoot) as T
+}
+
+fun View.setMargins(
+    left: Int? = null,
+    top: Int? = null,
+    right: Int? = null,
+    bottom: Int? = null
+) {
+    val lp = layoutParams as? ViewGroup.MarginLayoutParams
+        ?: return
+
+    lp.setMargins(
+        left ?: lp.leftMargin,
+        top ?: lp.topMargin,
+        right ?: lp.rightMargin,
+        bottom ?: lp.rightMargin
+    )
+
+    layoutParams = lp
 }

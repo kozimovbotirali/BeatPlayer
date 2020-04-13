@@ -15,9 +15,11 @@ package com.crrl.beatplayer.utils
 
 import android.net.Uri
 import android.provider.MediaStore
+import com.crrl.beatplayer.R
 
 object PlayerConstants {
 
+    const val FAVORITE_KEY = "favorite_key"
     const val LYRIC: String = "lyrics_fragment"
     const val PLAY_LIST_DETAIL = "play_list_detail"
     const val NOW_PLAYING = "now_playing"
@@ -35,6 +37,13 @@ object PlayerConstants {
     const val AUTO_THEME = "auto_theme"
     const val SONG_KEY = "song_key"
     const val NO_DATA = "no_data"
+    const val FAVORITE_ID = 7440L
+    const val FAVORITE_NAME = "${R.string.favorites}"
+    const val FAVORITE_TYPE = "Favorite"
+    const val ALBUM_TYPE = "Album"
+    const val ARTIST_TYPE = "Artist"
+    const val FOLDER_TYPE = "Folder"
+    const val READ_ONLY_MODE = "r"
 }
 
 enum class Repeat {

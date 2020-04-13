@@ -13,7 +13,6 @@
 
 package com.crrl.beatplayer.extensions
 
-import android.util.Log
 import com.crrl.beatplayer.models.Folder
 import com.crrl.beatplayer.models.MediaItem
 import com.crrl.beatplayer.models.Playlist

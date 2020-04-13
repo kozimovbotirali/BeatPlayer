@@ -13,19 +13,21 @@
 
 package com.crrl.beatplayer.playback
 
-import com.crrl.beatplayer.models.Song
+import kotlin.random.Random.Default.nextInt
 
-interface MediaControls{
+
+interface MediaControls {
     fun play()
     fun pause()
     fun stop()
-    fun next(currentSong: Song) : Song
-    fun previous(currentSong: Song) : Song
+    fun random(currentSong: Long): Long
+    fun next(currentSong: Long): Long
+    fun previous(currentSong: Long): Long
 }
 
-class MusicService : MediaControls{
+class MusicService : MediaControls {
 
-    private var songList: List<Song> = emptyList()
+    private var songList: LongArray = longArrayOf()
 
     override fun play() {
 
@@ -39,27 +41,37 @@ class MusicService : MediaControls{
 
     }
 
-    // Calculating the next song based on the current list and song
-    override fun next(currentSong: Song): Song {
+    override fun random(currentSong: Long): Long {
+        if (songList.size == 1) return songList.first()
         val currentIndex = songList.indexOf(currentSong)
-        return if (currentIndex == songList.size - 1){
+        var randomSong = nextInt(0, songList.size - 1)
+        while (randomSong == currentIndex) {
+            randomSong = nextInt(0, songList.size - 1)
+        }
+        return songList[randomSong]
+    }
+
+    // Calculating the next song based on the current list and song
+    override fun next(currentSong: Long): Long {
+        val currentIndex = songList.indexOf(currentSong)
+        return if (currentIndex == songList.size - 1) {
             songList[0]
-        }else{
-            songList[currentIndex+1]
+        } else {
+            songList[currentIndex + 1]
         }
     }
 
     // Calculating the previous song based on the current list and song
-    override fun previous(currentSong: Song): Song {
+    override fun previous(currentSong: Long): Long {
         val currentIndex = songList.indexOf(currentSong)
-        return if (currentIndex == 0){
+        return if (currentIndex == 0) {
             songList[songList.size - 1]
-        }else{
-            songList[currentIndex-1]
+        } else {
+            songList[currentIndex - 1]
         }
     }
 
-    fun updateData(list: List<Song>) {
+    fun updateData(list: LongArray) {
         songList = list
     }
 }

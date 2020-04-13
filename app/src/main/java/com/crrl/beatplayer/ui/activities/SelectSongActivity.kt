@@ -27,7 +27,6 @@ import com.crrl.beatplayer.extensions.delete
 import com.crrl.beatplayer.extensions.observe
 import com.crrl.beatplayer.interfaces.ItemClickListener
 import com.crrl.beatplayer.models.Song
-import com.crrl.beatplayer.repository.PlaylistRepository
 import com.crrl.beatplayer.ui.activities.base.BaseActivity
 import com.crrl.beatplayer.ui.adapters.SelectSongAdapter
 import com.crrl.beatplayer.ui.viewmodels.SongViewModel
@@ -79,21 +78,17 @@ class SelectSongActivity : BaseActivity(), ItemClickListener<Song> {
 
     fun doneClick(view: View) {
         val name = intent.extras!!.getString(PLAY_LIST_DETAIL)
-        val songs = viewModel.selectedSongs().value!!.toLongArray()
+        val songs = viewModel.selectedSongs().value!!
         returnResult(name, songs)
         finish()
     }
 
     fun selectAll(view: View) {
         view as CheckBox
-        if(view.isChecked){
-            viewModel.update(songList2LongList(true))
-        } else {
-            viewModel.update(songList2LongList(false))
-        }
+        viewModel.update(songListSelected(view.isChecked))
     }
 
-    private fun returnResult(name: String?, songs: LongArray){
+    private fun returnResult(name: String?, songs: List<Song>) {
         val returnIntent = Intent().apply {
             putExtra(PLAY_LIST_DETAIL, name)
             putExtra("SONGS", Gson().toJson(songs))
@@ -103,20 +98,16 @@ class SelectSongActivity : BaseActivity(), ItemClickListener<Song> {
         overridePendingTransition(0, 0)
     }
 
-    private fun songList2LongList(select: Boolean): MutableList<Long>{
-        val songList = mutableListOf<Long>()
-        for((index, item) in songAdapter.songList.iterator().withIndex()){
-            if(select){
-                songList.add(item.id)
-            }
+    private fun songListSelected(select: Boolean): MutableList<Song> {
+        return songAdapter.songList.mapIndexed { index, item ->
             toggleSelect(index, item, select)
-        }
-        return songList
+            item.apply { isSelected = select }
+        }.filter { it.isSelected }.toMutableList()
     }
 
     override fun onBackPressed() {
         val name = intent.extras!!.getString(PLAY_LIST_DETAIL)
-        returnResult(name, longArrayOf())
+        returnResult(name, emptyList())
         finish()
         overridePendingTransition(0, 0)
     }
@@ -124,11 +115,11 @@ class SelectSongActivity : BaseActivity(), ItemClickListener<Song> {
     override fun onItemClick(view: View, position: Int, item: Song) {
         val songs = viewModel.selectedSongs().value!!
         if (!item.isSelected) {
-            songs.add(item.id)
+            songs.add(item)
             toggleSelect(position, item, true)
         } else {
             toggleSelect(position, item, false)
-            songs.delete(item.id)
+            songs.delete(item)
         }
         viewModel.update(songs)
     }
@@ -136,5 +127,6 @@ class SelectSongActivity : BaseActivity(), ItemClickListener<Song> {
     override fun onShuffleClick(view: View) = Unit
     override fun onSortClick(view: View) = Unit
     override fun onPlayAllClick(view: View) = Unit
-    override fun onPopupMenuClick(view: View, position: Int, item: Song, itemList: List<Song>) = Unit
+    override fun onPopupMenuClick(view: View, position: Int, item: Song, itemList: List<Song>) =
+        Unit
 }

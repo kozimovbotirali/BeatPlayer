@@ -15,7 +15,6 @@ package com.crrl.beatplayer.ui.adapters
 
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CompoundButton
 import androidx.recyclerview.widget.RecyclerView
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.SelectSongItemBinding
@@ -26,10 +25,11 @@ import com.crrl.beatplayer.models.Song
 class SelectSongAdapter(
     val songList: MutableList<Song>,
     private val itemClickListener: ItemClickListener<Song>
-): RecyclerView.Adapter<SelectSongAdapter.ViewHolderSong>() {
+) : RecyclerView.Adapter<SelectSongAdapter.ViewHolderSong>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderSong {
-        val viewBinding = parent.inflateWithBinding<SelectSongItemBinding>(R.layout.select_song_item)
+        val viewBinding =
+            parent.inflateWithBinding<SelectSongItemBinding>(R.layout.select_song_item)
         return ViewHolderSong(viewBinding)
     }
 
@@ -46,7 +46,7 @@ class SelectSongAdapter(
     }
 
     inner class ViewHolderSong(private val binding: SelectSongItemBinding) :
-        RecyclerView.ViewHolder(binding.root), View.OnClickListener{
+        RecyclerView.ViewHolder(binding.root), View.OnClickListener {
 
         fun bind(song: Song) {
             binding.apply {

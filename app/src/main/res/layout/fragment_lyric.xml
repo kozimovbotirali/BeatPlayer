@@ -32,54 +32,26 @@
         android:layout_height="match_parent"
         android:background="?colorPrimary">
 
-        <ImageButton
-            android:id="@+id/back"
-            android:layout_width="@dimen/btn_size"
-            android:layout_height="@dimen/btn_size"
-            android:background="@drawable/btn_ripple"
-            android:contentDescription="@string/cover"
-            android:onClick="back"
-            android:tint="?btnTintColor"
-            app:layout_constraintBottom_toBottomOf="@+id/folder_list_container"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_back" />
-
-        <ImageButton
-            android:id="@+id/menu"
-            android:layout_width="@dimen/btn_size"
-            android:layout_height="@dimen/btn_size"
-            android:background="@drawable/btn_ripple"
-            android:contentDescription="@string/cover"
-            android:onClick="menu"
-            android:src="@drawable/ic_more"
-            android:tint="?btnTintColor"
-            app:layout_constraintBottom_toBottomOf="@+id/folder_list_container"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <LinearLayout
             android:id="@+id/folder_list_container"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="@dimen/margin_12"
-            app:layout_constraintEnd_toStartOf="@+id/menu"
-            app:layout_constraintStart_toEndOf="@+id/back"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
                 style="@style/TitleTextAppearance"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginStart="7dp"
-                android:layout_marginEnd="7dp"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:maxLines="1"
-                android:textColor="?attr/titleTextColor"
+                android:padding="7dp"
                 android:text="@{viewModel.currentData.title, default=@string/title}"
-                android:textSize="@dimen/title_text_size" />
+                android:textColor="?titleTextColor" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -87,12 +59,10 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:maxLines="1"
-                android:layout_marginStart="7dp"
-                android:layout_marginEnd="7dp"
-                android:layout_marginTop="7dp"
-                android:text="@{viewModel.currentData.artist, default=@string/artist}"
+                android:padding="7dp"
+                android:text="@{viewModel.currentData.artist, default=@string/title}"
                 android:textColor="?colorAccent"
-                android:textSize="14sp" />
+                android:textSize="@dimen/title_text_size" />
         </LinearLayout>
 
         <View

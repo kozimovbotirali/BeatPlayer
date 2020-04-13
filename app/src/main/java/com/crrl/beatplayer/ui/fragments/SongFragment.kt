@@ -17,10 +17,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.SimpleItemAnimator
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.alertdialog.AlertDialog
 import com.crrl.beatplayer.alertdialog.dialogs.AlertItemAction
@@ -31,7 +29,7 @@ import com.crrl.beatplayer.databinding.FragmentSongBinding
 import com.crrl.beatplayer.extensions.getColorByTheme
 import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.extensions.observe
-import com.crrl.beatplayer.extensions.safeActivity
+import com.crrl.beatplayer.extensions.toIDList
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.ui.activities.MainActivity
 import com.crrl.beatplayer.ui.adapters.SongAdapter
@@ -40,12 +38,12 @@ import com.crrl.beatplayer.ui.viewmodels.SongViewModel
 import com.crrl.beatplayer.utils.SettingsUtility
 import com.crrl.beatplayer.utils.SortModes
 import com.dgreenhalgh.android.simpleitemdecoration.linear.EndOffsetItemDecoration
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.core.parameter.parametersOf
 
 class SongFragment : BaseFragment<Song>() {
 
-    private val viewModel: SongViewModel by viewModel { parametersOf(context) }
+    private val viewModel: SongViewModel by sharedViewModel { parametersOf(context) }
     private lateinit var songAdapter: SongAdapter
     private lateinit var binding: FragmentSongBinding
 
@@ -72,18 +70,27 @@ class SongFragment : BaseFragment<Song>() {
         binding.songList.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = songAdapter
-            addItemDecoration(EndOffsetItemDecoration(resources.getDimensionPixelOffset(R.dimen.song_item_size)))
-            (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         }
 
         dialog = buildSortModesDialog()
-
-        viewModel.liveData().observe(this) { list ->
-            songAdapter.updateDataSet(list)
+        val decor =
+            EndOffsetItemDecoration(resources.getDimensionPixelOffset(R.dimen.song_item_size))
+        viewModel.liveData().observe(this) {
+            binding.songList.apply {
+                if (it.size > 1) {
+                    removeItemDecoration(decor)
+                    songAdapter.updateDataSet(it)
+                    addItemDecoration(decor)
+                } else {
+                    removeItemDecoration(decor)
+                    songAdapter.updateDataSet(it)
+                }
+            }
         }
         binding.let {
             it.viewModel = viewModel
             it.lifecycleOwner = this
+            it.executePendingBindings()
         }
     }
 
@@ -162,16 +169,17 @@ class SongFragment : BaseFragment<Song>() {
     }
 
     override fun addToList(playListId: Long, song: Song) {
-        viewModel.addToPlaylist(playListId, arrayOf(song.id).toLongArray())
+        viewModel.addToPlaylist(playListId, listOf(song))
     }
 
     override fun onItemClick(view: View, position: Int, item: Song) {
-        (safeActivity as MainActivity).viewModel.update(item)
-        (safeActivity as MainActivity).viewModel.update(songAdapter.songList)
+        mainViewModel.update(item)
+        mainViewModel.update(songAdapter.songList.toIDList())
     }
 
     override fun onShuffleClick(view: View) {
-        Toast.makeText(context, "Shuffle", Toast.LENGTH_LONG).show()
+        mainViewModel.update(songAdapter.songList.toIDList())
+        mainViewModel.update(mainViewModel.random(-1))
     }
 
     override fun onSortClick(view: View) {
@@ -179,7 +187,8 @@ class SongFragment : BaseFragment<Song>() {
     }
 
     override fun onPlayAllClick(view: View) {
-        Toast.makeText(context, "Play All", Toast.LENGTH_LONG).show()
+        mainViewModel.update(songAdapter.songList.first())
+        mainViewModel.update(songAdapter.songList.toIDList())
     }
 
     override fun onPopupMenuClick(view: View, position: Int, item: Song, itemList: List<Song>) {

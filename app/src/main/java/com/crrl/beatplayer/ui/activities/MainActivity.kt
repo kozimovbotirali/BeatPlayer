@@ -22,11 +22,13 @@ import androidx.databinding.DataBindingUtil
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.extensions.*
 import com.crrl.beatplayer.models.Song
+import com.crrl.beatplayer.repository.FavoritesRepository
 import com.crrl.beatplayer.repository.PlaylistRepository
 import com.crrl.beatplayer.ui.activities.base.BaseActivity
 import com.crrl.beatplayer.ui.fragments.*
 import com.crrl.beatplayer.ui.viewmodels.MainViewModel
 import com.crrl.beatplayer.utils.PlayerConstants
+import com.crrl.beatplayer.utils.PlayerConstants.FAVORITE_ID
 import com.crrl.beatplayer.utils.PlayerConstants.NOW_PLAYING
 import com.crrl.beatplayer.utils.PlayerConstants.PLAY_LIST_DETAIL
 import com.github.florent37.kotlin.pleaseanimate.please
@@ -67,17 +69,15 @@ class MainActivity : BaseActivity() {
         viewModel.binding.let {
             it.viewModel = viewModel
             it.lifecycleOwner = this
+            it.executePendingBindings()
         }
 
         viewModel.binding.title.isSelected = true
-        hideMiniPlayer()
-        viewModel.getCurrentSong().observe(this){
+        viewModel.getCurrentSong().observe(this) {
             val fragment = supportFragmentManager.findFragmentByTag(NOW_PLAYING)
-            if (it.id != -1L){
-                if(fragment == null){
+            if (it.id != -1L) {
+                if (fragment == null) {
                     showMiniPlayer()
-                } else {
-                    if(!fragment.isVisible) false
                 }
             }
         }
@@ -109,7 +109,7 @@ class MainActivity : BaseActivity() {
         addFragment(
             R.id.nav_host_fragment,
             SongDetailFragment(),
-            PlayerConstants.NOW_PLAYING,
+            NOW_PLAYING,
             true
         )
     }
@@ -156,7 +156,8 @@ class MainActivity : BaseActivity() {
         data ?: return
         data.extras ?: return
         val name = data.extras!!.getString(PLAY_LIST_DETAIL)
-        val songs = Gson().fromJson<LongArray>(data.extras!!.getString("SONGS"))
+        val songs = Gson().fromJson<List<Song>>(data.extras!!.getString("SONGS"))
+        println(songs)
         if (requestCode == 1) {
             createPlayList(name, songs)
             if (resultCode == Activity.RESULT_CANCELED) {
@@ -165,16 +166,26 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    private fun createPlayList(name: String?, selectedSong: LongArray) {
-
-        val id = PlaylistRepository.getInstance(this).createPlaylist(name, selectedSong)
-
+    private fun createPlayList(name: String?, selectedSong: List<Song>) {
+        val id = PlaylistRepository(this).createPlaylist(name!!, selectedSong)
         if (id != -1L) {
             val extras = Bundle()
             extras.putLong(PLAY_LIST_DETAIL, id)
             addFragment(
                 R.id.nav_host_fragment, PlaylistDetailFragment(), PLAY_LIST_DETAIL, extras = extras
             )
+        }
+    }
+
+    fun toggleAddToFav(v: View) {
+        val song = viewModel.getCurrentSong().value ?: return
+        val favoritesRepository = FavoritesRepository(this)
+        //favoritesRepository.onUpgrade(favoritesRepository.writableDatabase, 0, 1)
+        if (!favoritesRepository.favExist(FAVORITE_ID)) return
+        if (favoritesRepository.songExist(song.id)) {
+            favoritesRepository.deleteSongByFavorite(FAVORITE_ID, longArrayOf(song.id))
+        } else {
+            favoritesRepository.addSongByFavorite(FAVORITE_ID, longArrayOf(song.id))
         }
     }
 }

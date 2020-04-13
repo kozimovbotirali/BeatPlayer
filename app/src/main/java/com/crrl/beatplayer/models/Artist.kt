@@ -14,28 +14,31 @@
 package com.crrl.beatplayer.models
 
 import android.database.Cursor
+import com.crrl.beatplayer.utils.PlayerConstants.ARTIST_TYPE
 import com.google.gson.Gson
 
 data class Artist(
     var id: Long = 0,
-    var albumId: Long = 0,
     var name: String = "",
-    var songCount: Int = 0,
-    var albumCount: Int = 0
+    var albumCount: Int = 0,
+    var albumId: Long = 0
 ) : MediaItem(id) {
 
     companion object {
         fun createFromCursor(cursor: Cursor): Artist {
             return Artist(
                 cursor.getLong(0),
-                cursor.getLong(1),
-                cursor.getString(2),
-                cursor.getInt(3)
+                cursor.getString(1),
+                cursor.getInt(2)
             )
         }
     }
 
     override fun toString(): String {
         return Gson().toJson(this)
+    }
+
+    fun toFavorite(): Favorite {
+        return Favorite(id, name, name, albumId, 0, albumCount, ARTIST_TYPE)
     }
 }

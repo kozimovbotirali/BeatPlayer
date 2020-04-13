@@ -20,8 +20,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.crrl.beatplayer.R
-import com.crrl.beatplayer.databinding.FragmentSongDetailBinding
 import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.extensions.observe
 import com.crrl.beatplayer.extensions.safeActivity
@@ -30,7 +30,6 @@ import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.ui.activities.MainActivity
 import com.crrl.beatplayer.ui.fragments.base.BaseSongDetailFragment
 import com.crrl.beatplayer.ui.viewmodels.SongDetailViewModel
-import com.crrl.beatplayer.utils.GeneralUtils
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import rm.com.audiowave.OnSamplingListener
@@ -56,16 +55,26 @@ class SongDetailFragment : BaseSongDetailFragment() {
         viewModel.getCurrentData().observe(viewLifecycleOwner) {
             updateViewComponents(it)
         }
+        viewModel.playLists().observe(this) {
+            buildPlaylistMenu(it, mainViewModel.getCurrentSong().value!!)
+        }
+        viewModel.binding!!.addPlaylist.setOnClickListener { showAddDialog() }
         setupRawData()
         viewModel.binding!!.let {
             it.song = viewModel
-            it.lifecycleOwner = viewLifecycleOwner
+            it.lifecycleOwner = this
+            it.executePendingBindings()
         }
+    }
+
+    private fun showAddDialog() {
+        alertPlaylists ?: return
+        alertPlaylists?.show(safeActivity as AppCompatActivity)
     }
 
     private fun setupRawData() {
         try {
-            viewModel.getRawData().observe(viewLifecycleOwner){
+            viewModel.getRawData().observe(viewLifecycleOwner) {
                 viewModel.binding!!.seekBar.setRawData(it, object : OnSamplingListener {
                     override fun onComplete() = Unit
                 })
@@ -82,10 +91,10 @@ class SongDetailFragment : BaseSongDetailFragment() {
                 safeActivity.toast("Play", Toast.LENGTH_SHORT)
             }
             nextBtn.setOnClickListener {
-                (safeActivity as MainActivity).viewModel.next(song)
+                mainViewModel.next(song.id)
             }
             previousBtn.setOnClickListener {
-                (safeActivity as MainActivity).viewModel.previous(song)
+                mainViewModel.previous(song.id)
             }
             seekBar.apply {
                 onStopTracking = {
@@ -96,7 +105,7 @@ class SongDetailFragment : BaseSongDetailFragment() {
                     viewModel.updateTime((it * song.duration / 100).toInt())
                 }
 
-                onProgressChanged = { progress, byUser ->
+                onProgressChanged = { progress, _ ->
                     viewModel.updateTime((progress * song.duration / 100).toInt())
                 }
             }
@@ -104,15 +113,15 @@ class SongDetailFragment : BaseSongDetailFragment() {
 
         viewModel.getTime().observe(viewLifecycleOwner) {
             viewModel.binding!!.seekBar.apply {
-                if(it == -1) {
+                if (it == -1) {
                     progress = 0F
                     setRawData(ByteArray(Int.SIZE_BYTES))
                 }
                 // Percent to Milliseconds and Normalize step to 1000
                 val t = (progress * song.duration / 100).toInt() / 1000 * 1000
-                if(t != it){
+                if (t != it) {
                     val time = (it * 100) / song.duration.toFloat()
-                    val timeF = if(time < 0F) 0F else if(time > 100F) 100F else time
+                    val timeF = if (time < 0F) 0F else if (time > 100F) 100F else time
                     progress = timeF
                 }
             }

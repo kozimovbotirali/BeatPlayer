@@ -13,14 +13,13 @@
 
 package com.crrl.beatplayer.ui.viewmodels
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.crrl.beatplayer.models.Album
 import com.crrl.beatplayer.repository.AlbumsRepository
 
-class AlbumViewModel(private val context: Context?) : ViewModel() {
+class AlbumViewModel(private val repository: AlbumsRepository) : ViewModel() {
 
     private val albums: MutableLiveData<List<Album>>? = MutableLiveData()
 
@@ -30,7 +29,7 @@ class AlbumViewModel(private val context: Context?) : ViewModel() {
 
     fun update() {
         Thread {
-            albums!!.postValue(AlbumsRepository.getInstance(context)!!.getAlbums())
+            albums!!.postValue(repository.getAlbums())
         }.start()
     }
 

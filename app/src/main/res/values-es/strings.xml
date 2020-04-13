@@ -56,7 +56,7 @@
     <string name="light_theme">Tema Claro</string>
     <string name="dark_theme">Tema Obscuro</string>
     <string name="appearance">Apariencia</string>
-    <string name="theme_description">Elija cómo desea que se vea la aplicación.</string>
+    <string name="theme_description">Elige uno de estos temas de BeatPlayer.</string>
     <string name="default_theme">Por defecto del Sistema</string>
     <string name="no_lyrics">Lo sentimos, no pudimos obtener la letra de esta canción.</string>
     <string name="deleted_ok">Canción eliminada exitosamente.</string>
@@ -69,6 +69,10 @@
     <string name="all">Todas</string>
     <string name="done">Done</string>
     <string name="no_albums">Sin Albumes</string>
+    <string name="no_favorites">Sin Música Favorita</string>
+    <string name="favorites_tip">Tap the heart icon on \"Now Playing, Albums, Artists or Folders\" views. Your favorite music will be listed here.</string>
+    <string name="favorite_music">Música Favorita</string>
+    <string name="no_artists">Sin Artistas</string>
 
     <plurals name="number_of_songs" tools:ignore="UnusedQuantity">
         <item quantity="zero">%d Pistas</item>

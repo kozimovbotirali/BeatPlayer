@@ -13,37 +13,34 @@
 
 package com.crrl.beatplayer.ui.fragments
 
-import android.content.ContentUris
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.recyclerview.widget.GridLayoutManager
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentArtistDetailBinding
-import com.crrl.beatplayer.extensions.*
+import com.crrl.beatplayer.extensions.addFragment
+import com.crrl.beatplayer.extensions.inflateWithBinding
+import com.crrl.beatplayer.extensions.observe
 import com.crrl.beatplayer.interfaces.ItemClickListener
 import com.crrl.beatplayer.models.Album
 import com.crrl.beatplayer.models.Artist
 import com.crrl.beatplayer.models.MediaItem
 import com.crrl.beatplayer.models.Song
+import com.crrl.beatplayer.repository.ArtistsRepository
+import com.crrl.beatplayer.repository.FavoritesRepository
 import com.crrl.beatplayer.ui.adapters.AlbumAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.viewmodels.SongViewModel
-import com.crrl.beatplayer.utils.GeneralUtils
 import com.crrl.beatplayer.utils.PlayerConstants
+import com.dgreenhalgh.android.simpleitemdecoration.linear.EndOffsetItemDecoration
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
 @Suppress("UNCHECKED_CAST")
 class ArtistDetailFragment : BaseFragment<MediaItem>() {
-
-    companion object {
-        fun newInstance() = ArtistDetailFragment()
-    }
 
     private val viewModel: SongViewModel by viewModel { parametersOf(context) }
     private lateinit var albumAdapter: AlbumAdapter
@@ -64,37 +61,47 @@ class ArtistDetailFragment : BaseFragment<MediaItem>() {
     }
 
     private fun init() {
-        val sc = if (GeneralUtils.getRotation(safeActivity) == GeneralUtils.VERTICAL) 3 else 5
-
-        artist = arguments!!.getString(PlayerConstants.ARTIST_KEY)!!.toArtist()
+        val id = arguments!!.getLong(PlayerConstants.ARTIST_KEY)
+        artist = ArtistsRepository.getInstance(context)?.getArtist(id)!!
 
         albumAdapter = AlbumAdapter(context).apply {
             itemClickListener = this@ArtistDetailFragment as ItemClickListener<Album>
-            spanCount = sc
+            artistDetail = true
         }
 
         binding.apply {
             albumList.apply {
-                layoutManager = GridLayoutManager(context, sc)
+                layoutManager = LinearLayoutManager(context)
                 adapter = albumAdapter
-                isNestedScrollingEnabled = false
-                setHasFixedSize(true)
+            }
+            addFavorites.setOnClickListener { toggleAddFav() }
+        }
+
+        val decor =
+            EndOffsetItemDecoration(resources.getDimensionPixelOffset(R.dimen.song_item_size))
+        viewModel.getArtistAlbums(artist.id).observe(this) {
+            binding.albumList.apply {
+                if (it.size > 1) {
+                    removeItemDecoration(decor)
+                    albumAdapter.updateDataSet(it)
+                    addItemDecoration(decor)
+                } else {
+                    removeItemDecoration(decor)
+                    albumAdapter.updateDataSet(it)
+                }
             }
         }
 
-        viewModel.getArtistAlbums(artist.id).observe(this) {
-            albumAdapter.updateDataSet(it)
-        }
-
-        binding.let{
+        binding.let {
             it.artist = artist
+            it.viewModel = viewModel
             it.lifecycleOwner = this
             it.executePendingBindings()
         }
     }
 
     override fun addToList(playListId: Long, song: Song) {
-        viewModel.addToPlaylist(playListId, arrayOf(song.id).toLongArray())
+        viewModel.addToPlaylist(playListId, listOf(song))
     }
 
     private fun albumClicked(item: Album) {
@@ -116,11 +123,26 @@ class ArtistDetailFragment : BaseFragment<MediaItem>() {
         }
     }
 
-    override fun onPopupMenuClick(view: View, position: Int, item: MediaItem, itemList: List<MediaItem>) {
+    override fun onPopupMenuClick(
+        view: View,
+        position: Int,
+        item: MediaItem,
+        itemList: List<MediaItem>
+    ) {
         item as Song
         powerMenu!!.showAsAnchorRightTop(view)
         viewModel.playLists().observe(this) {
             buildPlaylistMenu(it, item)
         }
+    }
+
+    private fun toggleAddFav() {
+        val favoritesRepository = FavoritesRepository(context)
+        if (favoritesRepository.favExist(artist.id)) {
+            favoritesRepository.deleteFavorites(longArrayOf(artist.id))
+        } else {
+            favoritesRepository.createFavorite(artist.toFavorite())
+        }
+        println(favoritesRepository.favExist(artist.id))
     }
 }

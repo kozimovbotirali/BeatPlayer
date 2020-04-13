@@ -17,7 +17,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager.widget.ViewPager
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentLibraryBinding
@@ -26,13 +25,11 @@ import com.crrl.beatplayer.extensions.safeActivity
 import com.crrl.beatplayer.ui.activities.MainActivity
 import com.crrl.beatplayer.ui.adapters.ViewPagerAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseSongDetailFragment
-import com.crrl.beatplayer.ui.viewmodels.LibraryViewModel
 import com.crrl.beatplayer.utils.SettingsUtility
 
 
 class LibraryFragment : BaseSongDetailFragment() {
 
-    private lateinit var viewModel: LibraryViewModel
     private lateinit var binding: FragmentLibraryBinding
 
     override fun onCreateView(
@@ -49,31 +46,39 @@ class LibraryFragment : BaseSongDetailFragment() {
         binding.apply {
             lifecycleOwner = this@LibraryFragment
             isPermissionsGranted = (safeActivity as MainActivity).isPermissionsGranted()
+            executePendingBindings()
         }
     }
 
     private fun init() {
 
-        viewModel = ViewModelProviders.of(this).get(LibraryViewModel::class.java)
-
         val listSortModeAdapter = ViewPagerAdapter(safeActivity.supportFragmentManager)
 
+        /* TODO Improve Fragments initial load to avoid frame skip when page scrolls */
         listSortModeAdapter.apply {
             addFragment(SongFragment(), getString(R.string.songs))
             addFragment(AlbumFragment(), getString(R.string.albums))
             addFragment(ArtistFragment(), getString(R.string.artists))
             addFragment(PlaylistFragment(), getString(R.string.playlists))
             addFragment(FolderFragment(), getString(R.string.folders))
+            addFragment(FavoriteFragment(), getString(R.string.favorites))
         }
 
         binding.apply {
             pagerSortMode.apply {
                 adapter = listSortModeAdapter
-                offscreenPageLimit = listSortModeAdapter.count
-                currentItem = SettingsUtility.getInstance(safeActivity).startPageIndexSelected
-                addOnPageChangeListener(object : ViewPager.OnPageChangeListener{
+                offscreenPageLimit = 1
+                setCurrentItem(
+                    SettingsUtility.getInstance(safeActivity).startPageIndexSelected, false
+                )
+                addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
                     override fun onPageScrollStateChanged(state: Int) = Unit
-                    override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) = Unit
+                    override fun onPageScrolled(
+                        position: Int,
+                        positionOffset: Float,
+                        positionOffsetPixels: Int
+                    ) = Unit
+
                     override fun onPageSelected(position: Int) {
                         SettingsUtility.getInstance(safeActivity).startPageIndexSelected = position
                     }
@@ -82,7 +87,6 @@ class LibraryFragment : BaseSongDetailFragment() {
             tabsContainer.apply {
                 setupWithViewPager(pagerSortMode)
             }
-            executePendingBindings()
         }
     }
 }

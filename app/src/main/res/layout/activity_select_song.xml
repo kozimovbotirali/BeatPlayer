@@ -15,8 +15,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
-
-        <import type="android.view.View" />
         <variable
             name="viewModel"
             type="com.crrl.beatplayer.ui.viewmodels.SongViewModel" />
@@ -76,7 +74,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/activity_title"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/activity_title"
-            android:visibility="@{viewModel.selectedSongs().size > 0 ? View.VISIBLE : View.GONE}"/>
+            app:visible="@{viewModel.selectedSongs().size > 0}" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/song_list"

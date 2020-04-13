@@ -51,24 +51,29 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:tabIndicator="@drawable/indicator"
-                    app:tabIndicatorColor="?colorAccent"
+                    app:tabIndicatorColor="?titleTextColor"
                     app:tabIndicatorFullWidth="false"
                     app:tabIndicatorHeight="4dp"
                     app:tabMode="scrollable"
                     app:tabRippleColor="@color/transparent"
-                    app:tabSelectedTextColor="?colorAccent"
+                    app:tabSelectedTextColor="?titleTextColor"
                     app:tabTextAppearance="@style/TabLayoutTextAppearance" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.appbar.AppBarLayout>
 
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/album_detail_shape"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/pager_sort_mode"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/album_detail_shape"
             android:elevation="1dp"
-            android:paddingTop="@dimen/margin_8"
+            app:overScroll="@{true}"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
         <TextView

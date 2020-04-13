@@ -13,6 +13,9 @@
 
 package com.crrl.beatplayer.ui.viewmodels
 
+import android.app.Activity
+import android.content.Context
+import android.net.Uri
 import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -22,72 +25,89 @@ import com.crrl.beatplayer.databinding.ActivityMainBinding
 import com.crrl.beatplayer.extensions.toast
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.playback.MusicService
-import com.crrl.beatplayer.ui.activities.MainActivity
+import com.crrl.beatplayer.repository.*
 import com.crrl.beatplayer.utils.GeneralUtils
 
-class MainViewModel(val safeActivity: MainActivity?) : ViewModel() {
+class MainViewModel(private val context: Context) : ViewModel() {
 
-    private val liveSongData: MutableLiveData<Song> = MutableLiveData()
-    private val timeLiveData: MutableLiveData<Int> = MutableLiveData()
-    private val rawLiveData: MutableLiveData<ByteArray> = MutableLiveData()
-    private val currentSongList: MutableLiveData<List<Song>> = MutableLiveData()
-    var musicService = MusicService()
+    private val liveSongData = MutableLiveData<Song>()
+    private val timeLiveData = MutableLiveData<Int>()
+    private val rawLiveData = MutableLiveData<ByteArray>()
+    private val currentSongList = MutableLiveData<LongArray>()
+    private val liveColorAccent = MutableLiveData<Int>()
+    private val songRepository = SongsRepository(context)
+    val albumRepository = AlbumsRepository(context)
+    val artistRepository = ArtistsRepository(context)
+    val favoriteRepository = FavoritesRepository(context)
+    val folderRepository = FoldersRepository(context)
+
+    val musicService = MusicService()
     lateinit var binding: ActivityMainBinding
 
     fun getCurrentSong(): LiveData<Song> {
         return liveSongData
     }
 
-    fun getCurrentSongList(): LiveData<List<Song>> {
+    fun getCurrentSongList(): LiveData<LongArray> {
         return currentSongList
     }
 
-    fun getTime(): LiveData<Int>{
+    fun getTime(): LiveData<Int> {
         return timeLiveData
     }
 
-    fun getRawData(): LiveData<ByteArray>{
+    fun getRawData(): LiveData<ByteArray> {
         return rawLiveData
     }
 
-    fun update(newTime: Int){
-        timeLiveData.postValue(if(newTime == -1) newTime else newTime / 1000 * 1000)
+    fun update(newTime: Int) {
+        timeLiveData.postValue(if (newTime == -1) newTime else newTime / 1000 * 1000)
     }
 
     fun update(song: Song) {
-        if(liveSongData.value != song) {
+        if (liveSongData.value?.id != song.id) {
             liveSongData.value = song
             Thread {
-                update(GeneralUtils.audio2Raw(safeActivity!!, song))
+                update(GeneralUtils.audio2Raw(context, Uri.parse(song.path)))
             }.start()
             update(-1)
         }
     }
 
-    fun update(newList: List<Song>) {
+    fun update(newList: LongArray) {
         currentSongList.value = newList
     }
 
     fun update(raw: ByteArray?) {
         if (raw == null) {
-            if(getCurrentSong().value?.id != -1L) {
-                safeActivity?.runOnUiThread {
-                    safeActivity.toast(safeActivity.getString(R.string.unavailable), Toast.LENGTH_SHORT)
+            if (getCurrentSong().value?.id != -1L) {
+                (context as Activity).runOnUiThread {
+                    context.toast(
+                        context.getString(R.string.unavailable),
+                        Toast.LENGTH_SHORT
+                    )
                 }
             }
             return
-        }else{
+        } else {
             rawLiveData.postValue(raw)
         }
     }
 
-    // Update the current song for the next one
-    fun next(currentSong: Song) {
-        if(!currentSongList.value.isNullOrEmpty()) update(musicService.next(currentSong))
+    fun next(currentSong: Long) {
+        currentSongList.value ?: return
+        val song = songRepository.getSongForId(musicService.next(currentSong))
+        update(song)
     }
 
-    // Update the current song for the previous one
-    fun previous(currentSong: Song) {
-        if(!currentSongList.value.isNullOrEmpty()) update(musicService.previous(currentSong))
+    fun previous(currentSong: Long) {
+        currentSongList.value ?: return
+        val song = songRepository.getSongForId(musicService.previous(currentSong))
+        update(song)
+    }
+
+    fun random(currentSong: Long): Song {
+        currentSongList.value ?: return Song()
+        return songRepository.getSongForId(musicService.random(currentSong))
     }
 }

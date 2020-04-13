@@ -13,19 +13,16 @@
 
 package com.crrl.beatplayer.ui.adapters
 
-import android.content.ContentUris
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FolderItemBinding
 import com.crrl.beatplayer.extensions.dataChanged
 import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.interfaces.ItemClickListener
 import com.crrl.beatplayer.models.Folder
-import com.crrl.beatplayer.utils.PlayerConstants
 
 class FolderAdapter(private val context: Context?) :
     RecyclerView.Adapter<FolderAdapter.ViewHolder>() {

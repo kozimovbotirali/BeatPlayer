@@ -14,7 +14,6 @@
 package com.crrl.beatplayer.ui.activities.base
 
 import android.app.ActivityOptions
-import android.content.Context
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
@@ -83,9 +82,10 @@ open class BaseActivity : RequestPermissionActivity() {
         powerMenu = initPopUpMenu().setOnMenuItemClickListener(onMenuItemClickListener).build()
     }
 
-    protected open fun recreateActivity(){
-        startActivity(intent)
+    protected open fun recreateActivity() {
         finish()
+        overridePendingTransition(0, 0)
+        startActivity(intent)
         overridePendingTransition(0, 0)
     }
 

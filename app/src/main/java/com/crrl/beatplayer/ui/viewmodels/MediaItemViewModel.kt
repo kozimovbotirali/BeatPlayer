@@ -13,6 +13,11 @@
 
 package com.crrl.beatplayer.ui.viewmodels
 
+import android.content.Context
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.crrl.beatplayer.models.MediaItem
 
-class LibraryViewModel : ViewModel()
+class MediaItemViewModel<T : MediaItem>(private val context: Context) : ViewModel() {
+    val mediaItem = MutableLiveData<MediaItem>()
+}

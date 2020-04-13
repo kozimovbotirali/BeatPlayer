@@ -12,38 +12,27 @@
   -->
 
 <resources>
-    <color name="colorPrimary">#181A1C</color>
-    <color name="colorPrimaryDark">#181A1C</color>
+    <color name="colorPrimary">#080808</color>
+    <color name="colorPrimaryDark">#080808</color>
     <color name="colorAccentDark">#427ADD</color>
     <color name="colorAccentDarkOpacity">#80427ADD</color>
-    <color name="colorPrimaryDarkSecondary">#181A1C</color>
-    <color name="colorPrimaryDarkSecondary2">#232428</color>
-    <color name="colorPrimaryDarkOpacity">#CB181A1C</color>
+    <color name="colorPrimaryDarkSecondary">#080808</color>
+    <color name="colorPrimaryDarkSecondary2">#252525</color>
+    <color name="colorPrimaryDarkOpacity">#80080808</color>
     <color name="colorTitleTextDark">#FFFFFF</color>
-    <color name="colorSubTitleTextDark">#CCCCCC</color>
-    <color name="colorBodyTextDark">#888888</color>
+    <color name="colorSubTitleTextDark">#E3E3E3</color>
+    <color name="colorBodyTextDark">#B5B5B5</color>
 
-    <color name="colorPrimaryLight">#F6F8FA</color>
-    <color name="colorPrimaryDarkLight">#F6F8FA</color>
+    <color name="colorPrimaryLight">#F2F2F2</color>
+    <color name="colorPrimaryDarkLight">#F2F2F2</color>
     <color name="colorAccentLight">#427ADD</color>
     <color name="colorAccentLightOpacity">#80427ADD</color>
-    <color name="colorPrimaryLightSecondary">#F6F8FA</color>
-    <color name="colorPrimaryLightSecondary2">#FFFFFF</color>
-    <color name="colorPrimaryLightOpacity">#CBF6F8FA</color>
-    <color name="colorTitleTextLight">#0E100F</color>
-    <color name="colorSubTitleTextLight">#444444</color>
-    <color name="colorBodyTextLight">#666666</color>
-
-    <color name="colorPrimaryAuto">#F6F8FA</color>
-    <color name="colorPrimaryDarkAuto">#F6F8FA</color>
-    <color name="colorAccentAuto">#427ADD</color>
-    <color name="colorAccentAutoOpacity">#80427ADD</color>
-    <color name="colorPrimaryAutoSecondary">#F6F8FA</color>
-    <color name="colorPrimaryAutoSecondary2">#FFFFFF</color>
-    <color name="colorPrimaryAutoOpacity">#CBF6F8FA</color>
-    <color name="colorTitleTextAuto">#1C1B20</color>
-    <color name="colorSubTitleTextAuto">#444444</color>
-    <color name="colorBodyTextAuto">#666666</color>
+    <color name="colorPrimaryLightSecondary">#F2F2F2</color>
+    <color name="colorPrimaryLightSecondary2">#FCFCFC</color>
+    <color name="colorPrimaryLightOpacity">#F2F2F2</color>
+    <color name="colorTitleTextLight">#252525</color>
+    <color name="colorSubTitleTextLight">#626262</color>
+    <color name="colorBodyTextLight">#878787</color>
 
     <color name="white">#ffffff</color>
     <color name="transparent">#00ffffff</color>

@@ -18,14 +18,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentPlaylistDetailBinding
 import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.extensions.observe
-import com.crrl.beatplayer.extensions.safeActivity
+import com.crrl.beatplayer.extensions.toIDList
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.repository.PlaylistRepository
 import com.crrl.beatplayer.ui.activities.MainActivity
@@ -33,6 +32,7 @@ import com.crrl.beatplayer.ui.adapters.SongAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.viewmodels.SongViewModel
 import com.crrl.beatplayer.utils.PlayerConstants.PLAY_LIST_DETAIL
+import com.dgreenhalgh.android.simpleitemdecoration.linear.EndOffsetItemDecoration
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -59,7 +59,7 @@ class PlaylistDetailFragment : BaseFragment<Song>() {
     private fun init() {
         val id = arguments!!.getLong(PLAY_LIST_DETAIL)
 
-        binding.playlist = PlaylistRepository.getInstance(context).getPlaylist(id)
+        binding.playlist = PlaylistRepository(context).getPlaylist(id)
 
         // Set up adapter
         songAdapter = SongAdapter(activity, (activity as MainActivity).viewModel).apply {
@@ -75,13 +75,24 @@ class PlaylistDetailFragment : BaseFragment<Song>() {
             (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         }
 
+        val decor =
+            EndOffsetItemDecoration(resources.getDimensionPixelOffset(R.dimen.song_item_size))
         viewModel.songsByPlayList(binding.playlist!!.id).observe(this) {
             songAdapter.updateDataSet(it)
+            binding.songList.apply {
+                if (it.size > 1) {
+                    removeItemDecoration(decor)
+                    addItemDecoration(decor)
+                } else {
+                    removeItemDecoration(decor)
+                }
+            }
         }
 
         binding.let {
             it.viewModel = viewModel
             it.lifecycleOwner = this
+            it.executePendingBindings()
         }
     }
 
@@ -90,16 +101,18 @@ class PlaylistDetailFragment : BaseFragment<Song>() {
     }
 
     override fun onItemClick(view: View, position: Int, item: Song) {
-        (safeActivity as MainActivity).viewModel.update(item)
-        (safeActivity as MainActivity).viewModel.update(songAdapter.songList)
+        mainViewModel.update(item)
+        mainViewModel.update(songAdapter.songList.toIDList())
     }
 
     override fun onShuffleClick(view: View) {
-        Toast.makeText(context, "Shuffle", Toast.LENGTH_LONG).show()
+        mainViewModel.update(songAdapter.songList.toIDList())
+        mainViewModel.update(mainViewModel.random(-1))
     }
 
     override fun onPlayAllClick(view: View) {
-        Toast.makeText(context, "Play All", Toast.LENGTH_LONG).show()
+        mainViewModel.update(songAdapter.songList.first())
+        mainViewModel.update(songAdapter.songList.toIDList())
     }
 
     override fun onPopupMenuClick(view: View, position: Int, item: Song, itemList: List<Song>) {

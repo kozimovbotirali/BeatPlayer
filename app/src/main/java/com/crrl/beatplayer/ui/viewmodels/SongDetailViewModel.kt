@@ -13,13 +13,17 @@
 
 package com.crrl.beatplayer.ui.viewmodels
 
+import android.database.sqlite.SQLiteException
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentLyricBinding
 import com.crrl.beatplayer.databinding.FragmentSongDetailBinding
+import com.crrl.beatplayer.models.Playlist
 import com.crrl.beatplayer.models.Song
+import com.crrl.beatplayer.repository.FavoritesRepository
+import com.crrl.beatplayer.repository.PlaylistRepository
 import com.crrl.beatplayer.ui.activities.MainActivity
 import com.crrl.beatplayer.utils.LyricsExtractor
 
@@ -27,6 +31,9 @@ import com.crrl.beatplayer.utils.LyricsExtractor
 class SongDetailViewModel(private val mainActivity: MainActivity?) : ViewModel() {
 
     private val lyrics: MutableLiveData<String> = MutableLiveData()
+    private val isFavLiveData: MutableLiveData<Boolean> = MutableLiveData()
+    private val _playlistLiveData: MutableLiveData<List<Playlist>> = MutableLiveData()
+
     var binding: FragmentSongDetailBinding? = null
     var bindingLB: FragmentLyricBinding? = null
 
@@ -36,6 +43,18 @@ class SongDetailViewModel(private val mainActivity: MainActivity?) : ViewModel()
 
     fun updateTime(newTime: Int) {
         mainActivity?.viewModel!!.update(newTime)
+    }
+
+    fun update(id: Long) {
+        Thread {
+            isFavLiveData.postValue(
+                try {
+                    FavoritesRepository(mainActivity).songExist(id)
+                } catch (ex: SQLiteException) {
+                    false
+                }
+            )
+        }.start()
     }
 
     private fun loadLyrics(song: Song) {
@@ -48,6 +67,11 @@ class SongDetailViewModel(private val mainActivity: MainActivity?) : ViewModel()
         }.start()
     }
 
+    fun isFav(id: Long): LiveData<Boolean> {
+        update(id)
+        return isFavLiveData
+    }
+
     fun getTime() = mainActivity?.viewModel!!.getTime()
 
     fun getRawData() = mainActivity?.viewModel!!.getRawData()
@@ -57,5 +81,12 @@ class SongDetailViewModel(private val mainActivity: MainActivity?) : ViewModel()
     fun getLyrics(song: Song): LiveData<String> {
         loadLyrics(song)
         return lyrics
+    }
+
+    fun playLists(): LiveData<List<Playlist>> {
+        Thread {
+            _playlistLiveData.postValue(PlaylistRepository(mainActivity).getPlayLists())
+        }.start()
+        return _playlistLiveData
     }
 }

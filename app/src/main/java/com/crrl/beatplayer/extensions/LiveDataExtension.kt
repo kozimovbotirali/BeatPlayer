@@ -18,7 +18,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 
 fun <T> LiveData<T>.observe(owner: LifecycleOwner, onEmission: (T) -> Unit) {
-    return observe(owner, Observer<T> {
+    return observe(owner, Observer {
         if (it != null) {
             onEmission(it)
         }

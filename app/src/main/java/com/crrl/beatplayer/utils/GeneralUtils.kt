@@ -13,16 +13,17 @@
 
 package com.crrl.beatplayer.utils
 
-import android.content.ContentUris
+import android.content.ContentUris.withAppendedId
 import android.content.Context
 import android.content.res.Resources
+import android.net.Uri
 import android.view.Surface.*
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import com.crrl.beatplayer.models.Song
+import com.crrl.beatplayer.utils.PlayerConstants.ARTWORK_URI
 import java.io.ByteArrayOutputStream
-import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
 
@@ -99,11 +100,12 @@ object GeneralUtils {
     }
 
     @Throws(FileNotFoundException::class)
-    fun audio2Raw(context: Context, song: Song): ByteArray? {
-        if (!File(song.path).exists()) return null
-
-        val fileUri = ContentUris.withAppendedId(PlayerConstants.SONG_URI, song.id)
-        val parcelFileDescriptor = context.contentResolver.openFileDescriptor(fileUri, "r", null)?: return null
+    fun audio2Raw(context: Context, uri: Uri): ByteArray? {
+        val parcelFileDescriptor = try {
+            context.contentResolver.openFileDescriptor(uri, "r", null) ?: return null
+        } catch (ex: FileNotFoundException) {
+            return null
+        }
 
         val fis = FileInputStream(parcelFileDescriptor.fileDescriptor)
         val bos = ByteArrayOutputStream()
@@ -142,8 +144,10 @@ object GeneralUtils {
     }
 
     fun addZeros(number: Int?): String {
-        if(number!! < 10) return "00${number}"
-        if(number < 100) return "0${number}"
+        if (number!! < 10) return "00${number}"
+        if (number < 100) return "0${number}"
         return number.toString()
     }
+
+    fun getAlbumArtUri(albumId: Long) = withAppendedId(ARTWORK_URI, albumId)
 }

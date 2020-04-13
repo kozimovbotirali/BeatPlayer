@@ -18,18 +18,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.SimpleItemAnimator
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentAlbumDetailBinding
 import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.extensions.observe
-import com.crrl.beatplayer.extensions.safeActivity
+import com.crrl.beatplayer.extensions.toIDList
 import com.crrl.beatplayer.models.Album
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.repository.AlbumsRepository
-import com.crrl.beatplayer.ui.activities.MainActivity
+import com.crrl.beatplayer.repository.FavoritesRepository
 import com.crrl.beatplayer.ui.adapters.AlbumDetailAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.viewmodels.SongViewModel
@@ -46,7 +44,8 @@ class AlbumDetailFragment : BaseFragment<Song>() {
     private lateinit var binding: FragmentAlbumDetailBinding
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View? {
         binding = inflater.inflateWithBinding(R.layout.fragment_album_detail, container)
         return binding.root
     }
@@ -70,16 +69,26 @@ class AlbumDetailFragment : BaseFragment<Song>() {
             albumSongList.apply {
                 layoutManager = LinearLayoutManager(context)
                 adapter = albumDetailAdapter
-                addItemDecoration(EndOffsetItemDecoration(resources.getDimensionPixelOffset(R.dimen.song_item_size)))
-                (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
+            }
+            addFavorites.setOnClickListener { toggleAddFav() }
+        }
+
+        val decor =
+            EndOffsetItemDecoration(resources.getDimensionPixelOffset(R.dimen.song_item_size))
+        viewModel.getSongsByAlbum(album.id)!!.observe(this) {
+            binding.albumSongList.apply {
+                if (it.size > 1) {
+                    removeItemDecoration(decor)
+                    albumDetailAdapter.updateDataSet(it)
+                    addItemDecoration(decor)
+                } else {
+                    removeItemDecoration(decor)
+                    albumDetailAdapter.updateDataSet(it)
+                }
             }
         }
 
-        viewModel.getSongsByAlbum(album.id)!!.observe(this) { list ->
-            albumDetailAdapter.updateDataSet(list)
-        }
-
-        binding.let{
+        binding.let {
             it.viewModel = viewModel
             it.album = album
             it.lifecycleOwner = this
@@ -88,20 +97,22 @@ class AlbumDetailFragment : BaseFragment<Song>() {
     }
 
     override fun addToList(playListId: Long, song: Song) {
-        viewModel.addToPlaylist(playListId, arrayOf(song.id).toLongArray())
+        viewModel.addToPlaylist(playListId, listOf(song))
     }
 
     override fun onItemClick(view: View, position: Int, item: Song) {
-        (safeActivity as MainActivity).viewModel.update(item)
-        (safeActivity as MainActivity).viewModel.update(albumDetailAdapter.songList)
-    }
-
-    override fun onPlayAllClick(view: View) {
-        Toast.makeText(context, "Play All", Toast.LENGTH_LONG).show()
+        mainViewModel.update(item)
+        mainViewModel.update(albumDetailAdapter.songList.toIDList())
     }
 
     override fun onShuffleClick(view: View) {
-        Toast.makeText(context, "Shuffle", Toast.LENGTH_LONG).show()
+        mainViewModel.update(albumDetailAdapter.songList.toIDList())
+        mainViewModel.update(mainViewModel.random(-1))
+    }
+
+    override fun onPlayAllClick(view: View) {
+        mainViewModel.update(albumDetailAdapter.songList.first())
+        mainViewModel.update(albumDetailAdapter.songList.toIDList())
     }
 
     override fun onPopupMenuClick(view: View, position: Int, item: Song, itemList: List<Song>) {
@@ -110,5 +121,15 @@ class AlbumDetailFragment : BaseFragment<Song>() {
         viewModel.playLists().observe(this) {
             buildPlaylistMenu(it, item)
         }
+    }
+
+    private fun toggleAddFav() {
+        val favoritesRepository = FavoritesRepository(context)
+        if (favoritesRepository.favExist(album.id)) {
+            favoritesRepository.deleteFavorites(longArrayOf(album.id))
+        } else {
+            favoritesRepository.createFavorite(album.toFavorite())
+        }
+        println(favoritesRepository.favExist(album.id))
     }
 }

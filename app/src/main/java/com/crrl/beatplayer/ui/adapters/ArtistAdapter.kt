@@ -112,7 +112,8 @@ class ArtistAdapter(private val context: Context?) :
                 this.artist = artist
                 showDetails.setOnClickListener(this@ViewHolderArtist)
                 container.layoutParams.apply {
-                    height = GeneralUtils.screenWidth / spanCount + GeneralUtils.dip2px(context!!, 42)
+                    height =
+                        GeneralUtils.screenWidth / spanCount + GeneralUtils.dip2px(context!!, 42)
                     width = GeneralUtils.screenWidth / spanCount - GeneralUtils.dip2px(context, 6)
                 }
                 executePendingBindings()

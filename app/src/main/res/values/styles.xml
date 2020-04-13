@@ -33,7 +33,7 @@
         <item name="titleTextColor">@color/colorTitleTextDark</item>
         <item name="subTitleTextColor">@color/colorSubTitleTextDark</item>
         <item name="bodyTextColor">@color/colorBodyTextDark</item>
-        <item name="btnTintColor">@color/white</item>
+        <item name="btnTintColor">@color/colorTitleTextDark</item>
         <item name="android:windowLightStatusBar">false</item>
     </style>
 
@@ -51,34 +51,35 @@
         <item name="titleTextColor">@color/colorTitleTextLight</item>
         <item name="subTitleTextColor">@color/colorSubTitleTextLight</item>
         <item name="bodyTextColor">@color/colorBodyTextLight</item>
-        <item name="btnTintColor">@color/colorPrimaryDark</item>
+        <item name="btnTintColor">@color/colorTitleTextLight</item>
         <item name="android:windowLightStatusBar">true</item>
     </style>
 
     <style name="AppTheme.Auto" parent="AppThemeParent.Light">
-        <item name="colorPrimary">@color/colorPrimaryDarkAuto</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryAuto</item>
-        <item name="colorPrimarySecondary">@color/colorPrimaryAutoSecondary</item>
-        <item name="colorPrimarySecondary2">@color/colorPrimaryAutoSecondary2</item>
-        <item name="colorPrimaryOpacity">@color/colorPrimaryAutoOpacity</item>
+        <item name="colorPrimary">@color/colorPrimaryDarkLight</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryLight</item>
+        <item name="colorPrimarySecondary">@color/colorPrimaryLightSecondary</item>
+        <item name="colorPrimarySecondary2">@color/colorPrimaryLightSecondary2</item>
+        <item name="colorPrimaryOpacity">@color/colorPrimaryLightOpacity</item>
         <item name="colorError">@color/error</item>
-        <item name="colorAccent">@color/colorAccentAuto</item>
-        <item name="colorAccentOpacity">@color/colorAccentAutoOpacity</item>
+        <item name="colorAccent">@color/colorAccentLight</item>
+        <item name="colorAccentOpacity">@color/colorAccentLightOpacity</item>
         <item name="android:fontFamily">@font/product_sans_regular</item>
-        <item name="android:windowBackground">@color/colorPrimaryAuto</item>
-        <item name="titleTextColor">@color/colorTitleTextAuto</item>
-        <item name="subTitleTextColor">@color/colorSubTitleTextAuto</item>
-        <item name="bodyTextColor">@color/colorBodyTextAuto</item>
-        <item name="btnTintColor">@color/colorTitleTextAuto</item>
+        <item name="android:windowBackground">@color/colorPrimaryLight</item>
+        <item name="titleTextColor">@color/colorTitleTextLight</item>
+        <item name="subTitleTextColor">@color/colorSubTitleTextLight</item>
+        <item name="bodyTextColor">@color/colorBodyTextLight</item>
+        <item name="btnTintColor">@color/colorTitleTextLight</item>
         <item name="android:windowLightStatusBar">true</item>
     </style>
 
     <style name="TabLayoutTextAppearance" parent="TextAppearance.Design.Tab">
         <item name="textAllCaps">false</item>
         <item name="android:textAllCaps">false</item>
-        <item name="android:textColor">?subTitleTextColor</item>
+        <item name="android:textColor">?bodyTextColor</item>
         <item name="android:fontFamily">@font/product_sans_regular</item>
         <item name="android:textSize">@dimen/title_text_size</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="TitleTextAppearance" parent="TextAppearance.MaterialComponents.Headline5">

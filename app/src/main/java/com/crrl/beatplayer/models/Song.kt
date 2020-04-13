@@ -13,10 +13,19 @@
 
 package com.crrl.beatplayer.models
 
+import android.content.ContentUris
 import android.database.Cursor
-import androidx.databinding.adapters.AdapterViewBindingAdapter
 import com.crrl.beatplayer.extensions.fix
-import com.google.gson.Gson
+import com.crrl.beatplayer.repository.PlaylistRepository.Companion.COLUMN_ALBUM
+import com.crrl.beatplayer.repository.PlaylistRepository.Companion.COLUMN_ALBUM_ID
+import com.crrl.beatplayer.repository.PlaylistRepository.Companion.COLUMN_ARTIST
+import com.crrl.beatplayer.repository.PlaylistRepository.Companion.COLUMN_ARTIST_ID
+import com.crrl.beatplayer.repository.PlaylistRepository.Companion.COLUMN_DURATION
+import com.crrl.beatplayer.repository.PlaylistRepository.Companion.COLUMN_ID
+import com.crrl.beatplayer.repository.PlaylistRepository.Companion.COLUMN_PLAYLIST
+import com.crrl.beatplayer.repository.PlaylistRepository.Companion.COLUMN_TITLE
+import com.crrl.beatplayer.repository.PlaylistRepository.Companion.COLUMN_TRACK
+import com.crrl.beatplayer.utils.PlayerConstants
 
 data class Song(
     val id: Long = -1,
@@ -28,35 +37,40 @@ data class Song(
     val duration: Int = 0,
     val trackNumber: Int = 0,
     val path: String = "",
-    val isFav: Boolean = false,
-    var isSelected: Boolean = false
+    var isFav: Boolean = false,
+    var isSelected: Boolean = false,
+    var playListId: Long = -1
 ) : MediaItem(id) {
-
     companion object {
         fun createFromCursor(cursor: Cursor, album_id: Long = 0): Song {
-            val id = cursor.getLong(0)
-            val title = cursor.getString(1)
-            val artist = cursor.getString(2)
-            val album = cursor.getString(3)
-            val duration = cursor.getInt(4)
-            val trackNumber = cursor.getInt(5).fix()
-            val artistId = cursor.getLong(6)
-            val albumId = if (album_id == 0L) cursor.getLong(7) else album_id
-            val path = if (album_id == 0L) cursor.getString(8) else cursor.getString(7)
-            return Song(id, albumId, artistId, title, artist, album, duration, trackNumber, path)
+            return Song(
+                id = cursor.getLong(0),
+                title = cursor.getString(1),
+                artist = cursor.getString(2),
+                album = cursor.getString(3),
+                duration = cursor.getInt(4),
+                trackNumber = cursor.getInt(5).fix(),
+                artistId = cursor.getLong(6),
+                albumId = if (album_id == 0L) cursor.getLong(7) else album_id,
+                path = ContentUris.withAppendedId(PlayerConstants.SONG_URI, cursor.getLong(0))
+                    .toString()
+            )
         }
 
         fun createFromPlaylistCursor(cursor: Cursor): Song {
-            val id = cursor.getLong(1)
-            val title = cursor.getString(2)
-            val artist = cursor.getString(3)
-            val album = cursor.getString(4)
-            val duration = cursor.getInt(5)
-            val trackNumber = cursor.getInt(6).fix()
-            val artistId = cursor.getLong(7)
-            val albumId = cursor.getLong(8)
-            val path = cursor.getString(9)
-            return Song(id, albumId, artistId, title, artist, album, duration, trackNumber, path)
+            return Song(
+                id = cursor.getLong(0),
+                title = cursor.getString(1),
+                artist = cursor.getString(2),
+                album = cursor.getString(3),
+                duration = cursor.getInt(4),
+                trackNumber = cursor.getInt(5),
+                artistId = cursor.getLong(6),
+                albumId = cursor.getLong(7),
+                playListId = cursor.getLong(8),
+                path = ContentUris.withAppendedId(PlayerConstants.SONG_URI, cursor.getLong(0))
+                    .toString()
+            )
         }
     }
 
@@ -67,7 +81,32 @@ data class Song(
                 && albumId == other.albumId && path == other.path
     }
 
-    override fun toString(): String {
-        return Gson().toJson(this)
+
+    fun columns(): Array<String> {
+        return arrayOf(
+            COLUMN_ID,
+            COLUMN_TITLE,
+            COLUMN_ARTIST,
+            COLUMN_ALBUM,
+            COLUMN_DURATION,
+            COLUMN_TRACK,
+            COLUMN_ARTIST_ID,
+            COLUMN_ALBUM_ID,
+            COLUMN_PLAYLIST
+        )
+    }
+
+    fun values(): Array<String> {
+        return arrayOf(
+            "$id",
+            title,
+            artist,
+            album,
+            "$duration",
+            "$trackNumber",
+            "$artistId",
+            "$albumId",
+            "$playListId"
+        )
     }
 }

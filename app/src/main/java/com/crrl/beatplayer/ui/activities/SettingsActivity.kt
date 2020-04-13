@@ -49,8 +49,8 @@ class SettingsActivity : BaseActivity() {
                 getColorByTheme(R.attr.colorPrimarySecondary2, "colorPrimarySecondary2")
         }
         return AlertDialog(
-            getString(R.string.sort_title),
-            getString(R.string.sort_msg),
+            getString(R.string.theme_title),
+            getString(R.string.theme_description),
             style,
             AlertType.BOTTOM_SHEET
         ).apply {

@@ -47,20 +47,6 @@ public final class SettingsUtility {
         return settingsUtility;
     }
 
-    private void setSongDirs(ArrayList<Uri> songDirs) {
-        SharedPreferences.Editor editor = sPreferences.edit();
-        StringBuilder dirs = new StringBuilder();
-        for (int i = 0; i < songDirs.size(); i++) {
-            if (i > 0) {
-                dirs.append("<,>").append(songDirs.get(i).toString());
-            } else {
-                dirs.append(songDirs.get(i).toString());
-            }
-        }
-        editor.putString(SONG_DIRS_KEY, dirs.toString());
-        editor.apply();
-    }
-
     public ArrayList<Uri> getSongDirs() {
         ArrayList<Uri> songDirs = new ArrayList<>();
         String readValue;
@@ -76,6 +62,20 @@ public final class SettingsUtility {
             }
         }
         return songDirs;
+    }
+
+    private void setSongDirs(ArrayList<Uri> songDirs) {
+        SharedPreferences.Editor editor = sPreferences.edit();
+        StringBuilder dirs = new StringBuilder();
+        for (int i = 0; i < songDirs.size(); i++) {
+            if (i > 0) {
+                dirs.append("<,>").append(songDirs.get(i).toString());
+            } else {
+                dirs.append(songDirs.get(i).toString());
+            }
+        }
+        editor.putString(SONG_DIRS_KEY, dirs.toString());
+        editor.apply();
     }
 
     public int getStartPageIndexSelected() {
@@ -114,32 +114,32 @@ public final class SettingsUtility {
         return sPreferences.getString(ALBUM_SONG_SORT_ORDER_KEY, SortModes.SongModes.SONG_TRACK);
     }
 
-    public void setCurrentColorAccent(int value) {
-        setPreference(CURRENT_COLOR_ACCENT_KEY, value);
+    public void setAlbumSongSortOrder(String value) {
+        setPreference(ALBUM_SONG_SORT_ORDER_KEY, value);
     }
 
     public int getCurrentColorAccent() {
         return sPreferences.getInt(CURRENT_COLOR_ACCENT_KEY, Color.parseColor("#7874D1"));
     }
 
-    public void setAlbumSongSortOrder(String value) {
-        setPreference(ALBUM_SONG_SORT_ORDER_KEY, value);
+    public void setCurrentColorAccent(int value) {
+        setPreference(CURRENT_COLOR_ACCENT_KEY, value);
     }
 
     public String getCurrentSongSelected() {
         return sPreferences.getString(PlayerConstants.SONG_KEY, PlayerConstants.NO_DATA);
     }
 
-    public void setArtistSortOrder(String value) {
-        setPreference(ARTIST_SORT_ORDER_KEY, value);
+    public void setCurrentSongSelected(String value) {
+        setPreference(PlayerConstants.SONG_KEY, value);
     }
 
     public String getArtistSortOrder() {
         return sPreferences.getString(ARTIST_SORT_ORDER_KEY, SortModes.ArtistModes.ARTIST_A_Z);
     }
 
-    public void setCurrentSongSelected(String value) {
-        setPreference(PlayerConstants.SONG_KEY, value);
+    public void setArtistSortOrder(String value) {
+        setPreference(ARTIST_SORT_ORDER_KEY, value);
     }
 
     private void setPreference(String key, String value) {

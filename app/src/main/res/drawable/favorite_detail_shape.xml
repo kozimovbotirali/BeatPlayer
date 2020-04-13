@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2020. Carlos René Ramos López. All rights reserved.
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -12,15 +11,11 @@
   ~ limitations under the License.
   -->
 
-<resources>
-    <color name="colorPrimaryAuto">#181A1C</color>
-    <color name="colorPrimaryDarkAuto">#181A1C</color>
-    <color name="colorAccentAuto">#427ADD</color>
-    <color name="colorAccentAutoOpacity">#80427ADD</color>
-    <color name="colorPrimaryAutoSecondary">#181A1C</color>
-    <color name="colorPrimaryAutoSecondary2">#232428</color>
-    <color name="colorPrimaryAutoOpacity">#CB181A1C</color>
-    <color name="colorTitleTextAuto">#FFFFFF</color>
-    <color name="colorSubTitleTextAuto">#CCCCCC</color>
-    <color name="colorBodyTextAuto">#888888</color>
-</resources>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape>
+            <solid android:color="@color/colorPrimaryDarkOpacity" />
+            <corners android:radius="@dimen/album_item_radius" />
+        </shape>
+    </item>
+</selector>

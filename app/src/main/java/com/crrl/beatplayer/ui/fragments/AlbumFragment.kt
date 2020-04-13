@@ -43,7 +43,7 @@ import org.koin.core.parameter.parametersOf
 
 class AlbumFragment : BaseFragment<Album>() {
 
-    private val viewModel: AlbumViewModel by viewModel { parametersOf(context) }
+    private val viewModel: AlbumViewModel by viewModel { parametersOf(mainViewModel.albumRepository) }
     private lateinit var albumAdapter: AlbumAdapter
     private lateinit var binding: FragmentAlbumBinding
 
@@ -158,7 +158,11 @@ class AlbumFragment : BaseFragment<Album>() {
         val extras = Bundle()
         extras.putLong(ALBUM_KEY, item.id)
         activity!!.addFragment(
-            R.id.nav_host_fragment, AlbumDetailFragment(), PlayerConstants.ALBUM_DETAIL, true, extras
+            R.id.nav_host_fragment,
+            AlbumDetailFragment(),
+            PlayerConstants.ALBUM_DETAIL,
+            true,
+            extras
         )
     }
 

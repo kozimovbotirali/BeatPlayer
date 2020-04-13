@@ -13,6 +13,7 @@
 
 package com.crrl.beatplayer.ui.binding
 
+import android.annotation.SuppressLint
 import android.content.ContentUris
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
@@ -23,13 +24,23 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.databinding.BindingAdapter
-import androidx.lifecycle.LiveData
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.crrl.beatplayer.R
+import com.crrl.beatplayer.extensions.setMargins
+import com.crrl.beatplayer.models.Album
+import com.crrl.beatplayer.models.Favorite
+import com.crrl.beatplayer.models.Song
+import com.crrl.beatplayer.utils.GeneralUtils
 import com.crrl.beatplayer.utils.PlayerConstants
+import com.crrl.beatplayer.utils.PlayerConstants.ALBUM_TYPE
+import com.crrl.beatplayer.utils.PlayerConstants.ARTIST_TYPE
+import com.crrl.beatplayer.utils.PlayerConstants.FAVORITE_TYPE
+import com.crrl.beatplayer.utils.PlayerConstants.FOLDER_TYPE
+import com.github.florent37.kotlin.pleaseanimate.please
+
 
 /**
  * @param view is the target view.
@@ -50,6 +61,7 @@ fun setAlbumId(view: ImageView, albumId: Long, recyclerPlaceholder: Boolean = fa
                 override fun onLoadCleared(placeholder: Drawable?) {
                     view.setImageDrawable(placeholder)
                 }
+
                 override fun onResourceReady(
                     resource: Bitmap,
                     transition: Transition<in Bitmap>?
@@ -76,11 +88,11 @@ fun setImageSize(view: ImageView, width: Int, height: Int) {
     view.scaleType = ImageView.ScaleType.CENTER_CROP
 }
 
-@BindingAdapter("app:isFav", requireAll = true)
-fun isSongFav(view: ImageButton, isFav: Boolean){
-    if(isFav){
+@BindingAdapter("app:isFav")
+fun isSongFav(view: ImageButton, isFav: Boolean) {
+    if (isFav) {
         view.setImageDrawable(getDrawable(view.context, R.drawable.ic_favorite))
-    }else{
+    } else {
         view.setImageDrawable(getDrawable(view.context, R.drawable.ic_no_favorite))
     }
 }
@@ -95,8 +107,7 @@ fun setPlayState(view: ImageView, state: Int) {
 }
 
 @BindingAdapter("app:selectedSongs")
-fun setTextTitle(view: TextView, selectedSongs: MutableList<Long>) {
-    selectedSongs ?: return
+fun setTextTitle(view: TextView, selectedSongs: MutableList<Song>) {
     if (selectedSongs.size == 0) {
         view.setText(R.string.select_tracks)
     } else {
@@ -104,7 +115,71 @@ fun setTextTitle(view: TextView, selectedSongs: MutableList<Long>) {
     }
 }
 
+@BindingAdapter("app:type")
+fun setTextByType(view: TextView, type: String) {
+    view.apply {
+        text = when (type) {
+            ARTIST_TYPE -> context.getString(R.string.artist)
+            ALBUM_TYPE -> context.getString(R.string.albums)
+            FOLDER_TYPE -> context.getString(R.string.folders)
+            else -> ""
+        }
+    }
+}
+
+@BindingAdapter("app:title", "app:detail", requireAll = false)
+fun setTextTitle(view: TextView, favorite: Favorite, detail: Boolean = false) {
+    view.apply {
+        text = if (favorite.type == FAVORITE_TYPE) {
+            if (!detail) setMargins(top = GeneralUtils.dip2px(context!!, 29))
+            context.getString(R.string.favorite_music)
+        } else {
+            favorite.title
+        }
+    }
+}
+
+@BindingAdapter("app:type", "app:count")
+fun setCount(view: TextView, type: String, count: Int) {
+    view.text = view.resources.getQuantityString(
+        if (type == ARTIST_TYPE) {
+            R.plurals.number_of_albums
+        } else {
+            R.plurals.number_of_songs
+        },
+        count,
+        count
+    )
+}
+
+@SuppressLint("SetTextI18n")
+@BindingAdapter("app:album")
+fun fixArtistLength(view: TextView, album: Album) {
+    val maxSize = if (GeneralUtils.getRotation(view.context) == GeneralUtils.VERTICAL) 15 else 10
+    album.apply {
+        view.text = "${if (artist.length > maxSize) {
+            artist.substring(0, maxSize)
+        } else {
+            artist
+        }} ${view.resources.getString(R.string.separator)} ${view.resources.getQuantityString(
+            R.plurals.number_of_songs,
+            songCount,
+            songCount
+        )}"
+    }
+}
+
 @BindingAdapter("app:clipToOutline")
 fun setClipToOutline(view: View, clipToOutline: Boolean) {
-    view.clipToOutline = true
+    view.clipToOutline = clipToOutline
+}
+
+@BindingAdapter("app:visible")
+fun setVisibility(view: View, isVisible: Boolean) {
+    please(100) {
+        animate(view) {
+            println(isVisible)
+            if (isVisible) scale(1f, 1f) else scale(0f, 0f)
+        }
+    }.start()
 }

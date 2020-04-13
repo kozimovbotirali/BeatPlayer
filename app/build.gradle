@@ -26,24 +26,32 @@ android {
         applicationId "com.crrl.beatplayer"
         minSdkVersion 24
         targetSdkVersion 29
-        versionCode 1
-        versionName "1.0"
+        versionCode 01
+        versionName "0.1-beta-1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    lintOptions {
+        checkReleaseBuilds true
+        abortOnError true
     }
     buildTypes {
         release {
             minifyEnabled false
+            zipAlignEnabled true
             manifestPlaceholders = [appNameSuffix: ""]
 
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            multiDexEnabled = false
         }
         debug {
             versionNameSuffix "-debug"
             minifyEnabled false
             applicationIdSuffix '.dev'
             manifestPlaceholders = [appNameSuffix: " Dev"]
+            debuggable true
 
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            multiDexEnabled = true
         }
     }
 
@@ -52,16 +60,16 @@ android {
     }
 
     compileOptions {
-        targetCompatibility = "8"
-        sourceCompatibility = "8"
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
 dependencies {
+    def room_version = "2.2.5"
+
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(':alertdialog')
-
-    def room_version = "2.2.5"
 
     implementation "androidx.room:room-runtime:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"
@@ -91,12 +99,15 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
     implementation 'com.github.florent37:kotlinpleaseanimate:1.0.2'
     implementation 'com.budiyev.android:circular-progress-bar:1.2.2'
-    implementation "io.reactivex.rxjava3:rxjava:3.0.0-RC1"
     implementation 'com.github.alxrm:audiowave-progressbar:0.9.2'
     implementation 'com.google.code.gson:gson:2.8.5'
 
     implementation group: 'com.jagrosh', name: 'JLyrics', version: '0.4'
 
-    implementation 'org.koin:koin-android:2.0.1'
+    // Koin
+    implementation "org.koin:koin-android:2.0.1"
     implementation 'org.koin:koin-androidx-viewmodel:2.0.1'
+    implementation 'org.koin:koin-androidx-scope:2.0.1'
+
+    implementation 'me.everything:overscroll-decor-android:1.0.4'
 }

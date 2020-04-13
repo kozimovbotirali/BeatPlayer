@@ -11,37 +11,43 @@
  * limitations under the License.
  */
 
-package com.crrl.beatplayer
+package com.crrl.beatplayer.ui.viewmodels
 
 import android.content.Context
+import com.crrl.beatplayer.repository.AlbumsRepository
+import com.crrl.beatplayer.repository.ArtistsRepository
+import com.crrl.beatplayer.repository.FavoritesRepository
 import com.crrl.beatplayer.ui.activities.MainActivity
-import com.crrl.beatplayer.ui.viewmodels.*
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 
-val mainModule = module {
+val viewModelModule = module {
     viewModel { (context: Context) ->
         SongViewModel(context)
     }
 
-    viewModel { (context: Context) ->
-        AlbumViewModel(context)
+    viewModel { (repository: AlbumsRepository) ->
+        AlbumViewModel(repository)
     }
 
-    viewModel { (context: Context) ->
-        ArtistViewModel(context)
+    viewModel { (repository: ArtistsRepository) ->
+        ArtistViewModel(repository)
     }
 
     viewModel { (context: Context) ->
         FolderViewModel(context)
     }
 
-    viewModel { (safeActivity: MainActivity) ->
-        MainViewModel(safeActivity)
+    viewModel { (context: Context) ->
+        MainViewModel(context)
     }
 
     viewModel { (safeActivity: MainActivity) ->
         SongDetailViewModel(safeActivity)
+    }
+
+    viewModel { (repository: FavoritesRepository) ->
+        FavoriteViewModel(repository)
     }
 }

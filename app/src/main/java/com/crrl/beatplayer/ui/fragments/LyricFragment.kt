@@ -48,7 +48,8 @@ class LyricFragment : Fragment() {
         viewModel.bindingLB!!.let {
             it.song = viewModel.getCurrentData().value
             it.viewModel = viewModel
-            it.lifecycleOwner = viewLifecycleOwner
+            it.lifecycleOwner = this
+            it.executePendingBindings()
         }
     }
 }

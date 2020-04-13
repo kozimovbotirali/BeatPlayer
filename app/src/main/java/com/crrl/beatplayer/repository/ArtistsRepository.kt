@@ -17,15 +17,16 @@ import android.content.ContentResolver
 import android.content.Context
 import android.database.Cursor
 import android.provider.MediaStore
+import android.provider.MediaStore.Audio.Artists.Albums.*
 import com.crrl.beatplayer.extensions.toList
 import com.crrl.beatplayer.models.Album
 import com.crrl.beatplayer.models.Artist
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.utils.SettingsUtility
 import com.crrl.beatplayer.utils.SortModes
-import java.util.*
 
 interface ArtistsRepositoryInterface {
+    fun getArtist(id: Long): Artist?
     fun getAllArtist(): List<Artist>
     fun getSongsForArtist(artistId: Long): List<Song>
     fun getAlbumsForArtist(artistId: Long): List<Album>
@@ -51,32 +52,23 @@ class ArtistsRepository() : ArtistsRepositoryInterface {
         settingsUtility = SettingsUtility.getInstance(context)
     }
 
-    override fun getAllArtist(): List<Artist> {
-        val albumList =
-            makeArtistCursor(null, null).toList(true, Artist.Companion::createFromCursor)
-        getArtists(albumList)
-        return albumList
-    }
-
-    private fun getArtists(albumList: MutableList<Artist>){
-        val artistList = mutableListOf<Artist>()
-        albumList.sortBy { it.name.toLowerCase(Locale.ROOT) }
-        for ((i, album) in albumList.withIndex()) {
-            if (i == 0) {
-                artistList.add(album)
-                artistList[artistList.size - 1].albumCount++
+    override fun getArtist(id: Long): Artist? {
+        makeArtistCursor("_id=?", arrayOf(id.toString())).use {
+            return if (it.moveToFirst()) {
+                Artist.createFromCursor(it).apply { albumId = getAlbumId(this.id) }
             } else {
-                if (album.name != albumList[i - 1].name) {
-                    artistList.add(album)
-                    artistList[artistList.size - 1].albumCount++
-                } else {
-                    artistList[artistList.size - 1].albumCount++
-                }
+                Artist()
             }
         }
+    }
+
+    override fun getAllArtist(): List<Artist> {
+        val artistList =
+            makeArtistCursor(null, null).toList(true) {
+                Artist.createFromCursor(this)
+            }
         SortModes.sortArtistList(artistList, settingsUtility.artistSortOrder)
-        albumList.clear()
-        albumList.addAll(artistList)
+        return artistList
     }
 
 
@@ -89,12 +81,9 @@ class ArtistsRepository() : ArtistsRepositoryInterface {
             results += moreArtists
         }
         return if (results.size < limit) {
-            getArtists(results)
             results
         } else {
-            val res = results.subList(0, limit)
-            getArtists(res)
-            res
+            results.subList(0, limit)
         }
     }
 
@@ -108,14 +97,24 @@ class ArtistsRepository() : ArtistsRepositoryInterface {
             .toList(true) { Album.createFromCursor(this, artistId) }
     }
 
+    private fun getAlbumId(id: Long): Long {
+        makeAlbumCursor("artist_id=?", arrayOf("$id")).use {
+            return if (it.moveToFirst()) {
+                it.getLong(0)
+            } else {
+                -1L
+            }
+        }
+    }
+
 
     private fun makeAlbumForArtistCursor(artistID: Long): Cursor? {
         if (artistID == -1L) {
             return null
         }
         return contentResolver.query(
-            MediaStore.Audio.Artists.Albums.getContentUri("external", artistID),
-            arrayOf("_id", "album", "artist", "numsongs", "minyear"),
+            getContentUri("external", artistID),
+            arrayOf(ALBUM_ID, ALBUM, ARTIST, NUMBER_OF_SONGS, FIRST_YEAR),
             null,
             null,
             SortModes.AlbumModes.ALBUM_A_Z
@@ -125,14 +124,27 @@ class ArtistsRepository() : ArtistsRepositoryInterface {
     private fun makeArtistCursor(
         selection: String?,
         paramArrayOfString: Array<String>?
-    ): Cursor? {
+    ): Cursor {
         return contentResolver.query(
-            MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
-            arrayOf("artist_id", "_id", "artist", "numsongs"),
+            MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI,
+            arrayOf("_id", "artist", "number_of_albums"),
             selection,
             paramArrayOfString,
-            "artist_id"
-        )
+            null
+        )!!
+    }
+
+    private fun makeAlbumCursor(
+        selection: String?,
+        paramArrayOfString: Array<String>?
+    ): Cursor {
+        return contentResolver.query(
+            MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+            arrayOf("_id"),
+            selection,
+            paramArrayOfString,
+            null
+        )!!
     }
 
     private fun makeArtistSongCursor(artistId: Long): Cursor? {

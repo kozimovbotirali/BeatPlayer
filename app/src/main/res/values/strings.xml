@@ -67,7 +67,7 @@
     <string name="light_theme">Light Theme</string>
     <string name="dark_theme">Dark Theme</string>
     <string name="appearance">Appearance</string>
-    <string name="theme_description">Choose how you want the application will look.</string>
+    <string name="theme_description">Choose one of these BeatPlayer themes.</string>
     <string name="default_theme">System Default</string>
 
     <plurals name="number_of_songs">
@@ -99,4 +99,8 @@
     <string name="all">All</string>
     <string name="done">Done</string>
     <string name="no_albums">No Albums</string>
+    <string name="no_favorites">No Favorite Music</string>
+    <string name="favorites_tip">Tap the heart icon on \"Now Playing, Albums, Artists or Folders\" views. Your favorite music will be listed here.</string>
+    <string name="favorite_music">Favorite Music</string>
+    <string name="no_artists">No Artists</string>
 </resources>

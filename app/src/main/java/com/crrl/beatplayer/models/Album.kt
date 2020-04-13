@@ -14,6 +14,7 @@
 package com.crrl.beatplayer.models
 
 import android.database.Cursor
+import com.crrl.beatplayer.utils.PlayerConstants.ALBUM_TYPE
 import com.google.gson.Gson
 
 
@@ -39,16 +40,11 @@ data class Album(
         }
     }
 
-    fun fixArtistLength(width: Int, length: Int, textSize: Int): String {
-        return if ((length * textSize) > width) artist.substring(
-            0,
-            width / textSize - 10
-        ) else artist
-    }
-
     override fun toString(): String {
         return Gson().toJson(this)
     }
 
-
+    fun toFavorite(): Favorite {
+        return Favorite(id, title, artist, artistId, year, songCount, ALBUM_TYPE)
+    }
 }

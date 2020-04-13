@@ -11,16 +11,44 @@
   ~ limitations under the License.
   -->
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.crrl.beatplayer.ui.fragments.ArtistFragment">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/artist_list"
-        android:layout_width="match_parent"
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="viewModel"
+            type="com.crrl.beatplayer.ui.viewmodels.ArtistViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingEnd="@dimen/padding_12"
-        android:paddingBottom="@dimen/song_item_size" />
-</FrameLayout>
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        tools:context="com.crrl.beatplayer.ui.fragments.ArtistFragment">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/artist_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingEnd="@dimen/padding_12"
+            app:overScroll="@{true}"
+            app:overScrollOrientation="@{0}"
+            tools:ignore="RtlSymmetry" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/song_item_size"
+            android:text="@string/no_artists"
+            android:textColor="?titleTextColor"
+            android:textSize="@dimen/text_size_18"
+            android:textStyle="bold"
+            android:visibility="@{viewModel.artists.size > 0 ? View.GONE : View.VISIBLE}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

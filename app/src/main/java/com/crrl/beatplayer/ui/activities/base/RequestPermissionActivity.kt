@@ -16,8 +16,16 @@ package com.crrl.beatplayer.ui.activities.base
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.content.pm.PackageManager
+import android.database.sqlite.SQLiteException
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.crrl.beatplayer.models.Favorite
+import com.crrl.beatplayer.repository.FavoritesRepository
+import com.crrl.beatplayer.repository.PlaylistRepository
+import com.crrl.beatplayer.utils.DBHelper
+import com.crrl.beatplayer.utils.PlayerConstants.FAVORITE_ID
+import com.crrl.beatplayer.utils.PlayerConstants.FAVORITE_NAME
+import com.crrl.beatplayer.utils.PlayerConstants.FAVORITE_TYPE
 
 
 open class RequestPermissionActivity : AppCompatActivity() {
@@ -39,6 +47,18 @@ open class RequestPermissionActivity : AppCompatActivity() {
         } else {
             permissionsGranted = true
         }
+        val frF = FavoritesRepository(this)
+        val frP = PlaylistRepository(this)
+        try {
+            createFavList(frF)
+        } catch (ex: SQLiteException) {
+            createDB(frF)
+        }
+        try {
+            frP.getPlayLists()
+        } catch (ex: SQLiteException) {
+            createDB(frP)
+        }
     }
 
     private fun isReadStoragePermissionGranted(): Boolean {
@@ -48,6 +68,27 @@ open class RequestPermissionActivity : AppCompatActivity() {
             requestPermissions(arrayOf(READ_EXTERNAL_STORAGE), 3)
             false
         }
+    }
+
+    private fun createFavList(favoritesRepository: FavoritesRepository) {
+        val favorite = favoritesRepository.getFavorite(FAVORITE_ID)
+        if (favorite.id == -1L) {
+            favoritesRepository.createFavorite(
+                Favorite(
+                    FAVORITE_ID,
+                    FAVORITE_NAME,
+                    FAVORITE_NAME,
+                    FAVORITE_ID,
+                    0,
+                    0,
+                    FAVORITE_TYPE
+                )
+            )
+        }
+    }
+
+    private fun createDB(fr: DBHelper) {
+        fr.onCreate(fr.writableDatabase)
     }
 
     private fun isWriteStoragePermissionGranted(): Boolean {

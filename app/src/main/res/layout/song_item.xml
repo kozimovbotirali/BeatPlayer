@@ -36,7 +36,9 @@
             android:layout_centerVertical="true"
             android:layout_marginStart="15dp"
             android:background="@drawable/song_cover_frame"
+            android:contentDescription="@string/cover"
             android:scaleType="centerCrop"
+            android:elevation="5dp"
             app:albumId="@{song.albumId}"
             android:src="@drawable/ic_empty_cover" />
 
@@ -84,7 +86,7 @@
                     android:ellipsize="end"
                     android:singleLine="true"
                     android:text="@{song.artist}"
-                    android:textColor="?subTitleTextColor"
+                    android:textColor="?bodyTextColor"
                     android:textSize="@dimen/sub_title_text_size" />
 
                 <TextView
@@ -95,7 +97,7 @@
                     android:paddingRight="5dp"
                     android:singleLine="true"
                     android:text="@string/separator"
-                    android:textColor="?subTitleTextColor"
+                    android:textColor="?bodyTextColor"
                     android:textSize="@dimen/sub_title_text_size" />
 
                 <TextView
@@ -105,7 +107,7 @@
                     android:ellipsize="end"
                     android:singleLine="true"
                     android:text="@{song.album}"
-                    android:textColor="?subTitleTextColor"
+                    android:textColor="?bodyTextColor"
                     android:textSize="@dimen/sub_title_text_size" />
             </LinearLayout>
         </LinearLayout>
@@ -118,6 +120,7 @@
             android:layout_centerVertical="true"
             android:background="@drawable/btn_ripple"
             android:src="@drawable/ic_more"
+            android:contentDescription="@string/cover"
             android:tint="?btnTintColor" />
 
     </RelativeLayout>

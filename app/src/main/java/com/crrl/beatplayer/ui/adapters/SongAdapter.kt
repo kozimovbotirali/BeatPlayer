@@ -30,7 +30,8 @@ import com.crrl.beatplayer.ui.viewmodels.MainViewModel
 private const val HEADER_TYPE = 0
 private const val ITEM_TYPE = 1
 
-class SongAdapter(private val context: Context?, private val mainViewModel: MainViewModel) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class SongAdapter(private val context: Context?, private val mainViewModel: MainViewModel) :
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var songList: MutableList<Song> = mutableListOf()
     var showHeader: Boolean = false

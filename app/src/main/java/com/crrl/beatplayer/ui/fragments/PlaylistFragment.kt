@@ -13,7 +13,6 @@
 
 package com.crrl.beatplayer.ui.fragments
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -23,29 +22,22 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.crrl.beatplayer.R
-import com.crrl.beatplayer.alertdialog.AlertDialog
-import com.crrl.beatplayer.alertdialog.dialogs.AlertItemAction
-import com.crrl.beatplayer.alertdialog.stylers.AlertItemTheme
-import com.crrl.beatplayer.alertdialog.stylers.AlertType
-import com.crrl.beatplayer.alertdialog.stylers.InputStyle
 import com.crrl.beatplayer.databinding.FragmentPlaylistBinding
 import com.crrl.beatplayer.extensions.*
 import com.crrl.beatplayer.models.Playlist
 import com.crrl.beatplayer.repository.PlaylistRepository
-import com.crrl.beatplayer.ui.activities.SelectSongActivity
 import com.crrl.beatplayer.ui.adapters.PlaylistAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.viewmodels.SongViewModel
-import com.crrl.beatplayer.utils.GeneralUtils
-import com.crrl.beatplayer.utils.PlayerConstants
 import com.crrl.beatplayer.utils.PlayerConstants.PLAY_LIST_DETAIL
+import com.dgreenhalgh.android.simpleitemdecoration.linear.EndOffsetItemDecoration
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
 
 class PlaylistFragment : BaseFragment<Playlist>() {
 
-    private val viewModel: SongViewModel by viewModel { parametersOf(context) }
+    private val viewModel by viewModel<SongViewModel> { parametersOf(context) }
     private lateinit var playlistAdapter: PlaylistAdapter
     private lateinit var binding: FragmentPlaylistBinding
 
@@ -92,6 +84,7 @@ class PlaylistFragment : BaseFragment<Playlist>() {
         binding.let {
             it.viewModel = viewModel
             it.lifecycleOwner = this
+            it.executePendingBindings()
         }
     }
 
@@ -109,7 +102,7 @@ class PlaylistFragment : BaseFragment<Playlist>() {
         item: Playlist,
         itemList: List<Playlist>
     ) {
-        PlaylistRepository.getInstance(context).deletePlaylist(item.id)
+        PlaylistRepository(context).deletePlaylist(item.id)
         safeActivity.toast("${item.name} Deleted ", Toast.LENGTH_SHORT)
     }
 
@@ -117,43 +110,20 @@ class PlaylistFragment : BaseFragment<Playlist>() {
         createDialog().show(safeActivity as AppCompatActivity)
     }
 
-    private fun createDialog(): AlertDialog {
-        val style = InputStyle(
-            activity?.getColorByTheme(R.attr.colorPrimarySecondary, "colorPrimarySecondary")!!,
-            activity!!.getColorByTheme(R.attr.colorPrimarySecondary2, "colorPrimarySecondary2"),
-            activity!!.getColorByTheme(R.attr.titleTextColor, "titleTextColor"),
-            activity!!.getColorByTheme(R.attr.bodyTextColor, "bodyTextColor"),
-            safeActivity.getColorByTheme(R.attr.colorAccent, "colorAccent"),
-            "${safeActivity.getString(R.string.playlist)} ${GeneralUtils.addZeros(
-                PlaylistRepository.getInstance(
-                    context
-                ).getPlayListsCount() + 1
-            )}"
-        )
-        return AlertDialog(
-            getString(R.string.new_playlist),
-            getString(R.string.create_playlist),
-            style,
-            AlertType.INPUT,
-            getString(R.string.input_hint)
-        ).apply {
-            addItem(AlertItemAction("Cancel", false, AlertItemTheme.CANCEL) {
-            })
-            addItem(AlertItemAction("OK", false, AlertItemTheme.ACCEPT) {
-                safeActivity.startActivityForResult(
-                    Intent(
-                        safeActivity,
-                        SelectSongActivity::class.java
-                    ).apply { putExtra(PLAY_LIST_DETAIL, it.input) },
-                    1
-                )
-            })
-        }
-    }
-
     private fun reloadAdapter() {
+        val decor =
+            EndOffsetItemDecoration(resources.getDimensionPixelOffset(R.dimen.song_item_size))
         viewModel.playLists().observe(this) {
-            playlistAdapter.updateDataSet(it)
+            binding.playList.apply {
+                if (it.size > 1) {
+                    removeItemDecoration(decor)
+                    playlistAdapter.updateDataSet(it)
+                    addItemDecoration(decor)
+                } else {
+                    removeItemDecoration(decor)
+                    playlistAdapter.updateDataSet(it)
+                }
+            }
         }
     }
 }

@@ -15,7 +15,7 @@ package com.crrl.beatplayer.extensions
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import java.lang.NullPointerException
+import org.jetbrains.annotations.NotNull
 
 fun <T> List<T>?.moveElement(fromIndex: Int, toIndex: Int): List<T> {
     if (this == null) {
@@ -32,7 +32,7 @@ fun <E> MutableList<E>.setAll(list: List<E>) {
     addAll(list)
 }
 
-fun <T> MutableList<T>.delete(idx: T){
+fun <T> MutableList<T>.delete(idx: T) {
     idx ?: throw NullPointerException("The index can't be null.")
 
     setAll(filterNot { it == idx }.optimizeReadOnlyList())
@@ -44,4 +44,5 @@ internal fun <T> List<T>.optimizeReadOnlyList() = when (size) {
     else -> this
 }
 
-inline fun <reified T> Gson.fromJson(json: String?) = this.fromJson<T>(json, object: TypeToken<T>() {}.type)
+inline fun <reified T> Gson.fromJson(@NotNull json: String?) =
+    this.fromJson<T>(json, object : TypeToken<T>() {}.type)!!

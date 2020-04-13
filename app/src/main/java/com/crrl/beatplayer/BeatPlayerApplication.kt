@@ -14,17 +14,22 @@
 package com.crrl.beatplayer
 
 import android.app.Application
+import com.crrl.beatplayer.ui.viewmodels.viewModelModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
+
 
 class BeatPlayerApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        val modules = listOf(
+            viewModelModule
+        )
         startKoin {
             // Android context
             androidContext(this@BeatPlayerApplication)
-            modules(mainModule)
+            modules(modules)
         }
     }
 }

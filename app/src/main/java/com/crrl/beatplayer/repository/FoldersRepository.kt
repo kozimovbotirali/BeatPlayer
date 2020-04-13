@@ -25,6 +25,7 @@ import com.crrl.beatplayer.utils.SettingsUtility
 import java.util.*
 
 interface FoldersRepositoryInterface {
+    fun getFolder(id: Long): Folder
     fun getFolders(): List<Folder>
     fun getSongsForIds(idList: LongArray): List<Song>
 }
@@ -37,6 +38,10 @@ class FoldersRepository() : FoldersRepositoryInterface {
     constructor(context: Context?) : this() {
         contentResolver = context!!.contentResolver
         settingsUtility = SettingsUtility.getInstance(context)
+    }
+
+    override fun getFolder(id: Long): Folder {
+        return getFolders().filter { it.id == id }[0]
     }
 
     override fun getFolders(): List<Folder> {

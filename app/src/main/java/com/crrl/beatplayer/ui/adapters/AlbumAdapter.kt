@@ -18,10 +18,12 @@ import android.os.SystemClock
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.AlbumItemBinding
 import com.crrl.beatplayer.databinding.AlbumItemHeaderBinding
+import com.crrl.beatplayer.databinding.ArtistDetailItemBinding
 import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.interfaces.ItemClickListener
 import com.crrl.beatplayer.models.Album
@@ -36,11 +38,13 @@ class AlbumAdapter(private val context: Context?) :
     private var albumList: MutableList<Album> = mutableListOf()
     private var lastClick = 0L
 
-    var showHeader: Boolean = false
+    var showHeader = false
+    var artistDetail = false
     var itemClickListener: ItemClickListener<Album>? = null
     var spanCount: Int = 1
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        val itemId = if (artistDetail) R.layout.artist_detail_item else R.layout.album_item
         return when (viewType) {
             HEADER_TYPE -> {
                 val viewBinding =
@@ -48,11 +52,11 @@ class AlbumAdapter(private val context: Context?) :
                 ViewHolderAlbumHeader(viewBinding)
             }
             ITEM_TYPE -> {
-                val viewBinding = parent.inflateWithBinding<AlbumItemBinding>(R.layout.album_item)
+                val viewBinding = parent.inflateWithBinding<ViewDataBinding>(itemId)
                 ViewHolderAlbum(viewBinding)
             }
             else -> {
-                val viewBinding = parent.inflateWithBinding<AlbumItemBinding>(R.layout.album_item)
+                val viewBinding = parent.inflateWithBinding<ViewDataBinding>(itemId)
                 ViewHolderAlbum(viewBinding)
             }
         }
@@ -117,21 +121,33 @@ class AlbumAdapter(private val context: Context?) :
         }.start()
     }
 
-    inner class ViewHolderAlbum(private val binding: AlbumItemBinding) :
+    inner class ViewHolderAlbum(private val binding: ViewDataBinding) :
         RecyclerView.ViewHolder(binding.root), View.OnClickListener {
 
         fun bind(album: Album) {
-            binding.apply {
-                this.album = album
-                width = GeneralUtils.screenWidth / spanCount - GeneralUtils.dip2px(context!!, 22)
-
-                showDetails.setOnClickListener(this@ViewHolderAlbum)
-                container.layoutParams.apply {
-                    height = GeneralUtils.screenWidth / spanCount + GeneralUtils.dip2px(context, 42)
-                    width = GeneralUtils.screenWidth / spanCount - GeneralUtils.dip2px(context, 6)
+            if (binding is AlbumItemBinding)
+                binding.apply {
+                    this.album = album
+                    showDetails.setOnClickListener(this@ViewHolderAlbum)
+                    container.layoutParams.apply {
+                        height =
+                            GeneralUtils.screenWidth / spanCount + GeneralUtils.dip2px(
+                                context!!,
+                                42
+                            )
+                        width =
+                            GeneralUtils.screenWidth / spanCount - GeneralUtils.dip2px(context, 6)
+                    }
                 }
-                executePendingBindings()
+            else {
+                binding as ArtistDetailItemBinding
+                binding.apply {
+                    this.album = album
+
+                    binding.root.setOnClickListener(this@ViewHolderAlbum)
+                }
             }
+            binding.executePendingBindings()
         }
 
         override fun onClick(view: View) {

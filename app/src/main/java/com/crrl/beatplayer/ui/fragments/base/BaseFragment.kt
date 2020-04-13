@@ -13,6 +13,8 @@
 
 package com.crrl.beatplayer.ui.fragments.base
 
+import android.app.ActivityOptions
+import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
 import android.view.Gravity
@@ -30,6 +32,7 @@ import com.crrl.beatplayer.alertdialog.stylers.AlertType
 import com.crrl.beatplayer.alertdialog.stylers.InputStyle
 import com.crrl.beatplayer.extensions.getColorByTheme
 import com.crrl.beatplayer.extensions.safeActivity
+import com.crrl.beatplayer.extensions.toIDList
 import com.crrl.beatplayer.extensions.toast
 import com.crrl.beatplayer.interfaces.ItemClickListener
 import com.crrl.beatplayer.models.MediaItem
@@ -38,20 +41,25 @@ import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.repository.PlaylistRepository
 import com.crrl.beatplayer.repository.SongsRepository
 import com.crrl.beatplayer.ui.activities.MainActivity
+import com.crrl.beatplayer.ui.activities.SelectSongActivity
 import com.crrl.beatplayer.ui.fragments.PlaylistDetailFragment
+import com.crrl.beatplayer.ui.viewmodels.MainViewModel
 import com.crrl.beatplayer.utils.GeneralUtils.addZeros
 import com.crrl.beatplayer.utils.PlayerConstants
 import com.skydoves.powermenu.MenuAnimation
 import com.skydoves.powermenu.OnMenuItemClickListener
 import com.skydoves.powermenu.PowerMenu
 import com.skydoves.powermenu.PowerMenuItem
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import org.koin.core.parameter.parametersOf
 
 
 open class BaseFragment<T : MediaItem> : Fragment(), ItemClickListener<T> {
 
+    protected val mainViewModel: MainViewModel by sharedViewModel { parametersOf(safeActivity as MainActivity) }
     private lateinit var currentItemList: List<T>
     protected lateinit var dialog: AlertDialog
-    private lateinit var alertPlaylists: AlertDialog
+    protected var alertPlaylists: AlertDialog? = null
     private var currentItem: T? = null
 
     protected var powerMenu: PowerMenu? = null
@@ -67,12 +75,12 @@ open class BaseFragment<T : MediaItem> : Fragment(), ItemClickListener<T> {
         }.start()
     }
 
-    protected fun buildPlaylistMenu(playlists: List<Playlist>, song: Song) {
+    protected open fun buildPlaylistMenu(playlists: List<Playlist>, song: Song) {
         val style = AlertItemStyle().apply {
             textColor = activity?.getColorByTheme(R.attr.titleTextColor, "titleTextColor")!!
             selectedTextColor = activity?.getColorByTheme(R.attr.colorAccent, "colorAccent")!!
             backgroundColor =
-                activity?.getColorByTheme(R.attr.colorPrimarySecondary, "colorPrimarySecondary")!!
+                activity?.getColorByTheme(R.attr.colorPrimarySecondary2, "colorPrimarySecondary2")!!
         }
         val alert = AlertDialog(
             getString(R.string.playlists),
@@ -93,17 +101,15 @@ open class BaseFragment<T : MediaItem> : Fragment(), ItemClickListener<T> {
         alertPlaylists = alert
     }
 
-    private fun createDialog(song: Song): AlertDialog {
+    protected open fun createDialog(song: Song? = null): AlertDialog {
         val style = InputStyle(
-            safeActivity.getColorByTheme(R.attr.colorPrimarySecondary, "colorPrimarySecondary"),
             safeActivity.getColorByTheme(R.attr.colorPrimarySecondary2, "colorPrimarySecondary2"),
+            safeActivity.getColorByTheme(R.attr.colorPrimaryOpacity, "colorPrimaryOpacity"),
             safeActivity.getColorByTheme(R.attr.titleTextColor, "titleTextColor"),
             safeActivity.getColorByTheme(R.attr.bodyTextColor, "bodyTextColor"),
             safeActivity.getColorByTheme(R.attr.colorAccent, "colorAccent"),
             "${safeActivity.getString(R.string.playlist)} ${addZeros(
-                PlaylistRepository.getInstance(
-                    context
-                ).getPlayListsCount() + 1
+                PlaylistRepository(context).getPlayListsCount() + 1
             )}"
         )
         return AlertDialog(
@@ -116,17 +122,29 @@ open class BaseFragment<T : MediaItem> : Fragment(), ItemClickListener<T> {
             addItem(AlertItemAction("Cancel", false, AlertItemTheme.CANCEL) {
             })
             addItem(AlertItemAction("OK", false, AlertItemTheme.ACCEPT) {
-                val id = PlaylistRepository.getInstance(context)
-                    .createPlaylist(it.input, longArrayOf(song.id))
-                if (id != -1L) {
-                    safeActivity.toast(getString(R.string.playlist_added_success), LENGTH_SHORT)
-                } else {
-                    safeActivity.toast(
-                        "${getString(R.string.playlist_added_error)} ${it.input}",
-                        LENGTH_LONG
-                    )
-                }
+                addSongs(it.input!!, song)
             })
+        }
+    }
+
+    private fun addSongs(name: String, song: Song?) {
+        if (song != null) {
+            val id = PlaylistRepository(context)
+                .createPlaylist(name, listOf(song))
+            if (id != -1L) {
+                safeActivity.toast(getString(R.string.playlist_added_success), LENGTH_SHORT)
+            } else {
+                safeActivity.toast(
+                    "${getString(R.string.playlist_added_error)} $name",
+                    LENGTH_LONG
+                )
+            }
+        } else {
+            val options = ActivityOptions.makeSceneTransitionAnimation(safeActivity)
+            val intent = Intent(safeActivity, SelectSongActivity::class.java).apply {
+                putExtra(PlayerConstants.PLAY_LIST_DETAIL, name)
+            }
+            safeActivity.startActivityForResult(intent, 1, options.toBundle())
         }
     }
 
@@ -199,11 +217,11 @@ open class BaseFragment<T : MediaItem> : Fragment(), ItemClickListener<T> {
     private val onMenuItemClickListener = OnMenuItemClickListener<PowerMenuItem> { position, _ ->
         when (position) {
             0 -> {
-                (safeActivity as MainActivity).viewModel.update(currentItem as Song)
-                (safeActivity as MainActivity).viewModel.update(currentItemList.filterIsInstance<Song>())
+                mainViewModel.update(currentItem as Song)
+                mainViewModel.update(currentItemList.toIDList())
             }
             1 -> {
-                alertPlaylists.show(safeActivity as AppCompatActivity)
+                alertPlaylists?.show(safeActivity as AppCompatActivity)
             }
             2 -> {
                 if (this is PlaylistDetailFragment) {

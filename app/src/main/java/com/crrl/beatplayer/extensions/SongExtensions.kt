@@ -13,6 +13,7 @@
 
 package com.crrl.beatplayer.extensions
 
+import com.crrl.beatplayer.models.MediaItem
 import com.crrl.beatplayer.utils.GeneralUtils
 
 fun Int.format(): String {
@@ -25,4 +26,8 @@ fun Int.fix(): Int {
         value -= 1000
     }
     return value
+}
+
+fun List<MediaItem>?.toIDList(): LongArray {
+    return this?.map { it._id }?.toLongArray() ?: LongArray(0)
 }

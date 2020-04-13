@@ -17,22 +17,22 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.SimpleItemAnimator
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentFolderDetailBinding
 import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.extensions.observe
-import com.crrl.beatplayer.extensions.safeActivity
-import com.crrl.beatplayer.extensions.toFolder
+import com.crrl.beatplayer.extensions.toIDList
 import com.crrl.beatplayer.models.Song
+import com.crrl.beatplayer.repository.FavoritesRepository
+import com.crrl.beatplayer.repository.FoldersRepository
 import com.crrl.beatplayer.ui.activities.MainActivity
 import com.crrl.beatplayer.ui.adapters.SongAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.viewmodels.FolderViewModel
 import com.crrl.beatplayer.ui.viewmodels.SongViewModel
 import com.crrl.beatplayer.utils.PlayerConstants
+import com.dgreenhalgh.android.simpleitemdecoration.linear.EndOffsetItemDecoration
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -58,25 +58,35 @@ class FolderDetailFragment : BaseFragment<Song>() {
     }
 
     fun init() {
-        binding.folder = arguments!!.getString(PlayerConstants.FOLDER_KEY)!!.toFolder()
+        val id = arguments!!.getLong(PlayerConstants.FOLDER_KEY)
+        binding.folder = FoldersRepository(context).getFolder(id)
 
         songAdapter = SongAdapter(context, (activity as MainActivity).viewModel).apply {
             showHeader = true
             isPlaylist = true
             itemClickListener = this@FolderDetailFragment
         }
-
+        val decor =
+            EndOffsetItemDecoration(resources.getDimensionPixelOffset(R.dimen.song_item_size))
         viewModel.getSongsByFolder(binding.folder!!.songIds).observe(this) {
-            songAdapter.updateDataSet(it)
+            binding.songList.apply {
+                if (it.size > 1) {
+                    removeItemDecoration(decor)
+                    songAdapter.updateDataSet(it)
+                    addItemDecoration(decor)
+                } else {
+                    removeItemDecoration(decor)
+                    songAdapter.updateDataSet(it)
+                }
+            }
         }
 
         binding.apply {
-            // Set up RecyclerView
             songList.apply {
                 layoutManager = LinearLayoutManager(context)
                 adapter = songAdapter
-                (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
             }
+            addFavorites.setOnClickListener { toggleAddFav() }
         }
 
         binding.let {
@@ -87,20 +97,22 @@ class FolderDetailFragment : BaseFragment<Song>() {
     }
 
     override fun addToList(playListId: Long, song: Song) {
-        songViewModel.addToPlaylist(playListId, arrayOf(song.id).toLongArray())
+        songViewModel.addToPlaylist(playListId, listOf(song))
     }
 
     override fun onItemClick(view: View, position: Int, item: Song) {
-        (safeActivity as MainActivity).viewModel.update(item)
-        (safeActivity as MainActivity).viewModel.update(songAdapter.songList)
+        mainViewModel.update(item)
+        mainViewModel.update(songAdapter.songList.toIDList())
     }
 
     override fun onShuffleClick(view: View) {
-        Toast.makeText(context, "Shuffle", Toast.LENGTH_LONG).show()
+        mainViewModel.update(songAdapter.songList.toIDList())
+        mainViewModel.update(mainViewModel.random(-1))
     }
 
     override fun onPlayAllClick(view: View) {
-        Toast.makeText(context, "Play All", Toast.LENGTH_LONG).show()
+        mainViewModel.update(songAdapter.songList.first())
+        mainViewModel.update(songAdapter.songList.toIDList())
     }
 
     override fun onPopupMenuClick(view: View, position: Int, item: Song, itemList: List<Song>) {
@@ -108,6 +120,15 @@ class FolderDetailFragment : BaseFragment<Song>() {
         powerMenu!!.showAsAnchorRightTop(view)
         songViewModel.playLists().observe(this) {
             buildPlaylistMenu(it, item)
+        }
+    }
+
+    private fun toggleAddFav() {
+        val favoritesRepository = FavoritesRepository(context)
+        if (favoritesRepository.favExist(binding.folder!!.id)) {
+            favoritesRepository.deleteFavorites(longArrayOf(binding.folder!!.id))
+        } else {
+            favoritesRepository.createFavorite(binding.folder!!.toFavorite())
         }
     }
 }

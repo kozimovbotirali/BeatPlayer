@@ -13,9 +13,8 @@
 
 package com.crrl.beatplayer.ui.viewmodels
 
-import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
+import android.database.sqlite.SQLiteException
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -23,15 +22,9 @@ import com.crrl.beatplayer.models.Album
 import com.crrl.beatplayer.models.Playlist
 import com.crrl.beatplayer.models.SearchData
 import com.crrl.beatplayer.models.Song
-import com.crrl.beatplayer.repository.AlbumsRepository
-import com.crrl.beatplayer.repository.ArtistsRepository
-import com.crrl.beatplayer.repository.PlaylistRepository
-import com.crrl.beatplayer.repository.SongsRepository
-import io.reactivex.Observable
-import io.reactivex.schedulers.Schedulers
+import com.crrl.beatplayer.repository.*
 
-@SuppressLint("CheckResult")
-class SongViewModel(private val context: Context?) : ViewModel() {
+class SongViewModel(private val context: Context) : ViewModel() {
 
     private val songs: MutableLiveData<List<Song>> = MutableLiveData()
     private val _songsByPlaylist: MutableLiveData<List<Song>> = MutableLiveData()
@@ -40,7 +33,8 @@ class SongViewModel(private val context: Context?) : ViewModel() {
     private val _artistLiveData: MutableLiveData<List<Album>> = MutableLiveData()
     private val searchData = SearchData()
     private val _searchLiveData: MutableLiveData<SearchData> = MutableLiveData()
-    private val songsSelected: MutableLiveData<MutableList<Long>> = MutableLiveData()
+    private val songsSelected: MutableLiveData<MutableList<Song>> = MutableLiveData()
+    private val isFavLiveData: MutableLiveData<Boolean> = MutableLiveData()
 
     val searchLiveData = _searchLiveData
 
@@ -70,8 +64,8 @@ class SongViewModel(private val context: Context?) : ViewModel() {
         return songs
     }
 
-    fun selectedSongs(): LiveData<MutableList<Long>>{
-        if(songsSelected.value == null) songsSelected.value = mutableListOf()
+    fun selectedSongs(): LiveData<MutableList<Song>> {
+        if (songsSelected.value == null) songsSelected.value = mutableListOf()
         return songsSelected
     }
 
@@ -81,23 +75,35 @@ class SongViewModel(private val context: Context?) : ViewModel() {
         }.start()
     }
 
-    fun update(id: Long){
-        Thread{
+    fun update(id: Long) {
+        Thread {
             val list = AlbumsRepository.getInstance(context)!!.getSongsForAlbum(id)
             _songsByAlbum.postValue(list)
         }.start()
     }
 
-    fun update(list: MutableList<Long>) {
+    fun update(list: MutableList<Song>) {
         Thread {
             songsSelected.postValue(list)
+        }.start()
+    }
+
+    private fun updateIsFav(id: Long) {
+        Thread {
+            isFavLiveData.postValue(
+                try {
+                    FavoritesRepository(context).favExist(id)
+                } catch (ex: SQLiteException) {
+                    null
+                }
+            )
         }.start()
     }
 
     fun songsByPlayList(id: Long): LiveData<List<Song>> {
         Thread {
             _songsByPlaylist.postValue(
-                PlaylistRepository.getInstance(context).getSongsInPlaylist(
+                PlaylistRepository(context).getSongsInPlaylist(
                     id
                 )
             )
@@ -105,19 +111,18 @@ class SongViewModel(private val context: Context?) : ViewModel() {
         return _songsByPlaylist
     }
 
-    fun addToPlaylist(playlistId: Long, ids: LongArray) {
-        PlaylistRepository.getInstance(context).addToPlaylist(playlistId, ids)
+    fun addToPlaylist(playlistId: Long, songs: List<Song>) {
+        PlaylistRepository(context).addToPlaylist(playlistId, songs)
     }
 
     fun removeFromPlaylist(playlistId: Long, id: Long) {
-        PlaylistRepository.getInstance(context).removeFromPlaylist(playlistId, id)
+        PlaylistRepository(context).removeFromPlaylist(playlistId, id)
     }
 
     fun playLists(): LiveData<List<Playlist>> {
-        Observable.fromCallable { PlaylistRepository.getInstance(context).getPlayLists() }
-            .observeOn(Schedulers.newThread()).subscribeOn(Schedulers.newThread())
-            .doOnError { Log.println(Log.ERROR, "Error", it.message!!) }
-            .subscribe { _playlistLiveData.postValue(it) }
+        Thread {
+            _playlistLiveData.postValue(PlaylistRepository(context).getPlayLists())
+        }.start()
         return _playlistLiveData
     }
 
@@ -127,11 +132,16 @@ class SongViewModel(private val context: Context?) : ViewModel() {
     }
 
     fun getArtistAlbums(artistId: Long): LiveData<List<Album>> {
-        Observable.fromCallable {
-            ArtistsRepository.getInstance(context)!!.getAlbumsForArtist(artistId)
-        }.observeOn(Schedulers.newThread()).subscribeOn(Schedulers.newThread())
-            .subscribe { _artistLiveData.postValue(it) }
+        Thread {
+            _artistLiveData.postValue(
+                ArtistsRepository.getInstance(context)!!.getAlbumsForArtist(artistId)
+            )
+        }.start()
         return _artistLiveData
     }
 
+    fun isFav(id: Long): LiveData<Boolean> {
+        updateIsFav(id)
+        return isFavLiveData
+    }
 }
