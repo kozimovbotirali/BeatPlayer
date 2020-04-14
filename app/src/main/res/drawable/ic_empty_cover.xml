@@ -14,5 +14,5 @@
 
 <bitmap
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:src="@drawable/app_icn"
+    android:src="@drawable/app_icon"
     android:tint="?colorAccent"/>

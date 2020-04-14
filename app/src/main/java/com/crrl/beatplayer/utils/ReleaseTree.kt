@@ -11,31 +11,23 @@
  * limitations under the License.
  */
 
-package com.crrl.beatplayer
+package com.crrl.beatplayer.utils
 
-import android.app.Application
 import com.crashlytics.android.Crashlytics
-import com.crrl.beatplayer.ui.viewmodels.viewModelModule
-import com.crrl.beatplayer.utils.ReleaseTree
-import io.fabric.sdk.android.Fabric
-import org.koin.android.ext.koin.androidContext
-import org.koin.core.context.startKoin
+import org.jetbrains.annotations.NotNull
 import timber.log.Timber
-import timber.log.Timber.DebugTree
 
-
-class BeatPlayerApplication : Application() {
-
-    override fun onCreate() {
-        super.onCreate()
-        Fabric.with(this, Crashlytics())
-        Timber.plant(ReleaseTree())
-        val modules = listOf(
-            viewModelModule
-        )
-        startKoin {
-            androidContext(this@BeatPlayerApplication)
-            modules(modules)
+class ReleaseTree : @NotNull Timber.Tree() {
+    override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
+        try {
+            if (t != null) {
+                Crashlytics.setString("beatplayer_crash_tag", tag)
+                Crashlytics.logException(t)
+            } else {
+                Crashlytics.log(priority, tag, message)
+            }
+        } catch (e: IllegalStateException) {
+            e.printStackTrace()
         }
     }
 }
