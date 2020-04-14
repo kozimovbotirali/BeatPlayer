@@ -51,12 +51,12 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:tabIndicator="@drawable/indicator"
-                    app:tabIndicatorColor="?titleTextColor"
+                    app:tabIndicatorColor="?colorAccent"
                     app:tabIndicatorFullWidth="false"
                     app:tabIndicatorHeight="4dp"
                     app:tabMode="scrollable"
                     app:tabRippleColor="@color/transparent"
-                    app:tabSelectedTextColor="?titleTextColor"
+                    app:tabSelectedTextColor="?colorAccent"
                     app:tabTextAppearance="@style/TabLayoutTextAppearance" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.appbar.AppBarLayout>

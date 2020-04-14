@@ -58,7 +58,7 @@
                 android:background="@drawable/btn_ripple"
                 android:contentDescription="@string/cover"
                 android:src="@drawable/ic_sort"
-                android:tint="?btnTintColor"
+                android:tint="?subTitleTextColor"
                 android:visibility="@{isPlaylist ? View.GONE : View.VISIBLE}" />
 
             <ImageButton
@@ -69,7 +69,7 @@
                 android:background="@drawable/btn_ripple"
                 android:contentDescription="@string/cover"
                 android:src="@drawable/ic_shuffle"
-                android:tint="?btnTintColor" />
+                android:tint="?subTitleTextColor" />
 
             <ImageButton
                 android:id="@+id/play_all_song"
@@ -78,7 +78,7 @@
                 android:background="@drawable/btn_ripple"
                 android:contentDescription="@string/cover"
                 android:src="@drawable/ic_play"
-                android:tint="?btnTintColor" />
+                android:tint="?subTitleTextColor" />
         </LinearLayout>
     </RelativeLayout>
 </layout>

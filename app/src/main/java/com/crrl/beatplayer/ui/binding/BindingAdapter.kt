@@ -55,20 +55,9 @@ fun setAlbumId(view: ImageView, albumId: Long, recyclerPlaceholder: Boolean = fa
         Glide.with(view)
             .asBitmap()
             .load(uri)
-            .error(Glide.with(view).asBitmap().load(R.drawable.ic_empty_cover))
-            .diskCacheStrategy(DiskCacheStrategy.NONE)
-            .into(object : CustomTarget<Bitmap>() {
-                override fun onLoadCleared(placeholder: Drawable?) {
-                    view.setImageDrawable(placeholder)
-                }
-
-                override fun onResourceReady(
-                    resource: Bitmap,
-                    transition: Transition<in Bitmap>?
-                ) {
-                    view.setImageBitmap(resource)
-                }
-            })
+            .placeholder(R.drawable.ic_empty_cover)
+            .error(R.drawable.ic_empty_cover)
+            .into(view)
     } else {
         Glide.with(view)
             .asBitmap()

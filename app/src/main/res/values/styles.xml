@@ -76,7 +76,7 @@
     <style name="TabLayoutTextAppearance" parent="TextAppearance.Design.Tab">
         <item name="textAllCaps">false</item>
         <item name="android:textAllCaps">false</item>
-        <item name="android:textColor">?bodyTextColor</item>
+        <item name="android:textColor">?subTitleTextColor</item>
         <item name="android:fontFamily">@font/product_sans_regular</item>
         <item name="android:textSize">@dimen/title_text_size</item>
         <item name="android:textStyle">bold</item>

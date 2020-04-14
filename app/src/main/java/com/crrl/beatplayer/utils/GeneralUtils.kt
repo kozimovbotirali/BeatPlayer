@@ -142,5 +142,5 @@ object GeneralUtils {
         }
     }
 
-    fun getAlbumArtUri(albumId: Long) = withAppendedId(ARTWORK_URI, albumId)
+    fun getAlbumArtUri(albumId: Long): Uri = withAppendedId(ARTWORK_URI, albumId)
 }

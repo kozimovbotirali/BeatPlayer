@@ -86,7 +86,7 @@
                     android:ellipsize="end"
                     android:singleLine="true"
                     android:text="@{song.artist}"
-                    android:textColor="?bodyTextColor"
+                    android:textColor="?subTitleTextColor"
                     android:textSize="@dimen/sub_title_text_size" />
 
                 <TextView
@@ -97,7 +97,7 @@
                     android:paddingRight="5dp"
                     android:singleLine="true"
                     android:text="@string/separator"
-                    android:textColor="?bodyTextColor"
+                    android:textColor="?subTitleTextColor"
                     android:textSize="@dimen/sub_title_text_size" />
 
                 <TextView
@@ -107,7 +107,7 @@
                     android:ellipsize="end"
                     android:singleLine="true"
                     android:text="@{song.album}"
-                    android:textColor="?bodyTextColor"
+                    android:textColor="?subTitleTextColor"
                     android:textSize="@dimen/sub_title_text_size" />
             </LinearLayout>
         </LinearLayout>
@@ -121,7 +121,7 @@
             android:background="@drawable/btn_ripple"
             android:src="@drawable/ic_more"
             android:contentDescription="@string/cover"
-            android:tint="?btnTintColor" />
+            android:tint="?subTitleTextColor" />
 
     </RelativeLayout>
 </layout>

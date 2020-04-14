@@ -121,7 +121,7 @@
                 android:background="@drawable/btn_ripple"
                 android:contentDescription="@string/cover"
                 android:src="@drawable/ic_shuffle"
-                android:tint="?btnTintColor"
+                android:tint="?subTitleTextColor"
                 android:visibility="@{viewModel.getSongsByAlbum(album.id).size() > 1 ? View.VISIBLE : View.GONE}" />
 
             <ImageButton
@@ -131,7 +131,7 @@
                 android:background="@drawable/btn_ripple"
                 android:contentDescription="@string/cover"
                 android:src="@drawable/ic_play"
-                android:tint="?btnTintColor" />
+                android:tint="?subTitleTextColor" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

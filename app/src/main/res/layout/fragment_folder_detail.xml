@@ -92,7 +92,7 @@
             android:layout_height="@dimen/btn_size"
             android:background="@drawable/btn_ripple"
             android:contentDescription="@string/cover"
-            android:onClick="menu"
+            android:onClick="search"
             android:src="@drawable/ic_search"
             android:tint="?btnTintColor"
             app:layout_constraintBottom_toBottomOf="@+id/folder_list_container"
