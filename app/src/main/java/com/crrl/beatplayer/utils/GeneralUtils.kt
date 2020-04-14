@@ -52,37 +52,9 @@ object GeneralUtils {
         val seconds = (duration / 1000).toInt() % 60
         val minutes = (duration / (1000 * 60) % 60).toInt()
         val hours = (duration / (1000 * 60 * 60) % 24).toInt()
-        val hh: String
-        val mm: String
-        val ss: String
-        hh = if (hours in 1..9) {
-            "0$hours:"
-        } else {
-            if (hours >= 10) {
-                "$hours:"
-            } else {
-                ""
-            }
+        "${timeAddZeros(hours, false)}:${timeAddZeros(minutes)}:${timeAddZeros(seconds)}".apply {
+            return if (this[0] == ':') replaceFirst(":", "") else this
         }
-        mm = if (minutes in 1..9) {
-            "0$minutes:"
-        } else {
-            if (minutes >= 10) {
-                "$minutes:"
-            } else {
-                "00:"
-            }
-        }
-        ss = if (seconds in 1..9) {
-            "0$seconds"
-        } else {
-            if (seconds >= 10) {
-                "" + seconds
-            } else {
-                "00"
-            }
-        }
-        return hh + mm + ss
     }
 
     fun getTotalTime(songList: List<Song>): Long {
@@ -160,6 +132,14 @@ object GeneralUtils {
         if (number!! < 10) return "00${number}"
         if (number < 100) return "0${number}"
         return number.toString()
+    }
+
+    private fun timeAddZeros(number: Int?, showIfIsZero: Boolean = true): String {
+        return when (number) {
+            0 -> if (showIfIsZero) "0${number}" else ""
+            1, 2, 3, 4, 5, 6, 7, 8, 9 -> "0${number}"
+            else -> number.toString()
+        }
     }
 
     fun getAlbumArtUri(albumId: Long) = withAppendedId(ARTWORK_URI, albumId)
