@@ -16,11 +16,11 @@ package com.crrl.beatplayer.ui.activities
 import android.os.Bundle
 import android.view.View
 import com.crrl.beatplayer.R
-import com.crrl.beatplayer.alertdialog.AlertDialog
-import com.crrl.beatplayer.alertdialog.dialogs.AlertItemAction
-import com.crrl.beatplayer.alertdialog.stylers.AlertItemStyle
-import com.crrl.beatplayer.alertdialog.stylers.AlertItemTheme
-import com.crrl.beatplayer.alertdialog.stylers.AlertType
+import com.crrl.alertdialog.AlertDialog
+import com.crrl.alertdialog.dialogs.AlertItemAction
+import com.crrl.alertdialog.stylers.AlertItemStyle
+import com.crrl.alertdialog.stylers.AlertItemTheme
+import com.crrl.alertdialog.stylers.AlertType
 import com.crrl.beatplayer.extensions.getColorByTheme
 import com.crrl.beatplayer.ui.activities.base.BaseActivity
 import com.crrl.beatplayer.utils.PlayerConstants

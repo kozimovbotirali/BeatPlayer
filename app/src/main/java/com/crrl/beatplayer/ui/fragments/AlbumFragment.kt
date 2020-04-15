@@ -21,11 +21,11 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import com.crrl.beatplayer.R
-import com.crrl.beatplayer.alertdialog.AlertDialog
-import com.crrl.beatplayer.alertdialog.dialogs.AlertItemAction
-import com.crrl.beatplayer.alertdialog.stylers.AlertItemStyle
-import com.crrl.beatplayer.alertdialog.stylers.AlertItemTheme
-import com.crrl.beatplayer.alertdialog.stylers.AlertType
+import com.crrl.alertdialog.AlertDialog
+import com.crrl.alertdialog.dialogs.AlertItemAction
+import com.crrl.alertdialog.stylers.AlertItemStyle
+import com.crrl.alertdialog.stylers.AlertItemTheme
+import com.crrl.alertdialog.stylers.AlertType
 import com.crrl.beatplayer.databinding.FragmentAlbumBinding
 import com.crrl.beatplayer.extensions.*
 import com.crrl.beatplayer.models.Album
