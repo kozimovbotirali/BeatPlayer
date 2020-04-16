@@ -28,6 +28,18 @@ fun <T : ViewDataBinding> ViewGroup.inflateWithBinding(
     return DataBindingUtil.inflate(layoutInflater, layoutRes, this, attachToRoot) as T
 }
 
+fun View?.show(){
+    this?.visibility = View.VISIBLE
+}
+
+fun View?.hide(){
+    this?.visibility = View.GONE
+}
+
+fun View?.toggleShow(show: Boolean){
+    if (show) show() else hide()
+}
+
 fun View.setMargins(
     left: Int? = null,
     top: Int? = null,

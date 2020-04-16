@@ -43,13 +43,13 @@
             android:src="@drawable/ic_empty_cover" />
 
         <LinearLayout
-            android:id="@+id/listViewTextContainer"
+            android:id="@+id/textViewContainer"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_centerVertical="true"
             android:layout_marginStart="@dimen/margin_8"
             android:layout_marginEnd="@dimen/margin_10"
-            android:layout_toStartOf="@+id/item_menu"
+            android:layout_toStartOf="@+id/visualizer"
             android:layout_toEndOf="@+id/cover"
             android:orientation="vertical"
             android:paddingBottom="4dp">
@@ -111,6 +111,17 @@
                     android:textSize="@dimen/sub_title_text_size" />
             </LinearLayout>
         </LinearLayout>
+
+        <com.crrl.beatplayer.ui.widgets.MusicVisualizer
+            android:id="@+id/visualizer"
+            android:layout_width="30dp"
+            android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/margin_10"
+            android:layout_toStartOf="@+id/item_menu"
+            app:visible="@{song.selected}"
+            app:animate="@{false}"
+            android:tint="?subTitleTextColor"/>
 
         <ImageButton
             android:id="@+id/item_menu"

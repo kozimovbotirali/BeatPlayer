@@ -26,10 +26,12 @@ import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions.withCrossFade
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.extensions.setMargins
+import com.crrl.beatplayer.extensions.toggleShow
 import com.crrl.beatplayer.models.Album
 import com.crrl.beatplayer.models.Favorite
 import com.crrl.beatplayer.models.Song
@@ -51,21 +53,13 @@ import com.github.florent37.kotlin.pleaseanimate.please
 fun setAlbumId(view: ImageView, albumId: Long, recyclerPlaceholder: Boolean = false) {
     view.clipToOutline = true
     val uri = ContentUris.withAppendedId(PlayerConstants.ARTWORK_URI, albumId)
-    if (recyclerPlaceholder) {
-        Glide.with(view)
-            .asBitmap()
-            .load(uri)
-            .placeholder(R.drawable.ic_empty_cover)
-            .error(R.drawable.ic_empty_cover)
-            .into(view)
-    } else {
-        Glide.with(view)
-            .asBitmap()
-            .load(uri)
-            .placeholder(R.drawable.ic_empty_cover)
-            .error(R.drawable.ic_empty_cover)
-            .into(view)
-    }
+    Glide.with(view)
+        .asBitmap()
+        .load(uri)
+        .transition(withCrossFade())
+        .placeholder(R.drawable.album_cover_frame)
+        .error(R.drawable.ic_empty_cover)
+        .into(view)
 }
 
 @BindingAdapter("app:width", "app:height", requireAll = true)
@@ -163,12 +157,15 @@ fun setClipToOutline(view: View, clipToOutline: Boolean) {
     view.clipToOutline = clipToOutline
 }
 
-@BindingAdapter("app:visible")
-fun setVisibility(view: View, isVisible: Boolean) {
-    please(100) {
-        animate(view) {
-            println(isVisible)
-            if (isVisible) scale(1f, 1f) else scale(0f, 0f)
-        }
-    }.start()
+@BindingAdapter("app:visible", "app:animate", requireAll = false)
+fun setVisibility(view: View, show: Boolean = true, animate: Boolean = true) {
+    if(animate){
+        please(100) {
+            animate(view) {
+                if (show) scale(1f, 1f) else scale(0f, 0f)
+            }
+        }.start()
+    } else {
+        view.toggleShow(show)
+    }
 }
