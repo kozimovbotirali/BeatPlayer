@@ -29,56 +29,56 @@
     <RelativeLayout
         android:id="@+id/linearLayout3"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/btn_size">
+        android:layout_height="@dimen/btn_size_header"
+        android:layout_margin="@dimen/margin_10">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal">
 
+            <ImageButton
+                android:id="@+id/sort_song"
+                android:layout_width="@dimen/btn_size_header"
+                android:layout_height="@dimen/btn_size_header"
+                android:layout_marginEnd="@dimen/margin_10"
+                android:background="@drawable/btn_ripple_header_with_background"
+                android:contentDescription="@string/cover"
+                android:src="@drawable/ic_sort"
+                android:tint="?colorAccent"
+                android:visibility="@{isPlaylist ? View.GONE : View.VISIBLE}" />
+
             <TextView
                 android:id="@+id/song_size"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
+                android:layout_marginEnd="@dimen/margin_10"
                 android:layout_weight="1"
                 android:gravity="center|start"
-                android:paddingStart="@dimen/padding_15"
-                android:paddingEnd="@dimen/padding_12"
                 android:text="@{@plurals/number_of_songs(songCount, songCount)}"
                 android:textColor="?titleTextColor"
                 android:textSize="@dimen/title_text_size"
                 android:visibility="@{isPlaylist ? View.INVISIBLE : View.VISIBLE}" />
 
             <ImageButton
-                android:id="@+id/sort_song"
-                android:layout_width="@dimen/btn_size"
-                android:layout_height="@dimen/btn_size"
-                android:layout_marginEnd="@dimen/margin_10"
-                android:background="@drawable/btn_ripple"
-                android:contentDescription="@string/cover"
-                android:src="@drawable/ic_sort"
-                android:tint="?subTitleTextColor"
-                android:visibility="@{isPlaylist ? View.GONE : View.VISIBLE}" />
-
-            <ImageButton
                 android:id="@+id/shuffle_song"
-                android:layout_width="@dimen/btn_size"
-                android:layout_height="@dimen/btn_size"
+                android:layout_width="@dimen/btn_size_header"
+                android:layout_height="@dimen/btn_size_header"
                 android:layout_marginEnd="@dimen/margin_10"
-                android:background="@drawable/btn_ripple"
+                android:background="@drawable/btn_ripple_header_with_background"
                 android:contentDescription="@string/cover"
                 android:src="@drawable/ic_shuffle"
-                android:tint="?subTitleTextColor" />
+                android:tint="?colorAccent" />
 
             <ImageButton
                 android:id="@+id/play_all_song"
-                android:layout_width="@dimen/btn_size"
-                android:layout_height="@dimen/btn_size"
-                android:background="@drawable/btn_ripple"
+                android:layout_width="@dimen/btn_size_header"
+                android:layout_height="@dimen/btn_size_header"
+                android:background="@drawable/btn_play_header_background"
                 android:contentDescription="@string/cover"
                 android:src="@drawable/ic_play"
-                android:tint="?subTitleTextColor" />
+                android:tint="@color/white" />
         </LinearLayout>
     </RelativeLayout>
 </layout>

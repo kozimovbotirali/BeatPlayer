@@ -19,6 +19,7 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
+import android.view.Window
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.extensions.addFragment
 import com.crrl.beatplayer.extensions.getColorByTheme
@@ -53,6 +54,7 @@ open class BaseActivity : RequestPermissionActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        with(window) { requestFeature(Window.FEATURE_CONTENT_TRANSITIONS) }
         init()
     }
 
@@ -82,11 +84,12 @@ open class BaseActivity : RequestPermissionActivity() {
         powerMenu = initPopUpMenu().setOnMenuItemClickListener(onMenuItemClickListener).build()
     }
 
-    protected open fun recreateActivity() {
+    override fun recreateActivity() {
+        val intent = packageManager.getLaunchIntentForPackage(packageName) ?: return
+        startActivity(intent.apply {
+            flags = (Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        })
         finish()
-        overridePendingTransition(0, 0)
-        startActivity(intent)
-        overridePendingTransition(0, 0)
     }
 
 
@@ -117,18 +120,13 @@ open class BaseActivity : RequestPermissionActivity() {
             .setMenuRadius(this.resources.getDimension(R.dimen.popupMenuRadius))
             .setMenuShadow(10f)
             .setShowBackground(false)
-            .setTextColor(getColorByTheme(R.attr.titleTextColor, "titleTextColor"))
-            .setTextGravity(Gravity.CENTER)
+            .setTextColor(getColorByTheme(R.attr.titleTextColor))
+            .setTextGravity(Gravity.START)
             .setTextSize(16)
             .setTextTypeface(Typeface.createFromAsset(assets, "fonts/product_sans_regular.ttf"))
-            .setSelectedTextColor(getColorByTheme(R.attr.colorAccent, "colorAccent"))
-            .setMenuColor(getColorByTheme(R.attr.colorPrimarySecondary2, "colorPrimarySecondary2"))
-            .setSelectedMenuColor(
-                getColorByTheme(
-                    R.attr.colorPrimarySecondary,
-                    "colorPrimarySecondary"
-                )
-            )
+            .setSelectedTextColor(getColorByTheme(R.attr.colorAccent))
+            .setMenuColor(getColorByTheme(R.attr.colorPrimarySecondary2))
+            .setSelectedMenuColor(getColorByTheme(R.attr.colorPrimarySecondary))
     }
 
     private fun setAppTheme(current_theme: String) {

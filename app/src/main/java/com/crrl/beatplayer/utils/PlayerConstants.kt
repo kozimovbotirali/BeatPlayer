@@ -37,7 +37,7 @@ object PlayerConstants {
     const val AUTO_THEME = "auto_theme"
     const val SONG_KEY = "song_key"
     const val NO_DATA = "no_data"
-    const val FAVORITE_ID = 7440L
+    const val FAVORITE_ID = -7440L
     const val FAVORITE_NAME = "${R.string.favorites}"
     const val FAVORITE_TYPE = "Favorite"
     const val ALBUM_TYPE = "Album"

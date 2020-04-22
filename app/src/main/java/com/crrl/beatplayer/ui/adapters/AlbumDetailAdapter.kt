@@ -13,29 +13,25 @@
 
 package com.crrl.beatplayer.ui.adapters
 
-import android.content.ContentUris
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.AlbumDetailItemBinding
 import com.crrl.beatplayer.databinding.AlbumDetailItemHeaderBinding
+import com.crrl.beatplayer.extensions.deepEquals
 import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.interfaces.ItemClickListener
 import com.crrl.beatplayer.models.Album
 import com.crrl.beatplayer.models.Song
-import com.crrl.beatplayer.ui.viewmodels.SongViewModel
+import com.crrl.beatplayer.ui.viewmodels.MainViewModel
 import com.crrl.beatplayer.utils.GeneralUtils
-import com.crrl.beatplayer.utils.PlayerConstants
 
 private const val HEADER_TYPE = 0
 private const val ITEM_TYPE = 1
 
-class AlbumDetailAdapter(private val context: Context?, private val songViewModel: SongViewModel) :
+class AlbumDetailAdapter(private val context: Context?, private val songViewModel: MainViewModel) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var songList: MutableList<Song> = mutableListOf()
@@ -102,24 +98,10 @@ class AlbumDetailAdapter(private val context: Context?, private val songViewMode
     }
 
     fun updateDataSet(newList: List<Song>) {
-        Thread {
-            if (newList.isEmpty()) {
-                songList = newList.toMutableList()
-                (context as AppCompatActivity).runOnUiThread {
-                    notifyDataSetChanged()
-                }
-            } else if (newList.size != songList.size) {
-                songList = newList.toMutableList()
-                (context as AppCompatActivity).runOnUiThread {
-                    notifyDataSetChanged()
-                }
-            } else if (songList.first() != newList.first() && songList.last() != newList.last()) {
-                songList = newList.toMutableList()
-                (context as AppCompatActivity).runOnUiThread {
-                    notifyDataSetChanged()
-                }
-            }
-        }.start()
+        if (!songList.deepEquals(newList)) {
+            songList = newList.toMutableList()
+            notifyDataSetChanged()
+        }
     }
 
     inner class ViewHolderAlbumSong(private val binding: AlbumDetailItemBinding) :
@@ -128,9 +110,10 @@ class AlbumDetailAdapter(private val context: Context?, private val songViewMode
         fun bind(song: Song) {
             binding.apply {
                 this.song = song
+                executePendingBindings()
+
                 container.setOnClickListener(this@ViewHolderAlbumSong)
                 itemMenu.setOnClickListener(this@ViewHolderAlbumSong)
-                executePendingBindings()
             }
         }
 
@@ -157,21 +140,13 @@ class AlbumDetailAdapter(private val context: Context?, private val songViewMode
 
         fun bind() {
             binding.apply {
+                this.album = this@AlbumDetailAdapter.album
+                this.viewModel = songViewModel
+                executePendingBindings()
+
                 shuffleAlbumSong.setOnClickListener(this@ViewHolderAlbumSongHeader)
                 playAllAlbumSong.setOnClickListener(this@ViewHolderAlbumSongHeader)
                 totalDuration = GeneralUtils.getTotalTime(songList).toInt()
-                this.album = this@AlbumDetailAdapter.album
-                this.viewModel = songViewModel
-                cover.clipToOutline = true
-                val uri = ContentUris.withAppendedId(PlayerConstants.ARTWORK_URI, album!!.id)
-                Glide.with(context!!)
-                    .load(uri)
-                    .placeholder(R.drawable.song_cover_frame)
-                    .error(R.drawable.ic_empty_cover)
-                    .centerCrop()
-                    .transition(DrawableTransitionOptions.withCrossFade())
-                    .into(cover)
-                executePendingBindings()
             }
         }
 

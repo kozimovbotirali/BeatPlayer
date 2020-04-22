@@ -26,7 +26,7 @@
 
         <variable
             name="viewModel"
-            type="com.crrl.beatplayer.ui.viewmodels.SongViewModel" />
+            type="com.crrl.beatplayer.ui.viewmodels.MainViewModel" />
 
         <variable
             name="totalDuration"
@@ -98,6 +98,7 @@
             android:orientation="horizontal"
             android:background="@drawable/album_detail_shape"
             android:layout_marginTop="@dimen/margin_34"
+            android:padding="@dimen/margin_10"
             app:layout_constraintTop_toBottomOf="@id/cover">
 
             <TextView
@@ -115,23 +116,23 @@
 
             <ImageButton
                 android:id="@+id/shuffle_album_song"
-                android:layout_width="@dimen/btn_size"
-                android:layout_height="@dimen/btn_size"
+                android:layout_width="@dimen/btn_size_header"
+                android:layout_height="@dimen/btn_size_header"
                 android:layout_marginEnd="@dimen/margin_10"
-                android:background="@drawable/btn_ripple"
+                android:background="@drawable/btn_ripple_header_with_background"
                 android:contentDescription="@string/cover"
                 android:src="@drawable/ic_shuffle"
-                android:tint="?subTitleTextColor"
+                android:tint="?colorAccent"
                 android:visibility="@{viewModel.getSongsByAlbum(album.id).size() > 1 ? View.VISIBLE : View.GONE}" />
 
             <ImageButton
                 android:id="@+id/play_all_album_song"
-                android:layout_width="@dimen/btn_size"
-                android:layout_height="@dimen/btn_size"
-                android:background="@drawable/btn_ripple"
+                android:layout_width="@dimen/btn_size_header"
+                android:layout_height="@dimen/btn_size_header"
+                android:background="@drawable/btn_ripple_header_with_background"
                 android:contentDescription="@string/cover"
                 android:src="@drawable/ic_play"
-                android:tint="?subTitleTextColor" />
+                android:tint="?colorAccent" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -44,6 +44,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/album_cover_frame"
                 android:contentDescription="@string/cover"
+                android:transitionName="album_item"
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_empty_cover"
                 app:albumId="@{album.id}" />

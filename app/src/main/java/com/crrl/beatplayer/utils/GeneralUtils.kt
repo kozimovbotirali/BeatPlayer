@@ -78,7 +78,7 @@ object GeneralUtils {
         }
         val fis = FileInputStream(parcelFileDescriptor.fileDescriptor)
         val data = try {
-            toByteArray(fis, 1024)
+            fis.readBytes()
         } catch (ex: Exception) {
             audio2Raw(context, uri)
         }

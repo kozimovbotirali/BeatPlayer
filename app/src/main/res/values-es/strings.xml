@@ -19,6 +19,7 @@
     <string name="albums">Álbumes</string>
     <string name="artists">Artistas</string>
     <string name="folders">Carpetas</string>
+    <string name="folder">Carpeta</string>
     <string name="favorites">Favoritos</string>
     <string name="equalizer">Ecualizador</string>
     <string name="hint_msg">Buscar pistas, artistas y álbumes.</string>
@@ -46,7 +47,7 @@
     <string name="delete">Eliminar</string>
     <string name="create_playlist">Creando Lista de Reproducción</string>
     <string name="choose_playlist">Por favor, selecciona una lista de reproducción.</string>
-    <string name="playlist_added_error">No se pudo crear la lista de reproducción</string>
+    <string name="playlist_added_error">No se pudo crear la lista de reproducción \"%s\".</string>
     <string name="playlist_added_success">Lista de reproducción agregada satisfactoriamente.</string>
     <string name="input_hint">Ingresa el nombre</string>
     <string name="no_permission">No se otorgaron permisos</string>
@@ -60,10 +61,10 @@
     <string name="default_theme">Por defecto del Sistema</string>
     <string name="no_lyrics">Lo sentimos, no pudimos obtener la letra de esta canción.</string>
     <string name="deleted_ok">Canción eliminada exitosamente.</string>
-    <string name="deleted_err">No se pudo eliminar la canción ahora.</string>
+    <string name="deleted_err">No se puedo eliminar la canción ahora.</string>
     <string name="unavailable">La canción no se puede reproducir.</string>
     <string name="playlist">Lista de Reproducción</string>
-    <string name="delete_conf">"Esta seguro que desea eliminar la canción "</string>
+    <string name="delete_conf">Esta seguro que desea eliminar la canción \"%s\" de su dispositivo.</string>
     <string name="delete_conf_title">Confirmar Eliminación</string>
     <string name="select_tracks">Seleccionar Canciones</string>
     <string name="all">Todas</string>
@@ -73,6 +74,16 @@
     <string name="favorites_tip">Tap the heart icon on \"Now Playing, Albums, Artists or Folders\" views. Your favorite music will be listed here.</string>
     <string name="favorite_music">Música Favorita</string>
     <string name="no_artists">Sin Artistas</string>
+    <string name="song_added_success">La pista fue agregada exitosamente.</string>
+    <string name="song_added_error">No se pudo agregar la pista a la lista de reproducción</string>
+    <string name="playlist_deleted_error">No se pudo eliminar la lista de reproducción \"%s\".</string>
+    <string name="playlist_deleted_success">La lista de reproducción \"%s\" fue eliminada exitosamente.</string>
+    <string name="retry">Reintentar</string>
+    <string name="song_no_fav_ok">Removida de tu música favorita.</string>
+    <string name="song_fav_ok">Agregada a tu música favorita.</string>
+    <string name="no_fav_ok">%s Removido de tu música favorita.</string>
+    <string name="fav_ok">%s Agregado a tu música favorita.</string>
+    <string name="playlist_name_error">El nombre de la lista de reproducción ya existe.</string>
 
     <plurals name="number_of_songs" tools:ignore="UnusedQuantity">
         <item quantity="zero">%d Pistas</item>

@@ -13,16 +13,17 @@
 
 package com.crrl.beatplayer.repository
 
+import android.annotation.SuppressLint
 import android.content.ContentResolver
 import android.content.Context
 import android.database.Cursor
 import android.provider.BaseColumns._ID
 import android.provider.MediaStore
-import android.provider.MediaStore.Audio.Media.*
+import android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+import com.crrl.beatplayer.extensions.forEach
 import com.crrl.beatplayer.extensions.toList
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.utils.SettingsUtility
-import com.crrl.beatplayer.utils.SortModes
 import java.io.File
 
 interface SongsRepositoryInterface {
@@ -45,12 +46,10 @@ class SongsRepository() : SongsRepositoryInterface {
     }
 
     override fun loadSongs(): List<Song> {
-        val sl = makeSongCursor(null, null)
+        return makeSongCursor(null, null)
             .toList(true) {
                 Song.createFromCursor(this)
             }
-        SortModes.sortSongList(sl, settingsUtility.songSortOrder)
-        return sl
     }
 
     override fun getSongForId(id: Long): Song {
@@ -79,8 +78,6 @@ class SongsRepository() : SongsRepositoryInterface {
         }
     }
 
-    // TODO a lot of operations are done here without verifying results,
-    // TODO e.g. if moveToFirst() returns true...
     override fun deleteTracks(ids: LongArray): Int {
         val projection = arrayOf(
             _ID,
@@ -96,60 +93,58 @@ class SongsRepository() : SongsRepositoryInterface {
                 }
             }
             append(")")
-        }
+        }.toString()
 
+        var deleted = ids.size
         contentResolver.query(
             EXTERNAL_CONTENT_URI,
             projection,
-            selection.toString(),
+            selection,
             null,
             null
         )?.use {
-            it.moveToFirst()
-            // Step 2: Remove selected tracks from the database
-            contentResolver.delete(EXTERNAL_CONTENT_URI, selection.toString(), null)
-
-            // Step 3: Remove files from card
-            it.moveToFirst()
-            while (!it.isAfterLast) {
+            val del = if (it.moveToFirst()) {
+                contentResolver.delete(EXTERNAL_CONTENT_URI, selection, null)
+            } else -1
+            if (del < 1) return -1
+            it.forEach(true) {
                 val name = it.getString(1)
                 val f = File(name)
-                try { // File.delete can throw a security exception
-                    if (!f.delete()) {
-                        // I'm not sure if we'd ever get here (deletion would
-                        // have to fail, but no exception thrown)
-                        print("Failed to delete file: $name")
-                    }
+                try {
+                    if (f.exists())
+                        if (!f.delete())
+                            if (!f.canonicalFile.delete())
+                                if (!context.deleteFile(f.name)) {
+                                    deleted--
+                                }
                 } catch (_: SecurityException) {
                 }
-                it.moveToNext()
             }
         }
-
-        return ids.size
+        return deleted
     }
 
+    @SuppressLint("Recycle")
     private fun makeSongCursor(
         selection: String?,
         paramArrayOfString: Array<String>?,
-        sortOrder: String
-    ): Cursor? {
+        sortOrder: String?
+    ): Cursor {
+        val selectionStatement = StringBuilder("is_music=1 AND title != ''")
+        if (!selection.isNullOrEmpty()) {
+            selectionStatement.append(" AND $selection")
+        }
+        val projection =
+            arrayOf("_id", "title", "artist", "album", "duration", "track", "artist_id", "album_id")
+
         return contentResolver.query(
             EXTERNAL_CONTENT_URI,
-            arrayOf(
-                _ID,
-                TITLE,
-                ARTIST,
-                ALBUM,
-                DURATION,
-                TRACK,
-                ARTIST_ID,
-                ALBUM_ID
-            ),
-            selection,
+            projection,
+            selectionStatement.toString(),
             paramArrayOfString,
             sortOrder
         )
+            ?: throw IllegalStateException("Unable to query $EXTERNAL_CONTENT_URI, system returned null.")
     }
 
     private fun makeSongCursor(selection: String?, paramArrayOfString: Array<String>?): Cursor? {

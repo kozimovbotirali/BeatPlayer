@@ -19,6 +19,9 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.provider.MediaStore;
 
+import com.crrl.beatplayer.models.Song;
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 
 public final class SettingsUtility {
@@ -127,7 +130,7 @@ public final class SettingsUtility {
     }
 
     public String getCurrentSongSelected() {
-        return sPreferences.getString(PlayerConstants.SONG_KEY, PlayerConstants.NO_DATA);
+        return sPreferences.getString(PlayerConstants.SONG_KEY, new Gson().toJson(new Song()));
     }
 
     public void setCurrentSongSelected(String value) {

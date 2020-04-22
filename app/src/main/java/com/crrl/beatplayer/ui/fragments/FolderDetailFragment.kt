@@ -30,9 +30,7 @@ import com.crrl.beatplayer.ui.activities.MainActivity
 import com.crrl.beatplayer.ui.adapters.SongAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.viewmodels.FolderViewModel
-import com.crrl.beatplayer.ui.viewmodels.SongViewModel
 import com.crrl.beatplayer.utils.PlayerConstants
-import com.dgreenhalgh.android.simpleitemdecoration.linear.EndOffsetItemDecoration
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -42,7 +40,6 @@ class FolderDetailFragment : BaseFragment<Song>() {
     private lateinit var songAdapter: SongAdapter
 
     private val viewModel: FolderViewModel by viewModel { parametersOf(context) }
-    private val songViewModel: SongViewModel by viewModel { parametersOf(context) }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -66,18 +63,11 @@ class FolderDetailFragment : BaseFragment<Song>() {
             isPlaylist = true
             itemClickListener = this@FolderDetailFragment
         }
-        val decor =
-            EndOffsetItemDecoration(resources.getDimensionPixelOffset(R.dimen.song_item_size))
         viewModel.getSongsByFolder(binding.folder!!.songIds).observe(this) {
-            binding.songList.apply {
-                if (it.size > 1) {
-                    removeItemDecoration(decor)
-                    songAdapter.updateDataSet(it)
-                    addItemDecoration(decor)
-                } else {
-                    removeItemDecoration(decor)
-                    songAdapter.updateDataSet(it)
-                }
+            songAdapter.updateDataSet(it)
+            if (it.isEmpty()) {
+                mainViewModel.favoriteRepository.deleteFavorites(longArrayOf(id))
+                activity?.onBackPressed()
             }
         }
 
@@ -94,10 +84,6 @@ class FolderDetailFragment : BaseFragment<Song>() {
             it.lifecycleOwner = this
             it.executePendingBindings()
         }
-    }
-
-    override fun addToList(playListId: Long, song: Song) {
-        songViewModel.addToPlaylist(playListId, listOf(song))
     }
 
     override fun onItemClick(view: View, position: Int, item: Song) {
@@ -118,17 +104,20 @@ class FolderDetailFragment : BaseFragment<Song>() {
     override fun onPopupMenuClick(view: View, position: Int, item: Song, itemList: List<Song>) {
         super.onPopupMenuClick(view, position, item, itemList)
         powerMenu!!.showAsAnchorRightTop(view)
-        songViewModel.playLists().observe(this) {
+        mainViewModel.playLists().observe(this) {
             buildPlaylistMenu(it, item)
         }
     }
 
     private fun toggleAddFav() {
         val favoritesRepository = FavoritesRepository(context)
+        val libType = getString(R.string.folder)
         if (favoritesRepository.favExist(binding.folder!!.id)) {
-            favoritesRepository.deleteFavorites(longArrayOf(binding.folder!!.id))
+            val resp = favoritesRepository.deleteFavorites(longArrayOf(binding.folder!!.id))
+            showSnackBar(view, resp, 0, libType)
         } else {
-            favoritesRepository.createFavorite(binding.folder!!.toFavorite())
+            val resp = favoritesRepository.createFavorite(binding.folder!!.toFavorite())
+            showSnackBar(view, resp, 1, libType)
         }
     }
 }

@@ -20,7 +20,7 @@
 
         <variable
             name="viewModel"
-            type="com.crrl.beatplayer.ui.viewmodels.SongViewModel" />
+            type="com.crrl.beatplayer.ui.viewmodels.MainViewModel" />
 
         <variable
             name="status"
@@ -91,6 +91,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="88dp"
+            android:clipToPadding="false"
             android:paddingTop="@dimen/padding_12"
             android:background="@drawable/album_detail_shape"
             android:elevation="2dp">
@@ -107,17 +108,18 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="22dp"
                     android:maxLines="1"
-                    android:text="@{@plurals/number_of_songs(viewModel.searchLiveData.songList.size, viewModel.searchLiveData.songList.size)}"
+                    android:text="@{@plurals/number_of_songs(viewModel.searchLiveData().songList.size, viewModel.searchLiveData().songList.size)}"
                     android:textColor="?titleTextColor"
                     android:textSize="@dimen/text_size_18"
                     android:textStyle="bold"
-                    android:visibility="@{viewModel.searchLiveData.isNotSongListEmpty() ? View.VISIBLE : View.GONE}" />
+                    android:visibility="@{viewModel.searchLiveData().isNotSongListEmpty() ? View.VISIBLE : View.GONE}" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/songList"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:nestedScrollingEnabled="true"
+                    android:clipToPadding="false"
                     android:paddingTop="8dp" />
 
                 <TextView
@@ -126,17 +128,18 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     android:maxLines="1"
-                    android:text="@{@plurals/number_of_albums(viewModel.searchLiveData.albumList.size, viewModel.searchLiveData.albumList.size)}"
+                    android:text="@{@plurals/number_of_albums(viewModel.searchLiveData().albumList.size, viewModel.searchLiveData().albumList.size)}"
                     android:textColor="?titleTextColor"
                     android:textSize="@dimen/text_size_18"
                     android:textStyle="bold"
-                    android:visibility="@{viewModel.searchLiveData.isNotAlbumListEmpty ? View.VISIBLE : View.GONE}" />
+                    android:visibility="@{viewModel.searchLiveData().isNotAlbumListEmpty ? View.VISIBLE : View.GONE}" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/albumList"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:nestedScrollingEnabled="false"
+                    android:clipToPadding="false"
                     android:paddingTop="8dp"
                     android:paddingEnd="@dimen/padding_12"
                     tools:ignore="RtlSymmetry" />
@@ -147,17 +150,18 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     android:maxLines="1"
-                    android:text="@{@plurals/number_of_artists(viewModel.searchLiveData.artistList.size, viewModel.searchLiveData.artistList.size)}"
+                    android:text="@{@plurals/number_of_artists(viewModel.searchLiveData().artistList.size, viewModel.searchLiveData().artistList.size)}"
                     android:textColor="?titleTextColor"
                     android:textSize="@dimen/text_size_18"
                     android:textStyle="bold"
-                    android:visibility="@{viewModel.searchLiveData.isNotArtistListEmpty ? View.VISIBLE : View.GONE}" />
+                    android:visibility="@{viewModel.searchLiveData().isNotArtistListEmpty ? View.VISIBLE : View.GONE}" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/artistList"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:nestedScrollingEnabled="false"
+                    android:clipToPadding="false"
                     android:paddingTop="8dp"
                     android:paddingEnd="@dimen/padding_12"
                     tools:ignore="RtlSymmetry" />
@@ -178,7 +182,7 @@
             android:textColor="?titleTextColor"
             android:textSize="@dimen/text_size_18"
             android:elevation="10dp"
-            android:visibility="@{(viewModel.searchLiveData.isNotEmpty()) ? View.GONE : View.VISIBLE}" />
+            android:visibility="@{(viewModel.searchLiveData().isNotEmpty()) ? View.GONE : View.VISIBLE}" />
 
     </FrameLayout>
 

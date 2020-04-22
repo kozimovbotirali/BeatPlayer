@@ -30,9 +30,9 @@
             android:id="@+id/album_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:clipToPadding="false"
             android:paddingEnd="@dimen/padding_12"
-            app:overScroll="@{true}"
-            app:overScrollOrientation="@{0}"
+            android:paddingBottom="@dimen/song_item_size"
             tools:ignore="RtlSymmetry" />
 
         <TextView

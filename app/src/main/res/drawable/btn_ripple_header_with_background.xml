@@ -11,8 +11,19 @@
   ~ limitations under the License.
   -->
 
-<font-family xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:fontProviderAuthority="com.google.android.gms.fonts"
-    app:fontProviderPackage="com.google.android.gms"
-    app:fontProviderQuery="name=Rubik&amp;weight=500"
-    app:fontProviderCerts="@array/com_google_android_gms_fonts_certs"></font-family>
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="?bodyTextColor">
+    <item android:id="@android:id/mask">
+        <shape android:shape="rectangle">
+            <solid android:color="?colorPrimaryDark" />
+            <corners android:radius="@dimen/btn_radius_header" />
+        </shape>
+    </item>
+
+    <item android:id="@android:id/background">
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/btn_radius_header" />
+            <solid android:color="?colorPrimaryOpacity" />
+        </shape>
+    </item>
+</ripple>

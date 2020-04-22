@@ -29,13 +29,15 @@
         android:allowTaskReparenting="true"
         android:fullBackupContent="true"
         android:hardwareAccelerated="true"
+        android:requestLegacyExternalStorage="true"
         android:icon="@mipmap/ic_launcher"
         android:label="BeatPlayer${appNameSuffix}"
         android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Auto"
-        tools:replace="android:label">
+        tools:replace="android:label"
+        tools:targetApi="q">
 
         <activity android:name=".ui.activities.SelectSongActivity">
             <intent-filter>
@@ -80,4 +82,5 @@
             android:name="firebase_crashlytics_collection_enabled"
             android:value="false" />
     </application>
+    <protected-broadcast android:name="android.intent.action.MEDIA_MOUNTED" />
 </manifest>

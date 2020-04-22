@@ -17,15 +17,16 @@ import android.content.Context
 import android.os.SystemClock
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.ArtistItemBinding
 import com.crrl.beatplayer.databinding.ArtistItemHeaderBinding
+import com.crrl.beatplayer.extensions.deepEquals
 import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.interfaces.ItemClickListener
 import com.crrl.beatplayer.models.Artist
-import com.crrl.beatplayer.utils.GeneralUtils
+import com.crrl.beatplayer.utils.GeneralUtils.dip2px
+import com.crrl.beatplayer.utils.GeneralUtils.screenWidth
 
 private const val HEADER_TYPE = 0
 private const val ITEM_TYPE = 1
@@ -95,13 +96,11 @@ class ArtistAdapter(private val context: Context?) :
         }
     }
 
-    fun updateDataSet(artistList: List<Artist>) {
-        Thread {
-            this.artistList = artistList
-            (context as AppCompatActivity).runOnUiThread {
-                notifyDataSetChanged()
-            }
-        }.start()
+    fun updateDataSet(newList: List<Artist>) {
+        if (!artistList.deepEquals(newList)) {
+            this.artistList = newList
+            notifyDataSetChanged()
+        }
     }
 
     inner class ViewHolderArtist(private val binding: ArtistItemBinding) :
@@ -110,13 +109,13 @@ class ArtistAdapter(private val context: Context?) :
         fun bind(artist: Artist) {
             binding.apply {
                 this.artist = artist
+                executePendingBindings()
+
                 showDetails.setOnClickListener(this@ViewHolderArtist)
                 container.layoutParams.apply {
-                    height =
-                        GeneralUtils.screenWidth / spanCount + GeneralUtils.dip2px(context!!, 42)
-                    width = GeneralUtils.screenWidth / spanCount - GeneralUtils.dip2px(context, 6)
+                    height = screenWidth / spanCount + dip2px(context!!, 42)
+                    width = screenWidth / spanCount - dip2px(context, 6)
                 }
-                executePendingBindings()
             }
         }
 
@@ -139,9 +138,10 @@ class ArtistAdapter(private val context: Context?) :
         fun bind(artistCount: Int) {
             binding.apply {
                 this.artistCount = artistCount
+                executePendingBindings()
+
                 sortArtist.setOnClickListener(this@ViewHolderAlbumHeader)
                 playAllArtist.setOnClickListener(this@ViewHolderAlbumHeader)
-                executePendingBindings()
             }
         }
 

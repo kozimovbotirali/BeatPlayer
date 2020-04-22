@@ -47,10 +47,10 @@
             android:id="@+id/song_list"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:clipToPadding="false"
+            android:paddingBottom="@dimen/song_item_size"
             app:layout_constraintBottom_toBottomOf="@+id/view"
-            app:layout_constraintTop_toTopOf="@+id/view"
-            app:overScroll="@{true}"
-            app:overScrollOrientation="@{0}" />
+            app:layout_constraintTop_toTopOf="@+id/view" />
 
         <View
             android:layout_width="match_parent"
@@ -66,7 +66,7 @@
             android:background="@drawable/btn_ripple"
             android:contentDescription="@string/cover"
             android:onClick="back"
-            android:tint="?btnTintColor"
+            android:tint="?colorAccent"
             android:layout_marginTop="@dimen/margin_12"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -80,7 +80,7 @@
             android:contentDescription="@string/cover"
             android:onClick="menu"
             android:src="@drawable/ic_no_favorite"
-            android:tint="?btnTintColor"
+            android:tint="?colorAccent"
             app:isFav="@{viewModel.isFav(folder.id)}"
             app:layout_constraintBottom_toBottomOf="@+id/folder_list_container"
             app:layout_constraintEnd_toStartOf="@id/search"
@@ -94,7 +94,7 @@
             android:contentDescription="@string/cover"
             android:onClick="search"
             android:src="@drawable/ic_search"
-            android:tint="?btnTintColor"
+            android:tint="?colorAccent"
             app:layout_constraintBottom_toBottomOf="@+id/folder_list_container"
             app:layout_constraintEnd_toStartOf="@id/menu"
             app:layout_constraintTop_toTopOf="@+id/folder_list_container" />
@@ -107,7 +107,7 @@
             android:contentDescription="@string/cover"
             android:onClick="menu"
             android:src="@drawable/ic_more"
-            android:tint="?btnTintColor"
+            android:tint="?colorAccent"
             app:layout_constraintBottom_toBottomOf="@+id/folder_list_container"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/folder_list_container" />

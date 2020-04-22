@@ -24,7 +24,7 @@
 
         <variable
             name="viewModel"
-            type="com.crrl.beatplayer.ui.viewmodels.SongViewModel" />
+            type="com.crrl.beatplayer.ui.viewmodels.MainViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -46,10 +46,10 @@
             android:id="@+id/song_list"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:clipToPadding="false"
+            android:paddingBottom="@dimen/song_item_size"
             app:layout_constraintBottom_toBottomOf="@+id/view"
-            app:layout_constraintTop_toTopOf="@+id/view"
-            app:overScroll="@{true}"
-            app:overScrollOrientation="@{0}" />
+            app:layout_constraintTop_toTopOf="@+id/view" />
 
         <View
             android:layout_width="match_parent"

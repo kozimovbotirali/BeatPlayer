@@ -23,9 +23,10 @@ import com.crrl.beatplayer.interfaces.ItemClickListener
 import com.crrl.beatplayer.models.Song
 
 class SelectSongAdapter(
-    val songList: MutableList<Song>,
     private val itemClickListener: ItemClickListener<Song>
 ) : RecyclerView.Adapter<SelectSongAdapter.ViewHolderSong>() {
+
+    var songList: MutableList<Song> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderSong {
         val viewBinding =
@@ -45,15 +46,21 @@ class SelectSongAdapter(
         return songList[position]
     }
 
+    fun updateDataSet(list: MutableList<Song>) {
+        songList = list
+        notifyDataSetChanged()
+    }
+
     inner class ViewHolderSong(private val binding: SelectSongItemBinding) :
         RecyclerView.ViewHolder(binding.root), View.OnClickListener {
 
         fun bind(song: Song) {
             binding.apply {
                 this.song = song
+                executePendingBindings()
+
                 container.setOnClickListener(this@ViewHolderSong)
                 selected.setOnClickListener(this@ViewHolderSong)
-                executePendingBindings()
             }
         }
 

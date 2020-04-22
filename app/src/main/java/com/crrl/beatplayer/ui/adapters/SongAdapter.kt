@@ -16,12 +16,11 @@ package com.crrl.beatplayer.ui.adapters
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.SongItemBinding
 import com.crrl.beatplayer.databinding.SongItemHeaderBinding
-import com.crrl.beatplayer.extensions.dataChanged
+import com.crrl.beatplayer.extensions.deepEquals
 import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.interfaces.ItemClickListener
 import com.crrl.beatplayer.models.Song
@@ -95,27 +94,9 @@ class SongAdapter(private val context: Context?, private val mainViewModel: Main
     }
 
     fun updateDataSet(newList: List<Song>) {
-        if (!isPlaylist) {
-            Thread {
-                if (newList.isEmpty()) {
-                    songList = newList.toMutableList()
-                    (context as AppCompatActivity).runOnUiThread {
-                        notifyDataSetChanged()
-                    }
-                } else if (newList.size != songList.size) {
-                    songList = newList.toMutableList()
-                    (context as AppCompatActivity).runOnUiThread {
-                        notifyDataSetChanged()
-                    }
-                } else if (songList.first() != newList.first() && songList.last() != newList.last()) {
-                    songList = newList.toMutableList()
-                    (context as AppCompatActivity).runOnUiThread {
-                        notifyDataSetChanged()
-                    }
-                }
-            }.start()
-        } else {
-            dataChanged(newList)
+        if (!songList.deepEquals(newList)) {
+            songList = newList.toMutableList()
+            notifyDataSetChanged()
         }
     }
 
@@ -154,12 +135,13 @@ class SongAdapter(private val context: Context?, private val mainViewModel: Main
 
         fun bind(songCount: Int, isPlaylist: Boolean) {
             binding.apply {
-                shuffleSong.setOnClickListener(this@ViewHolderSongHeader)
-                sortSong.setOnClickListener(this@ViewHolderSongHeader)
-                playAllSong.setOnClickListener(this@ViewHolderSongHeader)
                 this.songCount = songCount
                 this.isPlaylist = isPlaylist
                 executePendingBindings()
+
+                shuffleSong.setOnClickListener(this@ViewHolderSongHeader)
+                sortSong.setOnClickListener(this@ViewHolderSongHeader)
+                playAllSong.setOnClickListener(this@ViewHolderSongHeader)
             }
         }
 

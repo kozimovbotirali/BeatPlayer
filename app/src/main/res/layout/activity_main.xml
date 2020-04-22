@@ -57,6 +57,7 @@
                     android:layout_marginStart="@dimen/margin_12"
                     android:background="@drawable/mini_player_cover_frame"
                     android:src="@drawable/ic_empty_cover"
+                    android:transitionName="now_cover"
                     android:contentDescription="@string/cover"
                     app:albumId="@{viewModel.currentSong.albumId}"
                     app:recycled="@{true}" />

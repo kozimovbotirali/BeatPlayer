@@ -14,7 +14,6 @@
 package com.crrl.beatplayer.extensions
 
 import android.app.Activity
-import android.os.Build
 import android.os.Bundle
 import android.util.TypedValue
 import android.widget.Toast
@@ -62,14 +61,9 @@ fun Activity?.replaceFragment(
 }
 
 fun Activity?.getColorByTheme(
-    @AttrRes id: Int,
-    name: String
+    @AttrRes id: Int
 ): Int {
-    val colorAttr: Int? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-        id
-    } else {
-        this?.resources!!.getIdentifier(name, "attr", packageName)
-    }
+    val colorAttr: Int? = id
     val outValue = TypedValue()
     this?.theme!!.resolveAttribute(colorAttr!!, outValue, true)
     return outValue.data

@@ -27,7 +27,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?colorPrimary"
+        android:background="?colorPrimarySecondary"
         android:clickable="true"
         android:focusable="true">
 
@@ -36,7 +36,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_margin="@dimen/margin_12"
-            android:background="@drawable/album_cover_frame"
+            android:background="@drawable/song_detail_cover_frame"
             android:clickable="true"
             android:focusable="true"
             android:elevation="1dp"
@@ -52,8 +52,8 @@
             android:layout_marginEnd="@dimen/margin_10"
             android:background="@drawable/btn_ripple"
             android:contentDescription="@string/cover"
-            android:src="@drawable/ic_playlist_add"
-            android:tint="?btnTintColor"
+            android:src="@drawable/ic_share"
+            android:tint="?bodyTextColor"
             android:elevation="5dp"
             app:layout_constraintBottom_toBottomOf="@+id/album_title"
             app:layout_constraintEnd_toEndOf="@id/view"
@@ -68,7 +68,7 @@
             android:contentDescription="@string/cover"
             android:src="@drawable/ic_no_favorite"
             app:isFav="@{song.isFav(song.currentData.id)}"
-            android:tint="?btnTintColor"
+            android:tint="?bodyTextColor"
             android:elevation="5dp"
             android:onClick="toggleAddToFav"
             app:layout_constraintBottom_toBottomOf="@+id/album_title"
@@ -112,7 +112,7 @@
                 android:gravity="center"
                 android:maxLines="1"
                 android:text="@{GeneralUtils.INSTANCE.formatMilliseconds(song.time), default=@string/def_time}"
-                android:textColor="?subTitleTextColor" />
+                android:textColor="?bodyTextColor" />
 
             <TextView
                 android:id="@+id/time_left"
@@ -124,7 +124,7 @@
                 android:gravity="center"
                 android:maxLines="1"
                 android:text="@{GeneralUtils.INSTANCE.formatMilliseconds(song.currentData.duration - song.time), default=@string/def_time}"
-                android:textColor="?subTitleTextColor"
+                android:textColor="?bodyTextColor"
                 tools:ignore="RelativeOverlap" />
 
 
@@ -153,7 +153,7 @@
             android:paddingStart="@dimen/margin_10"
             android:paddingEnd="@dimen/margin_10"
             android:text="@{song.getCurrentData().album, default=Album}"
-            android:textColor="?colorAccent"
+            android:textColor="?bodyTextColor"
             android:textSize="@dimen/title_text_size"
             android:elevation="5dp"
             app:layout_constraintEnd_toStartOf="@+id/add_playlist"
@@ -194,7 +194,7 @@
                 android:layout_marginStart="8dp"
                 android:background="@drawable/btn_ripple_with_background"
                 android:src="@drawable/ic_previous"
-                android:tint="?btnTintColor"
+                android:tint="?colorAccent"
                 android:contentDescription="@string/cover"
                 app:layout_constraintBottom_toBottomOf="@+id/play_container"
                 app:layout_constraintEnd_toStartOf="@+id/play_container"
@@ -208,7 +208,7 @@
                 android:layout_marginEnd="8dp"
                 android:background="@drawable/btn_ripple_with_background"
                 android:src="@drawable/ic_skip"
-                android:tint="?btnTintColor"
+                android:tint="?colorAccent"
                 android:contentDescription="@string/cover"
                 app:layout_constraintBottom_toBottomOf="@+id/play_container"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -217,13 +217,12 @@
 
             <ImageButton
                 android:id="@+id/shuffle_btn"
-                android:layout_width="@dimen/btn_size"
-                android:layout_height="@dimen/btn_size"
+                android:layout_width="@dimen/btn_size_header"
+                android:layout_height="@dimen/btn_size_header"
                 android:layout_marginStart="8dp"
-                android:alpha="0.5"
-                android:background="@drawable/btn_ripple"
+                android:background="@drawable/btn_ripple_header_with_background"
                 android:src="@drawable/ic_shuffle"
-                android:tint="?btnTintColor"
+                android:tint="?bodyTextColor"
                 android:contentDescription="@string/cover"
                 app:layout_constraintBottom_toBottomOf="@+id/lyrics_container"
                 app:layout_constraintStart_toStartOf="parent"
@@ -231,13 +230,12 @@
 
             <ImageButton
                 android:id="@+id/repeat_btn"
-                android:layout_width="@dimen/btn_size"
-                android:layout_height="@dimen/btn_size"
+                android:layout_width="@dimen/btn_size_header"
+                android:layout_height="@dimen/btn_size_header"
                 android:layout_marginEnd="8dp"
-                android:alpha="0.5"
-                android:background="@drawable/btn_ripple"
+                android:background="@drawable/btn_ripple_header_with_background"
                 android:src="@drawable/ic_repeat"
-                android:tint="?btnTintColor"
+                android:tint="?bodyTextColor"
                 android:contentDescription="@string/cover"
                 app:layout_constraintBottom_toBottomOf="@+id/lyrics_container"
                 app:layout_constraintEnd_toEndOf="parent"

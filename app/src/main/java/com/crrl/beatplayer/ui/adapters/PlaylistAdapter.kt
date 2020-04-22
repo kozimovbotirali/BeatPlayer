@@ -18,7 +18,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.PlaylistItemBinding
-import com.crrl.beatplayer.extensions.dataChanged
+import com.crrl.beatplayer.extensions.deepEquals
 import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.interfaces.ItemClickListener
 import com.crrl.beatplayer.models.Playlist
@@ -38,8 +38,11 @@ class PlaylistAdapter : RecyclerView.Adapter<PlaylistAdapter.ViewHolder>() {
         return playlists.size
     }
 
-    fun updateDataSet(newList: List<Playlist>): Boolean {
-        return dataChanged(newList)
+    fun updateDataSet(newList: List<Playlist>) {
+        if (!playlists.deepEquals(newList)) {
+            playlists = newList.toMutableList()
+            notifyDataSetChanged()
+        }
     }
 
     private fun getItem(position: Int) = playlists[position]

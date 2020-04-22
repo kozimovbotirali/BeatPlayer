@@ -27,6 +27,7 @@ interface PlaylistRepositoryInterface {
     fun addToPlaylist(id: Long, songs: List<Song>): Long
     fun getPlayLists(): List<Playlist>
     fun getPlaylist(id: Long): Playlist
+    fun existPlaylist(name: String): Boolean
     fun getPlayListsCount(): Int
     fun getSongsInPlaylist(playlistId: Long): List<Song>
     fun removeFromPlaylist(playlistId: Long, id: Long)
@@ -79,6 +80,7 @@ class PlaylistRepository(context: Context?) : DBHelper(context),
 
     override fun addToPlaylist(id: Long, songs: List<Song>): Long {
         val array = songs.map {
+            it.playListId = id
             val contentValues = ContentValues()
             val values = it.values()
             it.columns().mapIndexed { i, column ->
@@ -105,12 +107,25 @@ class PlaylistRepository(context: Context?) : DBHelper(context),
         }
     }
 
+    override fun existPlaylist(name: String): Boolean {
+        getRow(TABLE_PLAYLIST, "*", "$COLUMN_NAME = ?", arrayOf(name)).use {
+            return it.moveToFirst()
+        }
+    }
+
     override fun getPlayListsCount(): Int {
         return getRow(TABLE_PLAYLIST, "*").count
     }
 
     override fun getSongsInPlaylist(playlistId: Long): List<Song> {
         val cursor = getRow(TABLE_SONGS, "*", "$COLUMN_PLAYLIST = ?", arrayOf("$playlistId"))
+        return cursor.toList(true) {
+            Song.createFromPlaylistCursor(this)
+        }
+    }
+
+    fun getSong(): List<Song> {
+        val cursor = getRow(TABLE_SONGS, "*")
         return cursor.toList(true) {
             Song.createFromPlaylistCursor(this)
         }

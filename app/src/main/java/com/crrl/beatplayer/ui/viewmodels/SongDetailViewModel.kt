@@ -20,10 +20,8 @@ import androidx.lifecycle.ViewModel
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentLyricBinding
 import com.crrl.beatplayer.databinding.FragmentSongDetailBinding
-import com.crrl.beatplayer.models.Playlist
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.repository.FavoritesRepository
-import com.crrl.beatplayer.repository.PlaylistRepository
 import com.crrl.beatplayer.ui.activities.MainActivity
 import com.crrl.beatplayer.utils.LyricsExtractor
 
@@ -32,7 +30,6 @@ class SongDetailViewModel(private val mainActivity: MainActivity?) : ViewModel()
 
     private val lyrics: MutableLiveData<String> = MutableLiveData()
     private val isFavLiveData: MutableLiveData<Boolean> = MutableLiveData()
-    private val _playlistLiveData: MutableLiveData<List<Playlist>> = MutableLiveData()
 
     var binding: FragmentSongDetailBinding? = null
     var bindingLB: FragmentLyricBinding? = null
@@ -81,12 +78,5 @@ class SongDetailViewModel(private val mainActivity: MainActivity?) : ViewModel()
     fun getLyrics(song: Song): LiveData<String> {
         loadLyrics(song)
         return lyrics
-    }
-
-    fun playLists(): LiveData<List<Playlist>> {
-        Thread {
-            _playlistLiveData.postValue(PlaylistRepository(mainActivity).getPlayLists())
-        }.start()
-        return _playlistLiveData
     }
 }

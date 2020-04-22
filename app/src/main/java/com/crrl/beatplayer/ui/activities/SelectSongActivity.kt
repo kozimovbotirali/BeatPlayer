@@ -17,7 +17,9 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import android.widget.CheckBox
+import androidx.core.view.doOnPreDraw
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
@@ -49,10 +51,21 @@ class SelectSongActivity : BaseActivity(), ItemClickListener<Song> {
 
     private fun init() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_select_song)
+        songAdapter = SelectSongAdapter(this@SelectSongActivity)
 
-        viewModel.liveData().observe(this) { list ->
-            updateView(list)
+        binding.songList.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = songAdapter
+            (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
+        }
+
+        viewModel.getSongList().observe(this) { list ->
+            songAdapter.updateDataSet(list.toMutableList())
             viewModel.update(mutableListOf())
+
+            (binding.root.parent as? ViewGroup)?.doOnPreDraw {
+                startPostponedEnterTransition()
+            }
         }
 
         binding.let {
@@ -63,12 +76,6 @@ class SelectSongActivity : BaseActivity(), ItemClickListener<Song> {
     }
 
     private fun updateView(songs: List<Song>) {
-        songAdapter = SelectSongAdapter(songs.toMutableList(), this@SelectSongActivity)
-        binding.songList.apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = songAdapter
-            (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
-        }
     }
 
     private fun toggleSelect(position: Int, item: Song, select: Boolean) {
@@ -79,7 +86,7 @@ class SelectSongActivity : BaseActivity(), ItemClickListener<Song> {
     fun doneClick(view: View) {
         val name = intent.extras!!.getString(PLAY_LIST_DETAIL)
         val songs = viewModel.selectedSongs().value!!
-        returnResult(name, songs)
+        returnResult(name, songs, Activity.RESULT_OK)
         finish()
     }
 
@@ -88,14 +95,12 @@ class SelectSongActivity : BaseActivity(), ItemClickListener<Song> {
         viewModel.update(songListSelected(view.isChecked))
     }
 
-    private fun returnResult(name: String?, songs: List<Song>) {
+    private fun returnResult(name: String?, songs: List<Song>, result: Int) {
         val returnIntent = Intent().apply {
             putExtra(PLAY_LIST_DETAIL, name)
             putExtra("SONGS", Gson().toJson(songs))
         }
-        setResult(Activity.RESULT_OK, returnIntent)
-        finish()
-        overridePendingTransition(0, 0)
+        setResult(result, returnIntent)
     }
 
     private fun songListSelected(select: Boolean): MutableList<Song> {
@@ -107,9 +112,8 @@ class SelectSongActivity : BaseActivity(), ItemClickListener<Song> {
 
     override fun onBackPressed() {
         val name = intent.extras!!.getString(PLAY_LIST_DETAIL)
-        returnResult(name, emptyList())
-        finish()
-        overridePendingTransition(0, 0)
+        returnResult(name, emptyList(), Activity.RESULT_CANCELED)
+        super.onBackPressed()
     }
 
     override fun onItemClick(view: View, position: Int, item: Song) {

@@ -15,18 +15,13 @@ package com.crrl.beatplayer.ui.widgets
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
 import com.crrl.beatplayer.R
+import java.util.*
 
-import java.util.Random
-
-/**
- * a music visualizer sort of animation (with random data)
- */
 class MusicVisualizer : View {
 
     private var random = Random()
@@ -34,10 +29,7 @@ class MusicVisualizer : View {
     private var paint = Paint()
     private val animateView = object : Runnable {
         override fun run() {
-
-            //run every 100 ms
             postDelayed(this, 120)
-
             invalidate()
         }
     }
@@ -59,21 +51,43 @@ class MusicVisualizer : View {
 
         paint.style = Paint.Style.FILL
 
-        canvas.drawRect(getDimensionInPixel(0).toFloat(), (height - (40 + random.nextInt((height / 1.5f).toInt() - 25))).toFloat(), getDimensionInPixel(7).toFloat(), (height - 15).toFloat(), paint)
-        canvas.drawRect(getDimensionInPixel(10).toFloat(), (height - (40 + random.nextInt((height / 1.5f).toInt() - 25))).toFloat(), getDimensionInPixel(17).toFloat(), (height - 15).toFloat(), paint)
-        canvas.drawRect(getDimensionInPixel(20).toFloat(), (height - (40 + random.nextInt((height / 1.5f).toInt() - 25))).toFloat(), getDimensionInPixel(27).toFloat(), (height - 15).toFloat(), paint)
+        canvas.drawRect(
+            getDimensionInPixel(0).toFloat(),
+            (height - (40 + random.nextInt((height / 1.5f).toInt() - 25))).toFloat(),
+            getDimensionInPixel(7).toFloat(),
+            (height - 15).toFloat(),
+            paint
+        )
+        canvas.drawRect(
+            getDimensionInPixel(10).toFloat(),
+            (height - (40 + random.nextInt((height / 1.5f).toInt() - 25))).toFloat(),
+            getDimensionInPixel(17).toFloat(),
+            (height - 15).toFloat(),
+            paint
+        )
+        canvas.drawRect(
+            getDimensionInPixel(20).toFloat(),
+            (height - (40 + random.nextInt((height / 1.5f).toInt() - 25))).toFloat(),
+            getDimensionInPixel(27).toFloat(),
+            (height - 15).toFloat(),
+            paint
+        )
     }
 
     private fun getDimensionInPixel(dp: Int): Int {
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp.toFloat(), resources.displayMetrics).toInt()
+        return TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            dp.toFloat(),
+            resources.displayMetrics
+        ).toInt()
     }
 
     override fun onWindowVisibilityChanged(visibility: Int) {
         super.onWindowVisibilityChanged(visibility)
-        if (visibility == View.VISIBLE) {
+        if (visibility == VISIBLE) {
             removeCallbacks(animateView)
             post(animateView)
-        } else if (visibility == View.GONE) {
+        } else if (visibility == GONE) {
             removeCallbacks(animateView)
         }
     }

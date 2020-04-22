@@ -45,13 +45,11 @@ open class DBHelper(context: Context?, factory: SQLiteDatabase.CursorFactory? = 
         }
 
         val db = this.writableDatabase
-        val inserted = try {
+        return try {
             db.insert(tableName, null, contentValues).toInt()
         } catch (ex: SQLException) {
             -1
         }
-        db.close()
-        return inserted
     }
 
     open fun bulkInsert(tableName: String, values: Array<ContentValues?>): Int {
@@ -82,7 +80,6 @@ open class DBHelper(context: Context?, factory: SQLiteDatabase.CursorFactory? = 
     ): Int {
         val db = this.writableDatabase
         val deleted = db.delete(tableName, whereClause, whereArgs)
-        db.close()
         return deleted
     }
 

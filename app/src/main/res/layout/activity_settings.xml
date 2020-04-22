@@ -27,7 +27,7 @@
             android:layout_marginTop="@dimen/margin_10"
             android:contentDescription="@string/cover"
             android:onClick="back"
-            android:tint="?btnTintColor"
+            android:tint="?colorAccent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_back" />
@@ -51,17 +51,6 @@
             app:layout_constraintStart_toStartOf="@+id/back"
             app:layout_constraintTop_toTopOf="@+id/back" />
 
-        <View
-            android:id="@+id/view"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:layout_marginTop="@dimen/global_padding_top"
-            android:background="@drawable/album_detail_shape"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/activity_title" />
-
         <ScrollView
             android:id="@+id/scroll"
             android:layout_width="match_parent"
@@ -69,8 +58,8 @@
             android:layout_marginTop="@dimen/margin_10"
             android:layout_marginBottom="8dp"
             android:scrollbars="vertical"
-            app:layout_constraintBottom_toBottomOf="@+id/view"
-            app:layout_constraintTop_toTopOf="@id/view">
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/back">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -83,7 +72,7 @@
                     android:layout_marginStart="@dimen/margin_10"
                     android:layout_marginTop="@dimen/margin_10"
                     android:text="@string/appearance"
-                    android:textColor="?subTitleTextColor"
+                    android:textColor="?bodyTextColor"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -94,12 +83,12 @@
                     android:layout_marginTop="@dimen/margin_10"
                     android:orientation="horizontal"
                     android:padding="@dimen/margin_10"
+                    android:background="@drawable/list_item_ripple_with_background"
                     app:layout_constraintTop_toBottomOf="@id/themes"
                     android:gravity="center"
                     android:clickable="true"
                     android:focusable="true"
-                    android:onClick="showThemes"
-                    android:background="@drawable/list_item_ripple">
+                    android:onClick="showThemes">
 
                     <ImageView
                         android:layout_width="@dimen/btn_size"

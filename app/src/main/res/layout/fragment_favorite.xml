@@ -33,10 +33,10 @@
             android:id="@+id/favorite_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/margin_12"
+            android:clipToPadding="false"
+            android:paddingTop="@dimen/padding_12"
             android:paddingEnd="@dimen/padding_12"
-            app:overScroll="@{true}"
-            app:overScrollOrientation="@{0}"
+            android:paddingBottom="@dimen/song_item_size"
             tools:ignore="RtlSymmetry" />
 
         <LinearLayout

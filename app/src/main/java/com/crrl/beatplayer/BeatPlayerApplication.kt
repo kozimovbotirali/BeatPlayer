@@ -21,7 +21,6 @@ import io.fabric.sdk.android.Fabric
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import timber.log.Timber
-import timber.log.Timber.DebugTree
 
 
 class BeatPlayerApplication : Application() {

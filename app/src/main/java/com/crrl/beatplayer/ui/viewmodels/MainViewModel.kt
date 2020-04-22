@@ -15,6 +15,7 @@ package com.crrl.beatplayer.ui.viewmodels
 
 import android.app.Activity
 import android.content.Context
+import android.database.sqlite.SQLiteException
 import android.net.Uri
 import android.widget.Toast
 import androidx.lifecycle.LiveData
@@ -22,7 +23,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.ActivityMainBinding
-import com.crrl.beatplayer.extensions.toast
+import com.crrl.beatplayer.extensions.ERROR
+import com.crrl.beatplayer.extensions.snackbar
+import com.crrl.beatplayer.models.Album
+import com.crrl.beatplayer.models.Playlist
+import com.crrl.beatplayer.models.SearchData
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.playback.MusicService
 import com.crrl.beatplayer.repository.*
@@ -34,30 +39,106 @@ class MainViewModel(private val context: Context) : ViewModel() {
     private val timeLiveData = MutableLiveData<Int>()
     private val rawLiveData = MutableLiveData<ByteArray>()
     private val currentSongList = MutableLiveData<LongArray>()
+    private val playlistLiveData = MutableLiveData<List<Playlist>>()
+    private val songsByPlaylist = MutableLiveData<List<Song>>()
+    private val songsByAlbum = MutableLiveData<List<Song>>()
+    private val artistLiveData = MutableLiveData<List<Album>>()
+    private val searchLiveData = MutableLiveData<SearchData>()
+    private val isFavLiveData = MutableLiveData<Boolean>()
     private val liveColorAccent = MutableLiveData<Int>()
+    private val searchData = SearchData()
     private val songRepository = SongsRepository(context)
     val albumRepository = AlbumsRepository(context)
     val artistRepository = ArtistsRepository(context)
     val favoriteRepository = FavoritesRepository(context)
+    val playlistRepository = PlaylistRepository(context)
     val folderRepository = FoldersRepository(context)
 
     val musicService = MusicService()
     lateinit var binding: ActivityMainBinding
 
-    fun getCurrentSong(): LiveData<Song> {
-        return liveSongData
+    fun playLists(): LiveData<List<Playlist>> {
+        Thread {
+            playlistLiveData.postValue(playlistRepository.getPlayLists())
+        }.start()
+        return playlistLiveData
     }
 
-    fun getCurrentSongList(): LiveData<LongArray> {
-        return currentSongList
+    fun songsByPlayList(id: Long): LiveData<List<Song>> {
+        Thread {
+            songsByPlaylist.postValue(
+                playlistRepository.getSongsInPlaylist(id)
+            )
+        }.start()
+        return songsByPlaylist
     }
 
-    fun getTime(): LiveData<Int> {
-        return timeLiveData
+    fun getSongsByAlbum(id: Long): LiveData<List<Song>>? {
+        Thread {
+            val list = AlbumsRepository.getInstance(context)!!.getSongsForAlbum(id)
+            songsByAlbum.postValue(list)
+        }.start()
+        return songsByAlbum
     }
 
-    fun getRawData(): LiveData<ByteArray> {
-        return rawLiveData
+    fun getArtistAlbums(artistId: Long): LiveData<List<Album>> {
+        Thread {
+            artistLiveData.postValue(
+                ArtistsRepository.getInstance(context)!!.getAlbumsForArtist(artistId)
+            )
+        }.start()
+        return artistLiveData
+    }
+
+    fun search(searchString: String) {
+        if (searchString.isNotEmpty()) {
+            Thread {
+                searchData.apply {
+                    val songs =
+                        SongsRepository(context).searchSongs(searchString, 10).toMutableList()
+                    val albums = AlbumsRepository.getInstance(context)!!.search(searchString, 10)
+                        .toMutableList()
+                    val artists = ArtistsRepository.getInstance(context)!!.search(searchString, 10)
+                        .toMutableList()
+                    songList = songs
+                    albumList = albums
+                    artistList = artists
+                }
+                searchLiveData.postValue(searchData)
+            }.start()
+        } else {
+            searchLiveData.postValue(searchData.flush())
+        }
+    }
+
+    fun isFav(id: Long): LiveData<Boolean> {
+        Thread {
+            isFavLiveData.postValue(
+                try {
+                    FavoritesRepository(context).favExist(id)
+                } catch (ex: SQLiteException) {
+                    null
+                }
+            )
+        }.start()
+        return isFavLiveData
+    }
+
+    fun next(currentSong: Long) {
+        currentSongList.value ?: return
+        val song = songRepository.getSongForId(musicService.next(currentSong))
+        update(song)
+    }
+
+    fun previous(currentSong: Long) {
+        currentSongList.value ?: return
+        val song = songRepository.getSongForId(musicService.previous(currentSong))
+        update(song)
+    }
+
+    fun random(currentSong: Long): Song {
+        currentSongList.value ?: return Song()
+        return songRepository.getSongForId(musicService.random(currentSong))
     }
 
     fun update(newTime: Int) {
@@ -82,7 +163,8 @@ class MainViewModel(private val context: Context) : ViewModel() {
         if (raw == null) {
             if (getCurrentSong().value?.id != -1L) {
                 (context as Activity).runOnUiThread {
-                    context.toast(
+                    binding.mainContainer.snackbar(
+                        ERROR,
                         context.getString(R.string.unavailable),
                         Toast.LENGTH_SHORT
                     )
@@ -94,20 +176,10 @@ class MainViewModel(private val context: Context) : ViewModel() {
         }
     }
 
-    fun next(currentSong: Long) {
-        currentSongList.value ?: return
-        val song = songRepository.getSongForId(musicService.next(currentSong))
-        update(song)
-    }
-
-    fun previous(currentSong: Long) {
-        currentSongList.value ?: return
-        val song = songRepository.getSongForId(musicService.previous(currentSong))
-        update(song)
-    }
-
-    fun random(currentSong: Long): Song {
-        currentSongList.value ?: return Song()
-        return songRepository.getSongForId(musicService.random(currentSong))
-    }
+    fun getCurrentSong(): LiveData<Song> = liveSongData
+    fun getCurrentSongList(): LiveData<LongArray> = currentSongList
+    fun getTime(): LiveData<Int> = timeLiveData
+    fun getRawData(): LiveData<ByteArray> = rawLiveData
+    fun searchLiveData() = searchLiveData
 }
+

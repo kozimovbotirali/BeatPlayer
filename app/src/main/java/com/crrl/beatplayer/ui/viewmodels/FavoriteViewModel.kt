@@ -49,6 +49,8 @@ class FavoriteViewModel(private val repository: FavoritesRepository) : ViewModel
                     repository.getFavorites()
                 } catch (ex: SQLiteException) {
                     null
+                } catch (ex: IllegalStateException) {
+                    null
                 }
             )
         }.start()

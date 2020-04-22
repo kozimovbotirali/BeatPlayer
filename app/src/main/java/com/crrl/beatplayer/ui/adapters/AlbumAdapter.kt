@@ -17,17 +17,18 @@ import android.content.Context
 import android.os.SystemClock
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.AlbumItemBinding
 import com.crrl.beatplayer.databinding.AlbumItemHeaderBinding
 import com.crrl.beatplayer.databinding.ArtistDetailItemBinding
+import com.crrl.beatplayer.extensions.deepEquals
 import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.interfaces.ItemClickListener
 import com.crrl.beatplayer.models.Album
-import com.crrl.beatplayer.utils.GeneralUtils
+import com.crrl.beatplayer.utils.GeneralUtils.dip2px
+import com.crrl.beatplayer.utils.GeneralUtils.screenWidth
 
 private const val HEADER_TYPE = 0
 private const val ITEM_TYPE = 1
@@ -101,24 +102,10 @@ class AlbumAdapter(private val context: Context?) :
     }
 
     fun updateDataSet(newList: List<Album>) {
-        Thread {
-            if (newList.isEmpty()) {
-                albumList = newList.toMutableList()
-                (context as AppCompatActivity).runOnUiThread {
-                    notifyDataSetChanged()
-                }
-            } else if (newList.size != albumList.size) {
-                albumList = newList.toMutableList()
-                (context as AppCompatActivity).runOnUiThread {
-                    notifyDataSetChanged()
-                }
-            } else if (albumList.first() != newList.first() && albumList.last() != newList.last()) {
-                albumList = newList.toMutableList()
-                (context as AppCompatActivity).runOnUiThread {
-                    notifyDataSetChanged()
-                }
-            }
-        }.start()
+        if (!albumList.deepEquals(newList)) {
+            albumList = newList.toMutableList()
+            notifyDataSetChanged()
+        }
     }
 
     inner class ViewHolderAlbum(private val binding: ViewDataBinding) :
@@ -128,26 +115,22 @@ class AlbumAdapter(private val context: Context?) :
             if (binding is AlbumItemBinding)
                 binding.apply {
                     this.album = album
+                    binding.executePendingBindings()
+
                     showDetails.setOnClickListener(this@ViewHolderAlbum)
                     container.layoutParams.apply {
-                        height =
-                            GeneralUtils.screenWidth / spanCount + GeneralUtils.dip2px(
-                                context!!,
-                                42
-                            )
-                        width =
-                            GeneralUtils.screenWidth / spanCount - GeneralUtils.dip2px(context, 6)
+                        height = screenWidth / spanCount + dip2px(context!!, 42)
+                        width = screenWidth / spanCount - dip2px(context, 6)
                     }
                 }
             else {
-                binding as ArtistDetailItemBinding
-                binding.apply {
+                (binding as ArtistDetailItemBinding).apply {
                     this.album = album
+                    binding.executePendingBindings()
 
                     binding.root.setOnClickListener(this@ViewHolderAlbum)
                 }
             }
-            binding.executePendingBindings()
         }
 
         override fun onClick(view: View) {

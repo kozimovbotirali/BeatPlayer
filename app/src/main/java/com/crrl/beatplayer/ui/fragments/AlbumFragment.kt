@@ -20,14 +20,14 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
-import com.crrl.beatplayer.R
-import com.crrl.alertdialog.AlertDialog
 import com.crrl.alertdialog.dialogs.AlertItemAction
-import com.crrl.alertdialog.stylers.AlertItemStyle
 import com.crrl.alertdialog.stylers.AlertItemTheme
-import com.crrl.alertdialog.stylers.AlertType
+import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentAlbumBinding
-import com.crrl.beatplayer.extensions.*
+import com.crrl.beatplayer.extensions.addFragment
+import com.crrl.beatplayer.extensions.inflateWithBinding
+import com.crrl.beatplayer.extensions.observe
+import com.crrl.beatplayer.extensions.safeActivity
 import com.crrl.beatplayer.models.Album
 import com.crrl.beatplayer.ui.adapters.AlbumAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
@@ -63,14 +63,12 @@ class AlbumFragment : BaseFragment<Album>() {
     private fun init() {
         val sc = if (GeneralUtils.getRotation(safeActivity) == VERTICAL) 2 else 5
 
-        // Init Adapter
         albumAdapter = AlbumAdapter(context).apply {
             showHeader = true
             itemClickListener = this@AlbumFragment
             spanCount = sc
         }
 
-        // Set up RecyclerView
         binding.albumList.apply {
             layoutManager = GridLayoutManager(context, sc).apply {
                 spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
@@ -82,7 +80,46 @@ class AlbumFragment : BaseFragment<Album>() {
             adapter = albumAdapter
         }
 
-        dialog = buildSortModesDialog()
+        dialog = buildSortModesDialog(listOf(
+            AlertItemAction(
+                context!!.getString(R.string.sort_default),
+                SettingsUtility.getInstance(context).albumSortOrder == SortModes.AlbumModes.ALBUM_DEFAULT,
+                AlertItemTheme.DEFAULT
+            ) { action ->
+                action.selected = true
+                SettingsUtility.getInstance(context).albumSortOrder =
+                    SortModes.AlbumModes.ALBUM_DEFAULT
+                reloadAdapter()
+            },
+            AlertItemAction(
+                context!!.getString(R.string.sort_az),
+                SettingsUtility.getInstance(context).albumSortOrder == SortModes.AlbumModes.ALBUM_A_Z,
+                AlertItemTheme.DEFAULT
+            ) { action ->
+                action.selected = true
+                SettingsUtility.getInstance(context).albumSortOrder = SortModes.AlbumModes.ALBUM_A_Z
+                reloadAdapter()
+            },
+            AlertItemAction(
+                context!!.getString(R.string.sort_za),
+                SettingsUtility.getInstance(context).albumSortOrder == SortModes.AlbumModes.ALBUM_Z_A,
+                AlertItemTheme.DEFAULT
+            ) { action ->
+                action.selected = true
+                SettingsUtility.getInstance(context).albumSortOrder = SortModes.AlbumModes.ALBUM_Z_A
+                reloadAdapter()
+            },
+            AlertItemAction(
+                context!!.getString(R.string.sort_year),
+                SettingsUtility.getInstance(context).albumSortOrder == SortModes.AlbumModes.ALBUM_YEAR,
+                AlertItemTheme.DEFAULT
+            ) { action ->
+                action.selected = true
+                SettingsUtility.getInstance(context).albumSortOrder =
+                    SortModes.AlbumModes.ALBUM_YEAR
+                reloadAdapter()
+            }
+        ))
 
         viewModel.getAlbums()!!.observe(this) { list ->
             albumAdapter.updateDataSet(list)
@@ -92,61 +129,6 @@ class AlbumFragment : BaseFragment<Album>() {
             it.viewModel = viewModel
             it.lifecycleOwner = this
             it.executePendingBindings()
-        }
-    }
-
-    private fun buildSortModesDialog(): AlertDialog {
-        val style = AlertItemStyle()
-        style.apply {
-            textColor = activity?.getColorByTheme(R.attr.titleTextColor, "titleTextColor")!!
-            selectedTextColor = activity?.getColorByTheme(R.attr.colorAccent, "colorAccent")!!
-            backgroundColor =
-                activity?.getColorByTheme(R.attr.colorPrimarySecondary2, "colorPrimarySecondary2")!!
-        }
-        return AlertDialog(
-            getString(R.string.sort_title),
-            getString(R.string.sort_msg),
-            style,
-            AlertType.BOTTOM_SHEET
-        ).apply {
-            addItem(AlertItemAction(
-                context!!.getString(R.string.sort_default),
-                SettingsUtility.getInstance(context).albumSortOrder == SortModes.AlbumModes.ALBUM_DEFAULT,
-                AlertItemTheme.DEFAULT
-            ) { action ->
-                action.selected = true
-                SettingsUtility.getInstance(context).albumSortOrder =
-                    SortModes.AlbumModes.ALBUM_DEFAULT
-                reloadAdapter()
-            })
-            addItem(AlertItemAction(
-                context!!.getString(R.string.sort_az),
-                SettingsUtility.getInstance(context).albumSortOrder == SortModes.AlbumModes.ALBUM_A_Z,
-                AlertItemTheme.DEFAULT
-            ) { action ->
-                action.selected = true
-                SettingsUtility.getInstance(context).albumSortOrder = SortModes.AlbumModes.ALBUM_A_Z
-                reloadAdapter()
-            })
-            addItem(AlertItemAction(
-                context!!.getString(R.string.sort_za),
-                SettingsUtility.getInstance(context).albumSortOrder == SortModes.AlbumModes.ALBUM_Z_A,
-                AlertItemTheme.DEFAULT
-            ) { action ->
-                action.selected = true
-                SettingsUtility.getInstance(context).albumSortOrder = SortModes.AlbumModes.ALBUM_Z_A
-                reloadAdapter()
-            })
-            addItem(AlertItemAction(
-                context!!.getString(R.string.sort_year),
-                SettingsUtility.getInstance(context).albumSortOrder == SortModes.AlbumModes.ALBUM_YEAR,
-                AlertItemTheme.DEFAULT
-            ) { action ->
-                action.selected = true
-                SettingsUtility.getInstance(context).albumSortOrder =
-                    SortModes.AlbumModes.ALBUM_YEAR
-                reloadAdapter()
-            })
         }
     }
 

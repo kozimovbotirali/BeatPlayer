@@ -16,6 +16,7 @@ package com.crrl.beatplayer.ui.fragments.base
 import android.app.ActivityOptions
 import android.content.Intent
 import android.graphics.Typeface
+import android.net.Uri
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
@@ -23,17 +24,14 @@ import android.widget.Toast.LENGTH_LONG
 import android.widget.Toast.LENGTH_SHORT
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.crrl.beatplayer.R
 import com.crrl.alertdialog.AlertDialog
 import com.crrl.alertdialog.dialogs.AlertItemAction
 import com.crrl.alertdialog.stylers.AlertItemStyle
 import com.crrl.alertdialog.stylers.AlertItemTheme
 import com.crrl.alertdialog.stylers.AlertType
 import com.crrl.alertdialog.stylers.InputStyle
-import com.crrl.beatplayer.extensions.getColorByTheme
-import com.crrl.beatplayer.extensions.safeActivity
-import com.crrl.beatplayer.extensions.toIDList
-import com.crrl.beatplayer.extensions.toast
+import com.crrl.beatplayer.R
+import com.crrl.beatplayer.extensions.*
 import com.crrl.beatplayer.interfaces.ItemClickListener
 import com.crrl.beatplayer.models.MediaItem
 import com.crrl.beatplayer.models.Playlist
@@ -42,10 +40,13 @@ import com.crrl.beatplayer.repository.PlaylistRepository
 import com.crrl.beatplayer.repository.SongsRepository
 import com.crrl.beatplayer.ui.activities.MainActivity
 import com.crrl.beatplayer.ui.activities.SelectSongActivity
+import com.crrl.beatplayer.ui.fragments.FavoriteDetailFragment
 import com.crrl.beatplayer.ui.fragments.PlaylistDetailFragment
 import com.crrl.beatplayer.ui.viewmodels.MainViewModel
 import com.crrl.beatplayer.utils.GeneralUtils.addZeros
 import com.crrl.beatplayer.utils.PlayerConstants
+import com.crrl.beatplayer.utils.PlayerConstants.FAVORITE_ID
+import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.skydoves.powermenu.MenuAnimation
 import com.skydoves.powermenu.OnMenuItemClickListener
 import com.skydoves.powermenu.PowerMenu
@@ -56,11 +57,11 @@ import org.koin.core.parameter.parametersOf
 
 open class BaseFragment<T : MediaItem> : Fragment(), ItemClickListener<T> {
 
-    protected val mainViewModel: MainViewModel by sharedViewModel { parametersOf(safeActivity as MainActivity) }
     private lateinit var currentItemList: List<T>
+    private lateinit var currentItem: T
+    private var alertPlaylists: AlertDialog? = null
     protected lateinit var dialog: AlertDialog
-    protected var alertPlaylists: AlertDialog? = null
-    private var currentItem: T? = null
+    protected val mainViewModel: MainViewModel by sharedViewModel { parametersOf(safeActivity as MainActivity) }
 
     protected var powerMenu: PowerMenu? = null
 
@@ -77,10 +78,10 @@ open class BaseFragment<T : MediaItem> : Fragment(), ItemClickListener<T> {
 
     protected open fun buildPlaylistMenu(playlists: List<Playlist>, song: Song) {
         val style = AlertItemStyle().apply {
-            textColor = activity?.getColorByTheme(R.attr.titleTextColor, "titleTextColor")!!
-            selectedTextColor = activity?.getColorByTheme(R.attr.colorAccent, "colorAccent")!!
+            textColor = activity?.getColorByTheme(R.attr.titleTextColor)!!
+            selectedTextColor = activity?.getColorByTheme(R.attr.colorAccent)!!
             backgroundColor =
-                activity?.getColorByTheme(R.attr.colorPrimarySecondary2, "colorPrimarySecondary2")!!
+                activity?.getColorByTheme(R.attr.colorPrimarySecondary2)!!
         }
         val alert = AlertDialog(
             getString(R.string.playlists),
@@ -88,6 +89,9 @@ open class BaseFragment<T : MediaItem> : Fragment(), ItemClickListener<T> {
             style,
             AlertType.BOTTOM_SHEET
         ).apply {
+            addItem(AlertItemAction(getString(R.string.favorites), false) {
+                addFavorite()
+            })
             playlists.forEach { playlist ->
                 addItem(AlertItemAction(playlist.name, false) {
                     addToList(playlist.id, song)
@@ -95,24 +99,62 @@ open class BaseFragment<T : MediaItem> : Fragment(), ItemClickListener<T> {
             }
             addItem(
                 AlertItemAction(getString(R.string.new_playlist), false, AlertItemTheme.ACCEPT) {
-                    createPlayList(song)
+                    createDialog(song)
                 })
         }
         alertPlaylists = alert
     }
 
-    protected open fun createDialog(song: Song? = null): AlertDialog {
+    private fun addFavorite() {
+        val added = mainViewModel.favoriteRepository.addSongByFavorite(
+            FAVORITE_ID,
+            longArrayOf(currentItem._id)
+        )
+        if (added != -1)
+            mainViewModel.binding.mainContainer.snackbar(
+                SUCCESS, getString(R.string.song_added_success), LENGTH_SHORT
+            )
+        else
+            mainViewModel.binding.mainContainer.snackbar(
+                ERROR,
+                getString(R.string.song_added_error),
+                LENGTH_SHORT,
+                action = getString(R.string.retry),
+                clickListener = View.OnClickListener {
+                    addFavorite()
+                })
+    }
+
+    protected fun buildSortModesDialog(actions: List<AlertItemAction>): AlertDialog {
+        val style = AlertItemStyle()
+        style.apply {
+            textColor = activity?.getColorByTheme(R.attr.titleTextColor)!!
+            selectedTextColor = activity?.getColorByTheme(R.attr.colorAccent)!!
+            backgroundColor =
+                activity?.getColorByTheme(R.attr.colorPrimarySecondary2)!!
+        }
+        return AlertDialog(
+            getString(R.string.sort_title),
+            getString(R.string.sort_msg),
+            style,
+            AlertType.BOTTOM_SHEET
+        ).apply {
+            for (action in actions) addItem(action)
+        }
+    }
+
+    protected open fun createDialog(song: Song? = null, text: String? = null) {
         val style = InputStyle(
-            safeActivity.getColorByTheme(R.attr.colorPrimarySecondary2, "colorPrimarySecondary2"),
-            safeActivity.getColorByTheme(R.attr.colorPrimaryOpacity, "colorPrimaryOpacity"),
-            safeActivity.getColorByTheme(R.attr.titleTextColor, "titleTextColor"),
-            safeActivity.getColorByTheme(R.attr.bodyTextColor, "bodyTextColor"),
-            safeActivity.getColorByTheme(R.attr.colorAccent, "colorAccent"),
-            "${safeActivity.getString(R.string.playlist)} ${addZeros(
+            safeActivity.getColorByTheme(R.attr.colorPrimarySecondary2),
+            safeActivity.getColorByTheme(R.attr.colorPrimaryOpacity),
+            safeActivity.getColorByTheme(R.attr.titleTextColor),
+            safeActivity.getColorByTheme(R.attr.bodyTextColor),
+            safeActivity.getColorByTheme(R.attr.colorAccent),
+            text ?: "${safeActivity.getString(R.string.playlist)} ${addZeros(
                 PlaylistRepository(context).getPlayListsCount() + 1
             )}"
         )
-        return AlertDialog(
+        AlertDialog(
             getString(R.string.new_playlist),
             getString(R.string.create_playlist),
             style,
@@ -121,21 +163,35 @@ open class BaseFragment<T : MediaItem> : Fragment(), ItemClickListener<T> {
         ).apply {
             addItem(AlertItemAction("Cancel", false, AlertItemTheme.CANCEL) {
             })
-            addItem(AlertItemAction("OK", false, AlertItemTheme.ACCEPT) {
-                addSongs(it.input!!, song)
+            addItem(AlertItemAction("OK", false, AlertItemTheme.ACCEPT) { action ->
+                val exists = mainViewModel.playlistRepository.existPlaylist(action.input!!)
+                if (exists) mainViewModel.binding.mainContainer.snackbar(
+                    ERROR,
+                    getString(R.string.playlist_name_error),
+                    LENGTH_SHORT,
+                    action = getString(R.string.retry),
+                    clickListener = View.OnClickListener {
+                        createDialog(song, action.input)
+                    }
+                )
+                else addSongs(action.input!!, song)
             })
-        }
+        }.show(safeActivity as AppCompatActivity)
     }
 
     private fun addSongs(name: String, song: Song?) {
         if (song != null) {
-            val id = PlaylistRepository(context)
-                .createPlaylist(name, listOf(song))
+            val id = mainViewModel.playlistRepository.createPlaylist(name, listOf(song))
             if (id != -1L) {
-                safeActivity.toast(getString(R.string.playlist_added_success), LENGTH_SHORT)
+                mainViewModel.binding.mainContainer.snackbar(
+                    SUCCESS,
+                    getString(R.string.playlist_added_success),
+                    LENGTH_SHORT
+                )
             } else {
-                safeActivity.toast(
-                    "${getString(R.string.playlist_added_error)} $name",
+                mainViewModel.binding.mainContainer.snackbar(
+                    ERROR,
+                    getString(R.string.playlist_added_error, name),
                     LENGTH_LONG
                 )
             }
@@ -150,18 +206,18 @@ open class BaseFragment<T : MediaItem> : Fragment(), ItemClickListener<T> {
 
     private fun initPopUpMenu(): PowerMenu.Builder {
         return PowerMenu.Builder(context).apply {
-            addItem(PowerMenuItem(getString(R.string.play), false))
-            if (tag != PlayerConstants.PLAY_LIST_DETAIL)
-                addItem(PowerMenuItem(getString(R.string.add), false))
-
-            addItem(PowerMenuItem(getString(R.string.share), false))
+            addItem(PowerMenuItem(getString(R.string.play)))
+            if (this@BaseFragment !is PlaylistDetailFragment && this@BaseFragment !is FavoriteDetailFragment)
+                addItem(PowerMenuItem(getString(R.string.add)))
+            addItem(PowerMenuItem(getString(R.string.share)))
             setAnimation(MenuAnimation.SHOWUP_TOP_RIGHT)
             setMenuRadius(resources.getDimension(R.dimen.popupMenuRadius))
             setOnBackgroundClickListener { powerMenu!!.dismiss() }
             setMenuShadow(5f)
             setShowBackground(false)
-            setTextColor(safeActivity.getColorByTheme(R.attr.titleTextColor, "titleTextColor"))
-            setTextGravity(Gravity.CENTER)
+            setTextColor(safeActivity.getColorByTheme(R.attr.titleTextColor))
+            setTextGravity(Gravity.START)
+            setSelectedTextColor(safeActivity.getColorByTheme(R.attr.colorAccent))
             setTextSize(16)
             setTextTypeface(
                 Typeface.createFromAsset(
@@ -169,17 +225,12 @@ open class BaseFragment<T : MediaItem> : Fragment(), ItemClickListener<T> {
                     "fonts/product_sans_regular.ttf"
                 )
             )
-            setSelectedTextColor(safeActivity.getColorByTheme(R.attr.colorAccent, "colorAccent"))
-            setMenuColor(
-                safeActivity.getColorByTheme(R.attr.colorPrimarySecondary, "colorPrimarySecondary")
-            )
-            setSelectedMenuColor(
-                safeActivity.getColorByTheme(R.attr.colorPrimarySecondary, "colorPrimarySecondary")
-            )
-            if (tag == PlayerConstants.PLAY_LIST_DETAIL)
-                addItem(PowerMenuItem(getString(R.string.remove), false))
-            if (tag != PlayerConstants.PLAY_LIST_DETAIL) {
-                addItem(PowerMenuItem(getString(R.string.delete), false))
+            setMenuColor(safeActivity.getColorByTheme(R.attr.colorPrimarySecondary))
+            setSelectedMenuColor(safeActivity.getColorByTheme(R.attr.colorPrimarySecondary))
+            if (this@BaseFragment is PlaylistDetailFragment || this@BaseFragment is FavoriteDetailFragment)
+                addItem(PowerMenuItem(getString(R.string.remove)))
+            else {
+                addItem(PowerMenuItem(getString(R.string.delete)))
             }
         }
 
@@ -187,31 +238,35 @@ open class BaseFragment<T : MediaItem> : Fragment(), ItemClickListener<T> {
 
     private fun createConfDialog(song: Song): AlertDialog {
         val style = AlertItemStyle().apply {
-            textColor = activity?.getColorByTheme(R.attr.titleTextColor, "titleTextColor")!!
-            selectedTextColor = activity?.getColorByTheme(R.attr.colorAccent, "colorAccent")!!
+            textColor = activity?.getColorByTheme(R.attr.titleTextColor)!!
+            selectedTextColor = activity?.getColorByTheme(R.attr.colorAccent)!!
             backgroundColor =
-                activity?.getColorByTheme(R.attr.colorPrimarySecondary2, "colorPrimarySecondary2")!!
+                activity?.getColorByTheme(R.attr.colorPrimarySecondary2)!!
         }
 
         return AlertDialog(
             getString(R.string.delete_conf_title),
-            "${getString(R.string.delete_conf)} \"${song.title}\"",
+            getString(R.string.delete_conf, song.title),
             style,
             AlertType.BOTTOM_SHEET
         ).apply {
             addItem(AlertItemAction(getString(R.string.delete), false, AlertItemTheme.ACCEPT) {
-                val resp =
-                    SongsRepository(context).deleteTracks(longArrayOf(song.id))
-                if (resp > 0)
-                    activity.toast(getString(R.string.deleted_ok), LENGTH_SHORT)
-                else
-                    activity.toast(getString(R.string.deleted_err), LENGTH_SHORT)
+                deleteItem(song.id)
             })
         }
     }
 
-    private fun createPlayList(song: Song) {
-        createDialog(song).show(activity as AppCompatActivity)
+    private fun deleteItem(id: Long) {
+        val resp =
+            SongsRepository(context).deleteTracks(longArrayOf(id))
+        if (resp > 0)
+            view.snackbar(SUCCESS, getString(R.string.deleted_ok), LENGTH_SHORT)
+        else
+            view.snackbar(ERROR, getString(R.string.deleted_err), LENGTH_SHORT,
+                action = getString(R.string.retry),
+                clickListener = View.OnClickListener {
+                    deleteItem(id)
+                })
     }
 
     private val onMenuItemClickListener = OnMenuItemClickListener<PowerMenuItem> { position, _ ->
@@ -221,13 +276,19 @@ open class BaseFragment<T : MediaItem> : Fragment(), ItemClickListener<T> {
                 mainViewModel.update(currentItemList.toIDList())
             }
             1 -> {
-                alertPlaylists?.show(safeActivity as AppCompatActivity)
+                when (this) {
+                    is PlaylistDetailFragment, is FavoriteDetailFragment -> shareItem()
+                    else -> alertPlaylists?.show(safeActivity as AppCompatActivity)
+                }
             }
             2 -> {
-                if (this is PlaylistDetailFragment) {
-                    removeFromList(binding.playlist!!.id, currentItem)
-                } else {
-                    //Share
+                when (this) {
+                    is PlaylistDetailFragment -> removeFromList(binding.playlist!!.id, currentItem)
+                    is FavoriteDetailFragment -> mainViewModel.favoriteRepository.deleteSongByFavorite(
+                        FAVORITE_ID,
+                        longArrayOf(currentItem._id)
+                    )
+                    else -> shareItem()
                 }
             }
             3 -> {
@@ -235,6 +296,39 @@ open class BaseFragment<T : MediaItem> : Fragment(), ItemClickListener<T> {
             }
         }
         powerMenu!!.dismiss()
+    }
+
+    private fun addToList(playListId: Long, song: Song) {
+        val added = mainViewModel.playlistRepository.addToPlaylist(playListId, listOf(song))
+        if (added != -1L)
+            mainViewModel.binding.mainContainer.snackbar(
+                SUCCESS,
+                getString(R.string.song_added_success),
+                LENGTH_SHORT
+            )
+        else
+            mainViewModel.binding.mainContainer.snackbar(
+                ERROR,
+                getString(R.string.song_added_error),
+                LENGTH_SHORT
+            )
+    }
+
+    fun initNeeded(item: T, itemList: List<T>) {
+        currentItem = item
+        currentItemList = itemList
+    }
+
+    fun shareItem() {
+        val song = currentItem as Song
+        val sendIntent: Intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_STREAM, Uri.parse(song.path))
+            type = "audio/mp3"
+        }
+
+        val shareIntent = Intent.createChooser(sendIntent, null)
+        startActivity(shareIntent)
     }
 
     open fun onBackPressed(): Boolean {
@@ -250,7 +344,23 @@ open class BaseFragment<T : MediaItem> : Fragment(), ItemClickListener<T> {
         }
     }
 
-    open fun addToList(playListId: Long, song: Song) {}
+    protected open fun showSnackBar(view: View?, resp: Int, type: Int, libType: String) {
+        val ok = when (type) {
+            0 -> getString(R.string.no_fav_ok, libType)
+            else -> getString(R.string.fav_ok, libType)
+        }
+        val custom = when (type) {
+            1 -> R.drawable.ic_success
+            else -> R.drawable.ic_dislike
+        }
+        if (resp > 0) view.snackbar(
+            CUSTOM,
+            ok,
+            BaseTransientBottomBar.LENGTH_SHORT,
+            custom = custom
+        )
+    }
+
     open fun removeFromList(playListId: Long, item: T?) {}
     override fun onItemClick(view: View, position: Int, item: T) {}
     override fun onShuffleClick(view: View) {}
@@ -258,8 +368,7 @@ open class BaseFragment<T : MediaItem> : Fragment(), ItemClickListener<T> {
     override fun onPlayAllClick(view: View) {}
 
     override fun onPopupMenuClick(view: View, position: Int, item: T, itemList: List<T>) {
-        currentItem = item
-        currentItemList = itemList
+        initNeeded(item, itemList)
     }
 }
 

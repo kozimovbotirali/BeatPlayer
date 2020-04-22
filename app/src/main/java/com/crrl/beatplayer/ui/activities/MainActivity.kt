@@ -16,8 +16,8 @@ package com.crrl.beatplayer.ui.activities
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.view.View
-import android.widget.Toast.LENGTH_SHORT
 import androidx.databinding.DataBindingUtil
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.extensions.*
@@ -31,9 +31,10 @@ import com.crrl.beatplayer.utils.PlayerConstants
 import com.crrl.beatplayer.utils.PlayerConstants.FAVORITE_ID
 import com.crrl.beatplayer.utils.PlayerConstants.NOW_PLAYING
 import com.crrl.beatplayer.utils.PlayerConstants.PLAY_LIST_DETAIL
+import com.crrl.beatplayer.utils.SettingsUtility
 import com.github.florent37.kotlin.pleaseanimate.please
+import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_SHORT
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -48,6 +49,8 @@ class MainActivity : BaseActivity() {
     }
 
     private fun init(savedInstanceState: Bundle?) {
+        viewModel.binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+
         viewModel.getCurrentSong().observe(this) {
             updateView(it)
         }
@@ -55,15 +58,15 @@ class MainActivity : BaseActivity() {
             viewModel.musicService.updateData(it)
         }
 
-        viewModel.binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-
         if (savedInstanceState == null) {
             replaceFragment(
                 R.id.nav_host_fragment,
                 LibraryFragment(),
                 PlayerConstants.LIBRARY
             )
-            viewModel.update(Song())
+            handler(150) {
+                viewModel.update(SettingsUtility.getInstance(this).currentSongSelected.toSong())
+            }
         }
 
         viewModel.binding.let {
@@ -76,11 +79,16 @@ class MainActivity : BaseActivity() {
         viewModel.getCurrentSong().observe(this) {
             val fragment = supportFragmentManager.findFragmentByTag(NOW_PLAYING)
             if (it.id != -1L) {
+                SettingsUtility.getInstance(this).currentSongSelected = Gson().toJson(it)
                 if (fragment == null) {
                     showMiniPlayer()
                 }
             }
         }
+    }
+
+    private fun handler(duration: Long, callback: () -> Unit) {
+        Handler().postDelayed({ callback() }, duration)
     }
 
     fun onSongLyricClick(v: View) {
@@ -90,14 +98,6 @@ class MainActivity : BaseActivity() {
             PlayerConstants.LYRIC,
             true
         )
-    }
-
-    private fun updateView(song: Song) {
-        viewModel.update(song)
-    }
-
-    fun isPermissionsGranted(): Boolean {
-        return permissionsGranted
     }
 
     override fun onResume() {
@@ -129,11 +129,11 @@ class MainActivity : BaseActivity() {
     }
 
     fun hideMiniPlayer() {
-        if (bottom_controls != null) {
-            bottom_controls.isEnabled = false
+        viewModel.binding.apply {
+            bottomControls.isEnabled = false
             please(190) {
-                animate(bottom_controls) {
-                    belowOf(main_container)
+                animate(bottomControls) {
+                    belowOf(mainContainer)
                 }
             }.start()
         }
@@ -141,10 +141,10 @@ class MainActivity : BaseActivity() {
 
     fun showMiniPlayer() {
         if (viewModel.getCurrentSong().value != null && viewModel.getCurrentSong().value?.id != -1L)
-            if (bottom_controls != null) {
-                bottom_controls.isEnabled = true
+            viewModel.binding.apply {
+                bottomControls.isEnabled = true
                 please(190) {
-                    animate(bottom_controls) {
+                    animate(bottomControls) {
                         bottomOfItsParent()
                     }
                 }.start()
@@ -157,22 +157,40 @@ class MainActivity : BaseActivity() {
         data.extras ?: return
         val name = data.extras!!.getString(PLAY_LIST_DETAIL)
         val songs = Gson().fromJson<List<Song>>(data.extras!!.getString("SONGS"))
-        println(songs)
         if (requestCode == 1) {
-            createPlayList(name, songs)
             if (resultCode == Activity.RESULT_CANCELED) {
-                toast(getString(R.string.playlist_added_success), LENGTH_SHORT)
+                createPlayList(name, songs)
+            } else {
+                createPlayList(name, songs, true)
             }
         }
     }
 
-    private fun createPlayList(name: String?, selectedSong: List<Song>) {
+    private fun createPlayList(
+        name: String?,
+        selectedSong: List<Song>,
+        showOnEnd: Boolean = false
+    ) {
         val id = PlaylistRepository(this).createPlaylist(name!!, selectedSong)
-        if (id != -1L) {
+        if (id > 0) {
+            if (!showOnEnd) {
+                viewModel.binding.mainContainer.snackbar(
+                    SUCCESS,
+                    getString(R.string.playlist_added_success),
+                    LENGTH_SHORT
+                )
+                return
+            }
             val extras = Bundle()
             extras.putLong(PLAY_LIST_DETAIL, id)
             addFragment(
                 R.id.nav_host_fragment, PlaylistDetailFragment(), PLAY_LIST_DETAIL, extras = extras
+            )
+        } else {
+            viewModel.binding.mainContainer.snackbar(
+                ERROR,
+                getString(R.string.playlist_added_error),
+                LENGTH_SHORT
             )
         }
     }
@@ -180,12 +198,28 @@ class MainActivity : BaseActivity() {
     fun toggleAddToFav(v: View) {
         val song = viewModel.getCurrentSong().value ?: return
         val favoritesRepository = FavoritesRepository(this)
-        //favoritesRepository.onUpgrade(favoritesRepository.writableDatabase, 0, 1)
         if (!favoritesRepository.favExist(FAVORITE_ID)) return
         if (favoritesRepository.songExist(song.id)) {
-            favoritesRepository.deleteSongByFavorite(FAVORITE_ID, longArrayOf(song.id))
+            val resp = favoritesRepository.deleteSongByFavorite(FAVORITE_ID, longArrayOf(song.id))
+            showSnackBar(v, resp, 0)
         } else {
-            favoritesRepository.addSongByFavorite(FAVORITE_ID, longArrayOf(song.id))
+            val resp = favoritesRepository.addSongByFavorite(FAVORITE_ID, longArrayOf(song.id))
+            showSnackBar(v, resp, 1)
         }
     }
+
+    private fun showSnackBar(view: View, resp: Int, type: Int) {
+        val ok = when (type) {
+            0 -> getString(R.string.song_no_fav_ok)
+            else -> getString(R.string.song_fav_ok)
+        }
+        val custom = when (type) {
+            1 -> R.drawable.ic_success
+            else -> R.drawable.ic_dislike
+        }
+        if (resp > 0) view.snackbar(CUSTOM, ok, LENGTH_SHORT, custom = custom)
+    }
+
+    private fun updateView(song: Song) = viewModel.update(song)
+    fun isPermissionsGranted() = permissionsGranted
 }

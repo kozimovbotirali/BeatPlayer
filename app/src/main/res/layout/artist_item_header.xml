@@ -23,13 +23,26 @@
     <RelativeLayout
         android:id="@+id/linearLayout3"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/btn_size"
+        android:layout_height="@dimen/btn_size_header"
+        android:layout_marginStart="@dimen/margin_10"
+        android:layout_marginTop="@dimen/margin_10"
         android:layout_marginBottom="@dimen/margin_10">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/sort_artist"
+                android:layout_width="@dimen/btn_size_header"
+                android:layout_height="@dimen/btn_size_header"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="@dimen/margin_10"
+                android:background="@drawable/btn_ripple_header_with_background"
+                android:contentDescription="@string/cover"
+                android:src="@drawable/ic_sort"
+                android:tint="?subTitleTextColor" />
 
             <TextView
                 android:id="@+id/song_size"
@@ -45,23 +58,14 @@
                 android:textSize="@dimen/title_text_size" />
 
             <ImageButton
-                android:id="@+id/sort_artist"
-                android:layout_width="@dimen/btn_size"
-                android:layout_height="@dimen/btn_size"
-                android:layout_marginEnd="@dimen/margin_10"
-                android:background="@drawable/btn_ripple"
-                android:contentDescription="@string/cover"
-                android:src="@drawable/ic_sort"
-                android:tint="?subTitleTextColor" />
-
-            <ImageButton
                 android:id="@+id/play_all_artist"
-                android:layout_width="@dimen/btn_size"
-                android:layout_height="@dimen/btn_size"
-                android:background="@drawable/btn_ripple"
+                android:layout_width="@dimen/btn_size_header"
+                android:layout_height="@dimen/btn_size_header"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/btn_play_header_background"
                 android:contentDescription="@string/cover"
                 android:src="@drawable/ic_play"
-                android:tint="?subTitleTextColor" />
+                android:tint="@color/white" />
         </LinearLayout>
     </RelativeLayout>
 </layout>

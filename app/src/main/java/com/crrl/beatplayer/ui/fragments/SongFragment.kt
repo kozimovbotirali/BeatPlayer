@@ -19,14 +19,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.crrl.beatplayer.R
-import com.crrl.alertdialog.AlertDialog
 import com.crrl.alertdialog.dialogs.AlertItemAction
-import com.crrl.alertdialog.stylers.AlertItemStyle
 import com.crrl.alertdialog.stylers.AlertItemTheme
-import com.crrl.alertdialog.stylers.AlertType
+import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentSongBinding
-import com.crrl.beatplayer.extensions.getColorByTheme
 import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.extensions.observe
 import com.crrl.beatplayer.extensions.toIDList
@@ -37,7 +33,6 @@ import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.viewmodels.SongViewModel
 import com.crrl.beatplayer.utils.SettingsUtility
 import com.crrl.beatplayer.utils.SortModes
-import com.dgreenhalgh.android.simpleitemdecoration.linear.EndOffsetItemDecoration
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -66,26 +61,72 @@ class SongFragment : BaseFragment<Song>() {
             itemClickListener = this@SongFragment
         }
 
-        // Set up RecyclerView
         binding.songList.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = songAdapter
         }
 
-        dialog = buildSortModesDialog()
-        val decor =
-            EndOffsetItemDecoration(resources.getDimensionPixelOffset(R.dimen.song_item_size))
-        viewModel.liveData().observe(this) {
-            binding.songList.apply {
-                if (it.size > 1) {
-                    removeItemDecoration(decor)
-                    songAdapter.updateDataSet(it)
-                    addItemDecoration(decor)
-                } else {
-                    removeItemDecoration(decor)
-                    songAdapter.updateDataSet(it)
-                }
+        dialog = buildSortModesDialog(listOf(
+            AlertItemAction(
+                context!!.getString(R.string.sort_default),
+                SettingsUtility.getInstance(context).songSortOrder == SortModes.SongModes.SONG_DEFAULT,
+                AlertItemTheme.DEFAULT
+            ) { action ->
+                action.selected = true
+                SettingsUtility.getInstance(context).songSortOrder =
+                    SortModes.SongModes.SONG_DEFAULT
+                reloadAdapter()
+            },
+            AlertItemAction(
+                context!!.getString(R.string.sort_az),
+                SettingsUtility.getInstance(context).songSortOrder == SortModes.SongModes.SONG_A_Z,
+                AlertItemTheme.DEFAULT
+            ) { action ->
+                action.selected = true
+                SettingsUtility.getInstance(context).songSortOrder = SortModes.SongModes.SONG_A_Z
+                reloadAdapter()
+            },
+            AlertItemAction(
+                context!!.getString(R.string.sort_za),
+                SettingsUtility.getInstance(context).songSortOrder == SortModes.SongModes.SONG_Z_A,
+                AlertItemTheme.DEFAULT
+            ) { action ->
+                action.selected = true
+                SettingsUtility.getInstance(context).songSortOrder = SortModes.SongModes.SONG_Z_A
+                reloadAdapter()
+            },
+            AlertItemAction(
+                context!!.getString(R.string.sort_duration),
+                SettingsUtility.getInstance(context).songSortOrder == SortModes.SongModes.SONG_DURATION,
+                AlertItemTheme.DEFAULT
+            ) { action ->
+                action.selected = true
+                SettingsUtility.getInstance(context).songSortOrder =
+                    SortModes.SongModes.SONG_DURATION
+                reloadAdapter()
+            },
+            AlertItemAction(
+                context!!.getString(R.string.sort_year),
+                SettingsUtility.getInstance(context).songSortOrder == SortModes.SongModes.SONG_YEAR,
+                AlertItemTheme.DEFAULT
+            ) { action ->
+                action.selected = true
+                SettingsUtility.getInstance(context).songSortOrder = SortModes.SongModes.SONG_YEAR
+                reloadAdapter()
+            },
+            AlertItemAction(
+                context!!.getString(R.string.sort_last_added),
+                SettingsUtility.getInstance(context).songSortOrder == SortModes.SongModes.SONG_LAST_ADDED,
+                AlertItemTheme.DEFAULT
+            ) { action ->
+                action.selected = true
+                SettingsUtility.getInstance(context).songSortOrder =
+                    SortModes.SongModes.SONG_LAST_ADDED
+                reloadAdapter()
             }
+        ))
+        viewModel.getSongList().observe(this) {
+            songAdapter.updateDataSet(it)
         }
         binding.let {
             it.viewModel = viewModel
@@ -94,82 +135,8 @@ class SongFragment : BaseFragment<Song>() {
         }
     }
 
-    private fun buildSortModesDialog(): AlertDialog {
-        val style = AlertItemStyle().apply {
-            textColor = activity?.getColorByTheme(R.attr.titleTextColor, "titleTextColor")!!
-            selectedTextColor = activity?.getColorByTheme(R.attr.colorAccent, "colorAccent")!!
-            backgroundColor =
-                activity?.getColorByTheme(R.attr.colorPrimarySecondary2, "colorPrimarySecondary2")!!
-        }
-        val alert = AlertDialog(
-            getString(R.string.sort_title),
-            getString(R.string.sort_msg),
-            style,
-            AlertType.BOTTOM_SHEET
-        )
-        alert.addItem(AlertItemAction(
-            context!!.getString(R.string.sort_default),
-            SettingsUtility.getInstance(context).songSortOrder == SortModes.SongModes.SONG_DEFAULT,
-            AlertItemTheme.DEFAULT
-        ) { action ->
-            action.selected = true
-            SettingsUtility.getInstance(context).songSortOrder = SortModes.SongModes.SONG_DEFAULT
-            reloadAdapter()
-        })
-        alert.addItem(AlertItemAction(
-            context!!.getString(R.string.sort_az),
-            SettingsUtility.getInstance(context).songSortOrder == SortModes.SongModes.SONG_A_Z,
-            AlertItemTheme.DEFAULT
-        ) { action ->
-            action.selected = true
-            SettingsUtility.getInstance(context).songSortOrder = SortModes.SongModes.SONG_A_Z
-            reloadAdapter()
-        })
-        alert.addItem(AlertItemAction(
-            context!!.getString(R.string.sort_za),
-            SettingsUtility.getInstance(context).songSortOrder == SortModes.SongModes.SONG_Z_A,
-            AlertItemTheme.DEFAULT
-        ) { action ->
-            action.selected = true
-            SettingsUtility.getInstance(context).songSortOrder = SortModes.SongModes.SONG_Z_A
-            reloadAdapter()
-        })
-        alert.addItem(AlertItemAction(
-            context!!.getString(R.string.sort_duration),
-            SettingsUtility.getInstance(context).songSortOrder == SortModes.SongModes.SONG_DURATION,
-            AlertItemTheme.DEFAULT
-        ) { action ->
-            action.selected = true
-            SettingsUtility.getInstance(context).songSortOrder = SortModes.SongModes.SONG_DURATION
-            reloadAdapter()
-        })
-        alert.addItem(AlertItemAction(
-            context!!.getString(R.string.sort_year),
-            SettingsUtility.getInstance(context).songSortOrder == SortModes.SongModes.SONG_YEAR,
-            AlertItemTheme.DEFAULT
-        ) { action ->
-            action.selected = true
-            SettingsUtility.getInstance(context).songSortOrder = SortModes.SongModes.SONG_YEAR
-            reloadAdapter()
-        })
-        alert.addItem(AlertItemAction(
-            context!!.getString(R.string.sort_last_added),
-            SettingsUtility.getInstance(context).songSortOrder == SortModes.SongModes.SONG_LAST_ADDED,
-            AlertItemTheme.DEFAULT
-        ) { action ->
-            action.selected = true
-            SettingsUtility.getInstance(context).songSortOrder = SortModes.SongModes.SONG_LAST_ADDED
-            reloadAdapter()
-        })
-        return alert
-    }
-
     private fun reloadAdapter() {
         viewModel.update()
-    }
-
-    override fun addToList(playListId: Long, song: Song) {
-        viewModel.addToPlaylist(playListId, listOf(song))
     }
 
     override fun onItemClick(view: View, position: Int, item: Song) {
@@ -194,7 +161,7 @@ class SongFragment : BaseFragment<Song>() {
     override fun onPopupMenuClick(view: View, position: Int, item: Song, itemList: List<Song>) {
         super.onPopupMenuClick(view, position, item, itemList)
         powerMenu!!.showAsAnchorRightTop(view)
-        viewModel.playLists().observe(this) {
+        mainViewModel.playLists().observe(this) {
             buildPlaylistMenu(it, item)
         }
     }

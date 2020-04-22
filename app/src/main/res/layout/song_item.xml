@@ -121,7 +121,7 @@
             android:layout_toStartOf="@+id/item_menu"
             app:visible="@{song.selected}"
             app:animate="@{false}"
-            android:tint="?subTitleTextColor"/>
+            android:tint="@color/white" />
 
         <ImageButton
             android:id="@+id/item_menu"

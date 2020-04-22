@@ -20,7 +20,7 @@
             type="com.crrl.beatplayer.models.Album" />
         <variable
             name="viewModel"
-            type="com.crrl.beatplayer.ui.viewmodels.SongViewModel" />
+            type="com.crrl.beatplayer.ui.viewmodels.MainViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -41,7 +41,7 @@
                 android:background="@drawable/btn_ripple"
                 android:contentDescription="@string/cover"
                 android:onClick="back"
-                android:tint="?btnTintColor"
+                android:tint="?colorAccent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_back" />
@@ -54,7 +54,7 @@
                 android:contentDescription="@string/cover"
                 android:src="@drawable/ic_no_favorite"
                 app:isFav="@{viewModel.isFav(album.id)}"
-                android:tint="?btnTintColor"
+                android:tint="?colorAccent"
                 app:layout_constraintEnd_toStartOf="@id/search"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -66,7 +66,7 @@
                 android:contentDescription="@string/cover"
                 android:onClick="search"
                 android:src="@drawable/ic_search"
-                android:tint="?btnTintColor"
+                android:tint="?colorAccent"
                 app:layout_constraintEnd_toStartOf="@id/menu"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -78,7 +78,7 @@
                 android:contentDescription="@string/cover"
                 android:onClick="menu"
                 android:src="@drawable/ic_more"
-                android:tint="?btnTintColor"
+                android:tint="?colorAccent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -94,11 +94,11 @@
             android:id="@+id/album_song_list"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:clipToPadding="false"
+            android:paddingBottom="@dimen/song_item_size"
             android:background="@drawable/album_detail_shape"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/app_bar"
-            app:overScroll="@{true}"
-            app:overScrollOrientation="@{0}" />
+            app:layout_constraintTop_toBottomOf="@+id/app_bar" />
 
         <TextView
             android:id="@+id/textView2"

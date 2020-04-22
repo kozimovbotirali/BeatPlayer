@@ -11,8 +11,7 @@
   ~ limitations under the License.
   -->
 
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
 
@@ -30,8 +29,8 @@
             android:id="@+id/song_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:overScroll="@{true}"
-            app:overScrollOrientation="@{0}" />
+            android:clipToPadding="false"
+            android:paddingBottom="@dimen/song_item_size" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -42,6 +41,6 @@
             android:textColor="?titleTextColor"
             android:textSize="@dimen/text_size_18"
             android:textStyle="bold"
-            android:visibility="@{viewModel.liveData().size > 0 ? View.GONE : View.VISIBLE}" />
+            android:visibility="@{viewModel.getSongList().size > 0 ? View.GONE : View.VISIBLE}" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

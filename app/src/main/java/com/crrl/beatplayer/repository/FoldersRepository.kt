@@ -84,10 +84,10 @@ class FoldersRepository() : FoldersRepositoryInterface {
         paramArrayOfString: Array<String>?,
         sortOrder: String = ""
     ): Cursor? {
-        var selectionStatement = "title != ''"
+        val selectionStatement = StringBuilder("is_music=1 AND title != ''")
 
         if (!TextUtils.isEmpty(selection)) {
-            selectionStatement = "$selectionStatement AND $selection"
+            selectionStatement.append(" AND $selection")
         }
         return contentResolver.query(
             MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
@@ -96,7 +96,7 @@ class FoldersRepository() : FoldersRepositoryInterface {
                 "album_id",
                 "_data"
             ),
-            selectionStatement,
+            selectionStatement.toString(),
             paramArrayOfString,
             sortOrder
         )

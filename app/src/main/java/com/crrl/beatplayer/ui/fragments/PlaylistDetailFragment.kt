@@ -30,17 +30,12 @@ import com.crrl.beatplayer.repository.PlaylistRepository
 import com.crrl.beatplayer.ui.activities.MainActivity
 import com.crrl.beatplayer.ui.adapters.SongAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
-import com.crrl.beatplayer.ui.viewmodels.SongViewModel
 import com.crrl.beatplayer.utils.PlayerConstants.PLAY_LIST_DETAIL
-import com.dgreenhalgh.android.simpleitemdecoration.linear.EndOffsetItemDecoration
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
 
 
 class PlaylistDetailFragment : BaseFragment<Song>() {
 
     lateinit var binding: FragmentPlaylistDetailBinding
-    private val viewModel: SongViewModel by viewModel { parametersOf(context) }
     private lateinit var songAdapter: SongAdapter
 
     override fun onCreateView(
@@ -75,29 +70,19 @@ class PlaylistDetailFragment : BaseFragment<Song>() {
             (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         }
 
-        val decor =
-            EndOffsetItemDecoration(resources.getDimensionPixelOffset(R.dimen.song_item_size))
-        viewModel.songsByPlayList(binding.playlist!!.id).observe(this) {
+        mainViewModel.songsByPlayList(binding.playlist!!.id).observe(this) {
             songAdapter.updateDataSet(it)
-            binding.songList.apply {
-                if (it.size > 1) {
-                    removeItemDecoration(decor)
-                    addItemDecoration(decor)
-                } else {
-                    removeItemDecoration(decor)
-                }
-            }
         }
 
         binding.let {
-            it.viewModel = viewModel
+            it.viewModel = mainViewModel
             it.lifecycleOwner = this
             it.executePendingBindings()
         }
     }
 
     override fun removeFromList(playListId: Long, item: Song?) {
-        viewModel.removeFromPlaylist(playListId, item!!.id)
+        mainViewModel.playlistRepository.removeFromPlaylist(playListId, item!!.id)
     }
 
     override fun onItemClick(view: View, position: Int, item: Song) {
@@ -118,7 +103,7 @@ class PlaylistDetailFragment : BaseFragment<Song>() {
     override fun onPopupMenuClick(view: View, position: Int, item: Song, itemList: List<Song>) {
         super.onPopupMenuClick(view, position, item, itemList)
         powerMenu!!.showAsAnchorRightTop(view)
-        viewModel.playLists().observe(this) {
+        mainViewModel.playLists().observe(this) {
             buildPlaylistMenu(it, item)
         }
     }

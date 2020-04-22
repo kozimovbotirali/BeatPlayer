@@ -38,18 +38,14 @@ import com.crrl.beatplayer.ui.adapters.AlbumAdapter
 import com.crrl.beatplayer.ui.adapters.ArtistAdapter
 import com.crrl.beatplayer.ui.adapters.SongAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
-import com.crrl.beatplayer.ui.viewmodels.SongViewModel
 import com.crrl.beatplayer.utils.GeneralUtils
 import com.crrl.beatplayer.utils.GeneralUtils.toggleShowKeyBoard
 import com.crrl.beatplayer.utils.PlayerConstants
 import kotlinx.android.synthetic.main.fragment_search.view.*
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
 
 @Suppress("UNCHECKED_CAST")
-class SearchFragment : BaseFragment<MediaItem>() {
+class SearchFragment : BaseFragment<MediaItem>(), TextWatcher {
 
-    private val viewModel: SongViewModel by viewModel { parametersOf(context) }
     private lateinit var binding: FragmentSearchBinding
 
     private lateinit var songAdapter: SongAdapter
@@ -89,26 +85,7 @@ class SearchFragment : BaseFragment<MediaItem>() {
 
         binding.apply {
             searchSrcText.apply {
-                addTextChangedListener(object : TextWatcher {
-                    override fun onTextChanged(
-                        src: CharSequence,
-                        start: Int,
-                        before: Int,
-                        count: Int
-                    ) {
-                        viewModel!!.search(src.toString())
-                        status = src.isNotEmpty()
-                    }
-
-                    override fun afterTextChanged(s: Editable?) = Unit
-
-                    override fun beforeTextChanged(
-                        s: CharSequence?,
-                        start: Int,
-                        count: Int,
-                        after: Int
-                    ) = Unit
-                })
+                addTextChangedListener(this@SearchFragment)
                 toggleShowKeyBoard(context, this, true)
             }
 
@@ -132,27 +109,21 @@ class SearchFragment : BaseFragment<MediaItem>() {
                 activity!!.onBackPressed()
             }
 
-            close.setOnClickListener {
-                searchSrcText.setText("")
-            }
+            close.setOnClickListener { searchSrcText.text.clear() }
         }
 
-        viewModel.searchLiveData.observe(this) {
+        mainViewModel.searchLiveData().observe(this) {
             songAdapter.updateDataSet(it.songList)
             albumAdapter.updateDataSet(it.albumList)
             artistAdapter.updateDataSet(it.artistList)
         }
 
         binding.let {
-            it.viewModel = viewModel
+            it.viewModel = mainViewModel
             it.lifecycleOwner = this
             it.status = false
             it.executePendingBindings()
         }
-    }
-
-    override fun addToList(playListId: Long, song: Song) {
-        viewModel.addToPlaylist(playListId, listOf(song))
     }
 
     override fun onItemClick(view: View, position: Int, item: MediaItem) {
@@ -176,7 +147,7 @@ class SearchFragment : BaseFragment<MediaItem>() {
 
     private fun songPopup(song: Song, view: View) {
         powerMenu!!.showAsAnchorRightTop(view)
-        viewModel.playLists().observe(this) {
+        mainViewModel.playLists().observe(this) {
             buildPlaylistMenu(it, song)
         }
     }
@@ -204,4 +175,12 @@ class SearchFragment : BaseFragment<MediaItem>() {
             extras
         )
     }
+
+    override fun onTextChanged(src: CharSequence?, start: Int, before: Int, count: Int) {
+        mainViewModel.search(src.toString())
+        binding.status = src?.isNotEmpty()
+    }
+
+    override fun afterTextChanged(s: Editable?) = Unit
+    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
 }

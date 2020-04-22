@@ -19,7 +19,7 @@ fun Cursor?.forEach(
     closeAfter: Boolean = false,
     each: Cursor.() -> Unit
 ) {
-    if (this == null) return
+    this ?: return
     if (moveToFirst()) {
         do {
             each(this)

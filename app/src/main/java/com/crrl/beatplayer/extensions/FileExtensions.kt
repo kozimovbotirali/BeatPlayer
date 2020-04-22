@@ -14,11 +14,12 @@
 package com.crrl.beatplayer.extensions
 
 import android.os.Environment
-import android.util.Log
+import timber.log.Timber
 import java.io.File
 
 private const val INTERNAL_STORAGE = "/Internal Storage"
 private const val EXTERNAL_STORAGE = "/SD Card"
+private const val MEGA_BYTES_SIZE = 1048576
 
 fun File?.fixedPath(): String {
     try {
@@ -32,7 +33,7 @@ fun File?.fixedPath(): String {
         }
         return fixedPath.toString()
     } catch (ex: IllegalArgumentException) {
-        Log.println(Log.ERROR, "IllegalArgumentException", ex.message!!)
+        Timber.e(ex)
     }
     return this?.name!!
 }
@@ -46,7 +47,11 @@ fun File?.fixedName(): String {
             fixedPath.indexOf("/") + 1
         ) else parts[parts.size - 1]
     } catch (ex: IllegalArgumentException) {
-        Log.println(Log.ERROR, "IllegalArgumentException", ex.message!!)
+        Timber.e(ex)
     }
     return this?.name!!
+}
+
+fun File.sizeMB(): String? {
+    return "${length() / MEGA_BYTES_SIZE} MB"
 }

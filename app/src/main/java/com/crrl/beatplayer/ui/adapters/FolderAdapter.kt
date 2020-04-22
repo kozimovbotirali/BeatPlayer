@@ -19,7 +19,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FolderItemBinding
-import com.crrl.beatplayer.extensions.dataChanged
+import com.crrl.beatplayer.extensions.deepEquals
 import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.interfaces.ItemClickListener
 import com.crrl.beatplayer.models.Folder
@@ -40,7 +40,10 @@ class FolderAdapter(private val context: Context?) :
     }
 
     fun updateDataSet(newList: List<Folder>) {
-        dataChanged(newList)
+        if (!folderList.deepEquals(newList)) {
+            folderList = newList.toMutableList()
+            notifyDataSetChanged()
+        }
     }
 
     private fun getItem(position: Int) = folderList[position]

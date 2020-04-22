@@ -30,15 +30,10 @@ import com.crrl.beatplayer.repository.AlbumsRepository
 import com.crrl.beatplayer.repository.FavoritesRepository
 import com.crrl.beatplayer.ui.adapters.AlbumDetailAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
-import com.crrl.beatplayer.ui.viewmodels.SongViewModel
 import com.crrl.beatplayer.utils.PlayerConstants
-import com.dgreenhalgh.android.simpleitemdecoration.linear.EndOffsetItemDecoration
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
 
 class AlbumDetailFragment : BaseFragment<Song>() {
 
-    private val viewModel: SongViewModel by viewModel { parametersOf(context) }
     private lateinit var album: Album
     private lateinit var albumDetailAdapter: AlbumDetailAdapter
     private lateinit var binding: FragmentAlbumDetailBinding
@@ -59,7 +54,7 @@ class AlbumDetailFragment : BaseFragment<Song>() {
         val id = arguments!!.getLong(PlayerConstants.ALBUM_KEY)
         album = AlbumsRepository.getInstance(context)?.getAlbum(id)!!
 
-        albumDetailAdapter = AlbumDetailAdapter(context, viewModel).apply {
+        albumDetailAdapter = AlbumDetailAdapter(context, mainViewModel).apply {
             showHeader = true
             itemClickListener = this@AlbumDetailFragment
             this.album = this@AlbumDetailFragment.album
@@ -73,31 +68,20 @@ class AlbumDetailFragment : BaseFragment<Song>() {
             addFavorites.setOnClickListener { toggleAddFav() }
         }
 
-        val decor =
-            EndOffsetItemDecoration(resources.getDimensionPixelOffset(R.dimen.song_item_size))
-        viewModel.getSongsByAlbum(album.id)!!.observe(this) {
-            binding.albumSongList.apply {
-                if (it.size > 1) {
-                    removeItemDecoration(decor)
-                    albumDetailAdapter.updateDataSet(it)
-                    addItemDecoration(decor)
-                } else {
-                    removeItemDecoration(decor)
-                    albumDetailAdapter.updateDataSet(it)
-                }
+        mainViewModel.getSongsByAlbum(album.id)!!.observe(this) {
+            albumDetailAdapter.updateDataSet(it)
+            if (it.isEmpty()) {
+                mainViewModel.favoriteRepository.deleteFavorites(longArrayOf(id))
+                activity?.onBackPressed()
             }
         }
 
         binding.let {
-            it.viewModel = viewModel
+            it.viewModel = mainViewModel
             it.album = album
             it.lifecycleOwner = this
             it.executePendingBindings()
         }
-    }
-
-    override fun addToList(playListId: Long, song: Song) {
-        viewModel.addToPlaylist(playListId, listOf(song))
     }
 
     override fun onItemClick(view: View, position: Int, item: Song) {
@@ -118,18 +102,20 @@ class AlbumDetailFragment : BaseFragment<Song>() {
     override fun onPopupMenuClick(view: View, position: Int, item: Song, itemList: List<Song>) {
         super.onPopupMenuClick(view, position, item, itemList)
         powerMenu!!.showAsAnchorRightTop(view)
-        viewModel.playLists().observe(this) {
+        mainViewModel.playLists().observe(this) {
             buildPlaylistMenu(it, item)
         }
     }
 
     private fun toggleAddFav() {
         val favoritesRepository = FavoritesRepository(context)
+        val libType = getString(R.string.album)
         if (favoritesRepository.favExist(album.id)) {
-            favoritesRepository.deleteFavorites(longArrayOf(album.id))
+            val resp = favoritesRepository.deleteFavorites(longArrayOf(album.id))
+            showSnackBar(view, resp, 0, libType)
         } else {
-            favoritesRepository.createFavorite(album.toFavorite())
+            val resp = favoritesRepository.createFavorite(album.toFavorite())
+            showSnackBar(view, resp, 1, libType)
         }
-        println(favoritesRepository.favExist(album.id))
     }
 }

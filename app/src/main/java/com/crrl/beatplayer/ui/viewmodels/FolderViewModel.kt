@@ -29,13 +29,9 @@ class FolderViewModel(private val context: Context?) : ViewModel() {
     private val songByFolder: MutableLiveData<List<Song>> = MutableLiveData()
     private val isFavLiveData: MutableLiveData<Boolean> = MutableLiveData()
 
-    init {
-        Thread {
-            albums.postValue(FoldersRepository(context).getFolders())
-        }.start()
-    }
 
     fun getFolders(): LiveData<List<Folder>> {
+        update()
         return albums
     }
 
@@ -61,5 +57,11 @@ class FolderViewModel(private val context: Context?) : ViewModel() {
     fun isFav(id: Long): LiveData<Boolean> {
         updateIsFav(id)
         return isFavLiveData
+    }
+
+    fun update() {
+        Thread {
+            albums.postValue(FoldersRepository(context).getFolders())
+        }.start()
     }
 }

@@ -100,6 +100,13 @@ open class RequestPermissionActivity : AppCompatActivity() {
         }
     }
 
+    protected open fun recreateActivity() {
+        finish()
+        overridePendingTransition(0, 0)
+        startActivity(intent)
+        overridePendingTransition(0, 0)
+    }
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
@@ -109,11 +116,10 @@ open class RequestPermissionActivity : AppCompatActivity() {
         when (requestCode) {
             2 -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    recreate()
+                    recreateActivity()
                 } else {
                     finish()
                 }
-                return
             }
         }
     }

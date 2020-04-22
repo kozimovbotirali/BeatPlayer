@@ -15,9 +15,8 @@ package com.crrl.beatplayer.ui.binding
 
 import android.annotation.SuppressLint
 import android.content.ContentUris
-import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import android.support.v4.media.session.PlaybackStateCompat.STATE_PLAYING
+import android.text.Html
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -25,10 +24,7 @@ import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions.withCrossFade
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.extensions.setMargins
 import com.crrl.beatplayer.extensions.toggleShow
@@ -157,9 +153,16 @@ fun setClipToOutline(view: View, clipToOutline: Boolean) {
     view.clipToOutline = clipToOutline
 }
 
+@BindingAdapter("app:textUnderline")
+fun textUnderline(view: TextView, textUnderline: Boolean) {
+    if (textUnderline)
+        view.text = Html.fromHtml("<u>${view.text}</u>", Html.FROM_HTML_MODE_LEGACY)
+}
+
+
 @BindingAdapter("app:visible", "app:animate", requireAll = false)
 fun setVisibility(view: View, show: Boolean = true, animate: Boolean = true) {
-    if(animate){
+    if (animate) {
         please(100) {
             animate(view) {
                 if (show) scale(1f, 1f) else scale(0f, 0f)

@@ -17,8 +17,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import android.widget.Toast.LENGTH_SHORT
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.crrl.beatplayer.R
@@ -28,16 +27,11 @@ import com.crrl.beatplayer.models.Playlist
 import com.crrl.beatplayer.repository.PlaylistRepository
 import com.crrl.beatplayer.ui.adapters.PlaylistAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
-import com.crrl.beatplayer.ui.viewmodels.SongViewModel
 import com.crrl.beatplayer.utils.PlayerConstants.PLAY_LIST_DETAIL
-import com.dgreenhalgh.android.simpleitemdecoration.linear.EndOffsetItemDecoration
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
 
 
 class PlaylistFragment : BaseFragment<Playlist>() {
 
-    private val viewModel by viewModel<SongViewModel> { parametersOf(context) }
     private lateinit var playlistAdapter: PlaylistAdapter
     private lateinit var binding: FragmentPlaylistBinding
 
@@ -77,12 +71,12 @@ class PlaylistFragment : BaseFragment<Playlist>() {
             })
         }
 
-        binding.createPlayList.setOnClickListener { createPlayList() }
+        binding.createPlayList.setOnClickListener { createDialog() }
 
         reloadAdapter()
 
         binding.let {
-            it.viewModel = viewModel
+            it.viewModel = mainViewModel
             it.lifecycleOwner = this
             it.executePendingBindings()
         }
@@ -102,28 +96,27 @@ class PlaylistFragment : BaseFragment<Playlist>() {
         item: Playlist,
         itemList: List<Playlist>
     ) {
-        PlaylistRepository(context).deletePlaylist(item.id)
-        safeActivity.toast("${item.name} Deleted ", Toast.LENGTH_SHORT)
-    }
-
-    private fun createPlayList() {
-        createDialog().show(safeActivity as AppCompatActivity)
+        val deleted = PlaylistRepository(context).deletePlaylist(item.id)
+        if (deleted != -1)
+            mainViewModel.binding.mainContainer.snackbar(
+                SUCCESS,
+                getString(R.string.playlist_deleted_success, item.name),
+                LENGTH_SHORT
+            )
+        else
+            mainViewModel.binding.mainContainer.snackbar(
+                ERROR,
+                getString(R.string.playlist_deleted_error, item.name),
+                LENGTH_SHORT,
+                action = getString(R.string.retry),
+                clickListener = View.OnClickListener {
+                    onPopupMenuClick(view, position, item, itemList)
+                })
     }
 
     private fun reloadAdapter() {
-        val decor =
-            EndOffsetItemDecoration(resources.getDimensionPixelOffset(R.dimen.song_item_size))
-        viewModel.playLists().observe(this) {
-            binding.playList.apply {
-                if (it.size > 1) {
-                    removeItemDecoration(decor)
-                    playlistAdapter.updateDataSet(it)
-                    addItemDecoration(decor)
-                } else {
-                    removeItemDecoration(decor)
-                    playlistAdapter.updateDataSet(it)
-                }
-            }
+        mainViewModel.playLists().observe(this) {
+            playlistAdapter.updateDataSet(it)
         }
     }
 }

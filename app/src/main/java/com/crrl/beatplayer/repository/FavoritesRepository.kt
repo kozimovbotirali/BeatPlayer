@@ -98,6 +98,7 @@ class FavoritesRepository(private val context: Context?) : DBHelper(context),
 
     override fun getFavorite(id: Long): Favorite {
         val cursor = getRow(TABLE_FAVORITES, "*", "$COLUMN_ID = ?", arrayOf(id.toString()))
+        if (cursor.isClosed) return Favorite()
         cursor.use {
             return if (it.moveToFirst()) {
                 Favorite.fromCursor(it)
@@ -109,7 +110,8 @@ class FavoritesRepository(private val context: Context?) : DBHelper(context),
 
     override fun getFavorites(): List<Favorite> {
         val cursor =
-            getRow(TABLE_FAVORITES, "*", "$COLUMN_SONG_COUNT > ?", arrayOf("0"), "$COLUMN_ID DESC")
+            getRow(TABLE_FAVORITES, "*", "$COLUMN_SONG_COUNT > ?", arrayOf("0"), COLUMN_ID)
+        if (cursor.isClosed) return emptyList()
         return cursor.toList(true) {
             Favorite.fromCursor(cursor)
         }.toList().optimizeReadOnlyList()
@@ -125,6 +127,7 @@ class FavoritesRepository(private val context: Context?) : DBHelper(context),
 
     override fun songExist(id: Long): Boolean {
         val cursor = getRow(TABLE_SONGS, "*", "$COLUMN_ID = ?", arrayOf("$id"))
+        if (cursor.isClosed) return false
         cursor.use {
             return it.moveToFirst()
         }

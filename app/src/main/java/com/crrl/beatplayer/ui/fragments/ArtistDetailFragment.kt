@@ -33,16 +33,10 @@ import com.crrl.beatplayer.repository.ArtistsRepository
 import com.crrl.beatplayer.repository.FavoritesRepository
 import com.crrl.beatplayer.ui.adapters.AlbumAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
-import com.crrl.beatplayer.ui.viewmodels.SongViewModel
 import com.crrl.beatplayer.utils.PlayerConstants
-import com.dgreenhalgh.android.simpleitemdecoration.linear.EndOffsetItemDecoration
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
 
 @Suppress("UNCHECKED_CAST")
 class ArtistDetailFragment : BaseFragment<MediaItem>() {
-
-    private val viewModel: SongViewModel by viewModel { parametersOf(context) }
     private lateinit var albumAdapter: AlbumAdapter
     private lateinit var binding: FragmentArtistDetailBinding
     private lateinit var artist: Artist
@@ -77,31 +71,16 @@ class ArtistDetailFragment : BaseFragment<MediaItem>() {
             addFavorites.setOnClickListener { toggleAddFav() }
         }
 
-        val decor =
-            EndOffsetItemDecoration(resources.getDimensionPixelOffset(R.dimen.song_item_size))
-        viewModel.getArtistAlbums(artist.id).observe(this) {
-            binding.albumList.apply {
-                if (it.size > 1) {
-                    removeItemDecoration(decor)
-                    albumAdapter.updateDataSet(it)
-                    addItemDecoration(decor)
-                } else {
-                    removeItemDecoration(decor)
-                    albumAdapter.updateDataSet(it)
-                }
-            }
+        mainViewModel.getArtistAlbums(artist.id).observe(this) {
+            albumAdapter.updateDataSet(it)
         }
 
         binding.let {
             it.artist = artist
-            it.viewModel = viewModel
+            it.viewModel = mainViewModel
             it.lifecycleOwner = this
             it.executePendingBindings()
         }
-    }
-
-    override fun addToList(playListId: Long, song: Song) {
-        viewModel.addToPlaylist(playListId, listOf(song))
     }
 
     private fun albumClicked(item: Album) {
@@ -131,18 +110,20 @@ class ArtistDetailFragment : BaseFragment<MediaItem>() {
     ) {
         item as Song
         powerMenu!!.showAsAnchorRightTop(view)
-        viewModel.playLists().observe(this) {
+        mainViewModel.playLists().observe(this) {
             buildPlaylistMenu(it, item)
         }
     }
 
     private fun toggleAddFav() {
         val favoritesRepository = FavoritesRepository(context)
+        val libType = getString(R.string.artist)
         if (favoritesRepository.favExist(artist.id)) {
-            favoritesRepository.deleteFavorites(longArrayOf(artist.id))
+            val resp = favoritesRepository.deleteFavorites(longArrayOf(artist.id))
+            showSnackBar(view, resp, 0, libType)
         } else {
-            favoritesRepository.createFavorite(artist.toFavorite())
+            val resp = favoritesRepository.createFavorite(artist.toFavorite())
+            showSnackBar(view, resp, 1, libType)
         }
-        println(favoritesRepository.favExist(artist.id))
     }
 }

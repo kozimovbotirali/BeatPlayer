@@ -32,7 +32,6 @@ import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.viewmodels.FavoriteViewModel
 import com.crrl.beatplayer.ui.viewmodels.SongViewModel
 import com.crrl.beatplayer.utils.PlayerConstants
-import com.dgreenhalgh.android.simpleitemdecoration.linear.EndOffsetItemDecoration
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -66,18 +65,12 @@ class FavoriteDetailFragment : BaseFragment<Song>() {
             isPlaylist = true
             itemClickListener = this@FavoriteDetailFragment
         }
-        val decor =
-            EndOffsetItemDecoration(resources.getDimensionPixelOffset(R.dimen.song_item_size))
         viewModel.songListFavorite(id).observe(this) {
-            binding.songList.apply {
-                if (it.size > 1) {
-                    removeItemDecoration(decor)
-                    songAdapter.updateDataSet(it)
-                    addItemDecoration(decor)
-                } else {
-                    removeItemDecoration(decor)
-                    songAdapter.updateDataSet(it)
-                }
+            if (it.isEmpty()) {
+                mainViewModel.favoriteRepository.deleteFavorites(longArrayOf(id))
+                activity?.onBackPressed()
+            } else {
+                songAdapter.updateDataSet(it)
             }
         }
 
@@ -94,10 +87,6 @@ class FavoriteDetailFragment : BaseFragment<Song>() {
             it.lifecycleOwner = this
             it.executePendingBindings()
         }
-    }
-
-    override fun addToList(playListId: Long, song: Song) {
-        songViewModel.addToPlaylist(playListId, listOf(song))
     }
 
     override fun onItemClick(view: View, position: Int, item: Song) {
@@ -118,7 +107,7 @@ class FavoriteDetailFragment : BaseFragment<Song>() {
     override fun onPopupMenuClick(view: View, position: Int, item: Song, itemList: List<Song>) {
         super.onPopupMenuClick(view, position, item, itemList)
         powerMenu!!.showAsAnchorRightTop(view)
-        songViewModel.playLists().observe(this) {
+        mainViewModel.playLists().observe(this) {
             buildPlaylistMenu(it, item)
         }
     }

@@ -17,14 +17,15 @@ import android.content.Context
 import android.os.SystemClock
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FavoriteItemBinding
+import com.crrl.beatplayer.extensions.deepEquals
 import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.interfaces.ItemClickListener
 import com.crrl.beatplayer.models.Favorite
-import com.crrl.beatplayer.utils.GeneralUtils
+import com.crrl.beatplayer.utils.GeneralUtils.dip2px
+import com.crrl.beatplayer.utils.GeneralUtils.screenWidth
 
 class FavoriteAdapter(private val context: Context?) :
     RecyclerView.Adapter<FavoriteAdapter.ViewHolderFavorite>() {
@@ -49,26 +50,10 @@ class FavoriteAdapter(private val context: Context?) :
     }
 
     fun updateDataSet(newList: List<Favorite>) {
-        Thread {
-            if (newList.isEmpty()) {
-                favoriteList = newList.toMutableList()
-                (context as AppCompatActivity).runOnUiThread {
-                    notifyDataSetChanged()
-                }
-            } else if (newList.size != favoriteList.size) {
-                favoriteList = newList.toMutableList()
-                (context as AppCompatActivity).runOnUiThread {
-                    notifyDataSetChanged()
-                }
-            } else if (!favoriteList.first().compare(newList.first()) || !favoriteList.last()
-                    .compare(newList.last())
-            ) {
-                favoriteList = newList.toMutableList()
-                (context as AppCompatActivity).runOnUiThread {
-                    notifyDataSetChanged()
-                }
-            }
-        }.start()
+        if (!favoriteList.deepEquals(newList)) {
+            favoriteList = newList.toMutableList()
+            notifyDataSetChanged()
+        }
     }
 
     fun getItem(position: Int): Favorite {
@@ -81,13 +66,13 @@ class FavoriteAdapter(private val context: Context?) :
         fun bind(artist: Favorite) {
             binding.apply {
                 this.favorite = artist
+                executePendingBindings()
+
                 showDetails.setOnClickListener(this@ViewHolderFavorite)
                 container.layoutParams.apply {
-                    height =
-                        GeneralUtils.screenWidth / spanCount + GeneralUtils.dip2px(context!!, 22)
-                    width = GeneralUtils.screenWidth / spanCount - GeneralUtils.dip2px(context, 6)
+                    height = screenWidth / spanCount + dip2px(context!!, 22)
+                    width = screenWidth / spanCount - dip2px(context, 6)
                 }
-                executePendingBindings()
             }
         }
 

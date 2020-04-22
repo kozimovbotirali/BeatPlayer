@@ -10,23 +10,23 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-
+<!-- Accent Color #DB5151 E34A4C-->
 <resources>
-    <color name="colorPrimary">#080808</color>
-    <color name="colorPrimaryDark">#080808</color>
-    <color name="colorAccentDark">#DB5151</color>
-    <color name="colorAccentDarkOpacity">#80DB5151</color>
-    <color name="colorPrimaryDarkSecondary">#080808</color>
+    <color name="colorPrimary">#000000</color>
+    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorAccentDark">#427ADD</color>
+    <color name="colorAccentDarkOpacity">#80427ADD</color>
+    <color name="colorPrimaryDarkSecondary">#000000</color>
     <color name="colorPrimaryDarkSecondary2">#252525</color>
-    <color name="colorPrimaryDarkOpacity">#80080808</color>
+    <color name="colorPrimaryDarkOpacity">#4D000000</color>
     <color name="colorTitleTextDark">#FFFFFF</color>
     <color name="colorSubTitleTextDark">#E3E3E3</color>
     <color name="colorBodyTextDark">#B5B5B5</color>
 
     <color name="colorPrimaryLight">#F2F2F2</color>
     <color name="colorPrimaryDarkLight">#F2F2F2</color>
-    <color name="colorAccentLight">#DB5151</color>
-    <color name="colorAccentLightOpacity">#80DB5151</color>
+    <color name="colorAccentLight">#427ADD</color>
+    <color name="colorAccentLightOpacity">#80427ADD</color>
     <color name="colorPrimaryLightSecondary">#F2F2F2</color>
     <color name="colorPrimaryLightSecondary2">#FCFCFC</color>
     <color name="colorPrimaryLightOpacity">#F2F2F2</color>
@@ -36,5 +36,5 @@
 
     <color name="white">#ffffff</color>
     <color name="transparent">#00ffffff</color>
-    <color name="error">#F50238</color>
+    <color name="error">#dd4254</color>
 </resources>

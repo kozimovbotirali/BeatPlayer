@@ -15,12 +15,12 @@ package com.crrl.beatplayer.ui.activities
 
 import android.os.Bundle
 import android.view.View
-import com.crrl.beatplayer.R
 import com.crrl.alertdialog.AlertDialog
 import com.crrl.alertdialog.dialogs.AlertItemAction
 import com.crrl.alertdialog.stylers.AlertItemStyle
 import com.crrl.alertdialog.stylers.AlertItemTheme
 import com.crrl.alertdialog.stylers.AlertType
+import com.crrl.beatplayer.R
 import com.crrl.beatplayer.extensions.getColorByTheme
 import com.crrl.beatplayer.ui.activities.base.BaseActivity
 import com.crrl.beatplayer.utils.PlayerConstants
@@ -43,10 +43,10 @@ class SettingsActivity : BaseActivity() {
     private fun buildThemeDialog(): AlertDialog {
         val style = AlertItemStyle()
         style.apply {
-            textColor = getColorByTheme(R.attr.titleTextColor, "titleTextColor")
-            selectedTextColor = getColorByTheme(R.attr.colorAccent, "colorAccent")
+            textColor = getColorByTheme(R.attr.titleTextColor)
+            selectedTextColor = getColorByTheme(R.attr.colorAccent)
             backgroundColor =
-                getColorByTheme(R.attr.colorPrimarySecondary2, "colorPrimarySecondary2")
+                getColorByTheme(R.attr.colorPrimarySecondary2)
         }
         return AlertDialog(
             getString(R.string.theme_title),

@@ -27,6 +27,7 @@
     <string name="favorites">Favorites</string>
     <string name="playlists">Playlists</string>
     <string name="folders">Folders</string>
+    <string name="folder">Folder</string>
     <string name="artists">Artists</string>
     <string name="albums">Albums</string>
     <string name="def_time" translatable="false">00:00</string>
@@ -57,7 +58,7 @@
     <string name="delete">Delete</string>
     <string name="create_playlist">Creating Playlist</string>
     <string name="choose_playlist">Please, choose a playlist.</string>
-    <string name="playlist_added_error">Could not create playlist </string>
+    <string name="playlist_added_error">Could not create playlist \"%s\".</string>
     <string name="playlist_added_success">Playlist added successfully</string>
     <string name="input_hint">Enter a name</string>
     <string name="no_permission">Permissions were not Granted</string>
@@ -69,6 +70,31 @@
     <string name="appearance">Appearance</string>
     <string name="theme_description">Choose one of these BeatPlayer themes.</string>
     <string name="default_theme">System Default</string>
+    <string name="no_lyrics">Sorry, We can\'t get lyrics for this song.</string>
+    <string name="deleted_ok">Track deleted successfully.</string>
+    <string name="deleted_err">We can\'t delete the song now.</string>
+    <string name="unavailable">Unable to play song.</string>
+    <string name="playlist">Playlist</string>
+    <string name="delete_conf">Are you sure you want to delete the song \"%s\" from your device.</string>
+    <string name="delete_conf_title">Delete Confirmation</string>
+    <string name="select_tracks">Select Tracks</string>
+    <string name="all">All</string>
+    <string name="done">Done</string>
+    <string name="no_albums">No Albums</string>
+    <string name="no_favorites">No Favorite Music</string>
+    <string name="favorites_tip">Tap the heart icon on \"Now Playing, Albums, Artists or Folders\" views. Your favorite music will be listed here.</string>
+    <string name="favorite_music">Favorite Music</string>
+    <string name="no_artists">No Artists</string>
+    <string name="song_added_success">The song was added successfully.</string>
+    <string name="song_added_error">Track could not added to playlist.</string>
+    <string name="playlist_deleted_error">Playlist \"%s\" could not deleted.</string>
+    <string name="playlist_deleted_success">Playlist \"%s\" deleted successfully.</string>
+    <string name="retry">Retry</string>
+    <string name="song_no_fav_ok">Removed from your favorite music.</string>
+    <string name="song_fav_ok">Added to your favorite music.</string>
+    <string name="no_fav_ok">%s Removed from your favorite music.</string>
+    <string name="fav_ok">%s Added to your favorite music.</string>
+    <string name="playlist_name_error">Playlist name already exists.</string>
 
     <plurals name="number_of_songs">
         <item quantity="zero">%d Tracks</item>
@@ -88,19 +114,4 @@
         <item quantity="other">%d Artists</item>
     </plurals>
 
-    <string name="no_lyrics">Sorry, We can\'t get lyrics for this song.</string>
-    <string name="deleted_ok">Song deleted successfully.</string>
-    <string name="deleted_err">We can\'t delete the song now.</string>
-    <string name="unavailable">Unable to play song.</string>
-    <string name="playlist">Playlist</string>
-    <string name="delete_conf">"Are you sure you want to delete the song "</string>
-    <string name="delete_conf_title">Delete Confirmation</string>
-    <string name="select_tracks">Select Tracks</string>
-    <string name="all">All</string>
-    <string name="done">Done</string>
-    <string name="no_albums">No Albums</string>
-    <string name="no_favorites">No Favorite Music</string>
-    <string name="favorites_tip">Tap the heart icon on \"Now Playing, Albums, Artists or Folders\" views. Your favorite music will be listed here.</string>
-    <string name="favorite_music">Favorite Music</string>
-    <string name="no_artists">No Artists</string>
 </resources>

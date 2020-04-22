@@ -54,12 +54,12 @@ object SortModes {
         when (sortMode) {
             SongModes.SONG_A_Z -> Thread {
                 songList.sortWith(Comparator { a, b ->
-                    a.title.toUpperCase().compareTo(b.title.toUpperCase())
+                    a.title.toLowerCase().compareTo(b.title.toLowerCase())
                 })
             }.start()
             SongModes.SONG_Z_A -> Thread {
                 songList.sortWith(Comparator { a, b ->
-                    b.title.toUpperCase().compareTo(a.title.toUpperCase())
+                    b.title.toLowerCase().compareTo(a.title.toLowerCase())
                 })
             }.start()
         }

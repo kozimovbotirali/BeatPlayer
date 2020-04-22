@@ -15,17 +15,13 @@ package com.crrl.beatplayer.ui.fragments
 
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.extensions.observe
 import com.crrl.beatplayer.extensions.safeActivity
-import com.crrl.beatplayer.extensions.toast
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.ui.activities.MainActivity
 import com.crrl.beatplayer.ui.fragments.base.BaseSongDetailFragment
@@ -33,6 +29,7 @@ import com.crrl.beatplayer.ui.viewmodels.SongDetailViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import rm.com.audiowave.OnSamplingListener
+import timber.log.Timber
 
 class SongDetailFragment : BaseSongDetailFragment() {
 
@@ -53,23 +50,17 @@ class SongDetailFragment : BaseSongDetailFragment() {
 
     private fun init() {
         viewModel.getCurrentData().observe(viewLifecycleOwner) {
+            initNeeded(it, emptyList())
             updateViewComponents(it)
         }
-        viewModel.playLists().observe(this) {
-            buildPlaylistMenu(it, mainViewModel.getCurrentSong().value!!)
-        }
-        viewModel.binding!!.addPlaylist.setOnClickListener { showAddDialog() }
+
+        viewModel.binding!!.addPlaylist.setOnClickListener { shareItem() }
         setupRawData()
         viewModel.binding!!.let {
             it.song = viewModel
             it.lifecycleOwner = this
             it.executePendingBindings()
         }
-    }
-
-    private fun showAddDialog() {
-        alertPlaylists ?: return
-        alertPlaylists?.show(safeActivity as AppCompatActivity)
     }
 
     private fun setupRawData() {
@@ -80,16 +71,14 @@ class SongDetailFragment : BaseSongDetailFragment() {
                 })
             }
         } catch (e: IllegalStateException) {
-            Log.println(Log.ERROR, "IllegalStateException", e.message!!)
+            Timber.e(e)
         }
     }
 
     private fun updateViewComponents(song: Song) {
         if (song.id == -1L) return
         viewModel.binding!!.apply {
-            playContainer.setOnClickListener {
-                safeActivity.toast("Play", Toast.LENGTH_SHORT)
-            }
+            playContainer.setOnClickListener {}
             nextBtn.setOnClickListener {
                 mainViewModel.next(song.id)
             }
