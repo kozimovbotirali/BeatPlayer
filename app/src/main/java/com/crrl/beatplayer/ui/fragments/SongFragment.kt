@@ -30,17 +30,21 @@ import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.ui.activities.MainActivity
 import com.crrl.beatplayer.ui.adapters.SongAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
+import com.crrl.beatplayer.ui.viewmodels.PlaylistViewModel
 import com.crrl.beatplayer.ui.viewmodels.SongViewModel
 import com.crrl.beatplayer.utils.SettingsUtility
 import com.crrl.beatplayer.utils.SortModes
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.core.parameter.parametersOf
 
 class SongFragment : BaseFragment<Song>() {
 
-    private val viewModel: SongViewModel by sharedViewModel { parametersOf(context) }
     private lateinit var songAdapter: SongAdapter
     private lateinit var binding: FragmentSongBinding
+
+    private val playlistViewModel by inject<PlaylistViewModel>()
+    private val viewModel by inject<SongViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -56,7 +60,7 @@ class SongFragment : BaseFragment<Song>() {
     }
 
     private fun init() {
-        songAdapter = SongAdapter(activity, (activity as MainActivity).viewModel).apply {
+        songAdapter = SongAdapter(activity, mainViewModel).apply {
             showHeader = true
             itemClickListener = this@SongFragment
         }
@@ -66,6 +70,30 @@ class SongFragment : BaseFragment<Song>() {
             adapter = songAdapter
         }
 
+        mainViewModel.getLastSong().observe(this){ song ->
+            val position = songAdapter.songList.indexOfFirst { it.compare(song)} + 1
+            songAdapter.notifyItemChanged(position)
+        }
+
+        mainViewModel.getCurrentSong().observe(this){
+            val position = songAdapter.songList.indexOf(it) + 1
+            songAdapter.notifyItemChanged(position)
+        }
+
+        viewModel.getSongList().observe(this) {
+            songAdapter.updateDataSet(it)
+        }
+
+        binding.let {
+            it.viewModel = viewModel
+            it.lifecycleOwner = this
+            it.executePendingBindings()
+        }
+
+        createDialog()
+    }
+
+    private fun createDialog(){
         dialog = buildSortModesDialog(listOf(
             AlertItemAction(
                 context!!.getString(R.string.sort_default),
@@ -125,14 +153,6 @@ class SongFragment : BaseFragment<Song>() {
                 reloadAdapter()
             }
         ))
-        viewModel.getSongList().observe(this) {
-            songAdapter.updateDataSet(it)
-        }
-        binding.let {
-            it.viewModel = viewModel
-            it.lifecycleOwner = this
-            it.executePendingBindings()
-        }
     }
 
     private fun reloadAdapter() {
@@ -161,7 +181,7 @@ class SongFragment : BaseFragment<Song>() {
     override fun onPopupMenuClick(view: View, position: Int, item: Song, itemList: List<Song>) {
         super.onPopupMenuClick(view, position, item, itemList)
         powerMenu!!.showAsAnchorRightTop(view)
-        mainViewModel.playLists().observe(this) {
+        playlistViewModel.playLists().observe(this) {
             buildPlaylistMenu(it, item)
         }
     }

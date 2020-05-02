@@ -15,17 +15,34 @@ package com.crrl.beatplayer.extensions
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
+import android.app.Activity
+import android.content.res.ColorStateList
+import android.graphics.Color
+import android.opengl.Visibility
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.animation.OvershootInterpolator
 import android.widget.FrameLayout
+import android.widget.ImageButton
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.annotation.LayoutRes
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
+import com.budiyev.android.circularprogressbar.CircularProgressBar
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.ui.widgets.SimpleCustomSnackbar
+import com.crrl.beatplayer.utils.GeneralUtils
+import com.github.florent37.kotlin.pleaseanimate.please
+import com.google.android.material.tabs.TabLayout
+import kotlinx.coroutines.*
+import rm.com.audiowave.AudioWaveView
+
 
 const val DEFAULT = "com.crrl.beatplayer.DEFAULT"
 const val SUCCESS = "com.crrl.beatplayer.SUCCESS"
@@ -40,15 +57,17 @@ fun <T : ViewDataBinding> ViewGroup.inflateWithBinding(
     return DataBindingUtil.inflate(layoutInflater, layoutRes, this, attachToRoot) as T
 }
 
-fun View?.show(){
-    this?.visibility = View.VISIBLE
+fun View?.show() {
+    this ?: return
+    visibility = VISIBLE
 }
 
-fun View?.hide(){
-    this?.visibility = View.GONE
+fun View?.hide() {
+    this ?: return
+    visibility = GONE
 }
 
-fun View?.toggleShow(show: Boolean){
+fun View?.toggleShow(show: Boolean) {
     if (show) show() else hide()
 }
 
@@ -129,4 +148,55 @@ internal fun View?.findSuitableParent(): ViewGroup? {
     } while (view != null)
 
     return fallback
+}
+
+fun View?.setCustomColor(color: Int, hasBackground: Boolean = false, opacity: Boolean = false) {
+    this ?: return
+    val cHex = "#${Integer.toHexString(color).replace("ff", "80")}"
+    val c = Color.parseColor(if (cHex != "#0") cHex else "#80000000")
+    when (this) {
+        is ImageButton -> {
+            if (hasBackground) {
+                this.apply {
+                    if (!opacity) {
+                        background =
+                            context.getDrawable(R.drawable.btn_play_header_background).apply {
+                                this?.setTint(color)
+                            }
+                    } else {
+                        imageTintList =
+                            ColorStateList.valueOf(GeneralUtils.getBlackWhiteColor(color))
+                    }
+                }
+            } else {
+                imageTintList = ColorStateList.valueOf(color)
+            }
+        }
+        is TabLayout -> {
+            val default = (context as Activity).getColorByTheme(R.attr.subTitleTextColor)
+            setTabTextColors(default, color)
+            setSelectedTabIndicatorColor(color)
+        }
+        is CircularProgressBar -> {
+            backgroundStrokeColor = c
+            foregroundStrokeColor = color
+        }
+        is LinearLayout -> {
+            background = if (hasBackground) {
+                AppCompatResources.getDrawable(
+                    context,
+                    R.drawable.btn_ripple_with_stroke
+                ).apply { this?.setTint(color) }
+            } else AppCompatResources.getDrawable(context, R.drawable.btn_play_header_background)
+                .apply { this?.setTint(color) }
+        }
+        is AudioWaveView -> {
+            waveColor = color
+        }
+        is TextView -> if (hasBackground) {
+            setTextColor(GeneralUtils.getBlackWhiteColor(color))
+        } else {
+            setTextColor(if (opacity) c else color)
+        }
+    }
 }

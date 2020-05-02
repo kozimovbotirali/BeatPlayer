@@ -19,28 +19,25 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.crrl.beatplayer.R
+import com.crrl.beatplayer.databinding.FragmentSongDetailBinding
 import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.extensions.observe
-import com.crrl.beatplayer.extensions.safeActivity
+import com.crrl.beatplayer.extensions.setCustomColor
 import com.crrl.beatplayer.models.Song
-import com.crrl.beatplayer.ui.activities.MainActivity
 import com.crrl.beatplayer.ui.fragments.base.BaseSongDetailFragment
-import com.crrl.beatplayer.ui.viewmodels.SongDetailViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
+import com.crrl.beatplayer.utils.SettingsUtility
 import rm.com.audiowave.OnSamplingListener
 import timber.log.Timber
 
 class SongDetailFragment : BaseSongDetailFragment() {
 
-    private val viewModel: SongDetailViewModel by viewModel { parametersOf(safeActivity as MainActivity) }
-
+    private lateinit var binding: FragmentSongDetailBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel.binding = inflater.inflateWithBinding(R.layout.fragment_song_detail, container)
-        return viewModel.binding!!.root
+        binding = inflater.inflateWithBinding(R.layout.fragment_song_detail, container)
+        return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -49,15 +46,15 @@ class SongDetailFragment : BaseSongDetailFragment() {
     }
 
     private fun init() {
-        viewModel.getCurrentData().observe(viewLifecycleOwner) {
+        updateViewComponents()
+        mainViewModel.getCurrentSong().observe(viewLifecycleOwner) {
             initNeeded(it, emptyList())
-            updateViewComponents(it)
         }
 
-        viewModel.binding!!.addPlaylist.setOnClickListener { shareItem() }
+        binding.addPlaylist.setOnClickListener { shareItem() }
         setupRawData()
-        viewModel.binding!!.let {
-            it.song = viewModel
+        binding.let {
+            it.viewModel = mainViewModel
             it.lifecycleOwner = this
             it.executePendingBindings()
         }
@@ -65,8 +62,8 @@ class SongDetailFragment : BaseSongDetailFragment() {
 
     private fun setupRawData() {
         try {
-            viewModel.getRawData().observe(viewLifecycleOwner) {
-                viewModel.binding!!.seekBar.setRawData(it, object : OnSamplingListener {
+            mainViewModel.getRawData().observe(viewLifecycleOwner) {
+                binding.seekBar.setRawData(it, object : OnSamplingListener {
                     override fun onComplete() = Unit
                 })
             }
@@ -75,33 +72,38 @@ class SongDetailFragment : BaseSongDetailFragment() {
         }
     }
 
-    private fun updateViewComponents(song: Song) {
-        if (song.id == -1L) return
-        viewModel.binding!!.apply {
+    private fun updateViewComponents() {
+        binding.apply {
             playContainer.setOnClickListener {}
             nextBtn.setOnClickListener {
+                val song = mainViewModel.getCurrentSong().value ?: return@setOnClickListener
                 mainViewModel.next(song.id)
             }
             previousBtn.setOnClickListener {
+                val song = mainViewModel.getCurrentSong().value ?: return@setOnClickListener
                 mainViewModel.previous(song.id)
             }
             seekBar.apply {
                 onStopTracking = {
-                    viewModel.updateTime((it * song.duration / 100).toInt())
+                    val song = mainViewModel.getCurrentSong().value ?: Song()
+                    mainViewModel.update((it * song.duration / 100).toInt())
                 }
 
                 onStartTracking = {
-                    viewModel.updateTime((it * song.duration / 100).toInt())
+                    val song = mainViewModel.getCurrentSong().value ?: Song()
+                    mainViewModel.update((it * song.duration / 100).toInt())
                 }
 
                 onProgressChanged = { progress, _ ->
-                    viewModel.updateTime((progress * song.duration / 100).toInt())
+                    val song = mainViewModel.getCurrentSong().value ?: Song()
+                    mainViewModel.update((progress * song.duration / 100).toInt())
                 }
             }
         }
 
-        viewModel.getTime().observe(viewLifecycleOwner) {
-            viewModel.binding!!.seekBar.apply {
+        mainViewModel.getTime().observe(viewLifecycleOwner) {
+            val song = mainViewModel.getCurrentSong().value ?: return@observe
+            binding.seekBar.apply {
                 if (it == -1) {
                     progress = 0F
                     setRawData(ByteArray(Int.SIZE_BYTES))

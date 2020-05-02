@@ -38,14 +38,13 @@ import com.crrl.beatplayer.utils.PlayerConstants
 import com.crrl.beatplayer.utils.PlayerConstants.ALBUM_KEY
 import com.crrl.beatplayer.utils.SettingsUtility
 import com.crrl.beatplayer.utils.SortModes
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
+import org.koin.android.ext.android.inject
 
 class AlbumFragment : BaseFragment<Album>() {
 
-    private val viewModel: AlbumViewModel by viewModel { parametersOf(mainViewModel.albumRepository) }
     private lateinit var albumAdapter: AlbumAdapter
     private lateinit var binding: FragmentAlbumBinding
+    private val albumViewModel by inject<AlbumViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -63,7 +62,7 @@ class AlbumFragment : BaseFragment<Album>() {
     private fun init() {
         val sc = if (GeneralUtils.getRotation(safeActivity) == VERTICAL) 2 else 5
 
-        albumAdapter = AlbumAdapter(context).apply {
+        albumAdapter = AlbumAdapter(context, mainViewModel).apply {
             showHeader = true
             itemClickListener = this@AlbumFragment
             spanCount = sc
@@ -80,6 +79,20 @@ class AlbumFragment : BaseFragment<Album>() {
             adapter = albumAdapter
         }
 
+        albumViewModel.getAlbums().observe(this) { list ->
+            albumAdapter.updateDataSet(list)
+        }
+
+        binding.let {
+            it.viewModel = albumViewModel
+            it.lifecycleOwner = this
+            it.executePendingBindings()
+        }
+
+        createDialog()
+    }
+
+    private fun createDialog(){
         dialog = buildSortModesDialog(listOf(
             AlertItemAction(
                 context!!.getString(R.string.sort_default),
@@ -120,20 +133,10 @@ class AlbumFragment : BaseFragment<Album>() {
                 reloadAdapter()
             }
         ))
-
-        viewModel.getAlbums()!!.observe(this) { list ->
-            albumAdapter.updateDataSet(list)
-        }
-
-        binding.let {
-            it.viewModel = viewModel
-            it.lifecycleOwner = this
-            it.executePendingBindings()
-        }
     }
 
     private fun reloadAdapter() {
-        viewModel.update()
+        albumViewModel.update()
     }
 
     override fun onItemClick(view: View, position: Int, item: Album) {

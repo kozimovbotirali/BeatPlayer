@@ -13,31 +13,50 @@
 
 package com.crrl.beatplayer.ui.activities
 
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.View
+import androidx.databinding.DataBindingUtil
 import com.crrl.alertdialog.AlertDialog
 import com.crrl.alertdialog.dialogs.AlertItemAction
 import com.crrl.alertdialog.stylers.AlertItemStyle
 import com.crrl.alertdialog.stylers.AlertItemTheme
 import com.crrl.alertdialog.stylers.AlertType
 import com.crrl.beatplayer.R
+import com.crrl.beatplayer.databinding.ActivitySettingsBinding
+import com.crrl.beatplayer.databinding.FragmentSongDetailBinding
 import com.crrl.beatplayer.extensions.getColorByTheme
+import com.crrl.beatplayer.extensions.observe
+import com.crrl.beatplayer.extensions.setCustomColor
 import com.crrl.beatplayer.ui.activities.base.BaseActivity
+import com.crrl.beatplayer.ui.viewmodels.MainViewModel
 import com.crrl.beatplayer.utils.PlayerConstants
 import com.crrl.beatplayer.utils.SettingsUtility
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class SettingsActivity : BaseActivity() {
 
+    private val viewModel by inject<MainViewModel>()
+    private lateinit var binding: ActivitySettingsBinding
     private lateinit var dialog: AlertDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_settings)
         init()
     }
 
     private fun init() {
         dialog = buildThemeDialog()
+
+        binding.let {
+            it.viewModel = viewModel
+            it.executePendingBindings()
+
+            it.lifecycleOwner = this
+        }
     }
 
     private fun buildThemeDialog(): AlertDialog {
@@ -45,8 +64,7 @@ class SettingsActivity : BaseActivity() {
         style.apply {
             textColor = getColorByTheme(R.attr.titleTextColor)
             selectedTextColor = getColorByTheme(R.attr.colorAccent)
-            backgroundColor =
-                getColorByTheme(R.attr.colorPrimarySecondary2)
+            backgroundColor = getColorByTheme(R.attr.colorPrimarySecondary2)
         }
         return AlertDialog(
             getString(R.string.theme_title),
@@ -88,6 +106,6 @@ class SettingsActivity : BaseActivity() {
     }
 
     fun showThemes(view: View) {
-        dialog.show(this)
+        try { dialog.show(this) } catch (ex: IllegalStateException){}
     }
 }

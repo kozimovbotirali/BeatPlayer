@@ -17,6 +17,7 @@ import android.content.Context
 import android.os.SystemClock
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.crrl.beatplayer.R
@@ -25,15 +26,19 @@ import com.crrl.beatplayer.databinding.AlbumItemHeaderBinding
 import com.crrl.beatplayer.databinding.ArtistDetailItemBinding
 import com.crrl.beatplayer.extensions.deepEquals
 import com.crrl.beatplayer.extensions.inflateWithBinding
+import com.crrl.beatplayer.extensions.observe
+import com.crrl.beatplayer.extensions.setCustomColor
 import com.crrl.beatplayer.interfaces.ItemClickListener
 import com.crrl.beatplayer.models.Album
+import com.crrl.beatplayer.ui.viewmodels.MainViewModel
 import com.crrl.beatplayer.utils.GeneralUtils.dip2px
 import com.crrl.beatplayer.utils.GeneralUtils.screenWidth
+import com.crrl.beatplayer.utils.SettingsUtility
 
 private const val HEADER_TYPE = 0
 private const val ITEM_TYPE = 1
 
-class AlbumAdapter(private val context: Context?) :
+class AlbumAdapter(private val context: Context?, private val mainViewModel: MainViewModel) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var albumList: MutableList<Album> = mutableListOf()
@@ -152,9 +157,11 @@ class AlbumAdapter(private val context: Context?) :
         fun bind(albumCount: Int) {
             binding.apply {
                 this.albumCount = albumCount
+                viewModel = mainViewModel
+                executePendingBindings()
+
                 sortAlbum.setOnClickListener(this@ViewHolderAlbumHeader)
                 playAllAlbum.setOnClickListener(this@ViewHolderAlbumHeader)
-                executePendingBindings()
             }
         }
 

@@ -15,25 +15,42 @@ package com.crrl.beatplayer.ui.viewmodels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import com.crrl.beatplayer.models.Album
 import com.crrl.beatplayer.models.Artist
 import com.crrl.beatplayer.repository.ArtistsRepository
+import com.crrl.beatplayer.ui.viewmodels.base.CoroutineViewModel
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.withContext
 
-class ArtistViewModel(private val repository: ArtistsRepository) : ViewModel() {
+class ArtistViewModel(
+    private val repository: ArtistsRepository
+) : CoroutineViewModel(Main) {
 
-    private val artists: MutableLiveData<List<Artist>>? = MutableLiveData()
-
-    init {
-        update()
-    }
+    private val artistsData: MutableLiveData<List<Artist>> = MutableLiveData()
+    private val albumLiveData = MutableLiveData<List<Album>>()
 
     fun update() {
-        Thread {
-            artists!!.postValue(repository.getAllArtist())
-        }.start()
+        launch {
+            val artists = withContext(IO){
+                repository.getAllArtist()
+            }
+            artistsData.postValue(artists)
+        }
     }
 
-    fun getArtists(): LiveData<List<Artist>>? {
-        return artists
+    fun getArtists(): LiveData<List<Artist>> {
+        update()
+        return artistsData
+    }
+
+    fun getArtistAlbums(artistId: Long): LiveData<List<Album>> {
+        launch {
+            val albums = withContext(IO) {
+                repository.getAlbumsForArtist(artistId)
+            }
+            albumLiveData.postValue(albums)
+        }
+        return albumLiveData
     }
 }

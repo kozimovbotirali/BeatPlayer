@@ -26,25 +26,32 @@ import androidx.recyclerview.widget.SimpleItemAnimator
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.ActivitySelectSongBinding
 import com.crrl.beatplayer.extensions.delete
+import com.crrl.beatplayer.extensions.getColorByTheme
 import com.crrl.beatplayer.extensions.observe
+import com.crrl.beatplayer.extensions.setCustomColor
 import com.crrl.beatplayer.interfaces.ItemClickListener
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.ui.activities.base.BaseActivity
 import com.crrl.beatplayer.ui.adapters.SelectSongAdapter
+import com.crrl.beatplayer.ui.viewmodels.MainViewModel
 import com.crrl.beatplayer.ui.viewmodels.SongViewModel
 import com.crrl.beatplayer.utils.PlayerConstants.PLAY_LIST_DETAIL
 import com.google.gson.Gson
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
 
 class SelectSongActivity : BaseActivity(), ItemClickListener<Song> {
 
-    private val viewModel: SongViewModel by viewModel { parametersOf(this) }
-    private lateinit var binding: ActivitySelectSongBinding
     private lateinit var songAdapter: SelectSongAdapter
+    private lateinit var binding: ActivitySelectSongBinding
+
+    private val viewModel by inject<SongViewModel>()
+    private val mainViewModel by inject<MainViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        postponeEnterTransition()
         super.onCreate(savedInstanceState)
         init()
     }
@@ -68,14 +75,16 @@ class SelectSongActivity : BaseActivity(), ItemClickListener<Song> {
             }
         }
 
-        binding.let {
-            it.lifecycleOwner = this
-            it.viewModel = viewModel
-            it.executePendingBindings()
+        mainViewModel.getCurrentSong().observe(this){
+            songAdapter.notifyDataSetChanged()
         }
-    }
 
-    private fun updateView(songs: List<Song>) {
+        binding.let {
+            it.viewModel = viewModel
+            //it.executePendingBindings()
+
+            it.lifecycleOwner = this
+        }
     }
 
     private fun toggleSelect(position: Int, item: Song, select: Boolean) {

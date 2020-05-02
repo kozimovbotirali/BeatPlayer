@@ -13,20 +13,52 @@
 
 package com.crrl.beatplayer.utils;
 
+import android.net.Uri;
+
 import com.crrl.beatplayer.models.Song;
 import com.jagrosh.jlyrics.Lyrics;
 import com.jagrosh.jlyrics.LyricsClient;
 
+import org.jaudiotagger.audio.AudioFile;
+import org.jaudiotagger.audio.AudioFileIO;
+import org.jaudiotagger.audio.exceptions.CannotReadException;
+import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
+import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
+import org.jaudiotagger.tag.FieldKey;
+import org.jaudiotagger.tag.TagException;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 public class LyricsExtractor {
 
     public static String getLyric(Song song) {
+        String lyrics = getEmbeddedLyrics(song);
+        return lyrics == null ? getOnlineLyrics(song) : lyrics;
+    }
+
+    private static String getEmbeddedLyrics(Song song) {
+        StringBuilder lyrics = new StringBuilder();
+        Uri uri = Uri.parse(song.getPath());
+
+        File file = new File(Objects.requireNonNull(uri.getPath()));
+        try {
+            AudioFile audioFile = AudioFileIO.read(file);
+            lyrics.append(audioFile.getTag().getFirst(FieldKey.LYRICS));
+        } catch (CannotReadException | IOException | TagException
+                | ReadOnlyFileException | InvalidAudioFrameException ignored) {
+        }
+        return lyrics.toString().isEmpty() ? null : lyrics.toString();
+    }
+
+    private static String getOnlineLyrics(Song song) {
         LyricsClient client = new LyricsClient();
         Lyrics lyrics = null;
         try {
             lyrics = client.getLyrics(song.getTitle() + " - " + song.getArtist().replace(";", ",") + " " + song.getAlbum()).get();
-            if (lyrics == null) {
+            /*if (lyrics == null) {
                 lyrics = client.getLyrics(song.getTitle() + " - " + song.getArtist().split("[;,]")[0] + " " + song.getAlbum()).get();
             }
             if (lyrics == null) {
@@ -34,7 +66,7 @@ public class LyricsExtractor {
             }
             if (lyrics == null) {
                 lyrics = client.getLyrics(song.getTitle() + " - " + song.getArtist().split("[;,]")[0]).get();
-            }
+            }*/
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }

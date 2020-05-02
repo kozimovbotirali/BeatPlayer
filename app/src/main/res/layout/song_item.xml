@@ -18,13 +18,16 @@
         <variable
             name="song"
             type="com.crrl.beatplayer.models.Song" />
+        <variable
+            name="position"
+            type="Integer" />
     </data>
 
     <RelativeLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="70dp"
-        android:background="@drawable/list_item_ripple"
+        app:position="@{position}"
         android:clickable="true"
         android:focusable="true">
 
@@ -90,6 +93,7 @@
                     android:textSize="@dimen/sub_title_text_size" />
 
                 <TextView
+                    android:id="@+id/sep"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
@@ -119,9 +123,8 @@
             android:layout_centerVertical="true"
             android:layout_marginEnd="@dimen/margin_10"
             android:layout_toStartOf="@+id/item_menu"
-            app:visible="@{song.selected}"
-            app:animate="@{false}"
-            android:tint="@color/white" />
+            android:visibility="gone"
+            android:tint="?colorAccent" />
 
         <ImageButton
             android:id="@+id/item_menu"

@@ -16,6 +16,7 @@ package com.crrl.beatplayer.models
 import android.content.ContentUris
 import android.database.Cursor
 import com.crrl.beatplayer.extensions.fix
+import com.crrl.beatplayer.repository.FavoritesRepository.Companion.COLUMN_FAVORITE
 import com.crrl.beatplayer.repository.PlaylistRepository.Companion.COLUMN_ALBUM
 import com.crrl.beatplayer.repository.PlaylistRepository.Companion.COLUMN_ALBUM_ID
 import com.crrl.beatplayer.repository.PlaylistRepository.Companion.COLUMN_ARTIST
@@ -82,7 +83,7 @@ data class Song(
     }
 
 
-    fun columns(): Array<String> {
+    fun columns(isPlaylist: Boolean = true): Array<String> {
         return arrayOf(
             COLUMN_ID,
             COLUMN_TITLE,
@@ -92,7 +93,7 @@ data class Song(
             COLUMN_TRACK,
             COLUMN_ARTIST_ID,
             COLUMN_ALBUM_ID,
-            COLUMN_PLAYLIST
+            if(isPlaylist) COLUMN_PLAYLIST else COLUMN_FAVORITE
         )
     }
 

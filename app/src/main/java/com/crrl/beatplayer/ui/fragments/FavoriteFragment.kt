@@ -30,17 +30,22 @@ import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.viewmodels.FavoriteViewModel
 import com.crrl.beatplayer.utils.GeneralUtils
 import com.crrl.beatplayer.utils.PlayerConstants
+import com.crrl.beatplayer.utils.PlayerConstants.ALBUM_DETAIL
 import com.crrl.beatplayer.utils.PlayerConstants.ALBUM_KEY
 import com.crrl.beatplayer.utils.PlayerConstants.ALBUM_TYPE
+import com.crrl.beatplayer.utils.PlayerConstants.ARTIST_DETAIL
 import com.crrl.beatplayer.utils.PlayerConstants.ARTIST_TYPE
 import com.crrl.beatplayer.utils.PlayerConstants.FAVORITE_KEY
+import com.crrl.beatplayer.utils.PlayerConstants.FAVORITE_NAME
+import com.crrl.beatplayer.utils.PlayerConstants.FOLDER_KEY
 import com.crrl.beatplayer.utils.PlayerConstants.FOLDER_TYPE
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
 class FavoriteFragment : BaseFragment<Favorite>() {
 
-    private val viewModel: FavoriteViewModel by viewModel { parametersOf(mainViewModel.favoriteRepository) }
+    private val viewModel by inject<FavoriteViewModel>()
     private lateinit var binding: FragmentFavoriteBinding
     private lateinit var favoriteAdapter: FavoriteAdapter
 
@@ -92,7 +97,7 @@ class FavoriteFragment : BaseFragment<Favorite>() {
                 activity!!.addFragment(
                     R.id.nav_host_fragment,
                     ArtistDetailFragment(),
-                    PlayerConstants.ARTIST_DETAIL,
+                    ARTIST_DETAIL,
                     true,
                     extras
                 )
@@ -102,17 +107,18 @@ class FavoriteFragment : BaseFragment<Favorite>() {
                 activity!!.addFragment(
                     R.id.nav_host_fragment,
                     AlbumDetailFragment(),
-                    PlayerConstants.ALBUM_DETAIL,
+                    ALBUM_DETAIL,
                     true,
                     extras
                 )
             }
             FOLDER_TYPE -> {
-                extras.putLong(PlayerConstants.FOLDER_KEY, item.id)
+                extras.putString(FOLDER_KEY, item.artist)
+                extras.putString(FAVORITE_NAME, item.title)
                 activity!!.addFragment(
                     R.id.nav_host_fragment,
                     FolderDetailFragment(),
-                    PlayerConstants.FOLDER_KEY,
+                    FOLDER_KEY,
                     true,
                     extras
                 )

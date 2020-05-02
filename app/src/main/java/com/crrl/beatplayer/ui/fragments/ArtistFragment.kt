@@ -35,12 +35,13 @@ import com.crrl.beatplayer.utils.GeneralUtils
 import com.crrl.beatplayer.utils.PlayerConstants
 import com.crrl.beatplayer.utils.SettingsUtility
 import com.crrl.beatplayer.utils.SortModes
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
 class ArtistFragment : BaseFragment<Artist>() {
 
-    private val viewModel: ArtistViewModel by viewModel { parametersOf(mainViewModel.artistRepository) }
+    private val viewModel by inject<ArtistViewModel>()
     private lateinit var binding: FragmentArtistBinding
     private lateinit var artistAdapter: ArtistAdapter
 
@@ -60,7 +61,7 @@ class ArtistFragment : BaseFragment<Artist>() {
     private fun init() {
         val sc = if (GeneralUtils.getRotation(safeActivity) == GeneralUtils.VERTICAL) 2 else 5
 
-        artistAdapter = ArtistAdapter(context).apply {
+        artistAdapter = ArtistAdapter(context, mainViewModel).apply {
             showHeader = true
             itemClickListener = this@ArtistFragment
             spanCount = sc
@@ -79,6 +80,20 @@ class ArtistFragment : BaseFragment<Artist>() {
             }
         }
 
+        viewModel.getArtists().observe(this) { list ->
+            artistAdapter.updateDataSet(list)
+        }
+
+        binding.let {
+            it.viewModel = viewModel
+            it.lifecycleOwner = this
+            it.executePendingBindings()
+        }
+
+        createDialog()
+    }
+
+    private fun createDialog(){
         dialog = buildSortModesDialog(listOf(
             AlertItemAction(
                 context!!.getString(R.string.sort_default),
@@ -88,7 +103,6 @@ class ArtistFragment : BaseFragment<Artist>() {
                 action.selected = true
                 SettingsUtility.getInstance(context).artistSortOrder =
                     SortModes.ArtistModes.ARTIST_DEFAULT
-                reloadAdapter()
             },
             AlertItemAction(
                 context!!.getString(R.string.sort_az),
@@ -98,7 +112,6 @@ class ArtistFragment : BaseFragment<Artist>() {
                 action.selected = true
                 SettingsUtility.getInstance(context).artistSortOrder =
                     SortModes.ArtistModes.ARTIST_A_Z
-                reloadAdapter()
             },
             AlertItemAction(
                 context!!.getString(R.string.sort_za),
@@ -108,23 +121,8 @@ class ArtistFragment : BaseFragment<Artist>() {
                 action.selected = true
                 SettingsUtility.getInstance(context).artistSortOrder =
                     SortModes.ArtistModes.ARTIST_Z_A
-                reloadAdapter()
             }
         ))
-
-        viewModel.getArtists()!!.observe(this) { list ->
-            artistAdapter.updateDataSet(list)
-        }
-
-        binding.let {
-            it.viewModel = viewModel
-            it.lifecycleOwner = this
-            it.executePendingBindings()
-        }
-    }
-
-    private fun reloadAdapter() {
-        viewModel.update()
     }
 
     override fun onItemClick(view: View, position: Int, item: Artist) {

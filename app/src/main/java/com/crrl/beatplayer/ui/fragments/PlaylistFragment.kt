@@ -27,13 +27,17 @@ import com.crrl.beatplayer.models.Playlist
 import com.crrl.beatplayer.repository.PlaylistRepository
 import com.crrl.beatplayer.ui.adapters.PlaylistAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
+import com.crrl.beatplayer.ui.viewmodels.PlaylistViewModel
 import com.crrl.beatplayer.utils.PlayerConstants.PLAY_LIST_DETAIL
+import org.koin.android.ext.android.inject
 
 
 class PlaylistFragment : BaseFragment<Playlist>() {
 
     private lateinit var playlistAdapter: PlaylistAdapter
     private lateinit var binding: FragmentPlaylistBinding
+
+    private val playlistViewModel by inject<PlaylistViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -71,16 +75,19 @@ class PlaylistFragment : BaseFragment<Playlist>() {
             })
         }
 
-        binding.createPlayList.setOnClickListener { createDialog() }
-
-        reloadAdapter()
+        playlistViewModel.playLists().observe(this) {
+            playlistAdapter.updateDataSet(it)
+        }
 
         binding.let {
-            it.viewModel = mainViewModel
+            it.viewModel = playlistViewModel
             it.lifecycleOwner = this
             it.executePendingBindings()
+
+            it.createPlayList.setOnClickListener { createDialog() }
         }
     }
+
 
     override fun onItemClick(view: View, position: Int, item: Playlist) {
         val extras = Bundle()
@@ -112,11 +119,5 @@ class PlaylistFragment : BaseFragment<Playlist>() {
                 clickListener = View.OnClickListener {
                     onPopupMenuClick(view, position, item, itemList)
                 })
-    }
-
-    private fun reloadAdapter() {
-        mainViewModel.playLists().observe(this) {
-            playlistAdapter.updateDataSet(it)
-        }
     }
 }

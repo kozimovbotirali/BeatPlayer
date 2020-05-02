@@ -82,7 +82,7 @@
     <string name="done">Done</string>
     <string name="no_albums">No Albums</string>
     <string name="no_favorites">No Favorite Music</string>
-    <string name="favorites_tip">Tap the heart icon on \"Now Playing, Albums, Artists or Folders\" views. Your favorite music will be listed here.</string>
+    <string name="favorites_tip">Tap the heart icon on \"Now Playing, Albums, Artists or Folders\". Your favorite music will be listed here.</string>
     <string name="favorite_music">Favorite Music</string>
     <string name="no_artists">No Artists</string>
     <string name="song_added_success">The song was added successfully.</string>
@@ -92,9 +92,14 @@
     <string name="retry">Retry</string>
     <string name="song_no_fav_ok">Removed from your favorite music.</string>
     <string name="song_fav_ok">Added to your favorite music.</string>
-    <string name="no_fav_ok">%s Removed from your favorite music.</string>
-    <string name="fav_ok">%s Added to your favorite music.</string>
+    <string name="album_no_fav_ok">Album removed from favorites.</string>
+    <string name="album_fav_ok">Album added to favorites.</string>
+    <string name="folder_no_fav_ok">Folder removed from favorites.</string>
+    <string name="folder_fav_ok">Folder added to your favorites.</string>
+    <string name="artist_no_fav_ok">Artist removed from favorites.</string>
+    <string name="artist_fav_ok">Artist added to your favorites.</string>
     <string name="playlist_name_error">Playlist name already exists.</string>
+    <string name="settings_theme_description">Auto, Light, Dark</string>
 
     <plurals name="number_of_songs">
         <item quantity="zero">%d Tracks</item>

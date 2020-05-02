@@ -13,18 +13,21 @@
 
 package com.crrl.beatplayer.ui.adapters
 
+import android.app.Activity
 import android.content.Context
+import android.content.res.ColorStateList
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.SongItemBinding
 import com.crrl.beatplayer.databinding.SongItemHeaderBinding
-import com.crrl.beatplayer.extensions.deepEquals
-import com.crrl.beatplayer.extensions.inflateWithBinding
+import com.crrl.beatplayer.extensions.*
 import com.crrl.beatplayer.interfaces.ItemClickListener
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.ui.viewmodels.MainViewModel
+import com.crrl.beatplayer.utils.SettingsUtility
 
 private const val HEADER_TYPE = 0
 private const val ITEM_TYPE = 1
@@ -32,9 +35,10 @@ private const val ITEM_TYPE = 1
 class SongAdapter(private val context: Context?, private val mainViewModel: MainViewModel) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    var songList: MutableList<Song> = mutableListOf()
-    var showHeader: Boolean = false
-    var isPlaylist: Boolean = false
+    var songList = mutableListOf<Song>()
+    var showHeader = false
+    var isPlaylist = false
+    var isAlbumDetail = false
     var itemClickListener: ItemClickListener<Song>? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -59,7 +63,7 @@ class SongAdapter(private val context: Context?, private val mainViewModel: Main
         val currentSong = if (!songList.isNullOrEmpty()) getItem(position) else Song()
         when (getItemViewType(position)) {
             HEADER_TYPE -> {
-                (holder as ViewHolderSongHeader).bind(songList.size, isPlaylist)
+                (holder as ViewHolderSongHeader).bind(songList.size)
             }
             ITEM_TYPE -> {
                 (holder as ViewHolderSong).bind(currentSong!!)
@@ -93,6 +97,14 @@ class SongAdapter(private val context: Context?, private val mainViewModel: Main
         }
     }
 
+    fun getPosition(position: Int): Int{
+        return if(showHeader){
+            if(position == 0){
+                position
+            } else position - 1
+        } else position
+    }
+
     fun updateDataSet(newList: List<Song>) {
         if (!songList.deepEquals(newList)) {
             songList = newList.toMutableList()
@@ -106,9 +118,33 @@ class SongAdapter(private val context: Context?, private val mainViewModel: Main
         fun bind(song: Song) {
             binding.apply {
                 this.song = song
+                position = adapterPosition
+                // TODO show animation only if the song is playing and selected.
+                if(songList.isNotEmpty())
+                    if(mainViewModel.getCurrentSong().value!!.compare(song)){
+                        val color = (context as Activity).getColorByTheme(R.attr.colorAccent)
+                        song.isSelected = true
+                        title.setCustomColor(color)
+                        title.isSelected = true
+                        artist.setCustomColor(color, opacity = true)
+                        sep.setCustomColor(color, opacity = true)
+                        album.setCustomColor(color, opacity = true)
+                        //visualizer.show()
+                    } else {
+                        song.isSelected = false
+                        context as Activity
+                        val color = context.getColorByTheme(R.attr.subTitleTextColor)
+                        title.setCustomColor(context.getColorByTheme(R.attr.titleTextColor))
+                        artist.setCustomColor(color)
+                        sep.setCustomColor(color)
+                        album.setCustomColor(color)
+                        //visualizer.hide()
+                    }
+                songList[getPosition(adapterPosition)] = song
+                executePendingBindings()
+
                 container.setOnClickListener(this@ViewHolderSong)
                 itemMenu.setOnClickListener(this@ViewHolderSong)
-                executePendingBindings()
             }
         }
 
@@ -133,10 +169,15 @@ class SongAdapter(private val context: Context?, private val mainViewModel: Main
     inner class ViewHolderSongHeader(private val binding: SongItemHeaderBinding) :
         RecyclerView.ViewHolder(binding.root), View.OnClickListener {
 
-        fun bind(songCount: Int, isPlaylist: Boolean) {
+        fun bind(songCount: Int) {
             binding.apply {
                 this.songCount = songCount
-                this.isPlaylist = isPlaylist
+                viewModel = mainViewModel
+                if(isAlbumDetail) sortSong.hide()
+                if(isPlaylist) {
+                    sortSong.hide()
+                    songSize.hide()
+                }
                 executePendingBindings()
 
                 shuffleSong.setOnClickListener(this@ViewHolderSongHeader)

@@ -21,10 +21,13 @@ import androidx.viewpager.widget.ViewPager
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentLibraryBinding
 import com.crrl.beatplayer.extensions.inflateWithBinding
+import com.crrl.beatplayer.extensions.observe
 import com.crrl.beatplayer.extensions.safeActivity
+import com.crrl.beatplayer.extensions.setCustomColor
 import com.crrl.beatplayer.ui.activities.MainActivity
 import com.crrl.beatplayer.ui.adapters.ViewPagerAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseSongDetailFragment
+import com.crrl.beatplayer.ui.transformers.ZoomOutPageTransformer
 import com.crrl.beatplayer.utils.SettingsUtility
 
 
@@ -44,9 +47,11 @@ class LibraryFragment : BaseSongDetailFragment() {
         super.onActivityCreated(savedInstanceState)
         if ((activity as MainActivity).isPermissionsGranted()) init()
         binding.apply {
-            lifecycleOwner = this@LibraryFragment
+            viewModel = mainViewModel
             isPermissionsGranted = (safeActivity as MainActivity).isPermissionsGranted()
             executePendingBindings()
+
+            lifecycleOwner = this@LibraryFragment
         }
     }
 
@@ -54,7 +59,6 @@ class LibraryFragment : BaseSongDetailFragment() {
 
         val listSortModeAdapter = ViewPagerAdapter(safeActivity.supportFragmentManager)
 
-        /* TODO Improve Fragments initial load to avoid frame skip when page scrolls */
         listSortModeAdapter.apply {
             addFragment(SongFragment(), getString(R.string.songs))
             addFragment(AlbumFragment(), getString(R.string.albums))

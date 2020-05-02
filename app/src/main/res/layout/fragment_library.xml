@@ -19,6 +19,10 @@
         <import type="android.view.View" />
 
         <variable
+            name="viewModel"
+            type="com.crrl.beatplayer.ui.viewmodels.MainViewModel" />
+
+        <variable
             name="isPermissionsGranted"
             type="Boolean" />
     </data>
@@ -27,7 +31,7 @@
         android:id="@+id/main_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?colorPrimary">
+        android:clipToPadding="false">
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/app_bar"
@@ -36,12 +40,82 @@
             android:background="@color/transparent"
             app:elevation="0dp">
 
-            <include layout="@layout/app_header" />
+            <com.google.android.material.appbar.CollapsingToolbarLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:contentScrim="@color/transparent"
+                android:layout_marginTop="@dimen/global_padding_top"
+                app:expandedTitleGravity="top"
+                app:layout_scrollFlags="scroll|enterAlways">
+
+                <RelativeLayout
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="@dimen/margin_6">
+
+                    <ImageView
+                        android:id="@+id/icon"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_alignTop="@+id/option_selected"
+                        android:layout_alignBottom="@+id/option_selected"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="@dimen/margin_12"
+                        android:scaleX="2"
+                        android:scaleY="2"
+                        android:src="@drawable/ic_empty_cover"
+                        android:tint="?subTitleTextColor" />
+
+                    <TextView
+                        android:id="@+id/option_selected"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="@dimen/margin_6"
+                        android:layout_toStartOf="@+id/search"
+                        android:layout_toEndOf="@id/icon"
+                        android:fontFamily="@font/product_sans_bold"
+                        android:maxLines="1"
+                        android:text="@string/app_name"
+                        android:textColor="?subTitleTextColor"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
+
+                    <ImageButton
+                        android:id="@+id/search"
+                        android:layout_width="@dimen/btn_size_header"
+                        android:layout_height="@dimen/btn_size_header"
+                        android:layout_marginStart="@dimen/margin_10"
+                        android:layout_marginEnd="@dimen/margin_10"
+                        android:layout_toStartOf="@id/menu"
+                        android:background="@drawable/btn_ripple_header_with_background"
+                        android:contentDescription="@string/cover"
+                        android:onClick="search"
+                        android:src="@drawable/ic_search"
+                        android:tint="?colorAccent"/>
+
+
+                    <ImageButton
+                        android:id="@+id/menu"
+                        android:layout_width="@dimen/btn_size_header"
+                        android:layout_height="@dimen/btn_size_header"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="@dimen/margin_10"
+                        android:background="@drawable/btn_ripple_header_with_background"
+                        android:contentDescription="@string/cover"
+                        android:onClick="menu"
+                        android:src="@drawable/ic_more"
+                        android:tint="?colorAccent"/>
+                </RelativeLayout>
+            </com.google.android.material.appbar.CollapsingToolbarLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_12">
+                android:layout_marginTop="@dimen/global_padding_top"
+                app:layout_collapseMode="pin">
 
                 <com.google.android.material.tabs.TabLayout
                     android:id="@+id/tabs_container"
@@ -54,7 +128,7 @@
                     app:tabIndicatorColor="?colorAccent"
                     app:tabIndicatorFullWidth="false"
                     app:tabIndicatorHeight="4dp"
-                    app:tabMode="scrollable"
+                    app:tabMode="auto"
                     app:tabRippleColor="@color/transparent"
                     app:tabSelectedTextColor="?colorAccent"
                     app:tabTextAppearance="@style/TabLayoutTextAppearance" />
@@ -74,11 +148,11 @@
             android:layout_width="wrap_content"
             android:layout_height="30dp"
             android:layout_gravity="center"
-            android:textStyle="bold"
+            android:elevation="1dp"
             android:text="@string/no_permission"
             android:textColor="?titleTextColor"
             android:textSize="@dimen/text_size_18"
-            android:elevation="1dp"
+            android:textStyle="bold"
             android:visibility="@{isPermissionsGranted ? View.GONE : View.VISIBLE}" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

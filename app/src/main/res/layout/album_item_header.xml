@@ -11,13 +11,17 @@
   ~ limitations under the License.
   -->
 
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
         <variable
             name="albumCount"
             type="Integer" />
+        <variable
+            name="viewModel"
+            type="com.crrl.beatplayer.ui.viewmodels.MainViewModel" />
     </data>
 
     <RelativeLayout
@@ -42,7 +46,7 @@
                 android:background="@drawable/btn_ripple_header_with_background"
                 android:contentDescription="@string/cover"
                 android:src="@drawable/ic_sort"
-                android:tint="?subTitleTextColor" />
+                android:tint="?colorAccent"/>
 
             <TextView
                 android:id="@+id/song_size"

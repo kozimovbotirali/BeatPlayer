@@ -15,6 +15,7 @@ package com.crrl.beatplayer.ui.widgets
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.util.TypedValue
@@ -90,5 +91,9 @@ class MusicVisualizer : View {
         } else if (visibility == GONE) {
             removeCallbacks(animateView)
         }
+    }
+
+    fun setTint(color: Int){
+        paint.color = color
     }
 }

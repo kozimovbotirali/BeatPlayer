@@ -28,12 +28,15 @@ import com.crrl.beatplayer.ui.adapters.FolderAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.viewmodels.FolderViewModel
 import com.crrl.beatplayer.utils.PlayerConstants
+import com.crrl.beatplayer.utils.PlayerConstants.FAVORITE_NAME
+import com.crrl.beatplayer.utils.PlayerConstants.FOLDER_KEY
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
 class FolderFragment : BaseFragment<Folder>() {
 
-    private val viewModel: FolderViewModel by viewModel { parametersOf(context) }
+    private val viewModel by inject<FolderViewModel>()
     private lateinit var folderAdapter: FolderAdapter
     private lateinit var binding: FragmentFolderBinding
 
@@ -74,7 +77,8 @@ class FolderFragment : BaseFragment<Folder>() {
 
     override fun onItemClick(view: View, position: Int, item: Folder) {
         val extras = Bundle()
-        extras.putLong(PlayerConstants.FOLDER_KEY, item.id)
+        extras.putString(FOLDER_KEY, item.realPath)
+        extras.putString(FAVORITE_NAME, item.name)
         activity!!.addFragment(
             R.id.nav_host_fragment,
             FolderDetailFragment(),

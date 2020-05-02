@@ -24,19 +24,24 @@ import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentPlaylistDetailBinding
 import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.extensions.observe
+import com.crrl.beatplayer.extensions.setCustomColor
 import com.crrl.beatplayer.extensions.toIDList
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.repository.PlaylistRepository
 import com.crrl.beatplayer.ui.activities.MainActivity
 import com.crrl.beatplayer.ui.adapters.SongAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
+import com.crrl.beatplayer.ui.viewmodels.PlaylistViewModel
 import com.crrl.beatplayer.utils.PlayerConstants.PLAY_LIST_DETAIL
+import org.koin.android.ext.android.inject
 
 
 class PlaylistDetailFragment : BaseFragment<Song>() {
 
     lateinit var binding: FragmentPlaylistDetailBinding
     private lateinit var songAdapter: SongAdapter
+
+    private val playlistViewModel by inject<PlaylistViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -56,33 +61,40 @@ class PlaylistDetailFragment : BaseFragment<Song>() {
 
         binding.playlist = PlaylistRepository(context).getPlaylist(id)
 
-        // Set up adapter
-        songAdapter = SongAdapter(activity, (activity as MainActivity).viewModel).apply {
+        songAdapter = SongAdapter(activity, mainViewModel).apply {
             showHeader = true
-            isPlaylist = true
+            isAlbumDetail = true
             itemClickListener = this@PlaylistDetailFragment
         }
 
-        // Set up RecyclerView
         binding.songList.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = songAdapter
-            (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         }
 
-        mainViewModel.songsByPlayList(binding.playlist!!.id).observe(this) {
+        playlistViewModel.getSongs(binding.playlist!!.id).observe(this) {
             songAdapter.updateDataSet(it)
         }
 
+        mainViewModel.getLastSong().observe(this){ song ->
+            val position = songAdapter.songList.indexOfFirst { it.compare(song)} + 1
+            songAdapter.notifyItemChanged(position)
+        }
+
+        mainViewModel.getCurrentSong().observe(this){
+            val position = songAdapter.songList.indexOf(it) + 1
+            songAdapter.notifyItemChanged(position)
+        }
+
         binding.let {
-            it.viewModel = mainViewModel
+            it.viewModel = playlistViewModel
             it.lifecycleOwner = this
             it.executePendingBindings()
         }
     }
 
     override fun removeFromList(playListId: Long, item: Song?) {
-        mainViewModel.playlistRepository.removeFromPlaylist(playListId, item!!.id)
+        playlistViewModel.remove(playListId, item!!.id)
     }
 
     override fun onItemClick(view: View, position: Int, item: Song) {
@@ -103,7 +115,7 @@ class PlaylistDetailFragment : BaseFragment<Song>() {
     override fun onPopupMenuClick(view: View, position: Int, item: Song, itemList: List<Song>) {
         super.onPopupMenuClick(view, position, item, itemList)
         powerMenu!!.showAsAnchorRightTop(view)
-        mainViewModel.playLists().observe(this) {
+        playlistViewModel.playLists().observe(this) {
             buildPlaylistMenu(it, item)
         }
     }

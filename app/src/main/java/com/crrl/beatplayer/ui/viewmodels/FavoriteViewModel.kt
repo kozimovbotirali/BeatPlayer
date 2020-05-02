@@ -16,43 +16,64 @@ package com.crrl.beatplayer.ui.viewmodels
 import android.database.sqlite.SQLiteException
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.crrl.beatplayer.models.Favorite
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.repository.FavoritesRepository
+import com.crrl.beatplayer.ui.viewmodels.base.CoroutineViewModel
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.withContext
 
-class FavoriteViewModel(private val repository: FavoritesRepository) : ViewModel() {
+class FavoriteViewModel(
+    private val repository: FavoritesRepository
+) : CoroutineViewModel(Main) {
 
-    private val songs: MutableLiveData<List<Song>> = MutableLiveData()
-    private val favorites: MutableLiveData<List<Favorite>> = MutableLiveData()
+    private val favoriteListData = MutableLiveData<List<Favorite>>()
+    private val songListData = MutableLiveData<List<Song>>()
+
+    fun deleteSong(id: Long){
+        repository.deleteFavorites(longArrayOf(id))
+    }
 
     fun songListFavorite(idFavorites: Long): LiveData<List<Song>> {
-        update(idFavorites)
-        return songs
+        launch {
+            val songs = withContext(IO) {
+                repository.getSongsForFavorite(idFavorites)
+            }
+            songListData.postValue(songs)
+        }
+        return songListData
     }
 
     fun getFavorites(): LiveData<List<Favorite>> {
-        update()
-        return favorites
-    }
-
-    fun update(idFavorites: Long) {
-        Thread {
-            songs.postValue(repository.getSongsForFavorite(idFavorites))
-        }.start()
-    }
-
-    fun update() {
-        Thread {
-            favorites.postValue(
+        launch {
+            val favorites = withContext(IO) {
                 try {
                     repository.getFavorites()
                 } catch (ex: SQLiteException) {
-                    null
+                    emptyList<Favorite>()
                 } catch (ex: IllegalStateException) {
-                    null
+                    emptyList<Favorite>()
                 }
-            )
-        }.start()
+            }
+            favoriteListData.postValue(favorites)
+        }
+        return favoriteListData
+    }
+
+    fun getFavorite(id: Long): Favorite {
+        return repository.getFavorite(id)
+    }
+
+    fun deleteFavorites(ids: LongArray) {
+        repository.deleteFavorites(ids)
+    }
+
+    fun addToFavorite(favoriteId: Long, songs: List<Song>): Int {
+        return repository.addSongByFavorite(favoriteId, songs)
+    }
+
+    fun remove(favoriteId: Long, ids: LongArray) {
+        repository.deleteSongByFavorite(favoriteId, ids)
     }
 }

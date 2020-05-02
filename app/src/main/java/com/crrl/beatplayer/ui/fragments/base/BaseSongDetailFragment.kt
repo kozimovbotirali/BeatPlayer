@@ -17,6 +17,7 @@ import android.os.Bundle
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.models.MediaItem
 import com.crrl.beatplayer.ui.activities.MainActivity
+import com.crrl.beatplayer.ui.fragments.LyricFragment
 import com.crrl.beatplayer.ui.fragments.SongDetailFragment
 
 open class BaseSongDetailFragment : BaseFragment<MediaItem>() {
@@ -39,7 +40,8 @@ open class BaseSongDetailFragment : BaseFragment<MediaItem>() {
 
     private fun showHideBottomSheet() {
         val activity = activity as MainActivity
-        if (activity.supportFragmentManager.findFragmentById(R.id.nav_host_fragment) is SongDetailFragment) {
+        val fragment = activity.supportFragmentManager.findFragmentById(R.id.nav_host_fragment)
+        if (fragment is SongDetailFragment || fragment is LyricFragment) {
             activity.hideMiniPlayer()
         } else {
             activity.showMiniPlayer()

@@ -35,13 +35,12 @@ import com.crrl.beatplayer.utils.SettingsUtility
 import com.github.florent37.kotlin.pleaseanimate.please
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_SHORT
 import com.google.gson.Gson
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
+import org.koin.android.ext.android.inject
 
 
 class MainActivity : BaseActivity() {
 
-    val viewModel: MainViewModel by viewModel { parametersOf(this) }
+    val viewModel by inject<MainViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,9 +50,6 @@ class MainActivity : BaseActivity() {
     private fun init(savedInstanceState: Bundle?) {
         viewModel.binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
-        viewModel.getCurrentSong().observe(this) {
-            updateView(it)
-        }
         viewModel.getCurrentSongList().observe(this) {
             viewModel.musicService.updateData(it)
         }
@@ -64,15 +60,16 @@ class MainActivity : BaseActivity() {
                 LibraryFragment(),
                 PlayerConstants.LIBRARY
             )
-            handler(150) {
+            Handler().postDelayed({
                 viewModel.update(SettingsUtility.getInstance(this).currentSongSelected.toSong())
-            }
+            }, 200)
         }
 
         viewModel.binding.let {
             it.viewModel = viewModel
-            it.lifecycleOwner = this
             it.executePendingBindings()
+
+            it.lifecycleOwner = this
         }
 
         viewModel.binding.title.isSelected = true
@@ -83,12 +80,9 @@ class MainActivity : BaseActivity() {
                 if (fragment == null) {
                     showMiniPlayer()
                 }
+                updateView(it)
             }
         }
-    }
-
-    private fun handler(duration: Long, callback: () -> Unit) {
-        Handler().postDelayed({ callback() }, duration)
     }
 
     fun onSongLyricClick(v: View) {
@@ -203,7 +197,7 @@ class MainActivity : BaseActivity() {
             val resp = favoritesRepository.deleteSongByFavorite(FAVORITE_ID, longArrayOf(song.id))
             showSnackBar(v, resp, 0)
         } else {
-            val resp = favoritesRepository.addSongByFavorite(FAVORITE_ID, longArrayOf(song.id))
+            val resp = favoritesRepository.addSongByFavorite(FAVORITE_ID, listOf(song))
             showSnackBar(v, resp, 1)
         }
     }

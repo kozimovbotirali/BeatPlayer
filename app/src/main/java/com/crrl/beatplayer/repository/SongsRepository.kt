@@ -33,17 +33,10 @@ interface SongsRepositoryInterface {
     fun deleteTracks(ids: LongArray): Int
 }
 
-class SongsRepository() : SongsRepositoryInterface {
+class SongsRepository(private val context: Context?) : SongsRepositoryInterface {
 
-    private lateinit var contentResolver: ContentResolver
-    private lateinit var settingsUtility: SettingsUtility
-    private lateinit var context: Context
-
-    constructor(context: Context?) : this() {
-        contentResolver = context!!.contentResolver
-        this.context = context
-        settingsUtility = SettingsUtility.getInstance(context)
-    }
+    private val contentResolver = context!!.contentResolver
+    private val settingsUtility = SettingsUtility.getInstance(context)
 
     override fun loadSongs(): List<Song> {
         return makeSongCursor(null, null)
@@ -114,7 +107,7 @@ class SongsRepository() : SongsRepositoryInterface {
                     if (f.exists())
                         if (!f.delete())
                             if (!f.canonicalFile.delete())
-                                if (!context.deleteFile(f.name)) {
+                                if (!context!!.deleteFile(f.name)) {
                                     deleted--
                                 }
                 } catch (_: SecurityException) {

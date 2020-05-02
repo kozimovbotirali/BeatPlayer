@@ -24,6 +24,8 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
+import static com.crrl.beatplayer.utils.PlayerConstants.AUTO_THEME;
+
 public final class SettingsUtility {
 
     private static final String SHARED_PREFERENCES_FILE_NAME = "configs";
@@ -106,7 +108,7 @@ public final class SettingsUtility {
     }
 
     public String getCurrentTheme() {
-        return sPreferences.getString(CURRENT_THEME_KEY, PlayerConstants.AUTO_THEME);
+        return sPreferences.getString(CURRENT_THEME_KEY, AUTO_THEME);
     }
 
     public void setCurrentTheme(String value) {
@@ -119,14 +121,6 @@ public final class SettingsUtility {
 
     public void setAlbumSongSortOrder(String value) {
         setPreference(ALBUM_SONG_SORT_ORDER_KEY, value);
-    }
-
-    public int getCurrentColorAccent() {
-        return sPreferences.getInt(CURRENT_COLOR_ACCENT_KEY, Color.parseColor("#7874D1"));
-    }
-
-    public void setCurrentColorAccent(int value) {
-        setPreference(CURRENT_COLOR_ACCENT_KEY, value);
     }
 
     public String getCurrentSongSelected() {

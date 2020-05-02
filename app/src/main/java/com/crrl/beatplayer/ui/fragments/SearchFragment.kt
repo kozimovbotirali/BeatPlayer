@@ -38,12 +38,14 @@ import com.crrl.beatplayer.ui.adapters.AlbumAdapter
 import com.crrl.beatplayer.ui.adapters.ArtistAdapter
 import com.crrl.beatplayer.ui.adapters.SongAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
+import com.crrl.beatplayer.ui.viewmodels.PlaylistViewModel
+import com.crrl.beatplayer.ui.viewmodels.SearchViewModel
 import com.crrl.beatplayer.utils.GeneralUtils
 import com.crrl.beatplayer.utils.GeneralUtils.toggleShowKeyBoard
 import com.crrl.beatplayer.utils.PlayerConstants
 import kotlinx.android.synthetic.main.fragment_search.view.*
+import org.koin.android.ext.android.inject
 
-@Suppress("UNCHECKED_CAST")
 class SearchFragment : BaseFragment<MediaItem>(), TextWatcher {
 
     private lateinit var binding: FragmentSearchBinding
@@ -51,6 +53,9 @@ class SearchFragment : BaseFragment<MediaItem>(), TextWatcher {
     private lateinit var songAdapter: SongAdapter
     private lateinit var albumAdapter: AlbumAdapter
     private lateinit var artistAdapter: ArtistAdapter
+
+    private val searchViewModel by inject<SearchViewModel>()
+    private val playlistViewModel by inject<PlaylistViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -66,19 +71,20 @@ class SearchFragment : BaseFragment<MediaItem>(), TextWatcher {
         init(view)
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun init(view: View) {
         val sc = if (GeneralUtils.getRotation(safeActivity) == GeneralUtils.VERTICAL) 3 else 5
 
-        songAdapter = SongAdapter(activity, (activity as MainActivity).viewModel).apply {
+        songAdapter = SongAdapter(activity, mainViewModel).apply {
             itemClickListener = this@SearchFragment as ItemClickListener<Song>
         }
 
-        albumAdapter = AlbumAdapter(context).apply {
+        albumAdapter = AlbumAdapter(context, mainViewModel).apply {
             itemClickListener = this@SearchFragment as ItemClickListener<Album>
             spanCount = sc
         }
 
-        artistAdapter = ArtistAdapter(context).apply {
+        artistAdapter = ArtistAdapter(context, mainViewModel).apply {
             itemClickListener = this@SearchFragment as ItemClickListener<Artist>
             spanCount = sc
         }
@@ -112,14 +118,24 @@ class SearchFragment : BaseFragment<MediaItem>(), TextWatcher {
             close.setOnClickListener { searchSrcText.text.clear() }
         }
 
-        mainViewModel.searchLiveData().observe(this) {
+        searchViewModel.searchLiveData().observe(this) {
             songAdapter.updateDataSet(it.songList)
             albumAdapter.updateDataSet(it.albumList)
             artistAdapter.updateDataSet(it.artistList)
         }
 
+        mainViewModel.getLastSong().observe(this){ song ->
+            val position = songAdapter.songList.indexOfFirst { it.compare(song)} + 1
+            songAdapter.notifyItemChanged(position)
+        }
+
+        mainViewModel.getCurrentSong().observe(this){
+            val position = songAdapter.songList.indexOf(it) + 1
+            songAdapter.notifyItemChanged(position)
+        }
+
         binding.let {
-            it.viewModel = mainViewModel
+            it.viewModel = searchViewModel
             it.lifecycleOwner = this
             it.status = false
             it.executePendingBindings()
@@ -133,6 +149,7 @@ class SearchFragment : BaseFragment<MediaItem>(), TextWatcher {
             is Album -> albumClicked(item)
             is Artist -> artistClicked(item)
         }
+        toggleShowKeyBoard(context, binding.searchSrcText, false)
     }
 
     override fun onPopupMenuClick(
@@ -147,7 +164,7 @@ class SearchFragment : BaseFragment<MediaItem>(), TextWatcher {
 
     private fun songPopup(song: Song, view: View) {
         powerMenu!!.showAsAnchorRightTop(view)
-        mainViewModel.playLists().observe(this) {
+        playlistViewModel.playLists().observe(this) {
             buildPlaylistMenu(it, song)
         }
     }
@@ -177,7 +194,7 @@ class SearchFragment : BaseFragment<MediaItem>(), TextWatcher {
     }
 
     override fun onTextChanged(src: CharSequence?, start: Int, before: Int, count: Int) {
-        mainViewModel.search(src.toString())
+        searchViewModel.search(src.toString())
         binding.status = src?.isNotEmpty()
     }
 

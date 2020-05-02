@@ -12,7 +12,8 @@
   -->
 
 <layout xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -20,7 +21,7 @@
 
         <variable
             name="viewModel"
-            type="com.crrl.beatplayer.ui.viewmodels.MainViewModel" />
+            type="com.crrl.beatplayer.ui.viewmodels.SearchViewModel" />
 
         <variable
             name="status"
@@ -38,7 +39,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/coverSize"
             android:layout_marginStart="@dimen/margin_12"
-            android:layout_marginTop="@dimen/global_padding_top"
+            android:layout_marginTop="@dimen/margin_34"
             android:layout_marginEnd="@dimen/margin_12"
             android:background="@drawable/search_text_view_frame"
             android:elevation="2dp" />
@@ -47,7 +48,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/coverSize"
             android:layout_marginStart="@dimen/margin_12"
-            android:layout_marginTop="@dimen/global_padding_top"
+            android:layout_marginTop="@dimen/margin_34"
             android:layout_marginEnd="@dimen/margin_12"
             android:elevation="2dp">
 
@@ -84,7 +85,7 @@
                 android:src="@drawable/ic_close"
                 android:tint="?bodyTextColor"
                 android:contentDescription="@string/cover"
-                android:visibility="@{status ? View.VISIBLE : View.GONE}" />
+                app:visible="@{status}" />
         </LinearLayout>
 
         <androidx.core.widget.NestedScrollView
@@ -112,7 +113,7 @@
                     android:textColor="?titleTextColor"
                     android:textSize="@dimen/text_size_18"
                     android:textStyle="bold"
-                    android:visibility="@{viewModel.searchLiveData().isNotSongListEmpty() ? View.VISIBLE : View.GONE}" />
+                    app:visible="@{viewModel.searchLiveData().isNotSongListEmpty()}" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/songList"
@@ -132,7 +133,7 @@
                     android:textColor="?titleTextColor"
                     android:textSize="@dimen/text_size_18"
                     android:textStyle="bold"
-                    android:visibility="@{viewModel.searchLiveData().isNotAlbumListEmpty ? View.VISIBLE : View.GONE}" />
+                    app:visible="@{viewModel.searchLiveData().isNotAlbumListEmpty}" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/albumList"
@@ -154,7 +155,7 @@
                     android:textColor="?titleTextColor"
                     android:textSize="@dimen/text_size_18"
                     android:textStyle="bold"
-                    android:visibility="@{viewModel.searchLiveData().isNotArtistListEmpty ? View.VISIBLE : View.GONE}" />
+                    app:visible="@{viewModel.searchLiveData().isNotArtistListEmpty}" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/artistList"
@@ -182,7 +183,7 @@
             android:textColor="?titleTextColor"
             android:textSize="@dimen/text_size_18"
             android:elevation="10dp"
-            android:visibility="@{(viewModel.searchLiveData().isNotEmpty()) ? View.GONE : View.VISIBLE}" />
+            app:visible="@{!(viewModel.searchLiveData().isNotEmpty())}" />
 
     </FrameLayout>
 

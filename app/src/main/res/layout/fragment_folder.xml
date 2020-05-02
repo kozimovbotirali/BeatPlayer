@@ -11,7 +11,7 @@
   ~ limitations under the License.
   -->
 
-<layout>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -41,9 +41,9 @@
             android:text="@string/no_folders"
             android:layout_gravity="center"
             android:textColor="?titleTextColor"
+            app:visible="@{!(viewModel.folders.size() > 0)}"
             android:textSize="@dimen/text_size_18"
             android:textStyle="bold"
-            android:visibility="@{viewModel.getFolders().size > 0 ? View.GONE : View.VISIBLE}"
             android:layout_marginBottom="@dimen/song_item_size" />
     </FrameLayout>
 </layout>

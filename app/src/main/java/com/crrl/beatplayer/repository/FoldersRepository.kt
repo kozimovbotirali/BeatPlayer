@@ -22,12 +22,13 @@ import com.crrl.beatplayer.extensions.toList
 import com.crrl.beatplayer.models.Folder
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.utils.SettingsUtility
+import java.io.File
 import java.util.*
 
 interface FoldersRepositoryInterface {
-    fun getFolder(id: Long): Folder
+    fun getFolder(path: String): Folder
     fun getFolders(): List<Folder>
-    fun getSongsForIds(idList: LongArray): List<Song>
+    fun getSongsForIds(path: String): List<Song>
 }
 
 class FoldersRepository() : FoldersRepositoryInterface {
@@ -40,43 +41,32 @@ class FoldersRepository() : FoldersRepositoryInterface {
         settingsUtility = SettingsUtility.getInstance(context)
     }
 
-    override fun getFolder(id: Long): Folder {
-        return getFolders().filter { it.id == id }[0]
+    override fun getFolder(path: String): Folder {
+        val songList = makeFolderCursor("rtrim(_data, replace(_data, '/', '')) = ?", arrayOf(path)).toList(true, Folder.Companion::createFromCursor)
+        val folderList = mutableListOf<Folder>()
+        songList.groupBy { it.fakePath }.map { pair ->
+            folderList.add(pair.value.first().apply {
+                songCount = pair.value.size
+            })
+        }
+        return folderList.first()
     }
 
     override fun getFolders(): List<Folder> {
         val songList = makeFolderCursor(null, null).toList(true, Folder.Companion::createFromCursor)
         val folderList = mutableListOf<Folder>()
         songList.sortBy { it.name.toLowerCase(Locale.ROOT) }
-        for ((i, song) in songList.withIndex()) {
-            if (i == 0) {
-                folderList.add(song)
-                folderList[folderList.size - 1].songIds.add(song.id)
-            } else {
-                if (song.path != songList[i - 1].path) {
-                    folderList.add(song)
-                    folderList[folderList.size - 1].songIds.add(song.id)
-                } else {
-                    folderList[folderList.size - 1].songIds.add(song.id)
-                }
-            }
+        songList.groupBy { it.fakePath }.map { pair ->
+            folderList.add(pair.value.first().apply {
+                songCount = pair.value.size
+            })
         }
         return folderList
     }
 
-    override fun getSongsForIds(idList: LongArray): List<Song> {
-        var selection = "_id IN ("
-        for (id in idList) {
-            selection += "$id,"
-        }
-        if (idList.isNotEmpty()) {
-            selection = selection.substring(0, selection.length - 1)
-        }
-        selection += ")"
-
-        return makeFolderSongCursor(selection, null)
+    override fun getSongsForIds(path: String): List<Song> {
+        return makeFolderSongCursor("rtrim(_data, replace(_data, '/', '')) = ?", arrayOf(path))
             .toList(true) { Song.createFromCursor(this) }
-            .sortedBy { it.title.toLowerCase(Locale.ROOT) }
     }
 
     private fun makeFolderCursor(

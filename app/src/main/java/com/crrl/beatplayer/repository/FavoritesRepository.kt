@@ -13,17 +13,19 @@
 
 package com.crrl.beatplayer.repository
 
+import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import com.crrl.beatplayer.extensions.optimizeReadOnlyList
 import com.crrl.beatplayer.extensions.toList
 import com.crrl.beatplayer.models.Favorite
 import com.crrl.beatplayer.models.Song
-import com.crrl.beatplayer.utils.DBHelper
+import com.crrl.beatplayer.db.DBHelper
+import com.crrl.beatplayer.utils.PlayerConstants.FAVORITE_ID
 
 interface FavoritesRepositoryInterface {
     fun createFavorite(favorite: Favorite): Int
-    fun addSongByFavorite(idFavorite: Long, ids: LongArray): Int
+    fun addSongByFavorite(idFavorite: Long, songs: List<Song>): Int
     fun deleteSongByFavorite(idFavorite: Long, ids: LongArray): Int
     fun deleteFavorites(ids: LongArray): Int
     fun getFavorite(id: Long): Favorite?
@@ -41,13 +43,19 @@ class FavoritesRepository(private val context: Context?) : DBHelper(context),
         const val TABLE_SONGS = "favorite_songs"
 
         const val COLUMN_ID = "id"
+
         const val COLUMN_FAVORITE = "favorite"
-        const val COLUMN_TITLE = "title"
-        const val COLUMN_ARTIST = "artist"
-        const val COLUMN_ARTIST_ID = "artist_id"
-        const val COLUMN_YEAR = "year"
         const val COLUMN_SONG_COUNT = "song_count"
+        const val COLUMN_TITLE = "title"
         const val COLUMN_TYPE = "type"
+
+        const val COLUMN_ARTIST = "artist"
+        const val COLUMN_ALBUM = "album"
+        const val COLUMN_DURATION = "duration"
+        const val COLUMN_TRACK = "track_num"
+        const val COLUMN_ARTIST_ID = "artist_id"
+        const val COLUMN_ALBUM_ID = "album_id"
+        const val COLUMN_YEAR = "year"
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
@@ -68,16 +76,17 @@ class FavoritesRepository(private val context: Context?) : DBHelper(context),
         return insertRow(TABLE_FAVORITES, favorite.columnNames(), favorite.values())
     }
 
-    override fun addSongByFavorite(idFavorite: Long, ids: LongArray): Int {
-        var resp = 0
-        for (id in ids) {
-            resp += insertRow(
-                TABLE_SONGS,
-                arrayOf(COLUMN_ID, COLUMN_FAVORITE),
-                arrayOf("$id", "$idFavorite")
-            )
+    override fun addSongByFavorite(idFavorite: Long, songs: List<Song>): Int {
+        val array = songs.map {
+            it.playListId = idFavorite
+            val contentValues = ContentValues()
+            val values = it.values()
+            it.columns(false).mapIndexed { i, column ->
+                contentValues.put(column, values[i])
+            }
+            contentValues
         }
-        return resp
+        return bulkInsert(TABLE_SONGS, array.toTypedArray())
     }
 
     override fun deleteSongByFavorite(idFavorite: Long, ids: LongArray): Int {
@@ -119,15 +128,11 @@ class FavoritesRepository(private val context: Context?) : DBHelper(context),
 
     override fun getSongsForFavorite(id: Long): List<Song> {
         val cursor = getRow(TABLE_SONGS, "*", "$COLUMN_FAVORITE = ?", arrayOf("$id"))
-        val ids = cursor.toList(true) {
-            getLong(0)
-        }.toLongArray()
-        return FoldersRepository(context).getSongsForIds(ids)
+        return cursor.toList(true, Song.Companion::createFromPlaylistCursor)
     }
 
     override fun songExist(id: Long): Boolean {
-        val cursor = getRow(TABLE_SONGS, "*", "$COLUMN_ID = ?", arrayOf("$id"))
-        if (cursor.isClosed) return false
+        val cursor = getRow(TABLE_SONGS, "*", "$COLUMN_ID = ? AND $COLUMN_FAVORITE = ?", arrayOf("$id", "$FAVORITE_ID"))
         cursor.use {
             return it.moveToFirst()
         }
@@ -155,6 +160,13 @@ class FavoritesRepository(private val context: Context?) : DBHelper(context),
     private fun getCreateSongsQuery(): String {
         return "CREATE TABLE $TABLE_SONGS (" +
                 "$COLUMN_ID INTEGER, " +
+                "$COLUMN_TITLE TEXT, " +
+                "$COLUMN_ARTIST TEXT, " +
+                "$COLUMN_ALBUM TEXT, " +
+                "$COLUMN_DURATION INTEGER, " +
+                "$COLUMN_TRACK INTEGER, " +
+                "$COLUMN_ARTIST_ID INTEGER, " +
+                "$COLUMN_ALBUM_ID INTEGER, " +
                 "$COLUMN_FAVORITE INTEGER, " +
                 "FOREIGN KEY($COLUMN_FAVORITE) REFERENCES FAVORITES($COLUMN_ID), " +
                 "PRIMARY KEY($COLUMN_ID, $COLUMN_FAVORITE)" +

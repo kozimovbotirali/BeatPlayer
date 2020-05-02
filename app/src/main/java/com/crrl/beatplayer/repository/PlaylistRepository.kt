@@ -19,7 +19,7 @@ import android.database.sqlite.SQLiteDatabase
 import com.crrl.beatplayer.extensions.toList
 import com.crrl.beatplayer.models.Playlist
 import com.crrl.beatplayer.models.Song
-import com.crrl.beatplayer.utils.DBHelper
+import com.crrl.beatplayer.db.DBHelper
 
 interface PlaylistRepositoryInterface {
     @Throws(IllegalStateException::class)
@@ -74,7 +74,7 @@ class PlaylistRepository(context: Context?) : DBHelper(context),
     override fun createPlaylist(name: String, songs: List<Song>): Long {
         val playlist = Playlist(getPlayListsCount() + 1L, name, 0)
         insertRow(TABLE_PLAYLIST, playlist.columns(), playlist.values()).toLong()
-        addToPlaylist(playlist.id, songs.map { it.apply { playListId = playlist.id } })
+        addToPlaylist(playlist.id, songs)
         return playlist.id
     }
 

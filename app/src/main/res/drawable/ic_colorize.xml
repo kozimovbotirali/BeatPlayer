@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<!--
   ~ Copyright (c) 2020. Carlos René Ramos López. All rights reserved.
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -11,16 +11,12 @@
   ~ limitations under the License.
   -->
 
-<!-- An white rectangle ripple. -->
-<ripple xmlns:android="http://schemas.android.com/apk/res/android"
-    android:color="?bodyTextColor">
-    <item
-        android:id="@android:id/mask"
-        android:gravity="center">
-        <shape android:shape="rectangle">
-            <corners
-                android:radius="@dimen/album_item_radius"/>
-            <solid android:color="?colorAccent" />
-        </shape>
-    </item>
-</ripple>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+        android:width="24dp"
+        android:height="24dp"
+        android:viewportWidth="24.0"
+        android:viewportHeight="24.0">
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M20.71,5.63l-2.34,-2.34c-0.39,-0.39 -1.02,-0.39 -1.41,0l-3.12,3.12 -1.93,-1.91 -1.41,1.41 1.42,1.42L3,16.25V21h4.75l8.92,-8.92 1.42,1.42 1.41,-1.41 -1.92,-1.92 3.12,-3.12c0.4,-0.4 0.4,-1.03 0.01,-1.42zM6.92,19L5,17.08l8.06,-8.06 1.92,1.92L6.92,19z"/>
+</vector>

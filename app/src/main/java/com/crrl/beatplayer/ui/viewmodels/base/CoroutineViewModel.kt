@@ -11,13 +11,26 @@
  * limitations under the License.
  */
 
-package com.crrl.beatplayer.ui.viewmodels
+package com.crrl.beatplayer.ui.viewmodels.base
 
-import android.content.Context
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.crrl.beatplayer.models.MediaItem
+import kotlinx.coroutines.*
+import kotlin.coroutines.CoroutineContext
 
-class MediaItemViewModel<T : MediaItem>(private val context: Context) : ViewModel() {
-    val mediaItem = MutableLiveData<MediaItem>()
+open class CoroutineViewModel(
+    private val mainDispatcher: CoroutineDispatcher
+): ViewModel() {
+    private val job = Job()
+    protected val scope = CoroutineScope(job + mainDispatcher)
+
+    protected fun launch(
+        context: CoroutineContext = mainDispatcher,
+        start: CoroutineStart = CoroutineStart.DEFAULT,
+        block: suspend CoroutineScope.() -> Unit
+    ) = scope.launch(context, start, block)
+
+    override fun onCleared() {
+        super.onCleared()
+        job.cancel()
+    }
 }

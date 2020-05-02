@@ -30,24 +30,10 @@ interface AlbumsRepositoryInterface {
     fun getAlbums(): List<Album>
 }
 
-class AlbumsRepository() : AlbumsRepositoryInterface {
+class AlbumsRepository(context: Context?) : AlbumsRepositoryInterface {
 
-    private lateinit var contentResolver: ContentResolver
-    private lateinit var settingsUtility: SettingsUtility
-
-    companion object {
-        private var instance: AlbumsRepository? = null
-
-        fun getInstance(context: Context?): AlbumsRepository? {
-            if (instance == null) instance = AlbumsRepository(context)
-            return instance
-        }
-    }
-
-    constructor(context: Context? = null) : this() {
-        contentResolver = context!!.contentResolver
-        settingsUtility = SettingsUtility.getInstance(context)
-    }
+    private val contentResolver = context!!.contentResolver
+    private val settingsUtility = SettingsUtility.getInstance(context)
 
     private fun getAlbum(cursor: Cursor?): Album {
         return cursor?.use {

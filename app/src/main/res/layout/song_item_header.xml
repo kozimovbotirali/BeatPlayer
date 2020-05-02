@@ -11,7 +11,8 @@
   ~ limitations under the License.
   -->
 
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -22,8 +23,8 @@
             type="Integer" />
 
         <variable
-            name="isPlaylist"
-            type="Boolean" />
+            name="viewModel"
+            type="com.crrl.beatplayer.ui.viewmodels.MainViewModel" />
     </data>
 
     <RelativeLayout
@@ -45,21 +46,20 @@
                 android:background="@drawable/btn_ripple_header_with_background"
                 android:contentDescription="@string/cover"
                 android:src="@drawable/ic_sort"
-                android:tint="?colorAccent"
-                android:visibility="@{isPlaylist ? View.GONE : View.VISIBLE}" />
+                android:tint="?colorAccent" />
 
             <TextView
                 android:id="@+id/song_size"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
+                android:paddingStart="@dimen/padding_15"
                 android:layout_marginEnd="@dimen/margin_10"
                 android:layout_weight="1"
                 android:gravity="center|start"
                 android:text="@{@plurals/number_of_songs(songCount, songCount)}"
                 android:textColor="?titleTextColor"
-                android:textSize="@dimen/title_text_size"
-                android:visibility="@{isPlaylist ? View.INVISIBLE : View.VISIBLE}" />
+                android:textSize="@dimen/title_text_size"/>
 
             <ImageButton
                 android:id="@+id/shuffle_song"

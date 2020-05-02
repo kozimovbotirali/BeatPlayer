@@ -14,29 +14,29 @@
 package com.crrl.beatplayer.ui.fragments
 
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import com.crrl.beatplayer.R
+import com.crrl.beatplayer.databinding.FragmentLyricBinding
 import com.crrl.beatplayer.extensions.inflateWithBinding
-import com.crrl.beatplayer.extensions.safeActivity
-import com.crrl.beatplayer.ui.activities.MainActivity
-import com.crrl.beatplayer.ui.viewmodels.SongDetailViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
+import com.crrl.beatplayer.extensions.observe
+import com.crrl.beatplayer.extensions.setCustomColor
+import com.crrl.beatplayer.ui.fragments.base.BaseSongDetailFragment
 
-class LyricFragment : Fragment() {
 
-    private val viewModel: SongDetailViewModel by viewModel { parametersOf(safeActivity as MainActivity) }
+class LyricFragment : BaseSongDetailFragment() {
+
+    private lateinit var binding: FragmentLyricBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel.bindingLB = inflater.inflateWithBinding(R.layout.fragment_lyric, container)
-        return viewModel.bindingLB!!.root
+        binding = inflater.inflateWithBinding(R.layout.fragment_lyric, container)
+        return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -45,9 +45,8 @@ class LyricFragment : Fragment() {
     }
 
     private fun init() {
-        viewModel.bindingLB!!.let {
-            it.song = viewModel.getCurrentData().value
-            it.viewModel = viewModel
+        binding.let {
+            it.viewModel = mainViewModel
             it.lifecycleOwner = this
             it.executePendingBindings()
         }

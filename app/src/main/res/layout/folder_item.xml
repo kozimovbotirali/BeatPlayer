@@ -19,13 +19,17 @@
         <variable
             name="folder"
             type="com.crrl.beatplayer.models.Folder" />
+
+        <variable
+            name="position"
+            type="Integer" />
     </data>
 
     <RelativeLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="70dp"
-        android:background="@drawable/list_item_ripple"
+        app:position="@{position}"
         android:clickable="true"
         android:focusable="true">
 
@@ -94,7 +98,7 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:singleLine="true"
-                    android:text="@{folder.path}"
+                    android:text="@{folder.fakePath}"
                     android:textColor="?subTitleTextColor"
                     android:textSize="@dimen/sub_title_text_size" />
             </LinearLayout>

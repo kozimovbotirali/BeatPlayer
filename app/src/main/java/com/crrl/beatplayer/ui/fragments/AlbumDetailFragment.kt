@@ -21,22 +21,27 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentAlbumDetailBinding
-import com.crrl.beatplayer.extensions.inflateWithBinding
-import com.crrl.beatplayer.extensions.observe
-import com.crrl.beatplayer.extensions.toIDList
+import com.crrl.beatplayer.extensions.*
 import com.crrl.beatplayer.models.Album
 import com.crrl.beatplayer.models.Song
-import com.crrl.beatplayer.repository.AlbumsRepository
 import com.crrl.beatplayer.repository.FavoritesRepository
-import com.crrl.beatplayer.ui.adapters.AlbumDetailAdapter
+import com.crrl.beatplayer.ui.adapters.SongAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
+import com.crrl.beatplayer.ui.viewmodels.AlbumViewModel
+import com.crrl.beatplayer.ui.viewmodels.FavoriteViewModel
+import com.crrl.beatplayer.ui.viewmodels.PlaylistViewModel
+import com.crrl.beatplayer.utils.GeneralUtils
 import com.crrl.beatplayer.utils.PlayerConstants
+import org.koin.android.ext.android.inject
 
 class AlbumDetailFragment : BaseFragment<Song>() {
 
     private lateinit var album: Album
-    private lateinit var albumDetailAdapter: AlbumDetailAdapter
+    private lateinit var songAdapter: SongAdapter
     private lateinit var binding: FragmentAlbumDetailBinding
+    private val favoriteViewModel by inject<FavoriteViewModel>()
+    private val albumViewModel by inject<AlbumViewModel>()
+    private val playlistViewModel by inject<PlaylistViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -52,70 +57,85 @@ class AlbumDetailFragment : BaseFragment<Song>() {
 
     private fun init() {
         val id = arguments!!.getLong(PlayerConstants.ALBUM_KEY)
-        album = AlbumsRepository.getInstance(context)?.getAlbum(id)!!
+        album = albumViewModel.getAlbum(id)
 
-        albumDetailAdapter = AlbumDetailAdapter(context, mainViewModel).apply {
-            showHeader = true
+        songAdapter = SongAdapter(context, mainViewModel).apply {
             itemClickListener = this@AlbumDetailFragment
-            this.album = this@AlbumDetailFragment.album
+            showHeader = true
+            isAlbumDetail = true
         }
 
         binding.apply {
             albumSongList.apply {
                 layoutManager = LinearLayoutManager(context)
-                adapter = albumDetailAdapter
+                clipToOutline = true
+                adapter = songAdapter
             }
             addFavorites.setOnClickListener { toggleAddFav() }
         }
 
-        mainViewModel.getSongsByAlbum(album.id)!!.observe(this) {
-            albumDetailAdapter.updateDataSet(it)
+        albumViewModel.getSongsByAlbum(album.id)!!.observe(this) {
+            if (!songAdapter.songList.deepEquals(it)) {
+                songAdapter.updateDataSet(it)
+                binding.totalDuration = GeneralUtils.getTotalTime(songAdapter.songList).toInt()
+            }
             if (it.isEmpty()) {
-                mainViewModel.favoriteRepository.deleteFavorites(longArrayOf(id))
-                activity?.onBackPressed()
+                favoriteViewModel.deleteSong(id)
+                safeActivity.onBackPressed()
             }
         }
 
+        mainViewModel.getCurrentSong().observe(this) {
+            val position = songAdapter.songList.indexOf(it) + 1
+            songAdapter.notifyItemChanged(position)
+        }
+
+        mainViewModel.getLastSong().observe(this){ song ->
+            val position = songAdapter.songList.indexOfFirst { it.compare(song)} + 1
+            songAdapter.notifyItemChanged(position)
+        }
+
         binding.let {
-            it.viewModel = mainViewModel
+            it.viewModel = albumViewModel
+            it.mainViewModel = mainViewModel
             it.album = album
-            it.lifecycleOwner = this
             it.executePendingBindings()
+
+            it.lifecycleOwner = this
         }
     }
 
     override fun onItemClick(view: View, position: Int, item: Song) {
         mainViewModel.update(item)
-        mainViewModel.update(albumDetailAdapter.songList.toIDList())
+        mainViewModel.update(songAdapter.songList.toIDList())
     }
 
     override fun onShuffleClick(view: View) {
-        mainViewModel.update(albumDetailAdapter.songList.toIDList())
+        mainViewModel.update(songAdapter.songList.toIDList())
         mainViewModel.update(mainViewModel.random(-1))
     }
 
     override fun onPlayAllClick(view: View) {
-        mainViewModel.update(albumDetailAdapter.songList.first())
-        mainViewModel.update(albumDetailAdapter.songList.toIDList())
+        mainViewModel.update(songAdapter.songList.first())
+        mainViewModel.update(songAdapter.songList.toIDList())
     }
 
     override fun onPopupMenuClick(view: View, position: Int, item: Song, itemList: List<Song>) {
         super.onPopupMenuClick(view, position, item, itemList)
         powerMenu!!.showAsAnchorRightTop(view)
-        mainViewModel.playLists().observe(this) {
+        playlistViewModel.playLists().observe(this) {
             buildPlaylistMenu(it, item)
         }
     }
 
     private fun toggleAddFav() {
         val favoritesRepository = FavoritesRepository(context)
-        val libType = getString(R.string.album)
         if (favoritesRepository.favExist(album.id)) {
             val resp = favoritesRepository.deleteFavorites(longArrayOf(album.id))
-            showSnackBar(view, resp, 0, libType)
+            showSnackBar(view, resp, 0, R.string.album_no_fav_ok)
         } else {
             val resp = favoritesRepository.createFavorite(album.toFavorite())
-            showSnackBar(view, resp, 1, libType)
+            showSnackBar(view, resp, 1, R.string.album_fav_ok)
         }
     }
 }

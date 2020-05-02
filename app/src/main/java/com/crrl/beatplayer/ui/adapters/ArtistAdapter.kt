@@ -23,15 +23,18 @@ import com.crrl.beatplayer.databinding.ArtistItemBinding
 import com.crrl.beatplayer.databinding.ArtistItemHeaderBinding
 import com.crrl.beatplayer.extensions.deepEquals
 import com.crrl.beatplayer.extensions.inflateWithBinding
+import com.crrl.beatplayer.extensions.setCustomColor
 import com.crrl.beatplayer.interfaces.ItemClickListener
 import com.crrl.beatplayer.models.Artist
+import com.crrl.beatplayer.ui.viewmodels.MainViewModel
 import com.crrl.beatplayer.utils.GeneralUtils.dip2px
 import com.crrl.beatplayer.utils.GeneralUtils.screenWidth
+import com.crrl.beatplayer.utils.SettingsUtility
 
 private const val HEADER_TYPE = 0
 private const val ITEM_TYPE = 1
 
-class ArtistAdapter(private val context: Context?) :
+class ArtistAdapter(private val context: Context?, private val mainViewModel: MainViewModel) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var artistList: List<Artist> = emptyList()
@@ -138,6 +141,7 @@ class ArtistAdapter(private val context: Context?) :
         fun bind(artistCount: Int) {
             binding.apply {
                 this.artistCount = artistCount
+                viewModel = mainViewModel
                 executePendingBindings()
 
                 sortArtist.setOnClickListener(this@ViewHolderAlbumHeader)

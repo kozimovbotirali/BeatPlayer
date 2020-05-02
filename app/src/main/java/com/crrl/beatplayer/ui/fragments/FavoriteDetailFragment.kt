@@ -17,21 +17,22 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.doOnPreDraw
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentFavoriteDetailBinding
-import com.crrl.beatplayer.extensions.inflateWithBinding
-import com.crrl.beatplayer.extensions.observe
-import com.crrl.beatplayer.extensions.toIDList
+import com.crrl.beatplayer.extensions.*
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.repository.FavoritesRepository
 import com.crrl.beatplayer.ui.activities.MainActivity
 import com.crrl.beatplayer.ui.adapters.SongAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.viewmodels.FavoriteViewModel
+import com.crrl.beatplayer.ui.viewmodels.PlaylistViewModel
 import com.crrl.beatplayer.ui.viewmodels.SongViewModel
 import com.crrl.beatplayer.utils.PlayerConstants
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -39,9 +40,10 @@ class FavoriteDetailFragment : BaseFragment<Song>() {
 
     private lateinit var binding: FragmentFavoriteDetailBinding
     private lateinit var songAdapter: SongAdapter
+    private val favoriteViewModel by inject<FavoriteViewModel>()
+    private val playlistViewModel by inject<PlaylistViewModel>()
 
-    private val viewModel: FavoriteViewModel by sharedViewModel { parametersOf(mainViewModel.favoriteRepository) }
-    private val songViewModel: SongViewModel by sharedViewModel { parametersOf(context) }
+    private val viewModel by inject<FavoriteViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,33 +54,47 @@ class FavoriteDetailFragment : BaseFragment<Song>() {
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
+        postponeEnterTransition()
         super.onActivityCreated(savedInstanceState)
         init()
     }
 
     private fun init() {
         val id = arguments!!.getLong(PlayerConstants.FAVORITE_KEY)
-        binding.favorite = FavoritesRepository(context).getFavorite(id)
+        binding.favorite = favoriteViewModel.getFavorite(id)
 
-        songAdapter = SongAdapter(context, (activity as MainActivity).viewModel).apply {
+        songAdapter = SongAdapter(context, mainViewModel).apply {
             showHeader = true
-            isPlaylist = true
+            isAlbumDetail = true
             itemClickListener = this@FavoriteDetailFragment
         }
+
         viewModel.songListFavorite(id).observe(this) {
             if (it.isEmpty()) {
-                mainViewModel.favoriteRepository.deleteFavorites(longArrayOf(id))
-                activity?.onBackPressed()
+                favoriteViewModel.deleteFavorites(longArrayOf(id))
+                safeActivity.onBackPressed()
             } else {
                 songAdapter.updateDataSet(it)
+                (view?.parent as? ViewGroup)?.doOnPreDraw {
+                    startPostponedEnterTransition()
+                }
             }
+        }
+
+        mainViewModel.getLastSong().observe(this){ song ->
+            val position = songAdapter.songList.indexOfFirst { it.compare(song)} + 1
+            songAdapter.notifyItemChanged(position)
+        }
+
+        mainViewModel.getCurrentSong().observe(this){
+            val position = songAdapter.songList.indexOf(it) + 1
+            songAdapter.notifyItemChanged(position)
         }
 
         binding.apply {
             songList.apply {
                 layoutManager = LinearLayoutManager(context)
                 adapter = songAdapter
-                (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
             }
         }
 
@@ -107,7 +123,7 @@ class FavoriteDetailFragment : BaseFragment<Song>() {
     override fun onPopupMenuClick(view: View, position: Int, item: Song, itemList: List<Song>) {
         super.onPopupMenuClick(view, position, item, itemList)
         powerMenu!!.showAsAnchorRightTop(view)
-        mainViewModel.playLists().observe(this) {
+        playlistViewModel.playLists().observe(this) {
             buildPlaylistMenu(it, item)
         }
     }

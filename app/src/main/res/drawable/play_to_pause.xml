@@ -16,14 +16,14 @@
     <aapt:attr name="android:drawable">
         <vector
             android:name="vector"
-            android:width="357dp"
-            android:height="357dp"
+            android:width="0.5dp"
+            android:height="0.5dp"
             android:viewportWidth="357"
             android:viewportHeight="357">
             <group
                 android:name="group"
-                android:pivotX="178"
-                android:pivotY="178">
+                android:pivotX="0"
+                android:pivotY="0">
                 <path
                     android:name="path"
                     android:fillColor="#FFF"

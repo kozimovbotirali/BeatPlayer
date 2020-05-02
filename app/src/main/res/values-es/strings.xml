@@ -37,7 +37,7 @@
     <string name="sort_year">Año</string>
     <string name="title">Título</string>
     <string name="unknown">Desconosido</string>
-    <string name="now_playing">Reproduciendo</string>
+    <string name="now_playing">Reproduciendo Ahora</string>
     <string name="new_playlist">Nueva Lista</string>
     <string name="no_playlist">Sin Listas de Reproducción</string>
     <string name="no_songs">Sin Pistas</string>
@@ -54,11 +54,11 @@
     <string name="no_folders">Sin Carpetas</string>
     <string name="remove">Quitar</string>
     <string name="theme_title">Temas</string>
-    <string name="light_theme">Tema Claro</string>
-    <string name="dark_theme">Tema Obscuro</string>
+    <string name="light_theme">Claro</string>
+    <string name="dark_theme">Obscuro</string>
     <string name="appearance">Apariencia</string>
     <string name="theme_description">Elige uno de estos temas de BeatPlayer.</string>
-    <string name="default_theme">Por defecto del Sistema</string>
+    <string name="default_theme">Automático</string>
     <string name="no_lyrics">Lo sentimos, no pudimos obtener la letra de esta canción.</string>
     <string name="deleted_ok">Canción eliminada exitosamente.</string>
     <string name="deleted_err">No se puedo eliminar la canción ahora.</string>
@@ -71,7 +71,7 @@
     <string name="done">Done</string>
     <string name="no_albums">Sin Albumes</string>
     <string name="no_favorites">Sin Música Favorita</string>
-    <string name="favorites_tip">Tap the heart icon on \"Now Playing, Albums, Artists or Folders\" views. Your favorite music will be listed here.</string>
+    <string name="favorites_tip">Toque el ícono del corazón que aparecerá en \"Reproduciendo Ahora, Álbumes, Artistas y Carpetas\". Tu música favorita aparecerá aquí.</string>
     <string name="favorite_music">Música Favorita</string>
     <string name="no_artists">Sin Artistas</string>
     <string name="song_added_success">La pista fue agregada exitosamente.</string>
@@ -81,9 +81,14 @@
     <string name="retry">Reintentar</string>
     <string name="song_no_fav_ok">Removida de tu música favorita.</string>
     <string name="song_fav_ok">Agregada a tu música favorita.</string>
-    <string name="no_fav_ok">%s Removido de tu música favorita.</string>
-    <string name="fav_ok">%s Agregado a tu música favorita.</string>
+    <string name="album_no_fav_ok">Álbum removido de tus favoritos.</string>
+    <string name="album_fav_ok">Álbum agregado a tus favoritos.</string>
+    <string name="folder_no_fav_ok">Carpeta removida de tus favoritas.</string>
+    <string name="folder_fav_ok">Carpeta agregada a tus favoritas.</string>
+    <string name="artist_no_fav_ok">Artista removido de tus favoritos.</string>
+    <string name="artist_fav_ok">Artista agregado a tus favoritos.</string>
     <string name="playlist_name_error">El nombre de la lista de reproducción ya existe.</string>
+    <string name="settings_theme_description">Automático, Claro, Obscuro</string>
 
     <plurals name="number_of_songs" tools:ignore="UnusedQuantity">
         <item quantity="zero">%d Pistas</item>

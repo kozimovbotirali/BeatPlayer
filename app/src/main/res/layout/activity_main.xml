@@ -30,7 +30,7 @@
         <FrameLayout
             android:id="@+id/nav_host_fragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/bottom_controls"
@@ -49,6 +49,10 @@
                 android:background="@drawable/mini_player_frame"
                 app:layout_constraintTop_toTopOf="parent">
 
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/mini_player_frame"/>
                 <ImageView
                     android:id="@+id/mini_player_cover"
                     android:layout_width="50dp"
@@ -125,6 +129,7 @@
                     android:layout_marginEnd="@dimen/margin_8">
 
                     <com.budiyev.android.circularprogressbar.CircularProgressBar
+                        android:id="@+id/progress_circular"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         app:animateProgress="true"
@@ -141,14 +146,16 @@
                         app:maximum="@{viewModel.currentSong.duration}"
                         app:progress="0"
                         app:progressAnimationDuration="100"
-                        app:startAngle="270" />
+                        app:startAngle="270"/>
 
-                    <ImageView
+                    <ImageButton
+                        android:id="@+id/btn_play"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
                         android:src="@drawable/ic_play"
                         android:tint="?colorAccent"
+                        android:background="@color/transparent"
                         android:contentDescription="@string/cover" />
                 </RelativeLayout>
             </RelativeLayout>

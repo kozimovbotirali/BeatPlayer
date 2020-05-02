@@ -64,12 +64,12 @@
             android:layout_height="@dimen/btn_size"
             android:background="@drawable/btn_ripple"
             android:contentDescription="@string/cover"
-            android:layout_marginTop="@dimen/margin_12"
+            android:layout_marginTop="@dimen/margin_34"
             android:onClick="back"
             android:tint="?colorAccent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_back" />
+            app:srcCompat="@drawable/ic_back"/>
 
         <ImageButton
             android:id="@+id/add_favorites"
@@ -82,7 +82,7 @@
             app:isFav="@{viewModel.isFav(artist.id)}"
             app:layout_constraintBottom_toBottomOf="@+id/back"
             app:layout_constraintEnd_toStartOf="@id/search"
-            app:layout_constraintTop_toTopOf="@+id/back" />
+            app:layout_constraintTop_toTopOf="@+id/back"/>
 
         <ImageButton
             android:id="@+id/search"
@@ -95,7 +95,7 @@
             android:tint="?colorAccent"
             app:layout_constraintBottom_toBottomOf="@+id/add_favorites"
             app:layout_constraintEnd_toStartOf="@id/menu"
-            app:layout_constraintTop_toTopOf="@+id/add_favorites" />
+            app:layout_constraintTop_toTopOf="@+id/add_favorites"/>
 
         <ImageButton
             android:id="@+id/menu"
@@ -108,7 +108,7 @@
             android:tint="?colorAccent"
             app:layout_constraintBottom_toBottomOf="@+id/add_favorites"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/add_favorites" />
+            app:layout_constraintTop_toTopOf="@+id/add_favorites"/>
 
         <LinearLayout
             android:id="@+id/linearLayout2"
@@ -127,16 +127,17 @@
                 android:layout_height="wrap_content"
                 android:maxLines="1"
                 android:text="@{artist.name, default=@string/artist}"
-                android:textColor="?titleTextColor"
+                android:textColor="?subTitleTextColor"
                 android:textSize="@dimen/text_size_18" />
 
             <TextView
+                android:id="@+id/sub_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:maxLines="1"
                 android:text="@{@plurals/number_of_albums(artist.albumCount, artist.albumCount), default=@string/albums}"
                 android:textColor="?colorAccent"
-                android:textSize="@dimen/text_size_14" />
+                android:textSize="@dimen/text_size_14"/>
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

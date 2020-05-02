@@ -14,6 +14,11 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <data>
+        <variable
+            name="viewModel"
+            type="com.crrl.beatplayer.ui.viewmodels.MainViewModel" />
+    </data>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -24,7 +29,7 @@
             android:layout_width="@dimen/btn_size"
             android:layout_height="@dimen/btn_size"
             android:background="@drawable/btn_ripple"
-            android:layout_marginTop="@dimen/margin_10"
+            android:layout_marginTop="@dimen/margin_34"
             android:contentDescription="@string/cover"
             android:onClick="back"
             android:tint="?colorAccent"
@@ -36,19 +41,17 @@
             android:id="@+id/activity_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:layout_weight="1"
             android:gravity="center"
             android:maxLines="1"
             android:padding="7dp"
             android:text="@string/settings"
-            android:textColor="?titleTextColor"
+            android:textColor="?subTitleTextColor"
             android:textSize="@dimen/text_size_16"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/back"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/back"
+            app:layout_constraintStart_toEndOf="@+id/back"
             app:layout_constraintTop_toTopOf="@+id/back" />
 
         <ScrollView
@@ -56,7 +59,6 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="@dimen/margin_10"
-            android:layout_marginBottom="8dp"
             android:scrollbars="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/back">
@@ -77,49 +79,60 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_10"
-                    android:orientation="horizontal"
-                    android:padding="@dimen/margin_10"
-                    android:background="@drawable/list_item_ripple_with_background"
-                    app:layout_constraintTop_toBottomOf="@id/themes"
-                    android:gravity="center"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:onClick="showThemes">
-
-                    <ImageView
-                        android:layout_width="@dimen/btn_size"
-                        android:layout_height="@dimen/btn_size"
-                        android:scaleType="centerInside"
-                        android:src="@drawable/ic_theme"
-                        android:tint="?btnTintColor" />
-
+                    android:background="@drawable/song_detail_cover_frame"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/themes">
                     <LinearLayout
+                        android:id="@+id/theme"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        app:layout_constraintTop_toBottomOf="@id/themes">
+                        android:orientation="horizontal"
+                        android:padding="@dimen/margin_10"
+                        android:background="@drawable/list_item_ripple_with_background"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:gravity="center"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:onClick="showThemes">
 
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
-                            android:text="@string/theme_title"
-                            android:textColor="?titleTextColor"
-                            android:textSize="@dimen/title_text_size" />
+                        <ImageView
+                            android:layout_width="@dimen/btn_size"
+                            android:layout_height="@dimen/btn_size"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/ic_theme"
+                            android:tint="?btnTintColor" />
 
-                        <TextView
+                        <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
-                            android:text="@string/theme_description"
-                            android:textColor="?subTitleTextColor"
-                            android:textSize="@dimen/sub_title_text_size" />
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            app:layout_constraintTop_toBottomOf="@id/themes">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_weight="1"
+                                android:maxLines="1"
+                                android:text="@string/theme_title"
+                                android:textColor="?titleTextColor"
+                                android:textSize="@dimen/title_text_size" />
+
+                            <TextView
+                                android:id="@+id/sub_title"
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_weight="1"
+                                android:maxLines="1"
+                                android:text="@string/settings_theme_description"
+                                android:textColor="?colorAccent"
+                                android:textSize="@dimen/sub_title_text_size"/>
+                        </LinearLayout>
                     </LinearLayout>
-                </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>

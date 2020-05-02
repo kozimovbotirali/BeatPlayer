@@ -14,7 +14,10 @@
 package com.crrl.beatplayer.ui.binding
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.ContentUris
+import android.graphics.drawable.Animatable
+import android.graphics.drawable.Drawable
 import android.support.v4.media.session.PlaybackStateCompat.STATE_PLAYING
 import android.text.Html
 import android.view.View
@@ -24,8 +27,12 @@ import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions.withCrossFade
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.crrl.beatplayer.R
+import com.crrl.beatplayer.extensions.getColorByTheme
 import com.crrl.beatplayer.extensions.setMargins
 import com.crrl.beatplayer.extensions.toggleShow
 import com.crrl.beatplayer.models.Album
@@ -37,28 +44,54 @@ import com.crrl.beatplayer.utils.PlayerConstants.ALBUM_TYPE
 import com.crrl.beatplayer.utils.PlayerConstants.ARTIST_TYPE
 import com.crrl.beatplayer.utils.PlayerConstants.FAVORITE_TYPE
 import com.crrl.beatplayer.utils.PlayerConstants.FOLDER_TYPE
-import com.github.florent37.kotlin.pleaseanimate.please
-
 
 /**
  * @param view is the target view.
  * @param albumId is the id that will be used to get the image form the DB.
- * @param recyclerPlaceholder, if it is true the placeholder will be the last image setted.
+ * @param recycled, if it is true the placeholder will be the last song cover selected.
  * */
 @BindingAdapter("app:albumId", "app:recycled", requireAll = false)
-fun setAlbumId(view: ImageView, albumId: Long, recyclerPlaceholder: Boolean = false) {
+fun setAlbumId(
+    view: ImageView,
+    albumId: Long,
+    recycled: Boolean = false
+) {
     view.clipToOutline = true
+
     val uri = ContentUris.withAppendedId(PlayerConstants.ARTWORK_URI, albumId)
+
+    val drawable = getDrawable(view.context, R.drawable.ic_empty_cover).apply {
+        val context = view.context as Activity
+        this?.setTint(context.getColorByTheme(R.attr.colorAccent))
+    }
     Glide.with(view)
-        .asBitmap()
         .load(uri)
-        .transition(withCrossFade())
-        .placeholder(R.drawable.album_cover_frame)
-        .error(R.drawable.ic_empty_cover)
-        .into(view)
+        .transition(withCrossFade()).apply {
+            if (recycled) {
+                error(Glide.with(view).load(drawable))
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .into(object : CustomTarget<Drawable>() {
+                        override fun onLoadCleared(placeholder: Drawable?) {
+                            view.setImageDrawable(placeholder)
+                        }
+
+                        override fun onResourceReady(
+                            resource: Drawable,
+                            transition: Transition<in Drawable>?
+                        ) {
+                            view.setImageDrawable(resource)
+                        }
+                    })
+            } else {
+                placeholder(R.drawable.mini_player_cover_frame)
+                    .error(R.drawable.ic_empty_cover)
+                    .into(view)
+            }
+        }
+
 }
 
-@BindingAdapter("app:width", "app:height", requireAll = true)
+@BindingAdapter("app:width", "app:height")
 fun setImageSize(view: ImageView, width: Int, height: Int) {
     view.layoutParams.apply {
         this.width = width
@@ -134,7 +167,7 @@ fun setCount(view: TextView, type: String, count: Int) {
 @SuppressLint("SetTextI18n")
 @BindingAdapter("app:album")
 fun fixArtistLength(view: TextView, album: Album) {
-    val maxSize = if (GeneralUtils.getRotation(view.context) == GeneralUtils.VERTICAL) 15 else 10
+    val maxSize = if (GeneralUtils.getRotation(view.context) == GeneralUtils.VERTICAL) 13 else 8
     album.apply {
         view.text = "${if (artist.length > maxSize) {
             artist.substring(0, maxSize)
@@ -153,6 +186,14 @@ fun setClipToOutline(view: View, clipToOutline: Boolean) {
     view.clipToOutline = clipToOutline
 }
 
+@BindingAdapter("app:position")
+fun setBackgroundByPosition(view: View, position: Int) {
+    when (position) {
+        0 -> view.setBackgroundResource(R.drawable.list_item_ripple_top)
+        else -> view.setBackgroundResource(R.drawable.list_item_ripple_middle)
+    }
+}
+
 @BindingAdapter("app:textUnderline")
 fun textUnderline(view: TextView, textUnderline: Boolean) {
     if (textUnderline)
@@ -160,15 +201,7 @@ fun textUnderline(view: TextView, textUnderline: Boolean) {
 }
 
 
-@BindingAdapter("app:visible", "app:animate", requireAll = false)
-fun setVisibility(view: View, show: Boolean = true, animate: Boolean = true) {
-    if (animate) {
-        please(100) {
-            animate(view) {
-                if (show) scale(1f, 1f) else scale(0f, 0f)
-            }
-        }.start()
-    } else {
-        view.toggleShow(show)
-    }
+@BindingAdapter("app:visible", requireAll = false)
+fun setVisibility(view: View, visible: Boolean = true) {
+    view.toggleShow(visible)
 }

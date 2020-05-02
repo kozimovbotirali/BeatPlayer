@@ -67,7 +67,7 @@
             android:contentDescription="@string/cover"
             android:onClick="back"
             android:tint="?colorAccent"
-            android:layout_marginTop="@dimen/margin_12"
+            android:layout_marginTop="@dimen/margin_34"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_back" />
@@ -121,7 +121,7 @@
                 android:maxLines="1"
                 app:title="@{favorite}"
                 app:detail="@{true}"
-                android:textColor="?attr/titleTextColor"
+                android:textColor="?subTitleTextColor"
                 android:textSize="@dimen/text_size_18" />
         </LinearLayout>
 

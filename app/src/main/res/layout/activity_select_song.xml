@@ -23,6 +23,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:paddingTop="@dimen/padding_12"
         android:background="?colorPrimary">
 
         <CheckBox
@@ -31,7 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin_10"
-            android:layout_marginTop="@dimen/global_padding_top"
+            android:layout_marginTop="@dimen/margin_34"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:text="@string/all"
@@ -74,7 +75,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/activity_title"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/activity_title"
-            app:visible="@{viewModel.selectedSongs().size > 0}" />
+            app:visible="@{viewModel.selectedSongs().size > 0}"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/song_list"

@@ -19,12 +19,8 @@
         <import type="android.view.View" />
 
         <variable
-            name="song"
-            type="com.crrl.beatplayer.models.Song" />
-
-        <variable
             name="viewModel"
-            type="com.crrl.beatplayer.ui.viewmodels.SongDetailViewModel" />
+            type="com.crrl.beatplayer.ui.viewmodels.MainViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -38,6 +34,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="@dimen/margin_12"
+            android:layout_marginTop="@dimen/global_padding_top"
             android:clickable="true"
             android:focusable="true"
             app:layout_constraintEnd_toEndOf="parent"
@@ -47,22 +44,21 @@
             <TextView
                 style="@style/TitleTextAppearance"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:maxLines="1"
-                android:padding="7dp"
-                android:text="@{viewModel.currentData.title, default=@string/title}"
+                android:text="@{viewModel.currentSong.title}"
                 android:textColor="?titleTextColor" />
 
             <TextView
+                android:id="@+id/sub_title"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:maxLines="1"
-                android:padding="7dp"
-                android:text="@{viewModel.currentData.artist, default=@string/title}"
+                android:text="@{viewModel.currentSong.artist}"
                 android:textColor="?colorAccent"
                 android:textSize="@dimen/title_text_size" />
         </LinearLayout>
@@ -87,7 +83,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:visibility="@{viewModel.getLyrics(viewModel.currentData) != null ? View.GONE : View.VISIBLE}" />
+                android:visibility="@{viewModel.getLyrics(viewModel.currentSong) != null ? View.GONE : View.VISIBLE}" />
 
             <ScrollView
                 android:layout_width="match_parent"
@@ -110,7 +106,7 @@
                         android:paddingTop="20dp"
                         android:paddingBottom="150dp"
                         android:textColor="?subTitleTextColor"
-                        android:text="@{viewModel.getLyrics(viewModel.currentData)}"
+                        android:text="@{viewModel.getLyrics(viewModel.currentSong)}"
                         android:textSize="18sp" />
 
                 </LinearLayout>

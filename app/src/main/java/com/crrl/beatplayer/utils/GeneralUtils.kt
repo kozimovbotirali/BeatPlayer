@@ -16,13 +16,20 @@ package com.crrl.beatplayer.utils
 import android.content.ContentUris.withAppendedId
 import android.content.Context
 import android.content.res.Resources
+import android.graphics.Color
 import android.net.Uri
 import android.view.Surface.*
+import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import androidx.annotation.StringRes
+import com.crrl.beatplayer.R
+import com.crrl.beatplayer.extensions.CUSTOM
+import com.crrl.beatplayer.extensions.snackbar
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.utils.PlayerConstants.ARTWORK_URI
+import com.google.android.material.snackbar.BaseTransientBottomBar
 import java.io.*
 
 
@@ -140,6 +147,26 @@ object GeneralUtils {
             1, 2, 3, 4, 5, 6, 7, 8, 9 -> "0${number}"
             else -> number.toString()
         }
+    }
+
+    fun getBlackWhiteColor(color: Int): Int {
+        val darkness= 1 - (0.299 * Color.red(color) + 0.587 * Color.green(color) + 0.114 * Color.blue(color)) / 255
+        return if (darkness >= 0.5) {
+            Color.WHITE
+        } else Color.BLACK
+    }
+
+    fun showSnackBar(view: View?, resp: Int, type: Int, @StringRes message: Int) {
+        val custom = when (type) {
+            1 -> R.drawable.ic_success
+            else -> R.drawable.ic_dislike
+        }
+        if (resp > 0) view.snackbar(
+            CUSTOM,
+            view!!.context.getString(message),
+            BaseTransientBottomBar.LENGTH_SHORT,
+            custom = custom
+        )
     }
 
     fun getAlbumArtUri(albumId: Long): Uri = withAppendedId(ARTWORK_URI, albumId)

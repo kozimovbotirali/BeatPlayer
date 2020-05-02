@@ -13,37 +13,42 @@
 
 package com.crrl.beatplayer.ui.viewmodels
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.repository.SongsRepository
+import com.crrl.beatplayer.ui.viewmodels.base.CoroutineViewModel
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.withContext
 
-class SongViewModel(private val context: Context) : ViewModel() {
+class SongViewModel(
+    private val songsRepository: SongsRepository
+) : CoroutineViewModel(Main) {
 
-    private val songs: MutableLiveData<List<Song>> = MutableLiveData()
+    private val songsData: MutableLiveData<List<Song>> = MutableLiveData()
     private val songsSelected: MutableLiveData<MutableList<Song>> = MutableLiveData()
 
-    fun getSongList(): LiveData<List<Song>> {
-        update()
-        return songs
-    }
-
-    fun selectedSongs(): LiveData<MutableList<Song>> {
-        if (songsSelected.value == null) songsSelected.value = mutableListOf()
-        return songsSelected
-    }
-
     fun update() {
-        Thread {
-            songs.postValue(SongsRepository(context).loadSongs())
-        }.start()
+        launch {
+            val songs = withContext(IO) {
+                songsRepository.loadSongs()
+            }
+            if(songs.isNotEmpty()) songsData.postValue(songs)
+        }
     }
 
     fun update(list: MutableList<Song>) {
-        Thread {
-            songsSelected.postValue(list)
-        }.start()
+        songsSelected.postValue(list)
+    }
+
+    fun getSongList(): LiveData<List<Song>> {
+        update()
+        return songsData
+    }
+
+    fun selectedSongs(): LiveData<MutableList<Song>> {
+        if(songsSelected.value == null) songsSelected.value = mutableListOf()
+        return songsSelected
     }
 }

@@ -15,7 +15,7 @@ package com.crrl.beatplayer
 
 import android.app.Application
 import com.crashlytics.android.Crashlytics
-import com.crrl.beatplayer.ui.viewmodels.viewModelModule
+import com.crrl.beatplayer.ui.viewmodels.base.viewModelModule
 import com.crrl.beatplayer.utils.ReleaseTree
 import io.fabric.sdk.android.Fabric
 import org.koin.android.ext.koin.androidContext

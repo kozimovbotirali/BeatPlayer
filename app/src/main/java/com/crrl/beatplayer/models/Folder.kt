@@ -21,11 +21,12 @@ import com.google.gson.Gson
 import java.io.File
 
 class Folder(
-    val id: Long,
-    val name: String,
-    val albumId: Long,
-    val path: String,
-    val songIds: MutableList<Long> = mutableListOf()
+    val id: Long = -1,
+    val name: String = "",
+    val albumId: Long = -1,
+    val fakePath: String = "",
+    val realPath: String = "",
+    var songCount: Int = 0
 ) : MediaItem(id) {
     companion object {
         fun createFromCursor(cursor: Cursor): Folder {
@@ -33,14 +34,15 @@ class Folder(
                 cursor.getLong(0),
                 File(File(cursor.getString(2)).parent!!).fixedName(),
                 cursor.getLong(1),
-                File(File(cursor.getString(2)).parent!!).fixedPath()
+                File(File(cursor.getString(2)).parent!!).fixedPath(),
+                "${File(cursor.getString(2)).parent}/"
             )
         }
     }
 
     override fun compare(other: MediaItem): Boolean {
         other as Folder
-        return id == other.id && name == other.name && albumId == other.albumId && path == other.path && songIds.size == other.songIds.size
+        return id == other.id && name == other.name && albumId == other.albumId && realPath == other.realPath && songCount == other.songCount
     }
 
     override fun toString(): String {
@@ -48,6 +50,6 @@ class Folder(
     }
 
     fun toFavorite(): Favorite {
-        return Favorite(id, name, path, albumId, 0, songIds.size, FOLDER_TYPE)
+        return Favorite(id, name, realPath, albumId, 0, songCount, FOLDER_TYPE)
     }
 }

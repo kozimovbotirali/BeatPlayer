@@ -23,8 +23,17 @@
             type="com.crrl.beatplayer.models.Folder" />
 
         <variable
-            name="viewModel"
-            type="com.crrl.beatplayer.ui.viewmodels.FolderViewModel" />
+            name="isLoading"
+            type="Boolean" />
+
+        <variable
+            name="name"
+            type="String" />
+
+
+        <variable
+            name="mainViewModel"
+            type="com.crrl.beatplayer.ui.viewmodels.MainViewModel"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -36,10 +45,10 @@
             android:id="@+id/view"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginTop="@dimen/margin_12"
             android:background="@drawable/album_detail_shape"
             android:clickable="true"
             android:focusable="true"
-            android:layout_marginTop="@dimen/margin_12"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/back" />
 
@@ -53,21 +62,22 @@
             app:layout_constraintTop_toTopOf="@+id/view" />
 
         <View
+            android:id="@+id/view4"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:background="?colorPrimary"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/song_list" />
+            app:layout_constraintBottom_toTopOf="@id/song_list"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageButton
             android:id="@+id/back"
             android:layout_width="@dimen/btn_size"
             android:layout_height="@dimen/btn_size"
+            android:layout_marginTop="@dimen/margin_34"
             android:background="@drawable/btn_ripple"
             android:contentDescription="@string/cover"
             android:onClick="back"
             android:tint="?colorAccent"
-            android:layout_marginTop="@dimen/margin_12"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_back" />
@@ -78,13 +88,13 @@
             android:layout_height="@dimen/btn_size"
             android:background="@drawable/btn_ripple"
             android:contentDescription="@string/cover"
-            android:onClick="menu"
             android:src="@drawable/ic_no_favorite"
             android:tint="?colorAccent"
-            app:isFav="@{viewModel.isFav(folder.id)}"
+            app:isFav="@{mainViewModel.isFav(folder.id)}"
             app:layout_constraintBottom_toBottomOf="@+id/folder_list_container"
             app:layout_constraintEnd_toStartOf="@id/search"
-            app:layout_constraintTop_toTopOf="@+id/folder_list_container" />
+            app:layout_constraintTop_toTopOf="@+id/folder_list_container"
+            app:visible="@{!isLoading}" />
 
         <ImageButton
             android:id="@+id/search"
@@ -133,24 +143,21 @@
                 android:layout_weight="1"
                 android:gravity="start"
                 android:maxLines="1"
-                android:text="@{folder.name, default=@string/title}"
-                android:textColor="?attr/titleTextColor"
+                android:text="@{name, default=@string/title}"
+                android:textColor="?subTitleTextColor"
                 android:textSize="@dimen/text_size_18" />
         </LinearLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/no_songs"
-            android:textColor="?titleTextColor"
-            android:textSize="@dimen/text_size_18"
-            android:textStyle="bold"
-            android:visibility="@{viewModel.getSongsByFolder(folder.songIds).size > 0 ? View.GONE : View.VISIBLE}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="@dimen/btn_size"
+            android:layout_height="@dimen/btn_size"
+            app:layout_constraintBottom_toBottomOf="@+id/view"
+            app:layout_constraintEnd_toEndOf="@+id/view"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/song_list"
-            android:layout_marginBottom="@dimen/song_item_size" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:visible="@{isLoading}" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

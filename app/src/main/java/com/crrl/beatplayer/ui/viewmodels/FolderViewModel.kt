@@ -13,55 +13,52 @@
 
 package com.crrl.beatplayer.ui.viewmodels
 
-import android.content.Context
-import android.database.sqlite.SQLiteException
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.crrl.beatplayer.models.Folder
 import com.crrl.beatplayer.models.Song
-import com.crrl.beatplayer.repository.FavoritesRepository
 import com.crrl.beatplayer.repository.FoldersRepository
+import com.crrl.beatplayer.ui.viewmodels.base.CoroutineViewModel
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.withContext
 
-class FolderViewModel(private val context: Context?) : ViewModel() {
+class FolderViewModel(
+    private val repositoryFol: FoldersRepository
+) : CoroutineViewModel(Main) {
 
-    private val albums: MutableLiveData<List<Folder>> = MutableLiveData()
+    private val currentFolder = MutableLiveData<Folder>()
+    private val foldersData: MutableLiveData<List<Folder>> = MutableLiveData()
     private val songByFolder: MutableLiveData<List<Song>> = MutableLiveData()
-    private val isFavLiveData: MutableLiveData<Boolean> = MutableLiveData()
 
 
     fun getFolders(): LiveData<List<Folder>> {
-        update()
-        return albums
+        launch {
+            val folders = withContext(IO) {
+                repositoryFol.getFolders()
+            }
+            foldersData.postValue(folders)
+        }
+        return foldersData
     }
 
-    fun getSongsByFolder(ids: List<Long>): LiveData<List<Song>> {
-        Thread {
-            songByFolder.postValue(FoldersRepository(context).getSongsForIds(ids.toLongArray()))
-        }.start()
+    fun getSongsByFolder(path: String): LiveData<List<Song>> {
+        launch {
+            val songs = withContext(IO) {
+                repositoryFol.getSongsForIds(path)
+            }
+            songByFolder.postValue(songs)
+        }
         return songByFolder
     }
 
-    private fun updateIsFav(id: Long) {
-        Thread {
-            isFavLiveData.postValue(
-                try {
-                    FavoritesRepository(context).favExist(id)
-                } catch (ex: SQLiteException) {
-                    null
-                }
-            )
-        }.start()
-    }
-
-    fun isFav(id: Long): LiveData<Boolean> {
-        updateIsFav(id)
-        return isFavLiveData
-    }
-
-    fun update() {
-        Thread {
-            albums.postValue(FoldersRepository(context).getFolders())
-        }.start()
+    fun getFolder(path: String): LiveData<Folder> {
+        launch {
+            val folder = withContext(IO) {
+                repositoryFol.getFolder(path)
+            }
+            currentFolder.postValue(folder)
+        }
+        return currentFolder
     }
 }
