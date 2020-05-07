@@ -31,8 +31,12 @@ class FavoriteViewModel(
     private val favoriteListData = MutableLiveData<List<Favorite>>()
     private val songListData = MutableLiveData<List<Song>>()
 
-    fun deleteSong(id: Long){
+    fun deleteFavorite(id: Long) {
         repository.deleteFavorites(longArrayOf(id))
+    }
+
+    fun deleteSongByFavorite(favoriteId: Long, ids: LongArray): Int {
+        return repository.deleteSongByFavorite(favoriteId, ids)
     }
 
     fun songListFavorite(idFavorites: Long): LiveData<List<Song>> {
@@ -65,8 +69,8 @@ class FavoriteViewModel(
         return repository.getFavorite(id)
     }
 
-    fun deleteFavorites(ids: LongArray) {
-        repository.deleteFavorites(ids)
+    fun deleteFavorites(ids: LongArray): Int {
+        return repository.deleteFavorites(ids)
     }
 
     fun addToFavorite(favoriteId: Long, songs: List<Song>): Int {
@@ -75,5 +79,21 @@ class FavoriteViewModel(
 
     fun remove(favoriteId: Long, ids: LongArray) {
         repository.deleteSongByFavorite(favoriteId, ids)
+    }
+
+    fun favExist(favoriteId: Long): Boolean {
+        return repository.favExist(favoriteId)
+    }
+
+    fun songExist(songId: Long): Boolean {
+        return repository.songExist(songId)
+    }
+
+    fun create(favorite: Favorite): Int {
+        return repository.createFavorite(favorite)
+    }
+
+    fun update(parentId: Long, id: Long): Int {
+        return repository.updateFavoriteCount(parentId, id)
     }
 }

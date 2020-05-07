@@ -16,16 +16,16 @@ package com.crrl.beatplayer.models
 import android.content.ContentUris
 import android.database.Cursor
 import com.crrl.beatplayer.extensions.fix
-import com.crrl.beatplayer.repository.FavoritesRepository.Companion.COLUMN_FAVORITE
-import com.crrl.beatplayer.repository.PlaylistRepository.Companion.COLUMN_ALBUM
-import com.crrl.beatplayer.repository.PlaylistRepository.Companion.COLUMN_ALBUM_ID
-import com.crrl.beatplayer.repository.PlaylistRepository.Companion.COLUMN_ARTIST
-import com.crrl.beatplayer.repository.PlaylistRepository.Companion.COLUMN_ARTIST_ID
-import com.crrl.beatplayer.repository.PlaylistRepository.Companion.COLUMN_DURATION
-import com.crrl.beatplayer.repository.PlaylistRepository.Companion.COLUMN_ID
-import com.crrl.beatplayer.repository.PlaylistRepository.Companion.COLUMN_PLAYLIST
-import com.crrl.beatplayer.repository.PlaylistRepository.Companion.COLUMN_TITLE
-import com.crrl.beatplayer.repository.PlaylistRepository.Companion.COLUMN_TRACK
+import com.crrl.beatplayer.repository.FavoritesRepositoryImplementation.Companion.COLUMN_FAVORITE
+import com.crrl.beatplayer.repository.PlaylistRepositoryImplementation.Companion.COLUMN_ALBUM
+import com.crrl.beatplayer.repository.PlaylistRepositoryImplementation.Companion.COLUMN_ALBUM_ID
+import com.crrl.beatplayer.repository.PlaylistRepositoryImplementation.Companion.COLUMN_ARTIST
+import com.crrl.beatplayer.repository.PlaylistRepositoryImplementation.Companion.COLUMN_ARTIST_ID
+import com.crrl.beatplayer.repository.PlaylistRepositoryImplementation.Companion.COLUMN_DURATION
+import com.crrl.beatplayer.repository.PlaylistRepositoryImplementation.Companion.COLUMN_ID
+import com.crrl.beatplayer.repository.PlaylistRepositoryImplementation.Companion.COLUMN_PLAYLIST
+import com.crrl.beatplayer.repository.PlaylistRepositoryImplementation.Companion.COLUMN_TITLE
+import com.crrl.beatplayer.repository.PlaylistRepositoryImplementation.Companion.COLUMN_TRACK
 import com.crrl.beatplayer.utils.PlayerConstants
 
 data class Song(

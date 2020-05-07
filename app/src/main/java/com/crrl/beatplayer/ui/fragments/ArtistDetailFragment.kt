@@ -24,17 +24,15 @@ import com.crrl.beatplayer.databinding.FragmentArtistDetailBinding
 import com.crrl.beatplayer.extensions.addFragment
 import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.extensions.observe
-import com.crrl.beatplayer.extensions.setCustomColor
 import com.crrl.beatplayer.interfaces.ItemClickListener
 import com.crrl.beatplayer.models.Album
 import com.crrl.beatplayer.models.Artist
 import com.crrl.beatplayer.models.MediaItem
 import com.crrl.beatplayer.models.Song
-import com.crrl.beatplayer.repository.ArtistsRepository
-import com.crrl.beatplayer.repository.FavoritesRepository
 import com.crrl.beatplayer.ui.adapters.AlbumAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.viewmodels.ArtistViewModel
+import com.crrl.beatplayer.ui.viewmodels.FavoriteViewModel
 import com.crrl.beatplayer.ui.viewmodels.PlaylistViewModel
 import com.crrl.beatplayer.utils.PlayerConstants
 import org.koin.android.ext.android.inject
@@ -46,6 +44,7 @@ class ArtistDetailFragment : BaseFragment<MediaItem>() {
     private lateinit var artist: Artist
     private val artistViewModel by inject<ArtistViewModel>()
     private val playlistViewModel by inject<PlaylistViewModel>()
+    private val favoriteViewModel by inject<FavoriteViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -63,7 +62,7 @@ class ArtistDetailFragment : BaseFragment<MediaItem>() {
     @Suppress("UNCHECKED_CAST")
     private fun init() {
         val id = arguments!!.getLong(PlayerConstants.ARTIST_KEY)
-        artist = ArtistsRepository.getInstance(context)?.getArtist(id)!!
+        artist = artistViewModel.getArtist(id)
 
         albumAdapter = AlbumAdapter(context, mainViewModel).apply {
             itemClickListener = this@ArtistDetailFragment as ItemClickListener<Album>
@@ -127,12 +126,11 @@ class ArtistDetailFragment : BaseFragment<MediaItem>() {
     }
 
     private fun toggleAddFav() {
-        val favoritesRepository = FavoritesRepository(context)
-        if (favoritesRepository.favExist(artist.id)) {
-            val resp = favoritesRepository.deleteFavorites(longArrayOf(artist.id))
+        if (favoriteViewModel.favExist(artist.id)) {
+            val resp = favoriteViewModel.deleteFavorites(longArrayOf(artist.id))
             showSnackBar(view, resp, 0, R.string.artist_no_fav_ok)
         } else {
-            val resp = favoritesRepository.createFavorite(artist.toFavorite())
+            val resp = favoriteViewModel.create(artist.toFavorite())
             showSnackBar(view, resp, 1, R.string.artist_fav_ok)
         }
     }

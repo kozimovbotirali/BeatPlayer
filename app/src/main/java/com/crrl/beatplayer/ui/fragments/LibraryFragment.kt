@@ -13,6 +13,7 @@
 
 package com.crrl.beatplayer.ui.fragments
 
+import android.animation.AnimatorInflater.loadStateListAnimator
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -25,7 +26,7 @@ import com.crrl.beatplayer.extensions.safeActivity
 import com.crrl.beatplayer.ui.activities.MainActivity
 import com.crrl.beatplayer.ui.adapters.ViewPagerAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseSongDetailFragment
-import com.crrl.beatplayer.utils.SettingsUtility
+import com.google.android.material.appbar.AppBarLayout
 
 
 class LibraryFragment : BaseSongDetailFragment() {
@@ -53,41 +54,42 @@ class LibraryFragment : BaseSongDetailFragment() {
     }
 
     private fun init() {
+        binding.apply {
+            appBar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { _, verticalOffset ->
+                val animatorRes = if (verticalOffset == 0) {
+                    R.animator.appbar_alpha_1
+                } else {
+                    R.animator.appbar_alpha_0
+                }
+                toolbar.stateListAnimator = loadStateListAnimator(context, animatorRes)
+            })
 
-        val listSortModeAdapter = ViewPagerAdapter(safeActivity.supportFragmentManager)
+            initViewPager(binding.pagerSortMode)
+            tabsContainer.setupWithViewPager(pagerSortMode)
+        }
+    }
 
-        listSortModeAdapter.apply {
+    private fun initViewPager(viewPager: ViewPager) {
+        val listSortModeAdapter = ViewPagerAdapter(safeActivity.supportFragmentManager).apply {
             addFragment(FavoriteFragment(), getString(R.string.favorites))
+            addFragment(PlaylistFragment(), getString(R.string.playlists))
             addFragment(SongFragment(), getString(R.string.songs))
             addFragment(AlbumFragment(), getString(R.string.albums))
             addFragment(ArtistFragment(), getString(R.string.artists))
-            addFragment(PlaylistFragment(), getString(R.string.playlists))
             addFragment(FolderFragment(), getString(R.string.folders))
         }
 
-        binding.apply {
-            pagerSortMode.apply {
-                adapter = listSortModeAdapter
-                offscreenPageLimit = 1
-                setCurrentItem(
-                    SettingsUtility.getInstance(safeActivity).startPageIndexSelected, false
-                )
-                addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-                    override fun onPageScrollStateChanged(state: Int) = Unit
-                    override fun onPageScrolled(
-                        position: Int,
-                        positionOffset: Float,
-                        positionOffsetPixels: Int
-                    ) = Unit
-
-                    override fun onPageSelected(position: Int) {
-                        SettingsUtility.getInstance(safeActivity).startPageIndexSelected = position
-                    }
-                })
-            }
-            tabsContainer.apply {
-                setupWithViewPager(pagerSortMode)
-            }
+        viewPager.apply {
+            adapter = listSortModeAdapter
+            offscreenPageLimit = 1
+            addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+                override fun onPageScrollStateChanged(s: Int) = Unit
+                override fun onPageScrolled(p: Int, po: Float, pop: Int) = Unit
+                override fun onPageSelected(p: Int) {
+                    mainViewModel.settingsUtility.startPageIndexSelected = p
+                }
+            })
+            setCurrentItem(mainViewModel.settingsUtility.startPageIndexSelected, false)
         }
     }
 }

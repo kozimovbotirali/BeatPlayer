@@ -15,6 +15,7 @@ package com.crrl.beatplayer
 
 import android.app.Application
 import com.crashlytics.android.Crashlytics
+import com.crrl.beatplayer.repository.repositoriesModule
 import com.crrl.beatplayer.ui.viewmodels.base.viewModelModule
 import com.crrl.beatplayer.utils.ReleaseTree
 import io.fabric.sdk.android.Fabric
@@ -30,7 +31,8 @@ class BeatPlayerApplication : Application() {
         Fabric.with(this, Crashlytics())
         Timber.plant(ReleaseTree())
         val modules = listOf(
-            viewModelModule
+            viewModelModule,
+            repositoriesModule
         )
         startKoin {
             androidContext(this@BeatPlayerApplication)

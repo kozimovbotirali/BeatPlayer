@@ -23,16 +23,17 @@ import com.crrl.beatplayer.utils.PlayerConstants
 import com.crrl.beatplayer.utils.SettingsUtility
 import com.crrl.beatplayer.utils.SortModes
 
-interface AlbumsRepositoryInterface {
+interface AlbumsRepository {
     fun getAlbum(id: Long): Album
     fun getSongsForAlbum(albumId: Long): List<Song>
     fun getAlbums(): List<Album>
+    fun search(paramString: String, limit: Int = Int.MAX_VALUE): List<Album>
 }
 
-class AlbumsRepository(context: Context?) : AlbumsRepositoryInterface {
+class AlbumsRepositoryImplementation(context: Context?) : AlbumsRepository {
 
     private val contentResolver = context!!.contentResolver
-    private val settingsUtility = SettingsUtility.getInstance(context)
+    private val settingsUtility = SettingsUtility(context)
 
     private fun getAlbum(cursor: Cursor?): Album {
         return cursor?.use {
@@ -62,7 +63,7 @@ class AlbumsRepository(context: Context?) : AlbumsRepositoryInterface {
         return sl
     }
 
-    fun search(paramString: String, limit: Int = Int.MAX_VALUE): List<Album> {
+    override fun search(paramString: String, limit: Int): List<Album> {
         val result = makeAlbumCursor("album LIKE ?", arrayOf("$paramString%"))
             .toList(true) { Album.createFromCursor(this) }
         if (result.size < limit) {

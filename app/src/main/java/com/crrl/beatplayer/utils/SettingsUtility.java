@@ -15,75 +15,30 @@ package com.crrl.beatplayer.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.net.Uri;
-import android.provider.MediaStore;
 
 import com.crrl.beatplayer.models.Song;
 import com.google.gson.Gson;
-
-import java.util.ArrayList;
 
 import static com.crrl.beatplayer.utils.PlayerConstants.AUTO_THEME;
 
 public final class SettingsUtility {
 
     private static final String SHARED_PREFERENCES_FILE_NAME = "configs";
-    private static final String SONG_DIRS_KEY = "song_dirs";
     private static final String SONG_SORT_ORDER_KEY = "song_sort_order";
     private static final String ALBUM_SORT_ORDER_KEY = "album_sort_order";
     private static final String ALBUM_SONG_SORT_ORDER_KEY = "album_song_sort_order";
     private static final String ARTIST_SORT_ORDER_KEY = "album_song_sort_order";
     private static final String LAST_OPTION_SELECTED_KEY = "last_option_selected";
-    private static final String LIGHT_THEME_KEY = "light_theme";
     private static final String CURRENT_THEME_KEY = "current_theme";
-    private static final String CURRENT_COLOR_ACCENT_KEY = "current_accent_color";
 
-    private static SharedPreferences sPreferences;
-    private static SettingsUtility settingsUtility;
+    private SharedPreferences sPreferences;
 
-    private SettingsUtility(Context context) {
+    public SettingsUtility(Context context) {
         sPreferences = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
     }
 
-    public static SettingsUtility getInstance(Context context) {
-        if (settingsUtility == null)
-            settingsUtility = new SettingsUtility(context);
-        return settingsUtility;
-    }
-
-    public ArrayList<Uri> getSongDirs() {
-        ArrayList<Uri> songDirs = new ArrayList<>();
-        String readValue;
-        SharedPreferences prefs = sPreferences;
-        readValue = prefs.getString(SONG_DIRS_KEY, "null");
-        if (readValue.equals("null") || readValue.equals("")) {
-            songDirs.add(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI);
-            setSongDirs(songDirs);
-        } else {
-            String[] songs = readValue.split("<,>");
-            for (String song : songs) {
-                songDirs.add(Uri.parse(song));
-            }
-        }
-        return songDirs;
-    }
-
-    private void setSongDirs(ArrayList<Uri> songDirs) {
-        SharedPreferences.Editor editor = sPreferences.edit();
-        StringBuilder dirs = new StringBuilder();
-        for (int i = 0; i < songDirs.size(); i++) {
-            if (i > 0) {
-                dirs.append("<,>").append(songDirs.get(i).toString());
-            } else {
-                dirs.append(songDirs.get(i).toString());
-            }
-        }
-        editor.putString(SONG_DIRS_KEY, dirs.toString());
-        editor.apply();
-    }
-
     public int getStartPageIndexSelected() {
-        return sPreferences.getInt(LAST_OPTION_SELECTED_KEY, 1);
+        return sPreferences.getInt(LAST_OPTION_SELECTED_KEY, 2);
     }
 
     public void setStartPageIndexSelected(int value) {

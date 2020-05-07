@@ -25,7 +25,6 @@ import com.crrl.beatplayer.databinding.FragmentAlbumDetailBinding
 import com.crrl.beatplayer.extensions.*
 import com.crrl.beatplayer.models.Album
 import com.crrl.beatplayer.models.Song
-import com.crrl.beatplayer.repository.FavoritesRepository
 import com.crrl.beatplayer.ui.adapters.SongAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.viewmodels.AlbumViewModel
@@ -59,7 +58,7 @@ class AlbumDetailFragment : BaseFragment<Song>() {
     private fun init() {
         val id = arguments!!.getLong(PlayerConstants.ALBUM_KEY)
         album = albumViewModel.getAlbum(id)
-
+        initNeeded(Song(), emptyList(), id)
         songAdapter = SongAdapter(context, mainViewModel).apply {
             itemClickListener = this@AlbumDetailFragment
             showHeader = true
@@ -82,7 +81,7 @@ class AlbumDetailFragment : BaseFragment<Song>() {
                 binding.totalDuration = GeneralUtils.getTotalTime(songAdapter.songList).toInt()
             }
             if (it.isEmpty()) {
-                favoriteViewModel.deleteSong(id)
+                favoriteViewModel.deleteFavorite(id)
                 safeActivity.onBackPressed()
             }
         }
@@ -131,12 +130,11 @@ class AlbumDetailFragment : BaseFragment<Song>() {
     }
 
     private fun toggleAddFav() {
-        val favoritesRepository = FavoritesRepository(context)
-        if (favoritesRepository.favExist(album.id)) {
-            val resp = favoritesRepository.deleteFavorites(longArrayOf(album.id))
+        if (favoriteViewModel.favExist(album.id)) {
+            val resp = favoriteViewModel.deleteFavorites(longArrayOf(album.id))
             showSnackBar(view, resp, 0, R.string.album_no_fav_ok)
         } else {
-            val resp = favoritesRepository.createFavorite(album.toFavorite())
+            val resp = favoriteViewModel.create(album.toFavorite())
             showSnackBar(view, resp, 1, R.string.album_fav_ok)
         }
     }

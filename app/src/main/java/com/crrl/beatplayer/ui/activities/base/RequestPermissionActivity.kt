@@ -20,18 +20,24 @@ import android.database.sqlite.SQLiteException
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
+import com.crrl.beatplayer.db.DBHelper
 import com.crrl.beatplayer.models.Favorite
 import com.crrl.beatplayer.repository.FavoritesRepository
+import com.crrl.beatplayer.repository.FavoritesRepositoryImplementation
 import com.crrl.beatplayer.repository.PlaylistRepository
-import com.crrl.beatplayer.db.DBHelper
+import com.crrl.beatplayer.repository.PlaylistRepositoryImplementation
 import com.crrl.beatplayer.utils.PlayerConstants.FAVORITE_ID
 import com.crrl.beatplayer.utils.PlayerConstants.FAVORITE_NAME
 import com.crrl.beatplayer.utils.PlayerConstants.FAVORITE_TYPE
+import org.koin.android.ext.android.get
 
 
 open class RequestPermissionActivity : AppCompatActivity() {
 
     protected var permissionsGranted: Boolean = false
+
+    val playlistRepository: PlaylistRepository = get()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,8 +58,8 @@ open class RequestPermissionActivity : AppCompatActivity() {
         } else {
             permissionsGranted = true
         }
-        val frF = FavoritesRepository(this)
-        val frP = PlaylistRepository(this)
+        val frF: FavoritesRepositoryImplementation = get()
+        val frP: PlaylistRepositoryImplementation = get()
         try {
             createFavList(frF)
         } catch (ex: SQLiteException) {

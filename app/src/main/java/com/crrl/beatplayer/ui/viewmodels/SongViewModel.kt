@@ -51,4 +51,8 @@ class SongViewModel(
         if(songsSelected.value == null) songsSelected.value = mutableListOf()
         return songsSelected
     }
+
+    fun delete(ids: LongArray): Int {
+        return songsRepository.deleteTracks(ids)
+    }
 }

@@ -14,28 +14,30 @@
 package com.crrl.beatplayer.repository
 
 import android.annotation.SuppressLint
+import android.content.ContentProviderOperation
 import android.content.Context
+import android.content.OperationApplicationException
 import android.database.Cursor
-import android.provider.BaseColumns._ID
-import android.provider.MediaStore
+import android.os.RemoteException
+import android.provider.MediaStore.AUTHORITY
 import android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
-import com.crrl.beatplayer.extensions.forEach
 import com.crrl.beatplayer.extensions.toList
 import com.crrl.beatplayer.models.Song
+import com.crrl.beatplayer.utils.GeneralUtils.getSongUri
 import com.crrl.beatplayer.utils.SettingsUtility
-import java.io.File
 
-interface SongsRepositoryInterface {
+
+interface SongsRepository {
     fun loadSongs(): List<Song>
     fun getSongForId(id: Long): Song
     fun search(searchString: String, limit: Int = Int.MAX_VALUE): List<Song>
     fun deleteTracks(ids: LongArray): Int
 }
 
-class SongsRepository(private val context: Context?) : SongsRepositoryInterface {
+class SongsRepositoryImplementation(private val context: Context?) : SongsRepository {
 
     private val contentResolver = context!!.contentResolver
-    private val settingsUtility = SettingsUtility.getInstance(context)
+    private val settingsUtility = SettingsUtility(context)
 
     override fun loadSongs(): List<Song> {
         return makeSongCursor(null, null)
@@ -71,49 +73,24 @@ class SongsRepository(private val context: Context?) : SongsRepositoryInterface 
     }
 
     override fun deleteTracks(ids: LongArray): Int {
-        val projection = arrayOf(
-            _ID,
-            MediaStore.MediaColumns.DATA,
-            MediaStore.Audio.AudioColumns.ALBUM_ID
-        )
-        val selection = StringBuilder().apply {
-            append("$_ID IN (")
-            for (i in ids.indices) {
-                append(ids[i])
-                if (i < ids.size - 1) {
-                    append(",")
-                }
-            }
-            append(")")
-        }.toString()
-
-        var deleted = ids.size
-        contentResolver.query(
-            EXTERNAL_CONTENT_URI,
-            projection,
-            selection,
-            null,
-            null
-        )?.use {
-            val del = if (it.moveToFirst()) {
-                contentResolver.delete(EXTERNAL_CONTENT_URI, selection, null)
-            } else -1
-            if (del < 1) return -1
-            it.forEach(true) {
-                val name = it.getString(1)
-                val f = File(name)
-                try {
-                    if (f.exists())
-                        if (!f.delete())
-                            if (!f.canonicalFile.delete())
-                                if (!context!!.deleteFile(f.name)) {
-                                    deleted--
-                                }
-                } catch (_: SecurityException) {
-                }
-            }
+        if (ids.isEmpty()) {
+            return -1
         }
-        return deleted
+        val operations = ids.map { song ->
+            ContentProviderOperation
+                .newDelete(getSongUri(song))
+                .withSelection("_ID = ?", arrayOf("$song"))
+                .build()
+
+        }.toCollection(ArrayList())
+        return try {
+            contentResolver.applyBatch(AUTHORITY, operations)
+            ids.size
+        } catch (e: RemoteException) {
+            -1
+        } catch (e: OperationApplicationException) {
+            -1
+        }
     }
 
     @SuppressLint("Recycle")

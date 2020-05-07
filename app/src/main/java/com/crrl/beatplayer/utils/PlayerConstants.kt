@@ -43,6 +43,7 @@ object PlayerConstants {
     const val ARTIST_TYPE = "Artist"
     const val FOLDER_TYPE = "Folder"
     const val READ_ONLY_MODE = "r"
+    const val READ_AND_WRITE_MODE = "rw"
     const val EOF = -1
     val ARTWORK_URI: Uri = Uri.parse("content://media/external/audio/albumart")
     val SONG_URI: Uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI

@@ -38,4 +38,7 @@
     <color name="transparent">#00ffffff</color>
     <color name="error">#dd4254</color>
     <color name="success">#339A04</color>
+
+    <color name="colorAccent">#0788F1</color>
+    <color name="primary">#F2F2F2</color>
 </resources>

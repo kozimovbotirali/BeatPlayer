@@ -14,13 +14,13 @@
 package com.crrl.beatplayer.models
 
 import android.database.Cursor
-import com.crrl.beatplayer.repository.FavoritesRepository.Companion.COLUMN_ARTIST
-import com.crrl.beatplayer.repository.FavoritesRepository.Companion.COLUMN_ARTIST_ID
-import com.crrl.beatplayer.repository.FavoritesRepository.Companion.COLUMN_ID
-import com.crrl.beatplayer.repository.FavoritesRepository.Companion.COLUMN_SONG_COUNT
-import com.crrl.beatplayer.repository.FavoritesRepository.Companion.COLUMN_TITLE
-import com.crrl.beatplayer.repository.FavoritesRepository.Companion.COLUMN_TYPE
-import com.crrl.beatplayer.repository.FavoritesRepository.Companion.COLUMN_YEAR
+import com.crrl.beatplayer.repository.FavoritesRepositoryImplementation.Companion.COLUMN_ARTIST
+import com.crrl.beatplayer.repository.FavoritesRepositoryImplementation.Companion.COLUMN_ARTIST_ID
+import com.crrl.beatplayer.repository.FavoritesRepositoryImplementation.Companion.COLUMN_ID
+import com.crrl.beatplayer.repository.FavoritesRepositoryImplementation.Companion.COLUMN_SONG_COUNT
+import com.crrl.beatplayer.repository.FavoritesRepositoryImplementation.Companion.COLUMN_TITLE
+import com.crrl.beatplayer.repository.FavoritesRepositoryImplementation.Companion.COLUMN_TYPE
+import com.crrl.beatplayer.repository.FavoritesRepositoryImplementation.Companion.COLUMN_YEAR
 import com.crrl.beatplayer.utils.PlayerConstants.ARTIST_TYPE
 import com.crrl.beatplayer.utils.PlayerConstants.FOLDER_TYPE
 

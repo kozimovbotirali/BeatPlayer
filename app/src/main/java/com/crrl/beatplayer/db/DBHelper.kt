@@ -23,7 +23,8 @@ import android.database.sqlite.SQLiteOpenHelper
 
 
 open class DBHelper(context: Context?, factory: SQLiteDatabase.CursorFactory? = null) :
-    SQLiteOpenHelper(context,
+    SQLiteOpenHelper(
+        context,
         DATABASE_NAME, factory,
         DATABASE_VERSION
     ) {
@@ -82,8 +83,7 @@ open class DBHelper(context: Context?, factory: SQLiteDatabase.CursorFactory? = 
         whereArgs: Array<String>
     ): Int {
         val db = this.writableDatabase
-        val deleted = db.delete(tableName, whereClause, whereArgs)
-        return deleted
+        return db.delete(tableName, whereClause, whereArgs)
     }
 
     protected open fun getRow(
@@ -105,6 +105,16 @@ open class DBHelper(context: Context?, factory: SQLiteDatabase.CursorFactory? = 
             sql.toString(),
             whereArgs
         )
+    }
+
+    protected open fun updateRow(
+        tableName: String,
+        values: ContentValues,
+        whereClause: String,
+        updateArgs: Array<String>
+    ): Int {
+        val db = this.writableDatabase
+        return db.update(tableName, values, whereClause, updateArgs)
     }
 
     override fun onCreate(db: SQLiteDatabase?) {}

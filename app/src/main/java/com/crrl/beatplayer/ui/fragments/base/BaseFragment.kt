@@ -13,7 +13,6 @@
 
 package com.crrl.beatplayer.ui.fragments.base
 
-import android.app.ActivityOptions
 import android.content.Intent
 import android.graphics.Typeface
 import android.net.Uri
@@ -30,14 +29,13 @@ import com.crrl.beatplayer.interfaces.ItemClickListener
 import com.crrl.beatplayer.models.MediaItem
 import com.crrl.beatplayer.models.Playlist
 import com.crrl.beatplayer.models.Song
-import com.crrl.beatplayer.repository.PlaylistRepository
-import com.crrl.beatplayer.repository.SongsRepository
 import com.crrl.beatplayer.ui.activities.SelectSongActivity
 import com.crrl.beatplayer.ui.fragments.FavoriteDetailFragment
 import com.crrl.beatplayer.ui.fragments.PlaylistDetailFragment
 import com.crrl.beatplayer.ui.viewmodels.FavoriteViewModel
 import com.crrl.beatplayer.ui.viewmodels.MainViewModel
 import com.crrl.beatplayer.ui.viewmodels.PlaylistViewModel
+import com.crrl.beatplayer.ui.viewmodels.SongViewModel
 import com.crrl.beatplayer.ui.widgets.AlertDialog
 import com.crrl.beatplayer.ui.widgets.actions.AlertItemAction
 import com.crrl.beatplayer.ui.widgets.stylers.AlertItemStyle
@@ -57,15 +55,17 @@ import org.koin.android.ext.android.inject
 
 open class BaseFragment<T : MediaItem> : CoroutineFragment(), ItemClickListener<T> {
 
-    private lateinit var currentItemList: List<T>
-    private lateinit var currentItem: T
-    private var alertPlaylists: AlertDialog? = null
     protected lateinit var dialog: AlertDialog
     protected val mainViewModel by inject<MainViewModel>()
     protected var powerMenu: PowerMenu? = null
 
+    private lateinit var currentItemList: List<T>
+    private lateinit var currentItem: T
+    private var currentParentId = 0L
+    private var alertPlaylists: AlertDialog? = null
     private val favoriteViewModel by inject<FavoriteViewModel>()
     private val playlistViewModel by inject<PlaylistViewModel>()
+    private val songViewModel by inject<SongViewModel>()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -151,7 +151,7 @@ open class BaseFragment<T : MediaItem> : CoroutineFragment(), ItemClickListener<
             safeActivity.getColorByTheme(R.attr.bodyTextColor),
             safeActivity.getColorByTheme(R.attr.colorAccent),
             text ?: "${safeActivity.getString(R.string.playlist)} ${addZeros(
-                PlaylistRepository(context).getPlayListsCount() + 1
+                playlistViewModel.count + 1
             )}",
             resources.getDimension(R.dimen.bottom_panel_radius)
         )
@@ -197,11 +197,10 @@ open class BaseFragment<T : MediaItem> : CoroutineFragment(), ItemClickListener<
                 )
             }
         } else {
-            val options = ActivityOptions.makeSceneTransitionAnimation(safeActivity)
             val intent = Intent(safeActivity, SelectSongActivity::class.java).apply {
                 putExtra(PlayerConstants.PLAY_LIST_DETAIL, name)
             }
-            safeActivity.startActivityForResult(intent, 1, options.toBundle())
+            safeActivity.startActivityForResult(intent, 1)
         }
     }
 
@@ -259,16 +258,22 @@ open class BaseFragment<T : MediaItem> : CoroutineFragment(), ItemClickListener<
     }
 
     private fun deleteItem(id: Long) {
-        val resp =
-            SongsRepository(context).deleteTracks(longArrayOf(id))
-        if (resp > 0)
-            view.snackbar(SUCCESS, getString(R.string.deleted_ok), LENGTH_SHORT)
-        else
-            view.snackbar(ERROR, getString(R.string.deleted_err), LENGTH_SHORT,
-                action = getString(R.string.retry),
-                clickListener = View.OnClickListener {
-                    deleteItem(id)
-                })
+        val resp = songViewModel.delete(longArrayOf(id))
+        favoriteViewModel.update(currentParentId, id)
+        if (resp > 0) {
+            mainViewModel.binding.root.snackbar(
+                SUCCESS,
+                getString(R.string.deleted_ok),
+                LENGTH_SHORT
+            )
+            tidyUp(id)
+        } else mainViewModel.binding.root.snackbar(ERROR,
+            getString(R.string.deleted_err),
+            LENGTH_SHORT,
+            action = getString(R.string.retry),
+            clickListener = View.OnClickListener {
+                deleteItem(id)
+            })
     }
 
     private val onMenuItemClickListener = OnMenuItemClickListener<PowerMenuItem> { position, _ ->
@@ -316,9 +321,10 @@ open class BaseFragment<T : MediaItem> : CoroutineFragment(), ItemClickListener<
             )
     }
 
-    fun initNeeded(item: T, itemList: List<T>) {
+    fun initNeeded(item: T, itemList: List<T>, currentParentId: Long) {
         currentItem = item
         currentItemList = itemList
+        this.currentParentId = currentParentId
     }
 
     fun shareItem() {
@@ -331,6 +337,21 @@ open class BaseFragment<T : MediaItem> : CoroutineFragment(), ItemClickListener<
 
         val shareIntent = Intent.createChooser(sendIntent, null)
         startActivity(shareIntent)
+    }
+
+    private fun tidyUp(id: Long) {
+        val currentId = mainViewModel.getCurrentSong().value ?: return
+        when (mainViewModel.getCurrentSongList().value) {
+            null -> mainViewModel.update()
+            else -> {
+                if (mainViewModel.getCurrentSongList().value!!.size == 1) {
+                    mainViewModel.update()
+                } else {
+                    if (id == currentId.id) mainViewModel.next(id)
+                    mainViewModel.removeDeletedSong(id)
+                }
+            }
+        }
     }
 
     open fun onBackPressed(): Boolean {
@@ -366,7 +387,7 @@ open class BaseFragment<T : MediaItem> : CoroutineFragment(), ItemClickListener<
     override fun onPlayAllClick(view: View) {}
 
     override fun onPopupMenuClick(view: View, position: Int, item: T, itemList: List<T>) {
-        initNeeded(item, itemList)
+        initNeeded(item, itemList, currentParentId)
     }
 }
 

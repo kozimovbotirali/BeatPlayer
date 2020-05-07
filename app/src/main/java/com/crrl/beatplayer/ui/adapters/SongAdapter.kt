@@ -149,8 +149,9 @@ class SongAdapter(
 
         private fun setSelectedSongColor(binding: SongItemBinding, song: Song) {
             context as Activity
+            val currentSong = mainViewModel.getCurrentSong().value ?: return
             binding.apply {
-                if (mainViewModel.getCurrentSong().value!!.compare(song)) {
+                if (currentSong.compare(song)) {
                     val color = context.getColorByTheme(R.attr.colorAccentOpacity)
                     song.isSelected = true
                     title.isSelected = true

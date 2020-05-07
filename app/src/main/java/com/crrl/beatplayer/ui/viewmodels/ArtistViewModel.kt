@@ -53,4 +53,8 @@ class ArtistViewModel(
         }
         return albumLiveData
     }
+
+    fun getArtist(id: Long): Artist {
+        return repository.getArtist(id)
+    }
 }

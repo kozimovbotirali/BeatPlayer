@@ -33,7 +33,6 @@ import com.crrl.beatplayer.ui.widgets.actions.AlertItemAction
 import com.crrl.beatplayer.ui.widgets.stylers.AlertItemTheme
 import com.crrl.beatplayer.utils.GeneralUtils
 import com.crrl.beatplayer.utils.PlayerConstants
-import com.crrl.beatplayer.utils.SettingsUtility
 import com.crrl.beatplayer.utils.SortModes
 import org.koin.android.ext.android.inject
 
@@ -95,29 +94,29 @@ class ArtistFragment : BaseFragment<Artist>() {
         dialog = buildSortModesDialog(listOf(
             AlertItemAction(
                 context!!.getString(R.string.sort_default),
-                SettingsUtility.getInstance(context).artistSortOrder == SortModes.ArtistModes.ARTIST_DEFAULT,
+                mainViewModel.settingsUtility.artistSortOrder == SortModes.ArtistModes.ARTIST_DEFAULT,
                 AlertItemTheme.DEFAULT
             ) { action ->
                 action.selected = true
-                SettingsUtility.getInstance(context).artistSortOrder =
+                mainViewModel.settingsUtility.artistSortOrder =
                     SortModes.ArtistModes.ARTIST_DEFAULT
             },
             AlertItemAction(
                 context!!.getString(R.string.sort_az),
-                SettingsUtility.getInstance(context).artistSortOrder == SortModes.ArtistModes.ARTIST_A_Z,
+                mainViewModel.settingsUtility.artistSortOrder == SortModes.ArtistModes.ARTIST_A_Z,
                 AlertItemTheme.DEFAULT
             ) { action ->
                 action.selected = true
-                SettingsUtility.getInstance(context).artistSortOrder =
+                mainViewModel.settingsUtility.artistSortOrder =
                     SortModes.ArtistModes.ARTIST_A_Z
             },
             AlertItemAction(
                 context!!.getString(R.string.sort_za),
-                SettingsUtility.getInstance(context).artistSortOrder == SortModes.ArtistModes.ARTIST_Z_A,
+                mainViewModel.settingsUtility.artistSortOrder == SortModes.ArtistModes.ARTIST_Z_A,
                 AlertItemTheme.DEFAULT
             ) { action ->
                 action.selected = true
-                SettingsUtility.getInstance(context).artistSortOrder =
+                mainViewModel.settingsUtility.artistSortOrder =
                     SortModes.ArtistModes.ARTIST_Z_A
             }
         ))

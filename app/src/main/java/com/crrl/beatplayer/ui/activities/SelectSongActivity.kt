@@ -26,9 +26,7 @@ import androidx.recyclerview.widget.SimpleItemAnimator
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.ActivitySelectSongBinding
 import com.crrl.beatplayer.extensions.delete
-import com.crrl.beatplayer.extensions.getColorByTheme
 import com.crrl.beatplayer.extensions.observe
-import com.crrl.beatplayer.extensions.setCustomColor
 import com.crrl.beatplayer.interfaces.ItemClickListener
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.ui.activities.base.BaseActivity
@@ -38,8 +36,6 @@ import com.crrl.beatplayer.ui.viewmodels.SongViewModel
 import com.crrl.beatplayer.utils.PlayerConstants.PLAY_LIST_DETAIL
 import com.google.gson.Gson
 import org.koin.android.ext.android.inject
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
 
 
 class SelectSongActivity : BaseActivity(), ItemClickListener<Song> {
@@ -47,7 +43,7 @@ class SelectSongActivity : BaseActivity(), ItemClickListener<Song> {
     private lateinit var songAdapter: SelectSongAdapter
     private lateinit var binding: ActivitySelectSongBinding
 
-    private val viewModel by inject<SongViewModel>()
+    private val songViewModel by inject<SongViewModel>()
     private val mainViewModel by inject<MainViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,9 +62,9 @@ class SelectSongActivity : BaseActivity(), ItemClickListener<Song> {
             (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         }
 
-        viewModel.getSongList().observe(this) { list ->
+        songViewModel.getSongList().observe(this) { list ->
             songAdapter.updateDataSet(list.toMutableList())
-            viewModel.update(mutableListOf())
+            songViewModel.update(mutableListOf())
 
             (binding.root.parent as? ViewGroup)?.doOnPreDraw {
                 startPostponedEnterTransition()
@@ -80,8 +76,8 @@ class SelectSongActivity : BaseActivity(), ItemClickListener<Song> {
         }
 
         binding.let {
-            it.viewModel = viewModel
-            //it.executePendingBindings()
+            it.viewModel = songViewModel
+            it.executePendingBindings()
 
             it.lifecycleOwner = this
         }
@@ -94,14 +90,14 @@ class SelectSongActivity : BaseActivity(), ItemClickListener<Song> {
 
     fun doneClick(view: View) {
         val name = intent.extras!!.getString(PLAY_LIST_DETAIL)
-        val songs = viewModel.selectedSongs().value!!
+        val songs = songViewModel.selectedSongs().value!!
         returnResult(name, songs, Activity.RESULT_OK)
         finish()
     }
 
     fun selectAll(view: View) {
         view as CheckBox
-        viewModel.update(songListSelected(view.isChecked))
+        songViewModel.update(songListSelected(view.isChecked))
     }
 
     private fun returnResult(name: String?, songs: List<Song>, result: Int) {
@@ -126,7 +122,7 @@ class SelectSongActivity : BaseActivity(), ItemClickListener<Song> {
     }
 
     override fun onItemClick(view: View, position: Int, item: Song) {
-        val songs = viewModel.selectedSongs().value!!
+        val songs = songViewModel.selectedSongs().value!!
         if (!item.isSelected) {
             songs.add(item)
             toggleSelect(position, item, true)
@@ -134,7 +130,7 @@ class SelectSongActivity : BaseActivity(), ItemClickListener<Song> {
             toggleSelect(position, item, false)
             songs.delete(item)
         }
-        viewModel.update(songs)
+        songViewModel.update(songs)
     }
 
     override fun onShuffleClick(view: View) = Unit

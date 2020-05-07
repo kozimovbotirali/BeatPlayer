@@ -21,6 +21,7 @@ import com.crrl.beatplayer.repository.FoldersRepository
 import com.crrl.beatplayer.ui.viewmodels.base.CoroutineViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
 class FolderViewModel(
@@ -44,10 +45,13 @@ class FolderViewModel(
 
     fun getSongsByFolder(path: String): LiveData<List<Song>> {
         launch {
-            val songs = withContext(IO) {
-                repositoryFol.getSongsForIds(path)
+            while (true) {
+                val songs = withContext(IO) {
+                    repositoryFol.getSongsForIds(path)
+                }
+                songByFolder.postValue(songs)
+                delay(1000)
             }
-            songByFolder.postValue(songs)
         }
         return songByFolder
     }

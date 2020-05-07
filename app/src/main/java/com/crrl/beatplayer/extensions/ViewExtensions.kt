@@ -24,16 +24,12 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.animation.OvershootInterpolator
-import android.widget.FrameLayout
-import android.widget.ImageButton
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.annotation.LayoutRes
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
-import com.budiyev.android.circularprogressbar.CircularProgressBar
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.ui.widgets.SimpleCustomSnackbar
 import com.crrl.beatplayer.utils.GeneralUtils
@@ -188,9 +184,8 @@ fun View?.setCustomColor(color: Int, hasBackground: Boolean = false, opacity: Bo
             setTabTextColors(default, color)
             setSelectedTabIndicatorColor(color)
         }
-        is CircularProgressBar -> {
-            backgroundStrokeColor = c
-            foregroundStrokeColor = color
+        is ProgressBar -> {
+            backgroundTintList = ColorStateList.valueOf(c)
         }
         is LinearLayout -> {
             background = if (hasBackground) {

@@ -32,6 +32,7 @@ import com.crrl.beatplayer.extensions.CUSTOM
 import com.crrl.beatplayer.extensions.snackbar
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.utils.PlayerConstants.ARTWORK_URI
+import com.crrl.beatplayer.utils.PlayerConstants.SONG_URI
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import java.io.*
 
@@ -225,4 +226,5 @@ object GeneralUtils {
     }
 
     fun getAlbumArtUri(albumId: Long): Uri = withAppendedId(ARTWORK_URI, albumId)
+    fun getSongUri(songId: Long): Uri = withAppendedId(SONG_URI, songId)
 }

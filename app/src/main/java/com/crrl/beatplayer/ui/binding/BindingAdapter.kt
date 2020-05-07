@@ -204,7 +204,10 @@ fun setClipToOutline(view: View, clipToOutline: Boolean) {
 @BindingAdapter("app:position", "app:size", "app:isSearch", requireAll = false)
 fun setBackgroundByPosition(view: View, position: Int, size: Int, isSearch: Boolean = false) {
     when (position) {
-        0 -> view.setBackgroundResource(R.drawable.list_item_ripple_top)
+        0 -> if (isSearch) {
+            if (size == 1) view.setBackgroundResource(R.drawable.list_item_ripple_with_background)
+            else view.setBackgroundResource(R.drawable.list_item_ripple_top)
+        } else view.setBackgroundResource(R.drawable.list_item_ripple_top)
         size - 1 -> if (isSearch) {
             view.setBackgroundResource(R.drawable.list_item_ripple_bottom)
         } else view.setBackgroundResource(R.drawable.list_item_ripple_middle)

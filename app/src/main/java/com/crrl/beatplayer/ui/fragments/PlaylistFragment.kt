@@ -24,7 +24,6 @@ import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentPlaylistBinding
 import com.crrl.beatplayer.extensions.*
 import com.crrl.beatplayer.models.Playlist
-import com.crrl.beatplayer.repository.PlaylistRepository
 import com.crrl.beatplayer.ui.adapters.PlaylistAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.viewmodels.PlaylistViewModel
@@ -103,7 +102,7 @@ class PlaylistFragment : BaseFragment<Playlist>() {
         item: Playlist,
         itemList: List<Playlist>
     ) {
-        val deleted = PlaylistRepository(context).deletePlaylist(item.id)
+        val deleted = playlistViewModel.delete(item.id)
         if (deleted != -1)
             mainViewModel.binding.mainContainer.snackbar(
                 SUCCESS,

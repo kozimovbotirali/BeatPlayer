@@ -22,10 +22,8 @@ import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentSongDetailBinding
 import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.extensions.observe
-import com.crrl.beatplayer.extensions.setCustomColor
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.ui.fragments.base.BaseSongDetailFragment
-import com.crrl.beatplayer.utils.SettingsUtility
 import rm.com.audiowave.OnSamplingListener
 import timber.log.Timber
 
@@ -48,7 +46,7 @@ class SongDetailFragment : BaseSongDetailFragment() {
     private fun init() {
         updateViewComponents()
         mainViewModel.getCurrentSong().observe(viewLifecycleOwner) {
-            initNeeded(it, emptyList())
+            initNeeded(it, emptyList(), 0)
         }
 
         binding.addPlaylist.setOnClickListener { shareItem() }

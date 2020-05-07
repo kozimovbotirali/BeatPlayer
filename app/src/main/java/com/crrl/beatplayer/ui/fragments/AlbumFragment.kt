@@ -36,7 +36,6 @@ import com.crrl.beatplayer.utils.GeneralUtils
 import com.crrl.beatplayer.utils.GeneralUtils.VERTICAL
 import com.crrl.beatplayer.utils.PlayerConstants
 import com.crrl.beatplayer.utils.PlayerConstants.ALBUM_KEY
-import com.crrl.beatplayer.utils.SettingsUtility
 import com.crrl.beatplayer.utils.SortModes
 import org.koin.android.ext.android.inject
 
@@ -96,39 +95,39 @@ class AlbumFragment : BaseFragment<Album>() {
         dialog = buildSortModesDialog(listOf(
             AlertItemAction(
                 context!!.getString(R.string.sort_default),
-                SettingsUtility.getInstance(context).albumSortOrder == SortModes.AlbumModes.ALBUM_DEFAULT,
+                mainViewModel.settingsUtility.albumSortOrder == SortModes.AlbumModes.ALBUM_DEFAULT,
                 AlertItemTheme.DEFAULT
             ) { action ->
                 action.selected = true
-                SettingsUtility.getInstance(context).albumSortOrder =
+                mainViewModel.settingsUtility.albumSortOrder =
                     SortModes.AlbumModes.ALBUM_DEFAULT
                 reloadAdapter()
             },
             AlertItemAction(
                 context!!.getString(R.string.sort_az),
-                SettingsUtility.getInstance(context).albumSortOrder == SortModes.AlbumModes.ALBUM_A_Z,
+                mainViewModel.settingsUtility.albumSortOrder == SortModes.AlbumModes.ALBUM_A_Z,
                 AlertItemTheme.DEFAULT
             ) { action ->
                 action.selected = true
-                SettingsUtility.getInstance(context).albumSortOrder = SortModes.AlbumModes.ALBUM_A_Z
+                mainViewModel.settingsUtility.albumSortOrder = SortModes.AlbumModes.ALBUM_A_Z
                 reloadAdapter()
             },
             AlertItemAction(
                 context!!.getString(R.string.sort_za),
-                SettingsUtility.getInstance(context).albumSortOrder == SortModes.AlbumModes.ALBUM_Z_A,
+                mainViewModel.settingsUtility.albumSortOrder == SortModes.AlbumModes.ALBUM_Z_A,
                 AlertItemTheme.DEFAULT
             ) { action ->
                 action.selected = true
-                SettingsUtility.getInstance(context).albumSortOrder = SortModes.AlbumModes.ALBUM_Z_A
+                mainViewModel.settingsUtility.albumSortOrder = SortModes.AlbumModes.ALBUM_Z_A
                 reloadAdapter()
             },
             AlertItemAction(
                 context!!.getString(R.string.sort_year),
-                SettingsUtility.getInstance(context).albumSortOrder == SortModes.AlbumModes.ALBUM_YEAR,
+                mainViewModel.settingsUtility.albumSortOrder == SortModes.AlbumModes.ALBUM_YEAR,
                 AlertItemTheme.DEFAULT
             ) { action ->
                 action.selected = true
-                SettingsUtility.getInstance(context).albumSortOrder =
+                mainViewModel.settingsUtility.albumSortOrder =
                     SortModes.AlbumModes.ALBUM_YEAR
                 reloadAdapter()
             }

@@ -16,12 +16,12 @@ package com.crrl.beatplayer.repository
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
+import com.crrl.beatplayer.db.DBHelper
 import com.crrl.beatplayer.extensions.toList
 import com.crrl.beatplayer.models.Playlist
 import com.crrl.beatplayer.models.Song
-import com.crrl.beatplayer.db.DBHelper
 
-interface PlaylistRepositoryInterface {
+interface PlaylistRepository {
     @Throws(IllegalStateException::class)
     fun createPlaylist(name: String, songs: List<Song>): Long
     fun addToPlaylist(id: Long, songs: List<Song>): Long
@@ -34,8 +34,8 @@ interface PlaylistRepositoryInterface {
     fun deletePlaylist(playlistId: Long): Int
 }
 
-class PlaylistRepository(context: Context?) : DBHelper(context),
-    PlaylistRepositoryInterface {
+class PlaylistRepositoryImplementation(context: Context?) : DBHelper(context),
+    PlaylistRepository {
 
     companion object {
         const val TABLE_PLAYLIST = "playlist"

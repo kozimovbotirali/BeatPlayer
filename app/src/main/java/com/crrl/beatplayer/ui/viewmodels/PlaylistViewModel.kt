@@ -30,6 +30,9 @@ class PlaylistViewModel(
     private val playlistLiveData = MutableLiveData<List<Playlist>>()
     private val songsByPlaylist = MutableLiveData<List<Song>>()
 
+    val count: Int
+        get() = repository.getPlayListsCount()
+
     fun playLists(): LiveData<List<Playlist>> {
         launch {
             val playlists = withContext(Dispatchers.IO) {
@@ -64,5 +67,13 @@ class PlaylistViewModel(
 
     fun addToPlaylist(playListId: Long, song: List<Song>): Long {
         return repository.addToPlaylist(playListId, song)
+    }
+
+    fun getPlaylist(id: Long): Playlist {
+        return repository.getPlaylist(id)
+    }
+
+    fun delete(id: Long): Int {
+        return repository.deletePlaylist(id)
     }
 }

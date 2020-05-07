@@ -16,27 +16,29 @@ package com.crrl.beatplayer.repository
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
+import com.crrl.beatplayer.db.DBHelper
 import com.crrl.beatplayer.extensions.optimizeReadOnlyList
 import com.crrl.beatplayer.extensions.toList
 import com.crrl.beatplayer.models.Favorite
 import com.crrl.beatplayer.models.Song
-import com.crrl.beatplayer.db.DBHelper
 import com.crrl.beatplayer.utils.PlayerConstants.FAVORITE_ID
 
-interface FavoritesRepositoryInterface {
+interface FavoritesRepository {
     fun createFavorite(favorite: Favorite): Int
     fun addSongByFavorite(idFavorite: Long, songs: List<Song>): Int
     fun deleteSongByFavorite(idFavorite: Long, ids: LongArray): Int
+    fun deleteSongs(ids: LongArray): Int
     fun deleteFavorites(ids: LongArray): Int
-    fun getFavorite(id: Long): Favorite?
+    fun updateFavoriteCount(parentId: Long, id: Long): Int
+    fun getFavorite(id: Long): Favorite
     fun getFavorites(): List<Favorite>
     fun getSongsForFavorite(id: Long): List<Song>
     fun songExist(id: Long): Boolean
     fun favExist(id: Long): Boolean
 }
 
-class FavoritesRepository(private val context: Context?) : DBHelper(context),
-    FavoritesRepositoryInterface {
+class FavoritesRepositoryImplementation(private val context: Context?) : DBHelper(context),
+    FavoritesRepository {
 
     companion object {
         const val TABLE_FAVORITES = "favorites"
@@ -92,6 +94,18 @@ class FavoritesRepository(private val context: Context?) : DBHelper(context),
     override fun deleteSongByFavorite(idFavorite: Long, ids: LongArray): Int {
         var resp = 0
         for (id in ids) {
+            resp += deleteRow(
+                TABLE_SONGS,
+                "$COLUMN_ID = ? AND $COLUMN_FAVORITE = ?",
+                arrayOf("$id", "$idFavorite")
+            )
+        }
+        return resp
+    }
+
+    override fun deleteSongs(ids: LongArray): Int {
+        var resp = 0
+        for (id in ids) {
             resp += deleteRow(TABLE_SONGS, "$COLUMN_ID = ?", arrayOf("$id"))
         }
         return resp
@@ -101,6 +115,24 @@ class FavoritesRepository(private val context: Context?) : DBHelper(context),
         var resp = 0
         for (id in ids) {
             resp += deleteRow(TABLE_FAVORITES, "$COLUMN_ID = ?", arrayOf("$id"))
+        }
+        return resp
+    }
+
+    override fun updateFavoriteCount(parentId: Long, id: Long): Int {
+        val resp = deleteSongs(longArrayOf(id))
+        if (resp == 0) {
+            return updateRow(
+                TABLE_FAVORITES,
+                ContentValues().apply {
+                    put(
+                        COLUMN_SONG_COUNT,
+                        getFavorite(parentId).songCount - 1
+                    )
+                },
+                "$COLUMN_ID = ?",
+                arrayOf("$parentId")
+            )
         }
         return resp
     }
@@ -132,7 +164,12 @@ class FavoritesRepository(private val context: Context?) : DBHelper(context),
     }
 
     override fun songExist(id: Long): Boolean {
-        val cursor = getRow(TABLE_SONGS, "*", "$COLUMN_ID = ? AND $COLUMN_FAVORITE = ?", arrayOf("$id", "$FAVORITE_ID"))
+        val cursor = getRow(
+            TABLE_SONGS,
+            "*",
+            "$COLUMN_ID = ? AND $COLUMN_FAVORITE = ?",
+            arrayOf("$id", "$FAVORITE_ID")
+        )
         cursor.use {
             return it.moveToFirst()
         }
@@ -143,6 +180,11 @@ class FavoritesRepository(private val context: Context?) : DBHelper(context),
         cursor.use {
             return it.moveToFirst()
         }
+    }
+
+    private fun getSongs(id: Long): List<Song> {
+        val cursor = getRow(TABLE_SONGS, "*", "$COLUMN_ID = ?", arrayOf("$id"))
+        return cursor.toList(true, Song.Companion::createFromPlaylistCursor)
     }
 
     private fun getCreateFavoritesQuery(): String {

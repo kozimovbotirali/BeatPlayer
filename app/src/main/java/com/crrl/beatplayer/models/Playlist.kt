@@ -14,9 +14,9 @@
 package com.crrl.beatplayer.models
 
 import android.database.Cursor
-import com.crrl.beatplayer.repository.PlaylistRepository.Companion.COLUMN_ID
-import com.crrl.beatplayer.repository.PlaylistRepository.Companion.COLUMN_NAME
-import com.crrl.beatplayer.repository.PlaylistRepository.Companion.COLUMN_SONG_COUNT
+import com.crrl.beatplayer.repository.PlaylistRepositoryImplementation.Companion.COLUMN_ID
+import com.crrl.beatplayer.repository.PlaylistRepositoryImplementation.Companion.COLUMN_NAME
+import com.crrl.beatplayer.repository.PlaylistRepositoryImplementation.Companion.COLUMN_SONG_COUNT
 import com.google.gson.Gson
 
 data class Playlist(

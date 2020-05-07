@@ -22,23 +22,22 @@ import com.crrl.beatplayer.extensions.toList
 import com.crrl.beatplayer.models.Folder
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.utils.SettingsUtility
-import java.io.File
 import java.util.*
 
-interface FoldersRepositoryInterface {
+interface FoldersRepository {
     fun getFolder(path: String): Folder
     fun getFolders(): List<Folder>
     fun getSongsForIds(path: String): List<Song>
 }
 
-class FoldersRepository() : FoldersRepositoryInterface {
+class FoldersRepositoryImplementation() : FoldersRepository {
 
     private lateinit var contentResolver: ContentResolver
     private lateinit var settingsUtility: SettingsUtility
 
     constructor(context: Context?) : this() {
         contentResolver = context!!.contentResolver
-        settingsUtility = SettingsUtility.getInstance(context)
+        settingsUtility = SettingsUtility(context)
     }
 
     override fun getFolder(path: String): Folder {

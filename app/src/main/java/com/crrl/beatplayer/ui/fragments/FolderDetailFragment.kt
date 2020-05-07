@@ -26,7 +26,6 @@ import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.extensions.observe
 import com.crrl.beatplayer.extensions.toIDList
 import com.crrl.beatplayer.models.Song
-import com.crrl.beatplayer.repository.FavoritesRepository
 import com.crrl.beatplayer.ui.adapters.SongAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.viewmodels.FavoriteViewModel
@@ -71,6 +70,7 @@ class FolderDetailFragment : BaseFragment<Song>() {
         }
         postponeEnterTransition()
         folderViewModel.getFolder(id).observe(this){ folder ->
+            initNeeded(Song(), emptyList(), folder.id)
             binding.folder = folder
             folderViewModel.getSongsByFolder(folder.realPath).observe(this) {
                 songAdapter.updateDataSet(it)
@@ -135,12 +135,11 @@ class FolderDetailFragment : BaseFragment<Song>() {
     }
 
     private fun toggleAddFav() {
-        val favoritesRepository = FavoritesRepository(context)
-        if (favoritesRepository.favExist(binding.folder!!.id)) {
-            val resp = favoritesRepository.deleteFavorites(longArrayOf(binding.folder!!.id))
+        if (favoriteViewModel.favExist(binding.folder!!.id)) {
+            val resp = favoriteViewModel.deleteFavorites(longArrayOf(binding.folder!!.id))
             showSnackBar(view, resp, 0, R.string.folder_no_fav_ok)
         } else {
-            val resp = favoritesRepository.createFavorite(binding.folder!!.toFavorite())
+            val resp = favoriteViewModel.create(binding.folder!!.toFavorite())
             showSnackBar(view, resp, 1, R.string.folder_fav_ok)
         }
     }

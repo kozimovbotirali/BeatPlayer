@@ -30,10 +30,10 @@ fun <E> MutableList<E>.setAll(list: List<E>) {
     addAll(list)
 }
 
-fun <T> MutableList<T>.delete(idx: T) {
-    idx ?: throw NullPointerException("The index can't be null.")
+fun <T> MutableList<T>.delete(item: T) {
+    item ?: throw NullPointerException("The index can't be null.")
 
-    setAll(filterNot { it == idx }.optimizeReadOnlyList())
+    setAll(filterNot { it == item }.optimizeReadOnlyList())
 }
 
 internal fun <T> List<T>.optimizeReadOnlyList() = when (size) {

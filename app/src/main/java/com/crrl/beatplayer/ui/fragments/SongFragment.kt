@@ -32,7 +32,6 @@ import com.crrl.beatplayer.ui.viewmodels.PlaylistViewModel
 import com.crrl.beatplayer.ui.viewmodels.SongViewModel
 import com.crrl.beatplayer.ui.widgets.actions.AlertItemAction
 import com.crrl.beatplayer.ui.widgets.stylers.AlertItemTheme
-import com.crrl.beatplayer.utils.SettingsUtility
 import com.crrl.beatplayer.utils.SortModes
 import org.koin.android.ext.android.inject
 
@@ -96,58 +95,58 @@ class SongFragment : BaseFragment<Song>() {
         dialog = buildSortModesDialog(listOf(
             AlertItemAction(
                 context!!.getString(R.string.sort_default),
-                SettingsUtility.getInstance(context).songSortOrder == SortModes.SongModes.SONG_DEFAULT,
+                mainViewModel.settingsUtility.songSortOrder == SortModes.SongModes.SONG_DEFAULT,
                 AlertItemTheme.DEFAULT
             ) { action ->
                 action.selected = true
-                SettingsUtility.getInstance(context).songSortOrder =
+                mainViewModel.settingsUtility.songSortOrder =
                     SortModes.SongModes.SONG_DEFAULT
                 reloadAdapter()
             },
             AlertItemAction(
                 context!!.getString(R.string.sort_az),
-                SettingsUtility.getInstance(context).songSortOrder == SortModes.SongModes.SONG_A_Z,
+                mainViewModel.settingsUtility.songSortOrder == SortModes.SongModes.SONG_A_Z,
                 AlertItemTheme.DEFAULT
             ) { action ->
                 action.selected = true
-                SettingsUtility.getInstance(context).songSortOrder = SortModes.SongModes.SONG_A_Z
+                mainViewModel.settingsUtility.songSortOrder = SortModes.SongModes.SONG_A_Z
                 reloadAdapter()
             },
             AlertItemAction(
                 context!!.getString(R.string.sort_za),
-                SettingsUtility.getInstance(context).songSortOrder == SortModes.SongModes.SONG_Z_A,
+                mainViewModel.settingsUtility.songSortOrder == SortModes.SongModes.SONG_Z_A,
                 AlertItemTheme.DEFAULT
             ) { action ->
                 action.selected = true
-                SettingsUtility.getInstance(context).songSortOrder = SortModes.SongModes.SONG_Z_A
+                mainViewModel.settingsUtility.songSortOrder = SortModes.SongModes.SONG_Z_A
                 reloadAdapter()
             },
             AlertItemAction(
                 context!!.getString(R.string.sort_duration),
-                SettingsUtility.getInstance(context).songSortOrder == SortModes.SongModes.SONG_DURATION,
+                mainViewModel.settingsUtility.songSortOrder == SortModes.SongModes.SONG_DURATION,
                 AlertItemTheme.DEFAULT
             ) { action ->
                 action.selected = true
-                SettingsUtility.getInstance(context).songSortOrder =
+                mainViewModel.settingsUtility.songSortOrder =
                     SortModes.SongModes.SONG_DURATION
                 reloadAdapter()
             },
             AlertItemAction(
                 context!!.getString(R.string.sort_year),
-                SettingsUtility.getInstance(context).songSortOrder == SortModes.SongModes.SONG_YEAR,
+                mainViewModel.settingsUtility.songSortOrder == SortModes.SongModes.SONG_YEAR,
                 AlertItemTheme.DEFAULT
             ) { action ->
                 action.selected = true
-                SettingsUtility.getInstance(context).songSortOrder = SortModes.SongModes.SONG_YEAR
+                mainViewModel.settingsUtility.songSortOrder = SortModes.SongModes.SONG_YEAR
                 reloadAdapter()
             },
             AlertItemAction(
                 context!!.getString(R.string.sort_last_added),
-                SettingsUtility.getInstance(context).songSortOrder == SortModes.SongModes.SONG_LAST_ADDED,
+                mainViewModel.settingsUtility.songSortOrder == SortModes.SongModes.SONG_LAST_ADDED,
                 AlertItemTheme.DEFAULT
             ) { action ->
                 action.selected = true
-                SettingsUtility.getInstance(context).songSortOrder =
+                mainViewModel.settingsUtility.songSortOrder =
                     SortModes.SongModes.SONG_LAST_ADDED
                 reloadAdapter()
             }

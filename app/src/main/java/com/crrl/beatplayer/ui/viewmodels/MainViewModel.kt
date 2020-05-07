@@ -19,8 +19,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.ActivityMainBinding
-import com.crrl.beatplayer.extensions.ERROR
-import com.crrl.beatplayer.extensions.snackbar
+import com.crrl.beatplayer.extensions.delete
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.playback.MusicService
 import com.crrl.beatplayer.repository.FavoritesRepository
@@ -28,7 +27,8 @@ import com.crrl.beatplayer.repository.SongsRepository
 import com.crrl.beatplayer.ui.viewmodels.base.CoroutineViewModel
 import com.crrl.beatplayer.utils.GeneralUtils
 import com.crrl.beatplayer.utils.LyricsExtractor
-import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_SHORT
+import com.crrl.beatplayer.utils.SettingsUtility
+import com.github.florent37.kotlin.pleaseanimate.please
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.withContext
@@ -36,7 +36,8 @@ import kotlinx.coroutines.withContext
 class MainViewModel(
     private val context: Context,
     private val songRepository: SongsRepository,
-    private val favoritesRepository: FavoritesRepository
+    private val favoritesRepository: FavoritesRepository,
+    val settingsUtility: SettingsUtility
 ) : CoroutineViewModel(Main) {
 
     private val liveSongData = MutableLiveData<Song>()
@@ -83,7 +84,7 @@ class MainViewModel(
     fun isSongFav(id: Long): LiveData<Boolean> {
         launch {
             val isFav = withContext(IO) {
-                FavoritesRepository(context).songExist(id)
+                favoritesRepository.songExist(id)
             }
             isSongFavLiveData.postValue(isFav)
         }
@@ -127,7 +128,7 @@ class MainViewModel(
         timeLiveData.postValue(if (newTime == -1) newTime else newTime / 1000 * 1000)
     }
 
-    fun update(item: Song) {
+    fun update(item: Song = Song()) {
         val song = liveSongData.value
         if (song?.id != item.id) {
             lastSong.postValue(song)
@@ -142,23 +143,41 @@ class MainViewModel(
         }
     }
 
+    fun removeDeletedSong(id: Long) {
+        val currentList = currentSongList.value ?: return
+        update(currentList.toMutableList().apply { delete(id) }.toLongArray())
+    }
+
     fun update(newList: LongArray) {
         currentSongList.value = newList
     }
 
     fun update(raw: ByteArray?) {
-        if (raw == null) {
-            if (getCurrentSong().value?.id != -1L) {
-                binding.mainContainer.snackbar(
-                    ERROR,
-                    context.getString(R.string.unavailable),
-                    LENGTH_SHORT
-                )
-            }
-            return
-        } else {
-            rawLiveData.postValue(raw)
+        raw ?: return
+        rawLiveData.postValue(raw)
+    }
+
+    fun hideMiniPlayer() {
+        binding.apply {
+            bottomControls.isEnabled = false
+            please(190) {
+                animate(bottomControls) {
+                    belowOf(mainContainer)
+                }
+            }.start()
         }
+    }
+
+    fun showMiniPlayer() {
+        if (getCurrentSong().value != null && getCurrentSong().value?.id != -1L)
+            binding.apply {
+                bottomControls.isEnabled = true
+                please(190) {
+                    animate(bottomControls) {
+                        bottomOfItsParent()
+                    }
+                }.start()
+            }
     }
 
     fun getCurrentSong(): LiveData<Song> = liveSongData

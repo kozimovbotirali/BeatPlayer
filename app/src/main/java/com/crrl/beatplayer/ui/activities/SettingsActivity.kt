@@ -20,19 +20,15 @@ import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.ActivitySettingsBinding
 import com.crrl.beatplayer.extensions.getColorByTheme
 import com.crrl.beatplayer.ui.activities.base.BaseActivity
-import com.crrl.beatplayer.ui.viewmodels.MainViewModel
 import com.crrl.beatplayer.ui.widgets.AlertDialog
 import com.crrl.beatplayer.ui.widgets.actions.AlertItemAction
 import com.crrl.beatplayer.ui.widgets.stylers.AlertItemStyle
 import com.crrl.beatplayer.ui.widgets.stylers.AlertItemTheme
 import com.crrl.beatplayer.ui.widgets.stylers.AlertType
 import com.crrl.beatplayer.utils.PlayerConstants
-import com.crrl.beatplayer.utils.SettingsUtility
-import org.koin.android.ext.android.inject
 
 class SettingsActivity : BaseActivity() {
 
-    private val viewModel by inject<MainViewModel>()
     private lateinit var binding: ActivitySettingsBinding
     private lateinit var dialog: AlertDialog
 
@@ -68,31 +64,31 @@ class SettingsActivity : BaseActivity() {
         ).apply {
             addItem(AlertItemAction(
                 getString(R.string.default_theme),
-                SettingsUtility.getInstance(applicationContext).currentTheme == PlayerConstants.AUTO_THEME,
+                viewModel.settingsUtility.currentTheme == PlayerConstants.AUTO_THEME,
                 AlertItemTheme.DEFAULT
             ) {
                 it.selected = true
-                SettingsUtility.getInstance(applicationContext).currentTheme =
+                viewModel.settingsUtility.currentTheme =
                     PlayerConstants.AUTO_THEME
                 recreateActivity()
             })
             addItem(AlertItemAction(
                 getString(R.string.light_theme),
-                SettingsUtility.getInstance(applicationContext).currentTheme == PlayerConstants.LIGHT_THEME,
+                viewModel.settingsUtility.currentTheme == PlayerConstants.LIGHT_THEME,
                 AlertItemTheme.DEFAULT
             ) {
                 it.selected = true
-                SettingsUtility.getInstance(applicationContext).currentTheme =
+                viewModel.settingsUtility.currentTheme =
                     PlayerConstants.LIGHT_THEME
                 recreateActivity()
             })
             addItem(AlertItemAction(
                 getString(R.string.dark_theme),
-                SettingsUtility.getInstance(applicationContext).currentTheme == PlayerConstants.DARK_THEME,
+                viewModel.settingsUtility.currentTheme == PlayerConstants.DARK_THEME,
                 AlertItemTheme.DEFAULT
             ) {
                 it.selected = true
-                SettingsUtility.getInstance(applicationContext).currentTheme =
+                viewModel.settingsUtility.currentTheme =
                     PlayerConstants.DARK_THEME
                 recreateActivity()
             })

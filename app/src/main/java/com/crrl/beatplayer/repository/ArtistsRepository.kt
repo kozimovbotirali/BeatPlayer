@@ -13,7 +13,6 @@
 
 package com.crrl.beatplayer.repository
 
-import android.content.ContentResolver
 import android.content.Context
 import android.database.Cursor
 import android.provider.MediaStore
@@ -25,40 +24,26 @@ import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.utils.SettingsUtility
 import com.crrl.beatplayer.utils.SortModes
 
-interface ArtistsRepositoryInterface {
-    fun getArtist(id: Long): Artist?
+interface ArtistsRepository {
+    fun getArtist(id: Long): Artist
     fun getAllArtist(): List<Artist>
     fun getSongsForArtist(artistId: Long): List<Song>
     fun getAlbumsForArtist(artistId: Long): List<Album>
+    fun search(paramString: String, limit: Int = Int.MAX_VALUE): List<Artist>
 }
 
-class ArtistsRepository() : ArtistsRepositoryInterface {
+class ArtistsRepositoryImplementation(context: Context) : ArtistsRepository {
 
-    private lateinit var contentResolver: ContentResolver
-    private lateinit var settingsUtility: SettingsUtility
+    private val contentResolver = context.contentResolver
+    private val settingsUtility = SettingsUtility(context)
 
-    companion object {
-        private var instance: ArtistsRepository? = null
+    override fun getArtist(id: Long): Artist {
+        makeArtistCursor("artist_id=?", arrayOf(id.toString())).use {
+            return if (it.moveToFirst())
+                Artist.createFromCursor(it).apply { albumCount = it.count }
+            else Artist()
 
-        fun getInstance(context: Context?): ArtistsRepository? {
-            if (instance == null)
-                instance = ArtistsRepository(context)
-            return instance
         }
-    }
-
-    constructor(context: Context? = null) : this() {
-        contentResolver = context!!.contentResolver
-        settingsUtility = SettingsUtility.getInstance(context)
-    }
-
-    override fun getArtist(id: Long): Artist? {
-        val albumList =
-            makeArtistCursor("artist_id=?", arrayOf(id.toString())).toList(
-                true,
-                Artist.Companion::createFromCursor
-            )
-        return toArtistList(albumList).first()
     }
 
     override fun getAllArtist(): List<Artist> {
@@ -69,14 +54,14 @@ class ArtistsRepository() : ArtistsRepositoryInterface {
 
     private fun toArtistList(list: MutableList<Artist>): MutableList<Artist> {
         val artistList = mutableListOf<Artist>()
-        list.groupBy { it.name }.map {
+        list.groupBy { it.id }.map {
             artistList.add(it.value.first().apply { albumCount = it.value.size })
         }
         return artistList
     }
 
 
-    fun search(paramString: String, limit: Int = Int.MAX_VALUE): List<Artist> {
+    override fun search(paramString: String, limit: Int): List<Artist> {
         val results = toArtistList(makeArtistCursor("artist LIKE ?", arrayOf("$paramString%"))
             .toList(true) { Artist.createFromCursor(this) })
         if (results.size < limit) {
@@ -107,10 +92,10 @@ class ArtistsRepository() : ArtistsRepositoryInterface {
             return null
         }
         return contentResolver.query(
-            getContentUri("external", artistID),
+            MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
             arrayOf(ALBUM_ID, ALBUM, ARTIST, NUMBER_OF_SONGS, FIRST_YEAR),
-            null,
-            null,
+            "artist_id = ?",
+            arrayOf("$artistID"),
             SortModes.AlbumModes.ALBUM_A_Z
         )
     }

@@ -26,7 +26,6 @@ import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.extensions.observe
 import com.crrl.beatplayer.extensions.toIDList
 import com.crrl.beatplayer.models.Song
-import com.crrl.beatplayer.repository.PlaylistRepository
 import com.crrl.beatplayer.ui.adapters.SongAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.viewmodels.PlaylistViewModel
@@ -57,7 +56,7 @@ class PlaylistDetailFragment : BaseFragment<Song>() {
     private fun init() {
         val id = arguments!!.getLong(PLAY_LIST_DETAIL)
 
-        binding.playlist = PlaylistRepository(context).getPlaylist(id)
+        binding.playlist = playlistViewModel.getPlaylist(id)
 
         songAdapter = SongAdapter(activity, mainViewModel).apply {
             showHeader = true

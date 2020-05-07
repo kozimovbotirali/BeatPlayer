@@ -13,40 +13,38 @@
 
 package com.crrl.beatplayer.ui.activities.base
 
-import android.app.ActivityOptions
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
-import android.view.Window
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.extensions.addFragment
 import com.crrl.beatplayer.extensions.getColorByTheme
 import com.crrl.beatplayer.ui.activities.SettingsActivity
 import com.crrl.beatplayer.ui.fragments.SearchFragment
+import com.crrl.beatplayer.ui.viewmodels.MainViewModel
 import com.crrl.beatplayer.utils.PlayerConstants
-import com.crrl.beatplayer.utils.SettingsUtility
 import com.skydoves.powermenu.MenuAnimation
 import com.skydoves.powermenu.OnMenuItemClickListener
 import com.skydoves.powermenu.PowerMenu
 import com.skydoves.powermenu.PowerMenuItem
+import org.koin.android.ext.android.inject
 
 
 open class BaseActivity : RequestPermissionActivity() {
 
     private var currentTheme: String? = null
-
     private var powerMenu: PowerMenu? = null
+    protected val viewModel by inject<MainViewModel>()
 
     private val onMenuItemClickListener = OnMenuItemClickListener<PowerMenuItem> { position, _ ->
         when (position) {
             0 -> {
             }
             1 -> {
-                val options = ActivityOptions.makeSceneTransitionAnimation(this)
                 val intent = Intent(this@BaseActivity, SettingsActivity::class.java)
-                startActivity(intent, options.toBundle())
+                startActivity(intent)
             }
         }
         powerMenu!!.dismiss()
@@ -54,7 +52,6 @@ open class BaseActivity : RequestPermissionActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        with(window) { requestFeature(Window.FEATURE_CONTENT_TRANSITIONS) }
         init()
     }
 
@@ -72,13 +69,13 @@ open class BaseActivity : RequestPermissionActivity() {
 
     override fun onResume() {
         super.onResume()
-        if (SettingsUtility.getInstance(this).currentTheme != currentTheme) {
+        if (viewModel.settingsUtility.currentTheme != currentTheme) {
             recreateActivity()
         }
     }
 
     private fun init() {
-        currentTheme = SettingsUtility.getInstance(this).currentTheme
+        currentTheme = viewModel.settingsUtility.currentTheme
         setAppTheme(currentTheme!!)
 
         powerMenu = initPopUpMenu().setOnMenuItemClickListener(onMenuItemClickListener).build()
