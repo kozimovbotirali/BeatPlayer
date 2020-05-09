@@ -13,7 +13,6 @@
 
 package com.crrl.beatplayer.repository
 
-import android.content.ContentResolver
 import android.content.Context
 import android.database.Cursor
 import android.provider.MediaStore
@@ -30,15 +29,11 @@ interface FoldersRepository {
     fun getSongsForIds(path: String): List<Song>
 }
 
-class FoldersRepositoryImplementation() : FoldersRepository {
+class FoldersRepositoryImplementation(context: Context) : FoldersRepository {
 
-    private lateinit var contentResolver: ContentResolver
-    private lateinit var settingsUtility: SettingsUtility
+    private val contentResolver = context.contentResolver
+    private val settingsUtility = SettingsUtility(context)
 
-    constructor(context: Context?) : this() {
-        contentResolver = context!!.contentResolver
-        settingsUtility = SettingsUtility(context)
-    }
 
     override fun getFolder(path: String): Folder {
         val songList = makeFolderCursor("rtrim(_data, replace(_data, '/', '')) = ?", arrayOf(path)).toList(true, Folder.Companion::createFromCursor)

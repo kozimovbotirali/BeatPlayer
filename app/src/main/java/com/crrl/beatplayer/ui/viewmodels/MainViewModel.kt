@@ -20,13 +20,18 @@ import androidx.lifecycle.MutableLiveData
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.ActivityMainBinding
 import com.crrl.beatplayer.extensions.delete
+import com.crrl.beatplayer.extensions.toIDList
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.playback.MusicService
-import com.crrl.beatplayer.repository.FavoritesRepository
-import com.crrl.beatplayer.repository.SongsRepository
+import com.crrl.beatplayer.repository.*
 import com.crrl.beatplayer.ui.viewmodels.base.CoroutineViewModel
 import com.crrl.beatplayer.utils.GeneralUtils
 import com.crrl.beatplayer.utils.LyricsExtractor
+import com.crrl.beatplayer.utils.PlayerConstants.ALBUM_TYPE
+import com.crrl.beatplayer.utils.PlayerConstants.FAVORITE_TYPE
+import com.crrl.beatplayer.utils.PlayerConstants.FOLDER_TYPE
+import com.crrl.beatplayer.utils.PlayerConstants.PLAY_LIST_TYPE
+import com.crrl.beatplayer.utils.PlayerConstants.SONG_TYPE
 import com.crrl.beatplayer.utils.SettingsUtility
 import com.github.florent37.kotlin.pleaseanimate.please
 import kotlinx.coroutines.Dispatchers.IO
@@ -36,6 +41,9 @@ import kotlinx.coroutines.withContext
 class MainViewModel(
     private val context: Context,
     private val songRepository: SongsRepository,
+    private val albumsRepository: AlbumsRepository,
+    private val playlistRepository: PlaylistRepository,
+    private val foldersRepository: FoldersRepository,
     private val favoritesRepository: FavoritesRepository,
     val settingsUtility: SettingsUtility
 ) : CoroutineViewModel(Main) {
@@ -53,6 +61,10 @@ class MainViewModel(
 
     val musicService = MusicService()
     lateinit var binding: ActivityMainBinding
+
+    init {
+        getSongsByType()
+    }
 
     fun getLastSong(): LiveData<Song> = lastSong
 
@@ -103,6 +115,46 @@ class MainViewModel(
         }
     }
 
+    private fun getSongsByType() {
+        val str = settingsUtility.currentSongList ?: return
+        when (str.split("<,>")[0]) {
+            SONG_TYPE -> launch {
+                val list = withContext(IO) {
+                    songRepository.loadSongs()
+                }
+                update(list.toIDList())
+            }
+            ALBUM_TYPE -> launch {
+                val list = withContext(IO) {
+                    val id = str.split("<,>")
+                    albumsRepository.getSongsForAlbum(if (id.isNotEmpty()) id[1].toLong() else 0L)
+                }
+                update(list.toIDList())
+            }
+            PLAY_LIST_TYPE -> launch {
+                val list = withContext(IO) {
+                    val id = str.split("<,>")
+                    playlistRepository.getSongsInPlaylist((if (id.isNotEmpty()) id[1].toLong() else 0L))
+                }
+                update(list.toIDList())
+            }
+            FOLDER_TYPE -> launch {
+                val list = withContext(IO) {
+                    val id = str.split("<,>")
+                    foldersRepository.getSongsForIds((if (id.isNotEmpty()) id[1] else ""))
+                }
+                update(list.toIDList())
+            }
+            FAVORITE_TYPE -> launch {
+                val list = withContext(IO) {
+                    val id = str.split("<,>")
+                    favoritesRepository.getSongsForFavorite((if (id.isNotEmpty()) id[1].toLong() else 0L))
+                }
+                update(list.toIDList())
+            }
+        }
+    }
+
     fun next(currentSong: Long) {
         currentSongList.value ?: return
         val song = songRepository.getSongForId(musicService.next(currentSong))
@@ -115,7 +167,7 @@ class MainViewModel(
         update(song)
     }
 
-    fun random(currentSong: Long): Song {
+    fun random(currentSong: Long = -1): Song {
         currentSongList.value ?: return Song()
         return songRepository.getSongForId(musicService.random(currentSong))
     }

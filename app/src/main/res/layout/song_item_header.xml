@@ -14,7 +14,6 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
-
         <import type="android.view.View" />
 
         <variable
@@ -53,6 +52,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginEnd="@dimen/margin_10"
+                android:layout_marginStart="@dimen/header_count_space"
                 android:layout_weight="1"
                 android:gravity="center|start"
                 android:text="@{@plurals/number_of_songs(songCount, songCount)}"

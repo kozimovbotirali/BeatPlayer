@@ -30,9 +30,9 @@ interface AlbumsRepository {
     fun search(paramString: String, limit: Int = Int.MAX_VALUE): List<Album>
 }
 
-class AlbumsRepositoryImplementation(context: Context?) : AlbumsRepository {
+class AlbumsRepositoryImplementation(context: Context) : AlbumsRepository {
 
-    private val contentResolver = context!!.contentResolver
+    private val contentResolver = context.contentResolver
     private val settingsUtility = SettingsUtility(context)
 
     private fun getAlbum(cursor: Cursor?): Album {

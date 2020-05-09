@@ -48,4 +48,5 @@
     <dimen name="separator">18dp</dimen>
     <dimen name="size">40dp</dimen>
     <dimen name="space">6dp</dimen>
+    <dimen name="header_count_space">5dp</dimen>
 </resources>

@@ -37,7 +37,7 @@ interface FavoritesRepository {
     fun favExist(id: Long): Boolean
 }
 
-class FavoritesRepositoryImplementation(private val context: Context?) : DBHelper(context),
+class FavoritesRepositoryImplementation(context: Context) : DBHelper(context),
     FavoritesRepository {
 
     companion object {

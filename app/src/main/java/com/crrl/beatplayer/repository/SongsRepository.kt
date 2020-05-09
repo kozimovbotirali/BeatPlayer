@@ -34,9 +34,9 @@ interface SongsRepository {
     fun deleteTracks(ids: LongArray): Int
 }
 
-class SongsRepositoryImplementation(private val context: Context?) : SongsRepository {
+class SongsRepositoryImplementation(context: Context) : SongsRepository {
 
-    private val contentResolver = context!!.contentResolver
+    private val contentResolver = context.contentResolver
     private val settingsUtility = SettingsUtility(context)
 
     override fun loadSongs(): List<Song> {

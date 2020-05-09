@@ -136,6 +136,7 @@ class SearchFragment : BaseFragment<MediaItem>(), TextWatcher {
 
     private fun songClicked(item: Song) {
         mainViewModel.update(item)
+        mainViewModel.update(longArrayOf(item.id))
     }
 
     private fun albumClicked(item: Album) {

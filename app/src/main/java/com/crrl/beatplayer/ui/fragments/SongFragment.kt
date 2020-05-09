@@ -32,6 +32,7 @@ import com.crrl.beatplayer.ui.viewmodels.PlaylistViewModel
 import com.crrl.beatplayer.ui.viewmodels.SongViewModel
 import com.crrl.beatplayer.ui.widgets.actions.AlertItemAction
 import com.crrl.beatplayer.ui.widgets.stylers.AlertItemTheme
+import com.crrl.beatplayer.utils.PlayerConstants.SONG_TYPE
 import com.crrl.beatplayer.utils.SortModes
 import org.koin.android.ext.android.inject
 
@@ -73,8 +74,8 @@ class SongFragment : BaseFragment<Song>() {
             songAdapter.notifyItemChanged(position)
         }
 
-        mainViewModel.getCurrentSong().observe(this){
-            val position = songAdapter.songList.indexOf(it) + 1
+        mainViewModel.getCurrentSong().observe(this) { song ->
+            val position = songAdapter.songList.indexOfFirst { it.compare(song) } + 1
             songAdapter.notifyItemChanged(position)
         }
 
@@ -157,14 +158,19 @@ class SongFragment : BaseFragment<Song>() {
         viewModel.update()
     }
 
+    private fun updateSongList() {
+        mainViewModel.update(songAdapter.songList.toIDList())
+        mainViewModel.settingsUtility.currentSongList = "$SONG_TYPE<,>"
+    }
+
     override fun onItemClick(view: View, position: Int, item: Song) {
         mainViewModel.update(item)
-        mainViewModel.update(songAdapter.songList.toIDList())
+        updateSongList()
     }
 
     override fun onShuffleClick(view: View) {
-        mainViewModel.update(songAdapter.songList.toIDList())
-        mainViewModel.update(mainViewModel.random(-1))
+        updateSongList()
+        mainViewModel.update(mainViewModel.random())
     }
 
     override fun onSortClick(view: View) {
@@ -173,7 +179,7 @@ class SongFragment : BaseFragment<Song>() {
 
     override fun onPlayAllClick(view: View) {
         mainViewModel.update(songAdapter.songList.first())
-        mainViewModel.update(songAdapter.songList.toIDList())
+        updateSongList()
     }
 
     override fun onPopupMenuClick(view: View, position: Int, item: Song, itemList: List<Song>) {

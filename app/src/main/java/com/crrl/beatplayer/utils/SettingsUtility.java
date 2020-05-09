@@ -19,6 +19,8 @@ import android.content.SharedPreferences;
 import com.crrl.beatplayer.models.Song;
 import com.google.gson.Gson;
 
+import org.jetbrains.annotations.NotNull;
+
 import static com.crrl.beatplayer.utils.PlayerConstants.AUTO_THEME;
 
 public final class SettingsUtility {
@@ -33,7 +35,7 @@ public final class SettingsUtility {
 
     private SharedPreferences sPreferences;
 
-    public SettingsUtility(Context context) {
+    public SettingsUtility(@NotNull Context context) {
         sPreferences = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
     }
 
@@ -83,6 +85,14 @@ public final class SettingsUtility {
 
     public void setCurrentSongSelected(String value) {
         setPreference(PlayerConstants.SONG_KEY, value);
+    }
+
+    public String getCurrentSongList() {
+        return sPreferences.getString(PlayerConstants.SONG_LIST_KEY, null);
+    }
+
+    public void setCurrentSongList(String value) {
+        setPreference(PlayerConstants.SONG_LIST_KEY, value);
     }
 
     public String getArtistSortOrder() {

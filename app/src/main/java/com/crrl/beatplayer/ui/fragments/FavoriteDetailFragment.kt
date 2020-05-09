@@ -32,6 +32,7 @@ import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.viewmodels.FavoriteViewModel
 import com.crrl.beatplayer.ui.viewmodels.PlaylistViewModel
 import com.crrl.beatplayer.utils.PlayerConstants
+import com.crrl.beatplayer.utils.PlayerConstants.FAVORITE_TYPE
 import org.koin.android.ext.android.inject
 
 class FavoriteDetailFragment : BaseFragment<Song>() {
@@ -84,8 +85,8 @@ class FavoriteDetailFragment : BaseFragment<Song>() {
             songAdapter.notifyItemChanged(position)
         }
 
-        mainViewModel.getCurrentSong().observe(this){
-            val position = songAdapter.songList.indexOf(it) + 1
+        mainViewModel.getCurrentSong().observe(this) { song ->
+            val position = songAdapter.songList.indexOfFirst { it.compare(song) } + 1
             songAdapter.notifyItemChanged(position)
         }
 
@@ -104,19 +105,25 @@ class FavoriteDetailFragment : BaseFragment<Song>() {
         }
     }
 
+    private fun updateSongList() {
+        val id = arguments!!.getLong(PlayerConstants.FAVORITE_KEY)
+        mainViewModel.update(songAdapter.songList.toIDList())
+        mainViewModel.settingsUtility.currentSongList = "$FAVORITE_TYPE<,>$id"
+    }
+
     override fun onItemClick(view: View, position: Int, item: Song) {
         mainViewModel.update(item)
-        mainViewModel.update(songAdapter.songList.toIDList())
+        updateSongList()
     }
 
     override fun onShuffleClick(view: View) {
-        mainViewModel.update(songAdapter.songList.toIDList())
-        mainViewModel.update(mainViewModel.random(-1))
+        updateSongList()
+        mainViewModel.update(mainViewModel.random())
     }
 
     override fun onPlayAllClick(view: View) {
         mainViewModel.update(songAdapter.songList.first())
-        mainViewModel.update(songAdapter.songList.toIDList())
+        updateSongList()
     }
 
     override fun onPopupMenuClick(view: View, position: Int, item: Song, itemList: List<Song>) {

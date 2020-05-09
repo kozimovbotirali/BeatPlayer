@@ -21,7 +21,7 @@ import org.koin.dsl.module
 
 val viewModelModule = module {
     factory { SettingsUtility(get()) }
-    single { MainViewModel(get(), get(), get(), get()) }
+    single { MainViewModel(get(), get(), get(), get(), get(), get(), get()) }
     viewModel { PlaylistViewModel(get()) }
     viewModel { ArtistViewModel(get()) }
     viewModel { FavoriteViewModel(get()) }

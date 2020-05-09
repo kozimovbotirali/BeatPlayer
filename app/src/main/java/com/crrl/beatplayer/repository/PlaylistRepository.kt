@@ -34,7 +34,7 @@ interface PlaylistRepository {
     fun deletePlaylist(playlistId: Long): Int
 }
 
-class PlaylistRepositoryImplementation(context: Context?) : DBHelper(context),
+class PlaylistRepositoryImplementation(context: Context) : DBHelper(context),
     PlaylistRepository {
 
     companion object {

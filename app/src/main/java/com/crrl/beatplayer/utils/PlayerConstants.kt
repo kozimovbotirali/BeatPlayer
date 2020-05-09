@@ -19,9 +19,8 @@ import com.crrl.beatplayer.R
 
 object PlayerConstants {
 
-    const val ACCENT_COLOR = "#2F97FF"
     const val FAVORITE_KEY = "favorite_key"
-    const val LYRIC: String = "lyrics_fragment"
+    const val LYRIC = "lyrics_fragment"
     const val PLAY_LIST_DETAIL = "play_list_detail"
     const val NOW_PLAYING = "now_playing"
     const val ARTIST_DETAIL = "artist_detail"
@@ -29,12 +28,13 @@ object PlayerConstants {
     const val ALBUM_KEY = "album_key"
     const val FOLDER_KEY = "folder_key"
     const val LIBRARY = "library_fragment"
+    const val SONG_KEY = "song_key"
+    const val SONG_LIST_KEY = "song_list_key"
     const val SONG_DETAIL = "song_detail_fragment"
     const val ALBUM_DETAIL = "album_detail_fragment"
     const val LIGHT_THEME = "light_theme"
     const val DARK_THEME = "dark_theme"
     const val AUTO_THEME = "auto_theme"
-    const val SONG_KEY = "song_key"
     const val FAVORITE_ID = -7440L
     const val FAVORITE_NAME = "${R.string.favorites}"
     const val FAVORITE_TYPE = "Favorite"
@@ -42,6 +42,7 @@ object PlayerConstants {
     const val SONG_TYPE = "Song"
     const val ARTIST_TYPE = "Artist"
     const val FOLDER_TYPE = "Folder"
+    const val PLAY_LIST_TYPE = "Playlist"
     const val READ_ONLY_MODE = "r"
     const val READ_AND_WRITE_MODE = "rw"
     const val EOF = -1
@@ -52,18 +53,10 @@ object PlayerConstants {
 enum class Repeat {
     ONE,
     ALL,
-    LIST,
     OFF
 }
 
 enum class Shuffle {
     ON,
     OFF
-}
-
-enum class Size {
-    XL,
-    MD,
-    SM,
-    XS
 }

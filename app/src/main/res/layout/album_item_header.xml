@@ -11,8 +11,7 @@
   ~ limitations under the License.
   -->
 
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
 
@@ -55,8 +54,8 @@
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
                 android:gravity="center|start"
-                android:paddingStart="@dimen/padding_15"
-                android:paddingEnd="@dimen/padding_12"
+                android:layout_marginStart="@dimen/header_count_space"
+                android:layout_marginEnd="@dimen/margin_12"
                 android:text="@{@plurals/number_of_albums(albumCount, albumCount)}"
                 android:textColor="?titleTextColor"
                 android:textSize="@dimen/title_text_size" />
