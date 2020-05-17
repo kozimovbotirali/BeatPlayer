@@ -67,7 +67,7 @@
     <string name="delete_conf">Estas seguro que deseas eliminar la canción \"%s\" de tu dispositivo.</string>
     <string name="delete_conf_title">Confirmar Eliminación</string>
     <string name="select_tracks">Seleccionar Canciones</string>
-    <string name="all">Todas</string>
+    <string name="all">Todo</string>
     <string name="done">Hecho</string>
     <string name="no_albums">Sin Albumes</string>
     <string name="no_favorites">Sin Música Favorita</string>
@@ -92,6 +92,8 @@
     <string name="cancel">Cancelar</string>
     <string name="accept">Aceptar</string>
     <string name="search_tip">Escribe el nombre de un álbum, un artista o una canción y verás los resultados aquí.</string>
+    <string name="all_songs">Todas las pistas</string>
+    <string name="no_eq">Tu dispositivo no tiene ecualizador.</string>
 
     <plurals name="number_of_songs" tools:ignore="UnusedQuantity">
         <item quantity="zero">%d Pistas</item>

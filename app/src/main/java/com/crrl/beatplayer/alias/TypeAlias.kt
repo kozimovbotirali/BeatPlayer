@@ -11,28 +11,12 @@
  * limitations under the License.
  */
 
-package com.crrl.beatplayer.extensions
+package com.crrl.beatplayer.alias
 
-import com.crrl.beatplayer.models.MediaId
-import com.crrl.beatplayer.models.QueueInfo
-import com.crrl.beatplayer.models.Song
-import com.google.gson.Gson
+import com.crrl.beatplayer.playback.players.BeatPlayer
 
-fun String.toSong(): Song {
-    return Gson().fromJson(this)
-}
-
-fun String.toQueueInfo(): QueueInfo {
-    return Gson().fromJson(this)
-}
-
-fun String.toQueueList(): LongArray {
-    return Gson().fromJson(this)
-}
-
-fun String.toMediaId(): MediaId {
-    val parts = split("|")
-    return if (parts.size > 1)
-        MediaId(parts[0].trim(), parts[1].trim(), parts[2].trim())
-    else MediaId()
-}
+typealias OnPrepared<T> = T.() -> Unit
+typealias OnError<T> = T.(error: Throwable) -> Unit
+typealias OnCompletion<T> = T.() -> Unit
+typealias OnIsPlaying = BeatPlayer.(playing: Boolean) -> Unit
+typealias LiveDataFilter<T> = (T) -> Boolean

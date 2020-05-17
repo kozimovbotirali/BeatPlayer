@@ -103,6 +103,8 @@
     <string name="cancel">Cancel</string>
     <string name="accept">OK</string>
     <string name="search_tip">Type the name of an album, an artist or a song and you\'ll see the results here.</string>
+    <string name="all_songs">All tracks</string>
+    <string name="no_eq">Your device does not have a equalizer.</string>
 
     <plurals name="number_of_songs">
         <item quantity="zero">%d Tracks</item>
@@ -121,5 +123,4 @@
         <item quantity="one">%d Artist</item>
         <item quantity="other">%d Artists</item>
     </plurals>
-
 </resources>

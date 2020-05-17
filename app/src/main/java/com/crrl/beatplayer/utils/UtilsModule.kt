@@ -11,28 +11,12 @@
  * limitations under the License.
  */
 
-package com.crrl.beatplayer.extensions
+package com.crrl.beatplayer.utils
 
-import com.crrl.beatplayer.models.MediaId
-import com.crrl.beatplayer.models.QueueInfo
-import com.crrl.beatplayer.models.Song
-import com.google.gson.Gson
+import org.koin.dsl.bind
+import org.koin.dsl.module
 
-fun String.toSong(): Song {
-    return Gson().fromJson(this)
-}
-
-fun String.toQueueInfo(): QueueInfo {
-    return Gson().fromJson(this)
-}
-
-fun String.toQueueList(): LongArray {
-    return Gson().fromJson(this)
-}
-
-fun String.toMediaId(): MediaId {
-    val parts = split("|")
-    return if (parts.size > 1)
-        MediaId(parts[0].trim(), parts[1].trim(), parts[2].trim())
-    else MediaId()
+val utilsModule = module {
+    factory { SettingsUtility(get()) }
+    factory { QueueUtilsImplementation(get(), get()) } bind QueueUtils::class
 }

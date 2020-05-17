@@ -21,7 +21,10 @@ import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 
-import static com.crrl.beatplayer.utils.PlayerConstants.AUTO_THEME;
+import static com.crrl.beatplayer.utils.BeatConstants.AUTO_THEME;
+import static com.crrl.beatplayer.utils.BeatConstants.QUEUE_INFO_KEY;
+import static com.crrl.beatplayer.utils.BeatConstants.QUEUE_LIST_KEY;
+import static com.crrl.beatplayer.utils.BeatConstants.SONG_KEY;
 
 public final class SettingsUtility {
 
@@ -80,19 +83,27 @@ public final class SettingsUtility {
     }
 
     public String getCurrentSongSelected() {
-        return sPreferences.getString(PlayerConstants.SONG_KEY, new Gson().toJson(new Song()));
+        return sPreferences.getString(SONG_KEY, new Gson().toJson(new Song()));
     }
 
     public void setCurrentSongSelected(String value) {
-        setPreference(PlayerConstants.SONG_KEY, value);
+        setPreference(BeatConstants.SONG_KEY, value);
     }
 
-    public String getCurrentSongList() {
-        return sPreferences.getString(PlayerConstants.SONG_LIST_KEY, null);
+    public String getCurrentQueueInfo() {
+        return sPreferences.getString(QUEUE_INFO_KEY, null);
     }
 
-    public void setCurrentSongList(String value) {
-        setPreference(PlayerConstants.SONG_LIST_KEY, value);
+    public void setCurrentQueueInfo(String value) {
+        setPreference(QUEUE_INFO_KEY, value);
+    }
+
+    public String getCurrentQueueList() {
+        return sPreferences.getString(QUEUE_LIST_KEY, null);
+    }
+
+    public void setCurrentQueueList(String value) {
+        setPreference(QUEUE_LIST_KEY, value);
     }
 
     public String getArtistSortOrder() {

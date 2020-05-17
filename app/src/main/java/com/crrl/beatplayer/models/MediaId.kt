@@ -11,28 +11,24 @@
  * limitations under the License.
  */
 
-package com.crrl.beatplayer.extensions
+package com.crrl.beatplayer.models
 
-import com.crrl.beatplayer.models.MediaId
-import com.crrl.beatplayer.models.QueueInfo
-import com.crrl.beatplayer.models.Song
-import com.google.gson.Gson
+import android.support.v4.media.MediaBrowserCompat
 
-fun String.toSong(): Song {
-    return Gson().fromJson(this)
-}
+class MediaId(
+    val type: String? = "0",
+    val mediaId: String? = "0",
+    val caller: String? = ""
+) {
 
-fun String.toQueueInfo(): QueueInfo {
-    return Gson().fromJson(this)
-}
+    companion object {
+        const val CALLER_SELF = "self"
+        const val CALLER_OTHER = "other"
+    }
 
-fun String.toQueueList(): LongArray {
-    return Gson().fromJson(this)
-}
+    var mediaItem: MediaBrowserCompat.MediaItem? = null
 
-fun String.toMediaId(): MediaId {
-    val parts = split("|")
-    return if (parts.size > 1)
-        MediaId(parts[0].trim(), parts[1].trim(), parts[2].trim())
-    else MediaId()
+    override fun toString(): String {
+        return "$type | $mediaId | $caller"
+    }
 }

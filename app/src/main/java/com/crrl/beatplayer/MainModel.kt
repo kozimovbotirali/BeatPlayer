@@ -11,28 +11,18 @@
  * limitations under the License.
  */
 
-package com.crrl.beatplayer.extensions
+package com.crrl.beatplayer
 
-import com.crrl.beatplayer.models.MediaId
-import com.crrl.beatplayer.models.QueueInfo
-import com.crrl.beatplayer.models.Song
-import com.google.gson.Gson
+import android.content.ComponentName
+import com.crrl.beatplayer.playback.BeatPlayerService
+import com.crrl.beatplayer.playback.PlaybackConnection
+import com.crrl.beatplayer.playback.PlaybackConnectionImplementation
+import org.koin.dsl.bind
+import org.koin.dsl.module
 
-fun String.toSong(): Song {
-    return Gson().fromJson(this)
-}
-
-fun String.toQueueInfo(): QueueInfo {
-    return Gson().fromJson(this)
-}
-
-fun String.toQueueList(): LongArray {
-    return Gson().fromJson(this)
-}
-
-fun String.toMediaId(): MediaId {
-    val parts = split("|")
-    return if (parts.size > 1)
-        MediaId(parts[0].trim(), parts[1].trim(), parts[2].trim())
-    else MediaId()
+val mainModel = module {
+    factory {
+        val component = ComponentName(get(), BeatPlayerService::class.java)
+        PlaybackConnectionImplementation(get(), component)
+    } bind PlaybackConnection::class
 }

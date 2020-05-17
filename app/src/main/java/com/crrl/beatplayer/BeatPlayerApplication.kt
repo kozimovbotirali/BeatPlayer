@@ -15,9 +15,13 @@ package com.crrl.beatplayer
 
 import android.app.Application
 import com.crashlytics.android.Crashlytics
+import com.crrl.beatplayer.BuildConfig.DEBUG
+import com.crrl.beatplayer.notifications.notificationModule
+import com.crrl.beatplayer.playback.playbackModule
 import com.crrl.beatplayer.repository.repositoriesModule
-import com.crrl.beatplayer.ui.viewmodels.base.viewModelModule
+import com.crrl.beatplayer.ui.viewmodels.viewModelModule
 import com.crrl.beatplayer.utils.ReleaseTree
+import com.crrl.beatplayer.utils.utilsModule
 import io.fabric.sdk.android.Fabric
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
@@ -29,10 +33,20 @@ class BeatPlayerApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         Fabric.with(this, Crashlytics())
-        Timber.plant(ReleaseTree())
+
+        if (DEBUG) {
+            Timber.plant(Timber.DebugTree())
+        } else {
+            Timber.plant(ReleaseTree())
+        }
+
         val modules = listOf(
+            mainModel,
+            notificationModule,
+            playbackModule,
+            repositoriesModule,
             viewModelModule,
-            repositoriesModule
+            utilsModule
         )
         startKoin {
             androidContext(this@BeatPlayerApplication)

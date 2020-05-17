@@ -15,13 +15,17 @@ package com.crrl.beatplayer.utils
 
 import android.content.ContentUris.withAppendedId
 import android.content.Context
+import android.content.res.Configuration.ORIENTATION_PORTRAIT
 import android.content.res.Resources
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.RectF
 import android.graphics.drawable.ShapeDrawable
 import android.graphics.drawable.shapes.RoundRectShape
 import android.net.Uri
-import android.view.Surface.*
+import android.os.Build
+import android.provider.MediaStore
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
@@ -31,16 +35,20 @@ import com.crrl.beatplayer.R
 import com.crrl.beatplayer.extensions.CUSTOM
 import com.crrl.beatplayer.extensions.snackbar
 import com.crrl.beatplayer.models.Song
-import com.crrl.beatplayer.utils.PlayerConstants.ARTWORK_URI
-import com.crrl.beatplayer.utils.PlayerConstants.SONG_URI
+import com.crrl.beatplayer.utils.BeatConstants.ARTWORK_URI
+import com.crrl.beatplayer.utils.BeatConstants.SONG_URI
 import com.google.android.material.snackbar.BaseTransientBottomBar
-import java.io.*
+import java.io.FileInputStream
+import java.io.FileNotFoundException
 
 
 object GeneralUtils {
 
-    const val VERTICAL = 0
-    const val HORIZONTAL = 1
+    const val VERTICAL_TOP = 2
+    const val VERTICAL_BOTTOM = 0
+    const val HORIZONTAL_RIGHT = 1
+    const val HORIZONTAL_LEFT = 3
+    const val PORTRAIT = ORIENTATION_PORTRAIT
 
     val screenWidth: Int
         get() = Resources.getSystem().displayMetrics.widthPixels
@@ -50,13 +58,11 @@ object GeneralUtils {
 
     @Throws(IllegalArgumentException::class)
     fun getRotation(context: Context): Int {
-        val rotation =
-            (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.rotation
-        return when (rotation) {
-            ROTATION_0, ROTATION_180 -> VERTICAL
-            ROTATION_90 -> HORIZONTAL
-            else -> HORIZONTAL
-        }
+        return (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.rotation
+    }
+
+    fun getOrientation(context: Context): Int {
+        return context.resources.configuration.orientation
     }
 
     fun formatMilliseconds(duration: Long): String {
@@ -82,7 +88,7 @@ object GeneralUtils {
 
     fun audio2Raw(context: Context, uri: Uri): ByteArray? {
         val parcelFileDescriptor = try {
-            context.contentResolver.openFileDescriptor(uri, PlayerConstants.READ_ONLY_MODE, null)
+            context.contentResolver.openFileDescriptor(uri, BeatConstants.READ_ONLY_MODE, null)
                 ?: return null
         } catch (ex: FileNotFoundException) {
             return null
@@ -94,25 +100,6 @@ object GeneralUtils {
             audio2Raw(context, uri)
         }
         fis.close()
-        return data
-    }
-
-    @Throws(IOException::class, InterruptedIOException::class)
-    fun toByteArray(input: InputStream, size: Int): ByteArray? {
-        require(size >= 0) { "Size must be equal or greater than zero: $size" }
-        if (size == 0) {
-            return ByteArray(0)
-        }
-        val data = ByteArray(size)
-        var offset = 0
-        var read = input.read(data, offset, size - offset)
-        while (offset < size && read != PlayerConstants.EOF) {
-            offset += read
-            read = input.read(data, offset, size - offset)
-        }
-        if (offset != size) {
-            throw IOException("Unexpected readed size. current: $offset, excepted: $size")
-        }
         return data
     }
 
@@ -225,6 +212,17 @@ object GeneralUtils {
         )
     }
 
+    fun isOreo() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+
     fun getAlbumArtUri(albumId: Long): Uri = withAppendedId(ARTWORK_URI, albumId)
+    fun getAlbumArtBitmap(context: Context, albumId: Long?): Bitmap? {
+        if (albumId == null) return null
+        return try {
+            MediaStore.Images.Media.getBitmap(context.contentResolver, getAlbumArtUri(albumId))
+        } catch (e: FileNotFoundException) {
+            BitmapFactory.decodeResource(context.resources, R.drawable.ic_app_logo)
+        }
+    }
+
     fun getSongUri(songId: Long): Uri = withAppendedId(SONG_URI, songId)
 }

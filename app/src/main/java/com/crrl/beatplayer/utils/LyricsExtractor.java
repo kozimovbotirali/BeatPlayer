@@ -15,7 +15,7 @@ package com.crrl.beatplayer.utils;
 
 import android.net.Uri;
 
-import com.crrl.beatplayer.models.Song;
+import com.crrl.beatplayer.models.MediaItemData;
 import com.jagrosh.jlyrics.Lyrics;
 import com.jagrosh.jlyrics.LyricsClient;
 
@@ -34,14 +34,14 @@ import java.util.concurrent.ExecutionException;
 
 public class LyricsExtractor {
 
-    public static String getLyric(Song song) {
-        String lyrics = getEmbeddedLyrics(song);
-        return lyrics == null ? getOnlineLyrics(song) : lyrics;
+    public static String getLyric(MediaItemData mediaItemData) {
+        String lyrics = getEmbeddedLyrics(mediaItemData);
+        return lyrics == null ? getOnlineLyrics(mediaItemData) : lyrics;
     }
 
-    private static String getEmbeddedLyrics(Song song) {
+    private static String getEmbeddedLyrics(MediaItemData mediaItemData) {
         StringBuilder lyrics = new StringBuilder();
-        Uri uri = Uri.parse(song.getPath());
+        Uri uri = GeneralUtils.INSTANCE.getSongUri(mediaItemData.getId());
 
         File file = new File(Objects.requireNonNull(uri.getPath()));
         try {
@@ -53,11 +53,11 @@ public class LyricsExtractor {
         return lyrics.toString().isEmpty() ? null : lyrics.toString();
     }
 
-    private static String getOnlineLyrics(Song song) {
+    private static String getOnlineLyrics(MediaItemData mediaItemData) {
         LyricsClient client = new LyricsClient();
         Lyrics lyrics = null;
         try {
-            lyrics = client.getLyrics(song.getTitle() + " - " + song.getArtist().replace(";", ",") + " " + song.getAlbum()).get();
+            lyrics = client.getLyrics(mediaItemData.getTitle() + " - " + mediaItemData.getArtist().replace(";", ",") + " " + mediaItemData.getAlbum()).get();
             /*if (lyrics == null) {
                 lyrics = client.getLyrics(song.getTitle() + " - " + song.getArtist().split("[;,]")[0] + " " + song.getAlbum()).get();
             }

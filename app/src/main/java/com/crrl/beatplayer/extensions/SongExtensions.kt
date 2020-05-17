@@ -13,8 +13,10 @@
 
 package com.crrl.beatplayer.extensions
 
-import com.crrl.beatplayer.models.MediaItem
+import android.support.v4.media.MediaDescriptionCompat
+import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.utils.GeneralUtils
+import com.crrl.beatplayer.utils.GeneralUtils.getAlbumArtUri
 
 fun Int.format(): String {
     return GeneralUtils.formatMilliseconds(this.toLong())
@@ -28,6 +30,27 @@ fun Int.fix(): Int {
     return value
 }
 
-fun List<MediaItem>?.toIDList(): LongArray {
-    return this?.map { it._id }?.toLongArray() ?: LongArray(0)
+fun Float.fixPercentBounds(): Float {
+    return if (this < 0F) 0F else if (this > 100F) 100F else this
+}
+
+fun Int.fixToStep(step: Int): Int {
+    return this / step * step
+}
+
+fun Int.fixToPercent(total: Int): Float {
+    return (this * 100) / total.toFloat()
+}
+
+fun Float.percentToMs(total: Int): Int {
+    return (this * total / 100).toInt()
+}
+
+fun Song.toDescription(): MediaDescriptionCompat {
+    return MediaDescriptionCompat.Builder()
+        .setTitle(title)
+        .setMediaId(id.toString())
+        .setSubtitle(artist)
+        .setDescription(album)
+        .setIconUri(getAlbumArtUri(albumId)).build()
 }
