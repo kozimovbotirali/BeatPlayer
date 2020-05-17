@@ -116,6 +116,7 @@ class BeatPlayerService : MediaBrowserServiceCompat(), KoinComponent {
         parentId: String,
         result: Result<MutableList<MediaBrowserCompat.MediaItem>>
     ) {
+        result.detach()
         GlobalScope.launch {
             val itemList = withContext(IO) {
                 loadChildren(parentId)

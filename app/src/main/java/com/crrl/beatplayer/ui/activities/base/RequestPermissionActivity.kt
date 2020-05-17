@@ -18,7 +18,6 @@ import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.content.pm.PackageManager
 import android.database.sqlite.SQLiteException
 import android.os.Bundle
-import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.crrl.beatplayer.db.DBHelper
 import com.crrl.beatplayer.models.Favorite
@@ -26,9 +25,9 @@ import com.crrl.beatplayer.repository.FavoritesRepository
 import com.crrl.beatplayer.repository.FavoritesRepositoryImplementation
 import com.crrl.beatplayer.repository.PlaylistRepository
 import com.crrl.beatplayer.repository.PlaylistRepositoryImplementation
-import com.crrl.beatplayer.utils.PlayerConstants.FAVORITE_ID
-import com.crrl.beatplayer.utils.PlayerConstants.FAVORITE_NAME
-import com.crrl.beatplayer.utils.PlayerConstants.FAVORITE_TYPE
+import com.crrl.beatplayer.utils.BeatConstants.FAVORITE_ID
+import com.crrl.beatplayer.utils.BeatConstants.FAVORITE_NAME
+import com.crrl.beatplayer.utils.BeatConstants.FAVORITE_TYPE
 import org.koin.android.ext.android.get
 
 
@@ -41,10 +40,6 @@ open class RequestPermissionActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        window.setFlags(
-            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
-        )
         verify()
     }
 

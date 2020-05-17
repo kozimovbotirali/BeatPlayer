@@ -16,11 +16,10 @@ package com.crrl.beatplayer.ui.widgets.views
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
-import android.widget.TextView
-import androidx.core.content.ContextCompat
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.interfaces.ItemListener
 import com.crrl.beatplayer.ui.widgets.actions.AlertItemAction
@@ -29,6 +28,7 @@ import com.crrl.beatplayer.ui.widgets.stylers.AlertItemTheme
 import com.crrl.beatplayer.ui.widgets.stylers.ItemStyle
 import com.crrl.beatplayer.utils.GeneralUtils.drawRoundRectShape
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import kotlinx.android.synthetic.main.parent_dialog_layout.view.*
 
 class BottomSheetAlert(
     private val title: String,
@@ -57,54 +57,48 @@ class BottomSheetAlert(
         return view
     }
 
-    private fun initView(view: View?) {
+    private fun initView(view: View) {
         style as AlertItemStyle
-        //Finding views
-        val titleView = view!!.findViewById<TextView>(R.id.title)
-        val subTitleView = view.findViewById<TextView>(R.id.sub_title)
-        val cancel = view.findViewById<Button>(R.id.cancel)
-        val container = view.findViewById<LinearLayout>(R.id.container)
-
-        titleView.apply {
-            if (title.isEmpty()) {
-                visibility = View.GONE
-            } else {
-                text = title
+        with(view) {
+            title.apply {
+                if (this@BottomSheetAlert.title.isEmpty()) {
+                    visibility = GONE
+                } else {
+                    text = this@BottomSheetAlert.title
+                }
+                setTextColor(style.textColor)
             }
-            setTextColor(style.textColor)
-        }
 
-        subTitleView.apply {
-            if (message.isEmpty()) {
-                visibility = View.GONE
-            } else {
-                text = message
+            sub_title.apply {
+                if (message.isEmpty()) {
+                    visibility = GONE
+                } else {
+                    text = message
+                }
+                setTextColor(style.textColor)
             }
-            setTextColor(style.textColor)
+
+            // Configuring View Parent
+            val background = drawRoundRectShape(
+                container.layoutParams.width,
+                container.layoutParams.height,
+                style.backgroundColor,
+                style.cornerRadius
+            )
+
+            container.background = background
+
+            bottom_container.visibility = GONE
+            container.background = background
         }
 
-        // Configuring View Parent
-        val back = drawRoundRectShape(
-            container.layoutParams.width,
-            container.layoutParams.height,
-            style.backgroundColor,
-            style.cornerRadius
-        )
-
-        container.background = back
-
-        cancel.apply {
-            setOnClickListener { dismiss() }
-            this.background = back
-            setTextColor(ContextCompat.getColor(view.context, R.color.error))
-        }
         // Inflate action views
         inflateActionsView(view.findViewById(R.id.item_container), actions)
     }
 
     private fun inflateActionsView(actionsLayout: LinearLayout, items: ArrayList<AlertItemAction>) {
         style as AlertItemStyle
-        items.mapIndexed { index, item ->
+        for (item in items) {
 
             // Finding Views
             val view = LayoutInflater.from(context).inflate(R.layout.dialog_item, null)
@@ -112,9 +106,6 @@ class BottomSheetAlert(
             val indicator = view.findViewById<View>(R.id.indicator)
 
             action.text = item.title
-            if (index == items.size - 1) {
-                action.setBackgroundResource(R.drawable.list_item_ripple_bottom)
-            }
 
             // Click listener for action.
             action.setOnClickListener {
@@ -126,9 +117,7 @@ class BottomSheetAlert(
                 //Add root view
                 item.root = view
 
-                //Execute listeners' methods for each case (Kotlin on Java)
                 item.action?.invoke(item)
-                item.actionListener?.onAlertItemClick(item)
 
                 // Check if selected state changed
                 if (oldState != item.selected) {
@@ -183,10 +172,10 @@ class BottomSheetAlert(
                     }
                 }
                 AlertItemTheme.CANCEL -> {
-                    action.setTextColor(ContextCompat.getColor(context!!, R.color.error))
+                    action.setTextColor(style.backgroundColor)
                 }
                 AlertItemTheme.ACCEPT -> {
-                    action.setTextColor(ContextCompat.getColor(context!!, R.color.success))
+                    action.setTextColor(style.selectedTextColor)
                 }
             }
         }

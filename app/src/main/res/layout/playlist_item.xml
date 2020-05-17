@@ -11,33 +11,24 @@
   ~ limitations under the License.
   -->
 
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
         <variable
             name="playlist"
             type="com.crrl.beatplayer.models.Playlist" />
-        <variable
-            name="position"
-            type="Integer" />
-
-        <variable
-            name="size"
-            type="Integer" />
     </data>
 
     <LinearLayout
         android:id="@+id/container"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        app:position="@{position}"
-        app:size="@{size}"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
         android:clickable="true"
+        android:background="@drawable/list_item_ripple"
         android:focusable="true">
 
         <ImageView

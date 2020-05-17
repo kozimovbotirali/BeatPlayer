@@ -14,7 +14,7 @@
 package com.crrl.beatplayer.models
 
 import android.database.Cursor
-import com.crrl.beatplayer.utils.PlayerConstants.ALBUM_TYPE
+import com.crrl.beatplayer.utils.BeatConstants.ALBUM_TYPE
 import com.google.gson.Gson
 
 

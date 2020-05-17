@@ -24,10 +24,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentSearchBinding
-import com.crrl.beatplayer.extensions.addFragment
-import com.crrl.beatplayer.extensions.inflateWithBinding
-import com.crrl.beatplayer.extensions.observe
-import com.crrl.beatplayer.extensions.safeActivity
+import com.crrl.beatplayer.extensions.*
 import com.crrl.beatplayer.models.Album
 import com.crrl.beatplayer.models.Artist
 import com.crrl.beatplayer.models.MediaItem
@@ -36,9 +33,9 @@ import com.crrl.beatplayer.ui.adapters.SearchAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.viewmodels.PlaylistViewModel
 import com.crrl.beatplayer.ui.viewmodels.SearchViewModel
+import com.crrl.beatplayer.utils.BeatConstants
 import com.crrl.beatplayer.utils.GeneralUtils
 import com.crrl.beatplayer.utils.GeneralUtils.toggleShowKeyBoard
-import com.crrl.beatplayer.utils.PlayerConstants
 import kotlinx.android.synthetic.main.fragment_search.view.*
 import org.koin.android.ext.android.inject
 
@@ -67,9 +64,9 @@ class SearchFragment : BaseFragment<MediaItem>(), TextWatcher {
 
     private fun init(view: View) {
         val sc =
-            if (GeneralUtils.getRotation(safeActivity) == GeneralUtils.VERTICAL) 2 else 5
+            if (GeneralUtils.getOrientation(safeActivity) == GeneralUtils.PORTRAIT) 2 else 5
 
-        searchAdapter = SearchAdapter(safeActivity, mainViewModel, searchViewModel, this, sc)
+        searchAdapter = SearchAdapter(safeActivity, songDetailViewModel, searchViewModel, this, sc)
 
         binding.apply {
             searchSrcText.apply {
@@ -82,7 +79,7 @@ class SearchFragment : BaseFragment<MediaItem>(), TextWatcher {
                 activity!!.onBackPressed()
             }
 
-            searchList.apply {
+            binding.searchList.apply {
                 layoutManager = LinearLayoutManager(context)
                 adapter = searchAdapter
                 (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
@@ -93,10 +90,6 @@ class SearchFragment : BaseFragment<MediaItem>(), TextWatcher {
 
         searchViewModel.searchLiveData().observe(this) {
             searchAdapter.updateDataSet(it)
-        }
-
-        mainViewModel.getCurrentSong().observe(this){
-            searchAdapter.notifyItemChanged(0)
         }
 
         binding.let {
@@ -135,17 +128,17 @@ class SearchFragment : BaseFragment<MediaItem>(), TextWatcher {
     }
 
     private fun songClicked(item: Song) {
-        mainViewModel.update(item)
-        mainViewModel.update(longArrayOf(item.id))
+        val extras = getExtraBundle(longArrayOf(item.id), BeatConstants.PLAY_LIST_TYPE)
+        mainViewModel.mediaItemClicked(item.toMediaItem(), extras)
     }
 
     private fun albumClicked(item: Album) {
         val extras = Bundle()
-        extras.putLong(PlayerConstants.ALBUM_KEY, item.id)
+        extras.putLong(BeatConstants.ALBUM_KEY, item.id)
         activity!!.addFragment(
             R.id.nav_host_fragment,
             AlbumDetailFragment(),
-            PlayerConstants.ALBUM_DETAIL,
+            BeatConstants.ALBUM_DETAIL,
             true,
             extras
         )
@@ -153,11 +146,11 @@ class SearchFragment : BaseFragment<MediaItem>(), TextWatcher {
 
     private fun artistClicked(item: Artist) {
         val extras = Bundle()
-        extras.putLong(PlayerConstants.ARTIST_KEY, item.id)
+        extras.putLong(BeatConstants.ARTIST_KEY, item.id)
         activity!!.addFragment(
             R.id.nav_host_fragment,
             ArtistDetailFragment(),
-            PlayerConstants.ARTIST_DETAIL,
+            BeatConstants.ARTIST_DETAIL,
             true,
             extras
         )

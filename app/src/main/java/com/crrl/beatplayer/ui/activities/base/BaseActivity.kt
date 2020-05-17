@@ -15,16 +15,20 @@ package com.crrl.beatplayer.ui.activities.base
 
 import android.content.Intent
 import android.graphics.Typeface
+import android.media.audiofx.AudioEffect
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
 import com.crrl.beatplayer.R
+import com.crrl.beatplayer.extensions.DEFAULT
 import com.crrl.beatplayer.extensions.addFragment
 import com.crrl.beatplayer.extensions.getColorByTheme
+import com.crrl.beatplayer.extensions.snackbar
 import com.crrl.beatplayer.ui.activities.SettingsActivity
 import com.crrl.beatplayer.ui.fragments.SearchFragment
 import com.crrl.beatplayer.ui.viewmodels.MainViewModel
-import com.crrl.beatplayer.utils.PlayerConstants
+import com.crrl.beatplayer.utils.BeatConstants
+import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_SHORT
 import com.skydoves.powermenu.MenuAnimation
 import com.skydoves.powermenu.OnMenuItemClickListener
 import com.skydoves.powermenu.PowerMenu
@@ -41,6 +45,17 @@ open class BaseActivity : RequestPermissionActivity() {
     private val onMenuItemClickListener = OnMenuItemClickListener<PowerMenuItem> { position, _ ->
         when (position) {
             0 -> {
+                val intent = Intent(AudioEffect.ACTION_DISPLAY_AUDIO_EFFECT_CONTROL_PANEL)
+
+                if (intent.resolveActivity(packageManager) != null) {
+                    startActivityForResult(intent, 2)
+                } else {
+                    viewModel.binding.mainContainer.snackbar(
+                        DEFAULT,
+                        getString(R.string.no_eq),
+                        LENGTH_SHORT
+                    )
+                }
             }
             1 -> {
                 val intent = Intent(this@BaseActivity, SettingsActivity::class.java)
@@ -102,7 +117,7 @@ open class BaseActivity : RequestPermissionActivity() {
         addFragment(
             R.id.nav_host_fragment,
             SearchFragment(),
-            PlayerConstants.SONG_DETAIL,
+            BeatConstants.SONG_DETAIL,
             true
         )
     }
@@ -128,8 +143,8 @@ open class BaseActivity : RequestPermissionActivity() {
 
     private fun setAppTheme(current_theme: String) {
         when (current_theme) {
-            PlayerConstants.DARK_THEME -> setTheme(R.style.AppTheme_Dark)
-            PlayerConstants.LIGHT_THEME -> setTheme(R.style.AppTheme_Light)
+            BeatConstants.DARK_THEME -> setTheme(R.style.AppTheme_Dark)
+            BeatConstants.LIGHT_THEME -> setTheme(R.style.AppTheme_Light)
             else -> setTheme(R.style.AppTheme_Auto)
         }
     }

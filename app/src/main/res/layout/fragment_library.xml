@@ -45,9 +45,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:contentScrim="@color/transparent"
-                android:layout_marginTop="@dimen/global_padding_top"
                 app:expandedTitleGravity="top"
-                app:layout_scrollFlags="scroll|enterAlways">
+                app:layout_scrollFlags="scroll|snap">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -114,9 +113,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/global_padding_top"
                 app:layout_collapseMode="pin">
-
 
                 <com.google.android.material.tabs.TabLayout
                     android:id="@+id/tabs_container"
@@ -142,6 +139,7 @@
             android:layout_height="match_parent"
             android:background="@drawable/album_detail_shape"
             android:elevation="1dp"
+            app:clipToOutline="@{true}"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
         <TextView

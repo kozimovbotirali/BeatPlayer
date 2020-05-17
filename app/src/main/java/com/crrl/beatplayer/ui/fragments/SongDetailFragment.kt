@@ -15,21 +15,28 @@ package com.crrl.beatplayer.ui.fragments
 
 
 import android.os.Bundle
+import android.support.v4.media.session.PlaybackStateCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentSongDetailBinding
-import com.crrl.beatplayer.extensions.inflateWithBinding
-import com.crrl.beatplayer.extensions.observe
-import com.crrl.beatplayer.models.Song
+import com.crrl.beatplayer.extensions.*
+import com.crrl.beatplayer.models.MediaItemData
 import com.crrl.beatplayer.ui.fragments.base.BaseSongDetailFragment
-import rm.com.audiowave.OnSamplingListener
-import timber.log.Timber
+import com.crrl.beatplayer.ui.viewmodels.SongViewModel
+import com.crrl.beatplayer.utils.AutoClearBinding
+import com.crrl.beatplayer.utils.BeatConstants.BIND_STATE_BOUND
+import com.crrl.beatplayer.utils.GeneralUtils
+import com.crrl.beatplayer.utils.GeneralUtils.getSongUri
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.withContext
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 class SongDetailFragment : BaseSongDetailFragment() {
 
-    private lateinit var binding: FragmentSongDetailBinding
+    private var binding by AutoClearBinding<FragmentSongDetailBinding>(this)
+    private val songViewModel by sharedViewModel<SongViewModel>()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -44,74 +51,72 @@ class SongDetailFragment : BaseSongDetailFragment() {
     }
 
     private fun init() {
-        updateViewComponents()
-        mainViewModel.getCurrentSong().observe(viewLifecycleOwner) {
-            initNeeded(it, emptyList(), 0)
+        initViewComponents()
+
+        songDetailViewModel.currentData.observe(this) {
+            initNeeded(songViewModel.getSongById(it.id), emptyList(), 0L)
+            launch {
+                val raw = withContext(IO) {
+                    GeneralUtils.audio2Raw(context!!, getSongUri(it.id)) ?: byteArrayOf()
+                }
+                songDetailViewModel.update(raw)
+            }
         }
 
-        binding.addPlaylist.setOnClickListener { shareItem() }
-        setupRawData()
+        songDetailViewModel.time.observe(this) {
+            val total = songDetailViewModel.currentData.value?.let { it.duration } ?: 0
+            binding.seekBar.apply {
+                val t = progress.percentToMs(total).fixToStep(1000)
+                if (t != it) {
+                    progress = it.fixToPercent(total).fixPercentBounds()
+                }
+            }
+        }
+
+        binding.sharedSong.setOnClickListener { shareItem() }
+
+        songDetailViewModel.currentState.observe(this) {
+            songDetailViewModel.update(it.position)
+            if (it.state == PlaybackStateCompat.STATE_PLAYING) {
+                songDetailViewModel.update(BIND_STATE_BOUND)
+            } else songDetailViewModel.update()
+        }
+
         binding.let {
-            it.viewModel = mainViewModel
+            it.viewModel = songDetailViewModel
             it.lifecycleOwner = this
             it.executePendingBindings()
         }
     }
 
-    private fun setupRawData() {
-        try {
-            mainViewModel.getRawData().observe(viewLifecycleOwner) {
-                binding.seekBar.setRawData(it, object : OnSamplingListener {
-                    override fun onComplete() = Unit
-                })
-            }
-        } catch (e: IllegalStateException) {
-            Timber.e(e)
-        }
+    override fun onDetach() {
+        super.onDetach()
+        songDetailViewModel.update(byteArrayOf())
+        songDetailViewModel.update()
     }
 
-    private fun updateViewComponents() {
+    private fun initViewComponents() {
         binding.apply {
-            playContainer.setOnClickListener {}
             nextBtn.setOnClickListener {
-                val song = mainViewModel.getCurrentSong().value ?: return@setOnClickListener
-                mainViewModel.next(song.id)
+                mainViewModel.transportControls()?.skipToNext()
             }
             previousBtn.setOnClickListener {
-                val song = mainViewModel.getCurrentSong().value ?: return@setOnClickListener
-                mainViewModel.previous(song.id)
+                mainViewModel.transportControls()?.skipToPrevious()
             }
             seekBar.apply {
-                onStopTracking = {
-                    val song = mainViewModel.getCurrentSong().value ?: Song()
-                    mainViewModel.update((it * song.duration / 100).toInt())
-                }
-
                 onStartTracking = {
-                    val song = mainViewModel.getCurrentSong().value ?: Song()
-                    mainViewModel.update((it * song.duration / 100).toInt())
+                    songDetailViewModel.update()
                 }
-
-                onProgressChanged = { progress, _ ->
-                    val song = mainViewModel.getCurrentSong().value ?: Song()
-                    mainViewModel.update((progress * song.duration / 100).toInt())
+                onStopTracking = {
+                    val mediaItemData = songDetailViewModel.currentData.value ?: MediaItemData()
+                    mainViewModel.transportControls()
+                        ?.seekTo((it * mediaItemData.duration / 100).toLong())
                 }
-            }
-        }
-
-        mainViewModel.getTime().observe(viewLifecycleOwner) {
-            val song = mainViewModel.getCurrentSong().value ?: return@observe
-            binding.seekBar.apply {
-                if (it == -1) {
-                    progress = 0F
-                    setRawData(ByteArray(Int.SIZE_BYTES))
-                }
-                // Percent to Milliseconds and Normalize step to 1000
-                val t = (progress * song.duration / 100).toInt() / 1000 * 1000
-                if (t != it) {
-                    val time = (it * 100) / song.duration.toFloat()
-                    val timeF = if (time < 0F) 0F else if (time > 100F) 100F else time
-                    progress = timeF
+                onProgressChanged = { position, byUser ->
+                    if (byUser) {
+                        val mediaItemData = songDetailViewModel.currentData.value ?: MediaItemData()
+                        songDetailViewModel.update((position * mediaItemData.duration / 100).toInt())
+                    }
                 }
             }
         }

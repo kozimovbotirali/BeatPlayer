@@ -22,6 +22,7 @@ import com.google.gson.Gson;
 import org.jetbrains.annotations.NotNull;
 
 import static com.crrl.beatplayer.utils.BeatConstants.AUTO_THEME;
+import static com.crrl.beatplayer.utils.BeatConstants.DID_STOP_KEY;
 import static com.crrl.beatplayer.utils.BeatConstants.QUEUE_INFO_KEY;
 import static com.crrl.beatplayer.utils.BeatConstants.QUEUE_LIST_KEY;
 import static com.crrl.beatplayer.utils.BeatConstants.SONG_KEY;
@@ -112,6 +113,14 @@ public final class SettingsUtility {
 
     public void setArtistSortOrder(String value) {
         setPreference(ARTIST_SORT_ORDER_KEY, value);
+    }
+
+    public boolean getDidStop() {
+        return sPreferences.getBoolean(DID_STOP_KEY, false);
+    }
+
+    public void setDidStop(boolean value) {
+        setPreference(DID_STOP_KEY, value);
     }
 
     private void setPreference(String key, String value) {

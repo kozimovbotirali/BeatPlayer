@@ -27,14 +27,13 @@ import com.crrl.beatplayer.extensions.deepEquals
 import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.interfaces.ItemClickListener
 import com.crrl.beatplayer.models.Album
-import com.crrl.beatplayer.ui.viewmodels.MainViewModel
 import com.crrl.beatplayer.utils.GeneralUtils.dip2px
 import com.crrl.beatplayer.utils.GeneralUtils.screenWidth
 
 private const val HEADER_TYPE = 0
 private const val ITEM_TYPE = 1
 
-class AlbumAdapter(private val context: Context?, private val mainViewModel: MainViewModel) :
+class AlbumAdapter(private val context: Context?) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var lastClick = 0L
@@ -127,7 +126,6 @@ class AlbumAdapter(private val context: Context?, private val mainViewModel: Mai
             else {
                 (binding as ArtistDetailItemBinding).apply {
                     this.album = album
-                    this.size = itemCount
                     binding.executePendingBindings()
 
                     binding.root.setOnClickListener(this@ViewHolderAlbum)
@@ -154,7 +152,6 @@ class AlbumAdapter(private val context: Context?, private val mainViewModel: Mai
         fun bind(albumCount: Int) {
             binding.apply {
                 this.albumCount = albumCount
-                viewModel = mainViewModel
                 executePendingBindings()
 
                 sortAlbum.setOnClickListener(this@ViewHolderAlbumHeader)

@@ -21,7 +21,7 @@
 
         <variable
             name="viewModel"
-            type="com.crrl.beatplayer.ui.viewmodels.MainViewModel" />
+            type="com.crrl.beatplayer.ui.viewmodels.SongDetailViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -36,7 +36,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_margin="@dimen/margin_12"
-            android:background="@drawable/song_detail_cover_frame"
+            android:background="@drawable/album_detail_shape"
             android:clickable="true"
             android:elevation="1dp"
             android:focusable="true"
@@ -46,7 +46,7 @@
             app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
         <ImageButton
-            android:id="@+id/add_playlist"
+            android:id="@+id/sharedSong"
             android:layout_width="@dimen/btn_size"
             android:layout_height="@dimen/btn_size"
             android:layout_marginEnd="@dimen/margin_10"
@@ -70,7 +70,7 @@
             android:onClick="toggleAddToFav"
             android:src="@drawable/ic_no_favorite"
             android:tint="?bodyTextColor"
-            app:isFav="@{viewModel.isSongFav(viewModel.currentSong.id)}"
+            app:isFav="@{viewModel.isSongFav(viewModel.currentData.id)}"
             app:layout_constraintBottom_toBottomOf="@+id/album_title"
             app:layout_constraintStart_toStartOf="@id/view"
             app:layout_constraintTop_toTopOf="@+id/song_title" />
@@ -85,11 +85,13 @@
             android:elevation="5dp"
             android:src="@drawable/ic_empty_cover"
             android:transitionName="now_cover"
-            app:albumId="@{viewModel.currentSong.albumId}"
             app:layout_constraintBottom_toBottomOf="@+id/view"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/view"
-            app:recycled="@{true}" />
+            app:albumId="@{viewModel.currentData.albumId}"
+            app:height="@{GeneralUtils.INSTANCE.screenHeight-GeneralUtils.INSTANCE.screenHeight/4}"
+            app:recycled="@{true}"
+            app:width="@{GeneralUtils.INSTANCE.screenHeight-GeneralUtils.INSTANCE.screenHeight/4}" />
 
         <RelativeLayout
             android:layout_width="0dp"
@@ -115,6 +117,19 @@
                 android:textColor="?bodyTextColor" />
 
             <TextView
+                android:id="@+id/description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/margin_8"
+                android:layout_marginEnd="8dp"
+                android:gravity="center"
+                android:maxLines="1"
+                android:text="@{viewModel.currentData.description}"
+                android:textColor="?bodyTextColor"
+                tools:ignore="RelativeOverlap" />
+
+            <TextView
                 android:id="@+id/time_left"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -123,7 +138,7 @@
                 android:layout_marginEnd="8dp"
                 android:gravity="center"
                 android:maxLines="1"
-                android:text="@{GeneralUtils.INSTANCE.formatMilliseconds(viewModel.currentSong.duration - viewModel.time), default=@string/def_time}"
+                android:text="@{'-' + GeneralUtils.INSTANCE.formatMilliseconds(viewModel.currentData.duration - viewModel.time), default=@string/def_time}"
                 android:textColor="?bodyTextColor"
                 tools:ignore="RelativeOverlap" />
 
@@ -137,10 +152,11 @@
                 app:animateExpansion="true"
                 app:chunkHeight="30dp"
                 app:chunkRadius="1dp"
-                app:chunkSpacing="1dp"
-                app:chunkWidth="3dp"
+                app:chunkSpacing="3dp"
+                app:chunkWidth="1dp"
                 app:minChunkHeight="2dp"
                 app:touchable="true"
+                app:raw="@{viewModel.raw}"
                 app:waveColor="?colorAccent" />
         </RelativeLayout>
 
@@ -153,10 +169,10 @@
             android:maxLines="1"
             android:paddingStart="@dimen/margin_10"
             android:paddingEnd="@dimen/margin_10"
-            android:text="@{viewModel.currentSong.album, default=Album}"
+            android:text="@{viewModel.currentData.album, default=Album}"
             android:textColor="?bodyTextColor"
             android:textSize="@dimen/title_text_size"
-            app:layout_constraintEnd_toStartOf="@+id/add_playlist"
+            app:layout_constraintEnd_toStartOf="@+id/sharedSong"
             app:layout_constraintStart_toStartOf="@+id/song_title"
             app:layout_constraintTop_toBottomOf="@+id/song_title" />
 
@@ -170,10 +186,10 @@
             android:maxLines="1"
             android:paddingStart="@dimen/margin_10"
             android:paddingEnd="@dimen/margin_10"
-            android:text="@{viewModel.currentSong.title, default=Title}"
+            android:text="@{viewModel.currentData.title, default=Title}"
             android:textColor="?titleTextColor"
             android:textSize="20sp"
-            app:layout_constraintEnd_toStartOf="@+id/add_playlist"
+            app:layout_constraintEnd_toStartOf="@+id/sharedSong"
             app:layout_constraintStart_toEndOf="@+id/add_favorites"
             app:layout_constraintTop_toTopOf="@+id/view" />
 
@@ -251,6 +267,7 @@
                 android:clickable="true"
                 android:elevation="2dp"
                 android:focusable="true"
+                android:onClick="playPauseClick"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -263,13 +280,13 @@
                     android:clickable="false"
                     android:contentDescription="@string/cover"
                     android:focusable="false"
-                    android:paddingStart="@dimen/margin_10"
                     android:scaleType="centerCrop"
-                    android:scaleX="0.4"
-                    android:scaleY="0.4"
-                    android:src="@drawable/play_to_pause"
+                    android:scaleX="0.6"
+                    android:scaleY="0.6"
+                    android:src="@drawable/ic_play"
                     android:tint="@color/white"
-                    tools:ignore="RtlSymmetry"/>
+                    app:playState="@{safeUnbox(viewModel.currentState.state)}"
+                    tools:ignore="RtlSymmetry" />
             </LinearLayout>
 
             <LinearLayout
@@ -306,7 +323,6 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/margin_34"
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageButton

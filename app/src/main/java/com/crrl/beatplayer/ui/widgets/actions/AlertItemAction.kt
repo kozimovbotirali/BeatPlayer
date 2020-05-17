@@ -14,13 +14,11 @@
 package com.crrl.beatplayer.ui.widgets.actions
 
 import android.view.View
-import com.crrl.beatplayer.interfaces.AlertItemActionListener
 import com.crrl.beatplayer.ui.widgets.stylers.AlertItemTheme
 
 class AlertItemAction {
     var title: String
     var action: ((AlertItemAction) -> Unit)?
-    var actionListener: AlertItemActionListener?
     var theme: AlertItemTheme? = AlertItemTheme.DEFAULT
     var selected: Boolean
     var input: String? = null
@@ -35,19 +33,16 @@ class AlertItemAction {
         this.title = title
         this.selected = selected
         this.action = action
-        this.actionListener = null
         this.theme = theme
     }
 
     constructor(
         title: String,
         selected: Boolean,
-        theme: AlertItemTheme,
-        actionListener: AlertItemActionListener
+        theme: AlertItemTheme
     ) {
         this.title = title
         this.selected = selected
-        this.actionListener = actionListener
         this.action = null
         this.theme = theme
     }

@@ -15,6 +15,8 @@ package com.crrl.beatplayer.models
 
 import android.content.ContentUris
 import android.database.Cursor
+import android.support.v4.media.MediaBrowserCompat
+import android.support.v4.media.MediaDescriptionCompat
 import com.crrl.beatplayer.extensions.fix
 import com.crrl.beatplayer.repository.FavoritesRepositoryImplementation.Companion.COLUMN_FAVORITE
 import com.crrl.beatplayer.repository.PlaylistRepositoryImplementation.Companion.COLUMN_ALBUM
@@ -26,7 +28,9 @@ import com.crrl.beatplayer.repository.PlaylistRepositoryImplementation.Companion
 import com.crrl.beatplayer.repository.PlaylistRepositoryImplementation.Companion.COLUMN_PLAYLIST
 import com.crrl.beatplayer.repository.PlaylistRepositoryImplementation.Companion.COLUMN_TITLE
 import com.crrl.beatplayer.repository.PlaylistRepositoryImplementation.Companion.COLUMN_TRACK
-import com.crrl.beatplayer.utils.PlayerConstants
+import com.crrl.beatplayer.utils.BeatConstants
+import com.crrl.beatplayer.utils.BeatConstants.SONG_TYPE
+import com.crrl.beatplayer.utils.GeneralUtils.getAlbumArtUri
 
 data class Song(
     val id: Long = -1,
@@ -53,7 +57,7 @@ data class Song(
                 trackNumber = cursor.getInt(5).fix(),
                 artistId = cursor.getLong(6),
                 albumId = if (album_id == 0L) cursor.getLong(7) else album_id,
-                path = ContentUris.withAppendedId(PlayerConstants.SONG_URI, cursor.getLong(0))
+                path = ContentUris.withAppendedId(BeatConstants.SONG_URI, cursor.getLong(0))
                     .toString()
             )
         }
@@ -69,7 +73,7 @@ data class Song(
                 artistId = cursor.getLong(6),
                 albumId = cursor.getLong(7),
                 playListId = cursor.getLong(8),
-                path = ContentUris.withAppendedId(PlayerConstants.SONG_URI, cursor.getLong(0))
+                path = ContentUris.withAppendedId(BeatConstants.SONG_URI, cursor.getLong(0))
                     .toString()
             )
         }
@@ -93,7 +97,7 @@ data class Song(
             COLUMN_TRACK,
             COLUMN_ARTIST_ID,
             COLUMN_ALBUM_ID,
-            if(isPlaylist) COLUMN_PLAYLIST else COLUMN_FAVORITE
+            if (isPlaylist) COLUMN_PLAYLIST else COLUMN_FAVORITE
         )
     }
 
@@ -108,6 +112,17 @@ data class Song(
             "$artistId",
             "$albumId",
             "$playListId"
+        )
+    }
+
+    fun toMediaItem(): MediaBrowserCompat.MediaItem {
+        return MediaBrowserCompat.MediaItem(
+            MediaDescriptionCompat.Builder()
+                .setMediaId(MediaId(SONG_TYPE, id.toString(), null).toString())
+                .setTitle(title)
+                .setIconUri(getAlbumArtUri(albumId))
+                .setSubtitle(artist)
+                .build(), MediaBrowserCompat.MediaItem.FLAG_PLAYABLE
         )
     }
 }

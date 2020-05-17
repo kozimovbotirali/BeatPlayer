@@ -21,21 +21,11 @@
         <variable
             name="album"
             type="com.crrl.beatplayer.models.Album" />
-
-        <variable
-            name="size"
-            type="Integer" />
-
-        <variable
-            name="position"
-            type="Integer" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:position="@{position}"
-        app:size="@{size}"
         android:clickable="true"
         android:focusable="true">
 

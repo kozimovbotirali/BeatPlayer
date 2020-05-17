@@ -14,7 +14,7 @@
 package com.crrl.beatplayer.models
 
 import android.database.Cursor
-import com.crrl.beatplayer.utils.PlayerConstants.ARTIST_TYPE
+import com.crrl.beatplayer.utils.BeatConstants.ARTIST_TYPE
 import com.google.gson.Gson
 
 data class Artist(

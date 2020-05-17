@@ -56,8 +56,6 @@ class PlaylistAdapter : RecyclerView.Adapter<PlaylistAdapter.ViewHolder>() {
         fun bind(playlist: Playlist) {
             binding.apply {
                 this.playlist = playlist
-                this.size = itemCount
-                position = adapterPosition
                 itemMenu.setOnClickListener(this@ViewHolder)
                 container.setOnClickListener(this@ViewHolder)
                 executePendingBindings()

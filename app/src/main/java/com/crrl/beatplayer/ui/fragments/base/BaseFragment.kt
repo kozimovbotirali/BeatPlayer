@@ -32,32 +32,35 @@ import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.ui.activities.SelectSongActivity
 import com.crrl.beatplayer.ui.fragments.FavoriteDetailFragment
 import com.crrl.beatplayer.ui.fragments.PlaylistDetailFragment
-import com.crrl.beatplayer.ui.viewmodels.FavoriteViewModel
-import com.crrl.beatplayer.ui.viewmodels.MainViewModel
-import com.crrl.beatplayer.ui.viewmodels.PlaylistViewModel
-import com.crrl.beatplayer.ui.viewmodels.SongViewModel
+import com.crrl.beatplayer.ui.viewmodels.*
 import com.crrl.beatplayer.ui.widgets.AlertDialog
 import com.crrl.beatplayer.ui.widgets.actions.AlertItemAction
 import com.crrl.beatplayer.ui.widgets.stylers.AlertItemStyle
 import com.crrl.beatplayer.ui.widgets.stylers.AlertItemTheme
 import com.crrl.beatplayer.ui.widgets.stylers.AlertType
 import com.crrl.beatplayer.ui.widgets.stylers.InputStyle
+import com.crrl.beatplayer.utils.BeatConstants
+import com.crrl.beatplayer.utils.BeatConstants.FAVORITE_ID
+import com.crrl.beatplayer.utils.BeatConstants.REMOVE_SONG
+import com.crrl.beatplayer.utils.BeatConstants.SONG_KEY
 import com.crrl.beatplayer.utils.GeneralUtils.addZeros
-import com.crrl.beatplayer.utils.PlayerConstants
-import com.crrl.beatplayer.utils.PlayerConstants.FAVORITE_ID
+import com.crrl.beatplayer.utils.SettingsUtility
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.skydoves.powermenu.MenuAnimation
 import com.skydoves.powermenu.OnMenuItemClickListener
 import com.skydoves.powermenu.PowerMenu
 import com.skydoves.powermenu.PowerMenuItem
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 
 open class BaseFragment<T : MediaItem> : CoroutineFragment(), ItemClickListener<T> {
 
     protected lateinit var dialog: AlertDialog
     protected val mainViewModel by inject<MainViewModel>()
+    protected val songDetailViewModel by sharedViewModel<SongDetailViewModel>()
     protected var powerMenu: PowerMenu? = null
+    protected val settingsUtility by inject<SettingsUtility>()
 
     private lateinit var currentItemList: List<T>
     private lateinit var currentItem: T
@@ -198,7 +201,7 @@ open class BaseFragment<T : MediaItem> : CoroutineFragment(), ItemClickListener<
             }
         } else {
             val intent = Intent(safeActivity, SelectSongActivity::class.java).apply {
-                putExtra(PlayerConstants.PLAY_LIST_DETAIL, name)
+                putExtra(BeatConstants.PLAY_LIST_DETAIL, name)
             }
             safeActivity.startActivityForResult(intent, 1)
         }
@@ -249,7 +252,7 @@ open class BaseFragment<T : MediaItem> : CoroutineFragment(), ItemClickListener<
             getString(R.string.delete_conf_title),
             getString(R.string.delete_conf, song.title),
             style,
-            AlertType.BOTTOM_SHEET
+            AlertType.DIALOG
         ).apply {
             addItem(AlertItemAction(getString(R.string.delete), false, AlertItemTheme.ACCEPT) {
                 deleteItem(song.id)
@@ -279,8 +282,11 @@ open class BaseFragment<T : MediaItem> : CoroutineFragment(), ItemClickListener<
     private val onMenuItemClickListener = OnMenuItemClickListener<PowerMenuItem> { position, _ ->
         when (position) {
             0 -> {
-                mainViewModel.update(currentItem as Song)
-                mainViewModel.update(currentItemList.toIDList())
+                val extras = getExtraBundle(
+                    currentItemList.toIDList(),
+                    BeatConstants.SONG_TYPE
+                )
+                mainViewModel.mediaItemClicked((currentItem as Song).toMediaItem(), extras)
             }
             1 -> {
                 when (this) {
@@ -340,18 +346,11 @@ open class BaseFragment<T : MediaItem> : CoroutineFragment(), ItemClickListener<
     }
 
     private fun tidyUp(id: Long) {
-        val currentId = mainViewModel.getCurrentSong().value ?: return
-        when (mainViewModel.getCurrentSongList().value) {
-            null -> mainViewModel.update()
-            else -> {
-                if (mainViewModel.getCurrentSongList().value!!.size == 1) {
-                    mainViewModel.update()
-                } else {
-                    if (id == currentId.id) mainViewModel.next(id)
-                    mainViewModel.removeDeletedSong(id)
-                }
-            }
-        }
+        val currentId = songDetailViewModel.currentData.value?.id ?: return
+        if (currentId == id)
+            mainViewModel.transportControls()?.skipToNext()
+        mainViewModel.transportControls()
+            ?.sendCustomAction(REMOVE_SONG, Bundle().apply { putLong(SONG_KEY, id) })
     }
 
     open fun onBackPressed(): Boolean {

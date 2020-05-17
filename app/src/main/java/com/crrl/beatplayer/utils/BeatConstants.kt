@@ -21,31 +21,32 @@ object BeatConstants {
 
     const val CHANNEL_ID = "beatplayer_channel_id"
     const val NOTIFICATION_ID = 8341
-
     const val REMOVE_SONG = "action_remove_song"
+
     const val PREVIOUS = "action_previous"
     const val NEXT = "action_next"
     const val PLAY_PAUSE = "action_play_or_pause"
     const val REPEAT_ONE = "action_repeat_one"
     const val REPEAT_ALL = "action_repeat_all"
     const val UPDATE_QUEUE = "update_queue"
-
     const val REPEAT_MODE = "repeat_mode"
+
     const val SHUFFLE_MODE = "shuffle_mode"
-
     const val SET_MEDIA_STATE = "action_set_media_state"
+
     const val RESTORE_MEDIA_SESSION = "action_restore_media_session"
-
     const val BIND_STATE_BOUND = "STATE_BOUND"
+
     const val BIND_STATE_CANCELED = "STATE_CANCELED"
-
-
     const val LYRIC = "lyrics_fragment"
+
+
     const val PLAY_LIST_DETAIL = "play_list_detail"
     const val NOW_PLAYING = "now_playing"
     const val ARTIST_DETAIL = "artist_detail"
-
     const val FAVORITE_KEY = "favorite_key"
+
+    const val DID_STOP_KEY = "did_stop_key"
     const val ARTIST_KEY = "artist_key"
     const val ALBUM_KEY = "album_key"
     const val FOLDER_KEY = "folder_key"

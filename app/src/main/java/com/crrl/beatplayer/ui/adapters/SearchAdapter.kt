@@ -1,3 +1,16 @@
+/*
+ * Copyright (c) 2020. Carlos René Ramos López. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.crrl.beatplayer.ui.adapters
 
 import android.app.Activity
@@ -12,31 +25,30 @@ import com.crrl.beatplayer.extensions.deepEquals
 import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.interfaces.ItemClickListener
 import com.crrl.beatplayer.models.*
-import com.crrl.beatplayer.ui.viewmodels.MainViewModel
 import com.crrl.beatplayer.ui.viewmodels.SearchViewModel
-import com.crrl.beatplayer.utils.PlayerConstants.ALBUM_TYPE
-import com.crrl.beatplayer.utils.PlayerConstants.ARTIST_TYPE
-import com.crrl.beatplayer.utils.PlayerConstants.SONG_TYPE
+import com.crrl.beatplayer.ui.viewmodels.SongDetailViewModel
+import com.crrl.beatplayer.utils.BeatConstants.ALBUM_TYPE
+import com.crrl.beatplayer.utils.BeatConstants.ARTIST_TYPE
+import com.crrl.beatplayer.utils.BeatConstants.SONG_TYPE
 
 @Suppress("UNCHECKED_CAST")
 class SearchAdapter(
     activity: Activity,
-    mainViewModel: MainViewModel,
+    songDetailViewModel: SongDetailViewModel,
     private val viewModel: SearchViewModel,
     itemClickListener: ItemClickListener<MediaItem>,
     private val sc: Int = 2
 ) : RecyclerView.Adapter<SearchAdapter.ViewHolderSearch>() {
 
-    val songAdapter: SongAdapter = SongAdapter(activity, mainViewModel).apply {
+    val songAdapter: SongAdapter = SongAdapter(activity, songDetailViewModel).apply {
         this.itemClickListener = itemClickListener as ItemClickListener<Song>
         showHeader = false
-        isSearchView = true
     }
-    private val albumAdapter = AlbumAdapter(activity, mainViewModel).apply {
+    private val albumAdapter = AlbumAdapter(activity).apply {
         this.itemClickListener = itemClickListener as ItemClickListener<Album>
         spanCount = sc
     }
-    private val artistAdapter = ArtistAdapter(activity, mainViewModel).apply {
+    private val artistAdapter = ArtistAdapter(activity).apply {
         this.itemClickListener = itemClickListener as ItemClickListener<Artist>
         spanCount = sc
     }
@@ -55,18 +67,21 @@ class SearchAdapter(
     }
 
     fun updateDataSet(data: SearchData) {
-        if (!songAdapter.songList.deepEquals(data.songList)) {
-            songAdapter.updateDataSet(data.songList)
-            notifyItemChanged(0)
+        val first =
+            artistAdapter.artistList.isEmpty() && songAdapter.songList.isEmpty() && albumAdapter.albumList.isEmpty()
+        if (!artistAdapter.artistList.deepEquals(data.artistList)) {
+            artistAdapter.updateDataSet(data.artistList)
+            if (!first) notifyItemChanged(2)
         }
         if (!albumAdapter.albumList.deepEquals(data.albumList)) {
             albumAdapter.updateDataSet(data.albumList)
-            notifyItemChanged(1)
+            if (!first) notifyItemChanged(1)
         }
-        if (!artistAdapter.artistList.deepEquals(data.artistList)) {
-            artistAdapter.updateDataSet(data.artistList)
-            notifyItemChanged(2)
+        if (!songAdapter.songList.deepEquals(data.songList)) {
+            songAdapter.updateDataSet(data.songList)
+            if (!first) notifyItemChanged(0)
         }
+        if (first) notifyDataSetChanged()
     }
 
     inner class ViewHolderSearch(private val binding: SearchItemBinding) :

@@ -13,8 +13,8 @@
 
 package com.crrl.beatplayer.models
 
-import com.crrl.beatplayer.utils.PlayerConstants.ALBUM_TYPE
-import com.crrl.beatplayer.utils.PlayerConstants.ARTIST_TYPE
+import com.crrl.beatplayer.utils.BeatConstants.ALBUM_TYPE
+import com.crrl.beatplayer.utils.BeatConstants.ARTIST_TYPE
 
 data class SearchData(
     var songList: MutableList<Song> = mutableListOf(),

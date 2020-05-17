@@ -28,20 +28,19 @@ import com.crrl.beatplayer.models.Favorite
 import com.crrl.beatplayer.ui.adapters.FavoriteAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.viewmodels.FavoriteViewModel
+import com.crrl.beatplayer.utils.BeatConstants
+import com.crrl.beatplayer.utils.BeatConstants.ALBUM_DETAIL
+import com.crrl.beatplayer.utils.BeatConstants.ALBUM_KEY
+import com.crrl.beatplayer.utils.BeatConstants.ALBUM_TYPE
+import com.crrl.beatplayer.utils.BeatConstants.ARTIST_DETAIL
+import com.crrl.beatplayer.utils.BeatConstants.ARTIST_TYPE
+import com.crrl.beatplayer.utils.BeatConstants.FAVORITE_KEY
+import com.crrl.beatplayer.utils.BeatConstants.FAVORITE_NAME
+import com.crrl.beatplayer.utils.BeatConstants.FOLDER_KEY
+import com.crrl.beatplayer.utils.BeatConstants.FOLDER_TYPE
 import com.crrl.beatplayer.utils.GeneralUtils
-import com.crrl.beatplayer.utils.PlayerConstants
-import com.crrl.beatplayer.utils.PlayerConstants.ALBUM_DETAIL
-import com.crrl.beatplayer.utils.PlayerConstants.ALBUM_KEY
-import com.crrl.beatplayer.utils.PlayerConstants.ALBUM_TYPE
-import com.crrl.beatplayer.utils.PlayerConstants.ARTIST_DETAIL
-import com.crrl.beatplayer.utils.PlayerConstants.ARTIST_TYPE
-import com.crrl.beatplayer.utils.PlayerConstants.FAVORITE_KEY
-import com.crrl.beatplayer.utils.PlayerConstants.FAVORITE_NAME
-import com.crrl.beatplayer.utils.PlayerConstants.FOLDER_KEY
-import com.crrl.beatplayer.utils.PlayerConstants.FOLDER_TYPE
+import kotlinx.android.synthetic.main.layout_recyclerview.*
 import org.koin.android.ext.android.inject
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
 
 class FavoriteFragment : BaseFragment<Favorite>() {
 
@@ -63,7 +62,7 @@ class FavoriteFragment : BaseFragment<Favorite>() {
     }
 
     private fun init() {
-        val sc = if (GeneralUtils.getRotation(safeActivity) == GeneralUtils.VERTICAL) 2 else 5
+        val sc = if (GeneralUtils.getOrientation(safeActivity) == GeneralUtils.PORTRAIT) 2 else 5
 
         favoriteAdapter = FavoriteAdapter(context).apply {
             itemClickListener = this@FavoriteFragment
@@ -75,7 +74,7 @@ class FavoriteFragment : BaseFragment<Favorite>() {
         }
 
         binding.apply {
-            favoriteList.apply {
+            list.apply {
                 layoutManager = GridLayoutManager(context, sc)
                 adapter = favoriteAdapter
             }
@@ -93,7 +92,7 @@ class FavoriteFragment : BaseFragment<Favorite>() {
 
         when (item.type) {
             ARTIST_TYPE -> {
-                extras.putLong(PlayerConstants.ARTIST_KEY, item.id)
+                extras.putLong(BeatConstants.ARTIST_KEY, item.id)
                 activity!!.addFragment(
                     R.id.nav_host_fragment,
                     ArtistDetailFragment(),

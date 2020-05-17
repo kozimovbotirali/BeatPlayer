@@ -130,7 +130,6 @@ class BeatPlayerImplementation(
     override fun getSession(): MediaSessionCompat = mediaSession
 
     override fun playSong() {
-
         if (isInitialized) {
             updatePlaybackState {
                 setState(STATE_PLAYING, mediaSession.position(), 1F)
@@ -330,9 +329,10 @@ class BeatPlayerImplementation(
             putString(METADATA_KEY_ARTIST, song.artist)
             putString(METADATA_KEY_TITLE, song.title)
             putString(METADATA_KEY_ALBUM_ART_URI, song.albumId.toString())
-            putBitmap(METADATA_KEY_ALBUM_ART, artwork)
             putString(METADATA_KEY_MEDIA_ID, song.id.toString())
+            putString(METADATA_KEY_DISPLAY_DESCRIPTION, queueUtils.queue())
             putLong(METADATA_KEY_DURATION, song.duration.toLong())
+            putBitmap(METADATA_KEY_ALBUM_ART, artwork)
         }.build()
         mediaSession.setMetadata(mediaMetadata)
     }

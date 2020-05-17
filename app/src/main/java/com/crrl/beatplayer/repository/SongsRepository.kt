@@ -32,6 +32,7 @@ interface SongsRepository {
     fun getSongForId(id: Long): Song
     fun search(searchString: String, limit: Int = Int.MAX_VALUE): List<Song>
     fun deleteTracks(ids: LongArray): Int
+    fun getSongsForIds(ids: LongArray): List<Song>
 }
 
 class SongsRepositoryImplementation(context: Context) : SongsRepository {
@@ -91,6 +92,20 @@ class SongsRepositoryImplementation(context: Context) : SongsRepository {
         } catch (e: OperationApplicationException) {
             -1
         }
+    }
+
+    override fun getSongsForIds(ids: LongArray): List<Song> {
+        var selection = "_id IN ("
+        for (id in ids) {
+            selection += "$id,"
+        }
+        if (ids.isNotEmpty()) {
+            selection = selection.substring(0, selection.length - 1)
+        }
+        selection += ")"
+
+        return makeSongCursor(selection, null)
+            .toList(true) { Song.createFromCursor(this) }
     }
 
     @SuppressLint("Recycle")

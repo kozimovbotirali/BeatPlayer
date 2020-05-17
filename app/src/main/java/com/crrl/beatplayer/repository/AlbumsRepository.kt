@@ -19,7 +19,7 @@ import android.provider.MediaStore
 import com.crrl.beatplayer.extensions.toList
 import com.crrl.beatplayer.models.Album
 import com.crrl.beatplayer.models.Song
-import com.crrl.beatplayer.utils.PlayerConstants
+import com.crrl.beatplayer.utils.BeatConstants
 import com.crrl.beatplayer.utils.SettingsUtility
 import com.crrl.beatplayer.utils.SortModes
 
@@ -91,7 +91,7 @@ class AlbumsRepositoryImplementation(context: Context) : AlbumsRepository {
     private fun makeAlbumSongCursor(albumID: Long): Cursor? {
         val selection = "is_music=1 AND title != '' AND album_id=$albumID"
         return contentResolver.query(
-            PlayerConstants.SONG_URI,
+            BeatConstants.SONG_URI,
             arrayOf("_id", "title", "artist", "album", "duration", "track", "artist_id", "_data"),
             selection,
             null,

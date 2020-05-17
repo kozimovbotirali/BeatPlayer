@@ -25,15 +25,17 @@ import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentAlbumDetailBinding
 import com.crrl.beatplayer.extensions.*
 import com.crrl.beatplayer.models.Album
+import com.crrl.beatplayer.models.MediaItemData
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.ui.adapters.SongAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.viewmodels.AlbumViewModel
 import com.crrl.beatplayer.ui.viewmodels.FavoriteViewModel
 import com.crrl.beatplayer.ui.viewmodels.PlaylistViewModel
+import com.crrl.beatplayer.utils.BeatConstants
 import com.crrl.beatplayer.utils.GeneralUtils
-import com.crrl.beatplayer.utils.PlayerConstants
-import com.crrl.beatplayer.utils.PlayerConstants.ALBUM_TYPE
+import kotlinx.android.synthetic.main.layout_recyclerview.*
+import kotlinx.coroutines.delay
 import org.koin.android.ext.android.inject
 
 class AlbumDetailFragment : BaseFragment<Song>() {
@@ -52,38 +54,41 @@ class AlbumDetailFragment : BaseFragment<Song>() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
         init()
     }
 
     private fun init() {
         postponeEnterTransition()
-        val id = arguments!!.getLong(PlayerConstants.ALBUM_KEY)
+        val id = arguments!!.getLong(BeatConstants.ALBUM_KEY)
         album = albumViewModel.getAlbum(id)
         initNeeded(Song(), emptyList(), id)
-        songAdapter = SongAdapter(context, mainViewModel).apply {
+        songAdapter = SongAdapter(context, songDetailViewModel).apply {
             itemClickListener = this@AlbumDetailFragment
             showHeader = true
             isAlbumDetail = true
         }
 
-        binding.apply {
-            albumSongList.apply {
-                layoutManager = LinearLayoutManager(context)
-                clipToOutline = true
-                adapter = songAdapter
-                (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
-            }
-            addFavorites.setOnClickListener { toggleAddFav() }
+        list.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = songAdapter
+            clipToOutline = true
+            (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         }
+
+        binding.addFavorites.setOnClickListener { toggleAddFav() }
 
         albumViewModel.getSongsByAlbum(album.id)!!.observe(this) {
             if (!songAdapter.songList.deepEquals(it)) {
                 songAdapter.updateDataSet(it)
+                mainViewModel.reloadQueueIds(it.toIDList(), album.title)
                 binding.totalDuration = GeneralUtils.getTotalTime(songAdapter.songList).toInt()
                 (view as? ViewGroup)?.doOnPreDraw {
-                    startPostponedEnterTransition()
+                    launch {
+                        delay(150)
+                        startPostponedEnterTransition()
+                    }
                 }
             }
             if (it.isEmpty()) {
@@ -92,14 +97,23 @@ class AlbumDetailFragment : BaseFragment<Song>() {
             }
         }
 
-        mainViewModel.getCurrentSong().observe(this) { song ->
-            val position = songAdapter.songList.indexOfFirst { it.compare(song) } + 1
+        songDetailViewModel.currentData.observe(this) { mediaItemData ->
+            val position = songAdapter.songList.indexOfFirst { it.id == mediaItemData.id } + 1
             songAdapter.notifyItemChanged(position)
         }
 
-        mainViewModel.getLastSong().observe(this) { song ->
-            val position = songAdapter.songList.indexOfFirst { it.compare(song) } + 1
+        songDetailViewModel.currentState.observe(this) {
+            val mediaItemData = songDetailViewModel.currentData.value ?: MediaItemData()
+            val position = songAdapter.songList.indexOfFirst { it.id == mediaItemData.id } + 1
             songAdapter.notifyItemChanged(position)
+        }
+
+        songDetailViewModel.lastData.observe(this) { mediaItemData ->
+            val position = songAdapter.songList.indexOfFirst { it.id == mediaItemData.id } + 1
+            if(settingsUtility.didStop){
+                songAdapter.notifyDataSetChanged()
+                settingsUtility.didStop = false
+            } else songAdapter.notifyItemChanged(position)
         }
 
         binding.let {
@@ -112,25 +126,17 @@ class AlbumDetailFragment : BaseFragment<Song>() {
         }
     }
 
-    private fun updateSongList() {
-        val id = arguments!!.getLong(PlayerConstants.ALBUM_KEY)
-        mainViewModel.update(songAdapter.songList.toIDList())
-        mainViewModel.settingsUtility.currentSongList = "${ALBUM_TYPE}<,>$id"
-    }
-
     override fun onItemClick(view: View, position: Int, item: Song) {
-        mainViewModel.update(item)
-        updateSongList()
+        val extras = getExtraBundle(songAdapter.songList.toIDList(), album.title)
+        mainViewModel.mediaItemClicked(item.toMediaItem(), extras)
     }
 
     override fun onShuffleClick(view: View) {
-        updateSongList()
-        mainViewModel.update(mainViewModel.random())
     }
 
     override fun onPlayAllClick(view: View) {
-        mainViewModel.update(songAdapter.songList.first())
-        updateSongList()
+        val extras = getExtraBundle(songAdapter.songList.toIDList(), BeatConstants.ALBUM_KEY)
+        mainViewModel.mediaItemClicked(songAdapter.songList.first().toMediaItem(), extras)
     }
 
     override fun onPopupMenuClick(view: View, position: Int, item: Song, itemList: List<Song>) {

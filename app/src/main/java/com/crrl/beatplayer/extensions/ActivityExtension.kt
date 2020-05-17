@@ -14,6 +14,7 @@
 package com.crrl.beatplayer.extensions
 
 import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.util.TypedValue
 import android.widget.Toast
@@ -60,7 +61,7 @@ fun Activity?.replaceFragment(
         }
 }
 
-fun Activity?.getColorByTheme(
+fun Context?.getColorByTheme(
     @AttrRes id: Int
 ): Int {
     val colorAttr: Int? = id

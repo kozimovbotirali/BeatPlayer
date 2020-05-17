@@ -19,122 +19,143 @@
             name="song"
             type="com.crrl.beatplayer.models.Song" />
         <variable
+            name="viewModel"
+            type="com.crrl.beatplayer.ui.viewmodels.SongDetailViewModel" />
+        <variable
             name="size"
             type="Integer" />
-
-        <variable
-            name="position"
-            type="Integer" />
-
-        <variable
-            name="isSearch"
-            type="Boolean" />
     </data>
 
     <RelativeLayout
-        android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
-        app:position="@{position}"
-        app:isSearch="@{isSearch}"
-        app:size="@{size}"
-        android:clickable="true"
-        android:focusable="true">
-
-        <ImageView
-            android:id="@+id/cover"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="15dp"
-            android:background="@drawable/song_cover_frame"
-            android:contentDescription="@string/cover"
-            android:scaleType="centerCrop"
-            android:elevation="5dp"
-            app:albumId="@{song.albumId}"
-            android:src="@drawable/ic_empty_cover" />
-
-        <LinearLayout
-            android:id="@+id/textViewContainer"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="@dimen/margin_8"
-            android:layout_marginEnd="@dimen/margin_10"
-            android:layout_toStartOf="@+id/visualizer"
-            android:layout_toEndOf="@+id/cover"
-            android:orientation="vertical"
-            android:paddingBottom="4dp">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1">
-
-                <TextView
-                    android:id="@+id/title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginStart="0dp"
-                    android:layout_marginBottom="4dp"
-                    android:maxLines="1"
-                    app:html="@{song.title}"
-                    android:textColor="?titleTextColor"
-                    android:textSize="@dimen/title_text_size" />
-            </RelativeLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/artist"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:singleLine="true"
-                    android:text="@{song.artist}"
-                    android:textColor="?subTitleTextColor"
-                    android:textSize="@dimen/sub_title_text_size" />
-
-                <TextView
-                    android:id="@+id/sep"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:paddingLeft="5dp"
-                    android:paddingRight="5dp"
-                    android:singleLine="true"
-                    android:text="@string/separator"
-                    android:textColor="?subTitleTextColor"
-                    android:textSize="@dimen/sub_title_text_size" />
-
-                <TextView
-                    android:id="@+id/album"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:singleLine="true"
-                    android:text="@{song.album}"
-                    android:textColor="?subTitleTextColor"
-                    android:textSize="@dimen/sub_title_text_size" />
-            </LinearLayout>
-        </LinearLayout>
+        android:layout_height="70dp">
 
         <com.crrl.beatplayer.ui.widgets.MusicVisualizer
             android:id="@+id/visualizer"
             android:layout_width="30dp"
             android:layout_height="40dp"
             android:layout_centerVertical="true"
+            android:layout_marginStart="-40dp"
             android:layout_marginEnd="@dimen/margin_10"
+            android:tint="?colorAccent"
+            app:show="@{safeUnbox(viewModel.currentData.id == song.id)}"
+            app:state="@{safeUnbox(viewModel.currentState.state)}" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_toStartOf="@+id/item_menu"
-            android:visibility="gone"
-            android:tint="?colorAccent" />
+            android:layout_toEndOf="@id/visualizer"
+            app:slide="@{safeUnbox(viewModel.currentData.id == song.id)}"
+            app:state="@{safeUnbox(viewModel.currentState.state)}">
+
+            <ImageView
+                android:id="@+id/cover"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="15dp"
+                android:background="@drawable/song_cover_frame"
+                android:contentDescription="@string/cover"
+                android:elevation="5dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_empty_cover"
+                app:albumId="@{song.albumId}" />
+
+            <LinearLayout
+                android:id="@+id/textViewContainer"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/margin_8"
+                android:layout_marginEnd="@dimen/margin_10"
+                android:layout_toEndOf="@+id/cover"
+                android:orientation="vertical"
+                android:paddingBottom="4dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginStart="0dp"
+                        android:layout_marginBottom="4dp"
+                        android:maxLines="1"
+                        android:textColor="?titleTextColor"
+                        android:textSize="@dimen/title_text_size"
+                        app:html="@{song.title}"
+                        app:marquee="@{true}"
+                        app:selected="@{safeUnbox(viewModel.currentData.id == song.id)}" />
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/artist"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:singleLine="true"
+                        android:text="@{song.artist}"
+                        android:textColor="?subTitleTextColor"
+                        android:textSize="@dimen/sub_title_text_size"
+                        app:marquee="@{false}"
+                        app:selected="@{safeUnbox(viewModel.currentData.id == song.id)}" />
+
+                    <TextView
+                        android:id="@+id/sep"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:singleLine="true"
+                        android:text="@string/separator"
+                        android:textColor="?subTitleTextColor"
+                        android:textSize="@dimen/sub_title_text_size"
+                        app:marquee="@{false}"
+                        app:selected="@{safeUnbox(viewModel.currentData.id == song.id)}" />
+
+                    <TextView
+                        android:id="@+id/album"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:singleLine="true"
+                        android:text="@{song.album}"
+                        android:textColor="?subTitleTextColor"
+                        android:textSize="@dimen/sub_title_text_size"
+                        app:marquee="@{false}"
+                        app:selected="@{safeUnbox(viewModel.currentData.id == song.id)}" />
+                </LinearLayout>
+            </LinearLayout>
+        </RelativeLayout>
+
+        <View
+            android:layout_width="@dimen/btn_size"
+            android:layout_height="@dimen/btn_size"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/gradient_background" />
+
+        <View
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/list_item_ripple"
+            android:clickable="true"
+            android:focusable="true" />
 
         <ImageButton
             android:id="@+id/item_menu"
@@ -146,6 +167,5 @@
             android:src="@drawable/ic_more"
             android:contentDescription="@string/cover"
             android:tint="?subTitleTextColor" />
-
     </RelativeLayout>
 </layout>

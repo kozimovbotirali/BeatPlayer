@@ -70,9 +70,9 @@ class NotificationsImplementation(
         val isPlaying = mediaSession.isPlaying()
 
         val playButtonResId = if (isPlaying) {
-            R.drawable.ic_pause
+            R.drawable.ic_pause_notification
         } else {
-            R.drawable.ic_play
+            R.drawable.ic_play_notification
         }
 
         val nowPlayingIntent = Intent(context, MainActivity::class.java)
@@ -118,7 +118,7 @@ class NotificationsImplementation(
             action = PREVIOUS
         }
         val pendingIntent = PendingIntent.getService(context, 0, actionIntent, 0)
-        return NotificationCompat.Action(R.drawable.ic_previous, "", pendingIntent)
+        return NotificationCompat.Action(R.drawable.ic_previous_notification, "", pendingIntent)
     }
 
     private fun getPlayPauseAction(
@@ -137,7 +137,7 @@ class NotificationsImplementation(
             action = NEXT
         }
         val pendingIntent = PendingIntent.getService(context, 0, actionIntent, 0)
-        return NotificationCompat.Action(R.drawable.ic_skip, "", pendingIntent)
+        return NotificationCompat.Action(R.drawable.ic_skip_notification, "", pendingIntent)
     }
 
     private fun createEmptyNotification(): Notification {

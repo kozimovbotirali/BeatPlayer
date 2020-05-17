@@ -34,7 +34,8 @@ import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.viewmodels.ArtistViewModel
 import com.crrl.beatplayer.ui.viewmodels.FavoriteViewModel
 import com.crrl.beatplayer.ui.viewmodels.PlaylistViewModel
-import com.crrl.beatplayer.utils.PlayerConstants
+import com.crrl.beatplayer.utils.BeatConstants
+import kotlinx.android.synthetic.main.layout_recyclerview.*
 import org.koin.android.ext.android.inject
 
 class ArtistDetailFragment : BaseFragment<MediaItem>() {
@@ -61,16 +62,16 @@ class ArtistDetailFragment : BaseFragment<MediaItem>() {
 
     @Suppress("UNCHECKED_CAST")
     private fun init() {
-        val id = arguments!!.getLong(PlayerConstants.ARTIST_KEY)
+        val id = arguments!!.getLong(BeatConstants.ARTIST_KEY)
         artist = artistViewModel.getArtist(id)
 
-        albumAdapter = AlbumAdapter(context, mainViewModel).apply {
+        albumAdapter = AlbumAdapter(context).apply {
             itemClickListener = this@ArtistDetailFragment as ItemClickListener<Album>
             artistDetail = true
         }
 
         binding.apply {
-            albumList.apply {
+            list.apply {
                 layoutManager = LinearLayoutManager(context)
                 adapter = albumAdapter
             }
@@ -79,10 +80,6 @@ class ArtistDetailFragment : BaseFragment<MediaItem>() {
 
         artistViewModel.getArtistAlbums(artist.id).observe(this) {
             albumAdapter.updateDataSet(it)
-        }
-
-        mainViewModel.getCurrentSong().observe(this){
-            albumAdapter.notifyDataSetChanged()
         }
 
         binding.let {
@@ -95,11 +92,11 @@ class ArtistDetailFragment : BaseFragment<MediaItem>() {
 
     private fun albumClicked(item: Album) {
         val extras = Bundle()
-        extras.putLong(PlayerConstants.ALBUM_KEY, item.id)
+        extras.putLong(BeatConstants.ALBUM_KEY, item.id)
         activity!!.addFragment(
             R.id.nav_host_fragment,
             AlbumDetailFragment(),
-            PlayerConstants.ALBUM_DETAIL,
+            BeatConstants.ALBUM_DETAIL,
             true,
             extras
         )

@@ -32,10 +32,10 @@ import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.viewmodels.AlbumViewModel
 import com.crrl.beatplayer.ui.widgets.actions.AlertItemAction
 import com.crrl.beatplayer.ui.widgets.stylers.AlertItemTheme
+import com.crrl.beatplayer.utils.BeatConstants
+import com.crrl.beatplayer.utils.BeatConstants.ALBUM_KEY
 import com.crrl.beatplayer.utils.GeneralUtils
-import com.crrl.beatplayer.utils.GeneralUtils.VERTICAL
-import com.crrl.beatplayer.utils.PlayerConstants
-import com.crrl.beatplayer.utils.PlayerConstants.ALBUM_KEY
+import com.crrl.beatplayer.utils.GeneralUtils.PORTRAIT
 import com.crrl.beatplayer.utils.SortModes
 import org.koin.android.ext.android.inject
 
@@ -59,15 +59,15 @@ class AlbumFragment : BaseFragment<Album>() {
     }
 
     private fun init() {
-        val sc = if (GeneralUtils.getRotation(safeActivity) == VERTICAL) 2 else 5
+        val sc = if (GeneralUtils.getOrientation(safeActivity) == PORTRAIT) 2 else 5
 
-        albumAdapter = AlbumAdapter(context, mainViewModel).apply {
+        albumAdapter = AlbumAdapter(context).apply {
             showHeader = true
             itemClickListener = this@AlbumFragment
             spanCount = sc
         }
 
-        binding.albumList.apply {
+        binding.list.apply {
             layoutManager = GridLayoutManager(context, sc).apply {
                 spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                     override fun getSpanSize(position: Int): Int {
@@ -144,7 +144,7 @@ class AlbumFragment : BaseFragment<Album>() {
         activity!!.addFragment(
             R.id.nav_host_fragment,
             AlbumDetailFragment(),
-            PlayerConstants.ALBUM_DETAIL,
+            BeatConstants.ALBUM_DETAIL,
             true,
             extras
         )

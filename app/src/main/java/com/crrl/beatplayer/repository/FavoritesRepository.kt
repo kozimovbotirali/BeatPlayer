@@ -21,7 +21,7 @@ import com.crrl.beatplayer.extensions.optimizeReadOnlyList
 import com.crrl.beatplayer.extensions.toList
 import com.crrl.beatplayer.models.Favorite
 import com.crrl.beatplayer.models.Song
-import com.crrl.beatplayer.utils.PlayerConstants.FAVORITE_ID
+import com.crrl.beatplayer.utils.BeatConstants.FAVORITE_ID
 
 interface FavoritesRepository {
     fun createFavorite(favorite: Favorite): Int

@@ -30,33 +30,13 @@
         android:layout_height="match_parent"
         android:background="?colorPrimary">
 
-        <View
-            android:id="@+id/view"
+        <include
+            layout="@layout/layout_recyclerview"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:background="@drawable/album_detail_shape"
-            android:clickable="true"
-            android:focusable="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/albumList" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/albumList"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:nestedScrollingEnabled="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/back"
             android:layout_marginTop="@dimen/margin_12"
-            android:clipToPadding="false"
-            android:paddingBottom="@dimen/song_item_size" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:background="?colorPrimary"
-            app:layout_constraintBottom_toTopOf="@id/albumList"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/back" />
 
         <ImageButton
             android:id="@+id/back"
@@ -64,7 +44,6 @@
             android:layout_height="@dimen/btn_size"
             android:background="@drawable/btn_ripple"
             android:contentDescription="@string/cover"
-            android:layout_marginTop="@dimen/margin_34"
             android:onClick="back"
             android:tint="?colorAccent"
             app:layout_constraintStart_toStartOf="parent"

@@ -51,10 +51,8 @@ class MediaSessionCallback(
     }
 
     override fun onPlayFromMediaId(mediaId: String, extras: Bundle?) {
-        val songId = mediaId.toMediaId().mediaId!!.toLong()
-        musicPlayer.playSong(songId)
-
         extras ?: return
+        val songId = mediaId.toMediaId().mediaId!!.toLong()
         val queue = extras.getLongArray(QUEUE_INFO_KEY)
         val queueTitle = extras.getString(BeatConstants.SONG_LIST_NAME)
         val seekTo = extras.getInt(SEEK_TO)
@@ -62,9 +60,12 @@ class MediaSessionCallback(
         if (queue != null) {
             musicPlayer.setData(queue, queueTitle!!)
         }
+
         if (seekTo > 0) {
             musicPlayer.seekTo(seekTo)
         }
+
+        musicPlayer.playSong(songId)
     }
 
     override fun onSeekTo(pos: Long) = musicPlayer.seekTo(pos.toInt())

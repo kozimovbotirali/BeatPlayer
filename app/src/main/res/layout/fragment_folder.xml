@@ -14,7 +14,6 @@
 <layout xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-
         <import type="android.view.View" />
 
         <variable
@@ -28,12 +27,7 @@
         android:layout_height="match_parent"
         tools:context="com.crrl.beatplayer.ui.fragments.FolderFragment">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/folder_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:paddingBottom="@dimen/song_item_size" />
+        <include layout="@layout/layout_recyclerview" />
 
         <TextView
             android:layout_width="wrap_content"

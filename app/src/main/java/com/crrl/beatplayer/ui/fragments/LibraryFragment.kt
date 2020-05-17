@@ -13,7 +13,6 @@
 
 package com.crrl.beatplayer.ui.fragments
 
-import android.animation.AnimatorInflater.loadStateListAnimator
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -26,7 +25,6 @@ import com.crrl.beatplayer.extensions.safeActivity
 import com.crrl.beatplayer.ui.activities.MainActivity
 import com.crrl.beatplayer.ui.adapters.ViewPagerAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseSongDetailFragment
-import com.google.android.material.appbar.AppBarLayout
 
 
 class LibraryFragment : BaseSongDetailFragment() {
@@ -55,15 +53,6 @@ class LibraryFragment : BaseSongDetailFragment() {
 
     private fun init() {
         binding.apply {
-            appBar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { _, verticalOffset ->
-                val animatorRes = if (verticalOffset == 0) {
-                    R.animator.appbar_alpha_1
-                } else {
-                    R.animator.appbar_alpha_0
-                }
-                toolbar.stateListAnimator = loadStateListAnimator(context, animatorRes)
-            })
-
             initViewPager(binding.pagerSortMode)
             tabsContainer.setupWithViewPager(pagerSortMode)
         }

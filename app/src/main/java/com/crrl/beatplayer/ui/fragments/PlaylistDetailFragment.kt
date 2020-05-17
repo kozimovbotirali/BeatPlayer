@@ -22,15 +22,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentPlaylistDetailBinding
-import com.crrl.beatplayer.extensions.inflateWithBinding
-import com.crrl.beatplayer.extensions.observe
-import com.crrl.beatplayer.extensions.toIDList
+import com.crrl.beatplayer.extensions.*
+import com.crrl.beatplayer.models.MediaItemData
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.ui.adapters.SongAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.viewmodels.PlaylistViewModel
-import com.crrl.beatplayer.utils.PlayerConstants.PLAY_LIST_DETAIL
-import com.crrl.beatplayer.utils.PlayerConstants.PLAY_LIST_TYPE
+import com.crrl.beatplayer.utils.BeatConstants.PLAY_LIST_DETAIL
+import kotlinx.android.synthetic.main.layout_recyclerview.*
 import org.koin.android.ext.android.inject
 
 
@@ -59,29 +58,42 @@ class PlaylistDetailFragment : BaseFragment<Song>() {
 
         binding.playlist = playlistViewModel.getPlaylist(id)
 
-        songAdapter = SongAdapter(activity, mainViewModel).apply {
+        songAdapter = SongAdapter(activity, songDetailViewModel).apply {
             showHeader = true
             isAlbumDetail = true
             itemClickListener = this@PlaylistDetailFragment
         }
 
-        binding.songList.apply {
+        list.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = songAdapter
+            clipToOutline = true
             (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         }
 
         playlistViewModel.getSongs(binding.playlist!!.id).observe(this) {
-            songAdapter.updateDataSet(it)
+            if (!songAdapter.songList.deepEquals(it)) {
+                songAdapter.updateDataSet(it)
+                mainViewModel.reloadQueueIds(it.toIDList(), binding.playlist!!.name)
+            }
         }
 
-        mainViewModel.getLastSong().observe(this){ song ->
-            val position = songAdapter.songList.indexOfFirst { it.compare(song)} + 1
+        songDetailViewModel.lastData.observe(this) { mediaItemData ->
+            val position = songAdapter.songList.indexOfFirst { it.id == mediaItemData.id } + 1
+            if(settingsUtility.didStop){
+                songAdapter.notifyDataSetChanged()
+                settingsUtility.didStop = false
+            } else songAdapter.notifyItemChanged(position)
+        }
+
+        songDetailViewModel.currentState.observe(this) {
+            val mediaItemData = songDetailViewModel.currentData.value ?: MediaItemData()
+            val position = songAdapter.songList.indexOfFirst { it.id == mediaItemData.id } + 1
             songAdapter.notifyItemChanged(position)
         }
 
-        mainViewModel.getCurrentSong().observe(this) { song ->
-            val position = songAdapter.songList.indexOfFirst { it.compare(song) } + 1
+        songDetailViewModel.currentData.observe(this) { mediaItemData ->
+            val position = songAdapter.songList.indexOfFirst { it.id == mediaItemData.id } + 1
             songAdapter.notifyItemChanged(position)
         }
 
@@ -92,29 +104,21 @@ class PlaylistDetailFragment : BaseFragment<Song>() {
         }
     }
 
-    private fun updateSongList() {
-        val id = arguments!!.getLong(PLAY_LIST_DETAIL)
-        mainViewModel.update(songAdapter.songList.toIDList())
-        mainViewModel.settingsUtility.currentSongList = "$PLAY_LIST_TYPE<,>$id"
-    }
-
     override fun removeFromList(playListId: Long, item: Song?) {
         playlistViewModel.remove(playListId, item!!.id)
     }
 
     override fun onItemClick(view: View, position: Int, item: Song) {
-        mainViewModel.update(item)
-        updateSongList()
+        val extras = getExtraBundle(songAdapter.songList.toIDList(), binding.playlist!!.name)
+        mainViewModel.mediaItemClicked(item.toMediaItem(), extras)
     }
 
     override fun onShuffleClick(view: View) {
-        updateSongList()
-        mainViewModel.update(mainViewModel.random())
     }
 
     override fun onPlayAllClick(view: View) {
-        mainViewModel.update(songAdapter.songList.first())
-        updateSongList()
+        val extras = getExtraBundle(songAdapter.songList.toIDList(), binding.playlist!!.name)
+        mainViewModel.mediaItemClicked(songAdapter.songList.first().toMediaItem(), extras)
     }
 
     override fun onPopupMenuClick(view: View, position: Int, item: Song, itemList: List<Song>) {

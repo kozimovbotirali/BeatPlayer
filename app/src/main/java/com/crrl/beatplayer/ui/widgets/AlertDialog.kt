@@ -52,7 +52,7 @@ class AlertDialog(
     fun show(activity: AppCompatActivity) {
         alert = when (type) {
             AlertType.BOTTOM_SHEET -> BottomSheetAlert(title, message, actions, style)
-            AlertType.DIALOG -> DialogAlert(title, message, actions, style)
+            AlertType.DIALOG -> DialogAlert(title, message, actions, style as AlertItemStyle)
             AlertType.INPUT -> InputDialog(title, message, actions, style, inputText)
         }
         alert?.show(activity.supportFragmentManager, alert?.tag)

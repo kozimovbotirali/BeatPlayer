@@ -15,7 +15,6 @@ package com.crrl.beatplayer.ui.widgets
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.util.TypedValue
@@ -52,25 +51,44 @@ class MusicVisualizer : View {
 
         paint.style = Paint.Style.FILL
 
-        canvas.drawRect(
-            getDimensionInPixel(0).toFloat(),
+        canvas.drawRoundRect(
+            getDimensionInPixel(2).toFloat(),
             (height - (40 + random.nextInt((height / 1.5f).toInt() - 25))).toFloat(),
+            getDimensionInPixel(6).toFloat(),
+            (height - 15).toFloat(),
+            30f, 30f,
+            paint
+        )
+        canvas.drawRoundRect(
             getDimensionInPixel(7).toFloat(),
+            (height - (40 + random.nextInt((height / 1.5f).toInt() - 25))).toFloat(),
+            getDimensionInPixel(11).toFloat(),
             (height - 15).toFloat(),
+            30f, 30f,
             paint
         )
-        canvas.drawRect(
-            getDimensionInPixel(10).toFloat(),
+        canvas.drawRoundRect(
+            getDimensionInPixel(12).toFloat(),
             (height - (40 + random.nextInt((height / 1.5f).toInt() - 25))).toFloat(),
+            getDimensionInPixel(16).toFloat(),
+            (height - 15).toFloat(),
+            30f, 30f,
+            paint
+        )
+        canvas.drawRoundRect(
             getDimensionInPixel(17).toFloat(),
+            (height - (40 + random.nextInt((height / 1.5f).toInt() - 25))).toFloat(),
+            getDimensionInPixel(21).toFloat(),
             (height - 15).toFloat(),
+            30f, 30f,
             paint
         )
-        canvas.drawRect(
-            getDimensionInPixel(20).toFloat(),
+        canvas.drawRoundRect(
+            getDimensionInPixel(22).toFloat(),
             (height - (40 + random.nextInt((height / 1.5f).toInt() - 25))).toFloat(),
-            getDimensionInPixel(27).toFloat(),
+            getDimensionInPixel(26).toFloat(),
             (height - 15).toFloat(),
+            30f, 30f,
             paint
         )
     }

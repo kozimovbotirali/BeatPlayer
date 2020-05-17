@@ -27,7 +27,8 @@ import com.crrl.beatplayer.models.Playlist
 import com.crrl.beatplayer.ui.adapters.PlaylistAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.viewmodels.PlaylistViewModel
-import com.crrl.beatplayer.utils.PlayerConstants.PLAY_LIST_DETAIL
+import com.crrl.beatplayer.utils.BeatConstants.PLAY_LIST_DETAIL
+import kotlinx.android.synthetic.main.layout_recyclerview.*
 import org.koin.android.ext.android.inject
 
 
@@ -57,7 +58,7 @@ class PlaylistFragment : BaseFragment<Playlist>() {
             itemClickListener = this@PlaylistFragment
         }
 
-        binding.playList.apply {
+        list.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = playlistAdapter
             addOnScrollListener(object : RecyclerView.OnScrollListener() {

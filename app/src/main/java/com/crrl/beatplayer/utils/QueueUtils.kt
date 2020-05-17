@@ -38,6 +38,7 @@ interface QueueUtils {
     fun playNext(id: Long)
     fun remove(id: Long)
     fun swap(from: Int, to: Int)
+    fun queue(): String
     fun clear()
 }
 
@@ -47,6 +48,9 @@ class QueueUtilsImplementation(
 ) : QueueUtils {
 
     private lateinit var mediaSession: MediaSessionCompat
+
+    private val currentSongIndex
+        get() = queue.indexOf(currentSongId)
 
     override var currentSongId: Long = -1
 
@@ -66,11 +70,9 @@ class QueueUtilsImplementation(
 
             mediaSession.setQueueTitle(field)
         }
+
     override val currentSong: Song
         get() = songsRepository.getSongForId(currentSongId)
-
-    private val currentSongIndex
-        get() = queue.indexOf(currentSongId)
 
     override val previousSongId: Long?
         get() {
@@ -79,6 +81,7 @@ class QueueUtilsImplementation(
                 queue[previousIndex]
             } else null
         }
+
     override val nextSongIndex: Int?
         get() {
             val nextIndex = currentSongIndex + 1
@@ -89,6 +92,7 @@ class QueueUtilsImplementation(
                 else -> null
             }
         }
+
     override val nextSongId: Long?
         get() = if (nextSongIndex != null) queue[nextSongIndex!!] else null
 
@@ -107,6 +111,10 @@ class QueueUtilsImplementation(
 
     override fun swap(from: Int, to: Int) {
         queue = queue.toMutableList().moveElement(from, to).toLongArray()
+    }
+
+    override fun queue(): String {
+        return "${currentSongIndex + 1}/${queue.size}"
     }
 
     private fun getRandomIndex(): Int {

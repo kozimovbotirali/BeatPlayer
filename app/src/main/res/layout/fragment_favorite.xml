@@ -16,7 +16,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <import type="android.view.View" />
 
         <variable
@@ -29,14 +28,10 @@
         android:layout_height="match_parent"
         tools:context="com.crrl.beatplayer.ui.fragments.FavoriteFragment">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/favorite_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
+        <include
+            layout="@layout/layout_recyclerview"
             android:paddingTop="@dimen/padding_12"
             android:paddingEnd="@dimen/padding_12"
-            android:paddingBottom="@dimen/song_item_size"
             tools:ignore="RtlSymmetry" />
 
         <LinearLayout

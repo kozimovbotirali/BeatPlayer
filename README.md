@@ -25,12 +25,20 @@ Complete Music App built based on Material Designe and with the latest Android D
 # State
 Developing
 
-# TODO
-- Music Service.
-- Add Now Playing Buttons Functionality.
-- Improve Syntax.
+# Features
+
+- Find your music by Songs, Albums, Artists or even by Folders
+- Add Songs, Folders, Albums and Artists to Favorites
+- Create Playlists
+- Themes (System's Theme, Light, Dark)
 - More...
 
+# TODO
+- Recommended Songs, recently added and most Played
+
+# Donations
+The only financing of the project is through donations, if you find it useful, do not hesitate to make a donation :)
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://paypal.me/beatplayer?locale.x=es_XC)
 ## License
 
 > (c) 2019 Carlos René Ramos López. All rights reserved.

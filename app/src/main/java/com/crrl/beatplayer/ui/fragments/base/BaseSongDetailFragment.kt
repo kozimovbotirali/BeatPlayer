@@ -39,6 +39,8 @@ open class BaseSongDetailFragment : BaseFragment<MediaItem>() {
     }
 
     private fun showHideBottomSheet() {
+        val currentData = songDetailViewModel.currentData.value ?: return
+        if (currentData.id == 0L) return
         val fragment = safeActivity.supportFragmentManager.findFragmentById(R.id.nav_host_fragment)
         if (fragment is SongDetailFragment || fragment is LyricFragment) {
             mainViewModel.hideMiniPlayer()

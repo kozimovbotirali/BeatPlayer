@@ -11,17 +11,15 @@
  * limitations under the License.
  */
 
-package com.crrl.beatplayer.ui.viewmodels.base
+package com.crrl.beatplayer.ui.viewmodels
 
-import com.crrl.beatplayer.ui.viewmodels.*
-import com.crrl.beatplayer.utils.SettingsUtility
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 
 val viewModelModule = module {
-    factory { SettingsUtility(get()) }
-    single { MainViewModel(get(), get(), get(), get(), get(), get(), get()) }
+    single { MainViewModel(get(), get(), get()) }
+    viewModel { SongDetailViewModel(get(), get(), get()) }
     viewModel { PlaylistViewModel(get()) }
     viewModel { ArtistViewModel(get()) }
     viewModel { FavoriteViewModel(get()) }

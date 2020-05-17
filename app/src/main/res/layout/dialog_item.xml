@@ -27,7 +27,7 @@
         android:id="@+id/action"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/list_item_ripple_middle"
+        android:background="@drawable/list_item_ripple"
         android:gravity="center"
         android:padding="16dp"
         android:paddingStart="16dp"

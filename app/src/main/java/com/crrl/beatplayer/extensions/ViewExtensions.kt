@@ -23,6 +23,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.view.animation.AccelerateInterpolator
 import android.view.animation.OvershootInterpolator
 import android.widget.*
 import androidx.annotation.LayoutRes
@@ -31,8 +32,10 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import com.crrl.beatplayer.R
+import com.crrl.beatplayer.ui.widgets.MusicVisualizer
 import com.crrl.beatplayer.ui.widgets.SimpleCustomSnackbar
 import com.crrl.beatplayer.utils.GeneralUtils
+import com.github.florent37.kotlin.pleaseanimate.please
 import com.google.android.material.tabs.TabLayout
 import rm.com.audiowave.AudioWaveView
 
@@ -50,18 +53,89 @@ fun <T : ViewDataBinding> ViewGroup.inflateWithBinding(
     return DataBindingUtil.inflate(layoutInflater, layoutRes, this, attachToRoot) as T
 }
 
-fun View?.show() {
-    this ?: return
+fun View?.show(animated: Boolean = false) {
+    val view = this ?: return
     visibility = VISIBLE
+    if (animated) {
+        please(200, AccelerateInterpolator()) {
+            animate(view) {
+                scale(1f, 1f)
+            }
+        }.start()
+    }
 }
 
-fun View?.hide() {
-    this ?: return
-    visibility = GONE
+fun View?.hide(animated: Boolean = false) {
+    val view = this ?: return
+    if (animated) {
+        please(200, AccelerateInterpolator()) {
+            animate(view) {
+                scale(0f, 0f)
+            }
+        }.withEndAction { view.visibility = GONE }.start()
+    } else view.visibility = GONE
 }
 
-fun View?.toggleShow(show: Boolean) {
-    if (show) show() else hide()
+fun MusicVisualizer?.hide(animated: Boolean = false) {
+    val view = this ?: return
+    val duration = if (animated) 150L else 0L
+    please(duration, AccelerateInterpolator()) {
+        animate(view) {
+            originalPosition()
+        }
+    }.start()
+}
+
+fun MusicVisualizer?.show(animated: Boolean = false) {
+    val view = this ?: return
+    val duration = if (animated) 150L else 0L
+    please(duration, AccelerateInterpolator()) {
+        animate(view) {
+            this.leftOfItsParent(marginDp = 25f)
+        }
+    }.start()
+}
+
+fun View?.slideRight(animated: Boolean = false) {
+    val view = this ?: return
+    val duration = if (animated) 150L else 0L
+    please(duration, AccelerateInterpolator()) {
+        animate(view) {
+            leftOfItsParent(65f)
+        }
+    }.start()
+}
+
+fun View?.slideLeft(animated: Boolean = false) {
+    val view = this ?: return
+    val duration = if (animated) 150L else 0L
+    please(duration, AccelerateInterpolator()) {
+        animate(view) {
+            originalPosition()
+        }
+    }.start()
+}
+
+fun View?.scaleUp() {
+    val view = this ?: return
+    please(150, AccelerateInterpolator()) {
+        animate(view) {
+            originalScale()
+        }
+    }.start()
+}
+
+fun View?.scaleDown() {
+    val view = this ?: return
+    please(150, AccelerateInterpolator()) {
+        animate(view) {
+            scale(0.8f, 0.8f)
+        }
+    }.start()
+}
+
+fun View?.toggleShow(show: Boolean, animated: Boolean = false) {
+    if (show) show(animated) else hide(animated)
 }
 
 fun View.setMargins(

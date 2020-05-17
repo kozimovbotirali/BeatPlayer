@@ -38,9 +38,9 @@ interface PlaybackConnection {
     val playbackState: MutableLiveData<PlaybackStateCompat>
     val lastPlayed: MutableLiveData<MediaMetadataCompat>
     val nowPlaying: MutableLiveData<MediaMetadataCompat>
-    val transportControls: MediaControllerCompat.TransportControls
+    val transportControls: MediaControllerCompat.TransportControls?
     val queueLiveData: MutableLiveData<Queue>
-    var mediaController: MediaControllerCompat
+    var mediaController: MediaControllerCompat?
 }
 
 class PlaybackConnectionImplementation(
@@ -56,10 +56,10 @@ class PlaybackConnectionImplementation(
     override val nowPlaying =
         MutableLiveData<MediaMetadataCompat>().apply { postValue(NONE_PLAYING) }
     override val queueLiveData = MutableLiveData<Queue>()
-    override lateinit var mediaController: MediaControllerCompat
+    override var mediaController: MediaControllerCompat? = null
 
-    override val transportControls: MediaControllerCompat.TransportControls
-        get() = mediaController.transportControls
+    override val transportControls: MediaControllerCompat.TransportControls?
+        get() = mediaController?.transportControls
 
     private val mediaBrowserConnectionCallback = MediaBrowserConnectionCallback(context)
     private val mediaBrowser = MediaBrowserCompat(
@@ -98,7 +98,8 @@ class PlaybackConnectionImplementation(
         }
 
         override fun onQueueChanged(queue: MutableList<MediaSessionCompat.QueueItem>?) {
-            queueLiveData.postValue(Queue.fromMediaController(mediaController))
+            mediaController ?: return
+            queueLiveData.postValue(Queue.fromMediaController(mediaController!!))
         }
 
         override fun onSessionDestroyed() {

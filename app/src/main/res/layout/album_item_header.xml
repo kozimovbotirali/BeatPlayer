@@ -18,9 +18,6 @@
         <variable
             name="albumCount"
             type="Integer" />
-        <variable
-            name="viewModel"
-            type="com.crrl.beatplayer.ui.viewmodels.MainViewModel" />
     </data>
 
     <RelativeLayout

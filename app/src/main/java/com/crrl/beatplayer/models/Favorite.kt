@@ -21,8 +21,8 @@ import com.crrl.beatplayer.repository.FavoritesRepositoryImplementation.Companio
 import com.crrl.beatplayer.repository.FavoritesRepositoryImplementation.Companion.COLUMN_TITLE
 import com.crrl.beatplayer.repository.FavoritesRepositoryImplementation.Companion.COLUMN_TYPE
 import com.crrl.beatplayer.repository.FavoritesRepositoryImplementation.Companion.COLUMN_YEAR
-import com.crrl.beatplayer.utils.PlayerConstants.ARTIST_TYPE
-import com.crrl.beatplayer.utils.PlayerConstants.FOLDER_TYPE
+import com.crrl.beatplayer.utils.BeatConstants.ARTIST_TYPE
+import com.crrl.beatplayer.utils.BeatConstants.FOLDER_TYPE
 
 class Favorite(
     var id: Long = -1,

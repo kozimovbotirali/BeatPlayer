@@ -55,4 +55,8 @@ class SongViewModel(
     fun delete(ids: LongArray): Int {
         return songsRepository.deleteTracks(ids)
     }
+
+    fun getSongById(id: Long): Song {
+        return songsRepository.getSongForId(id)
+    }
 }

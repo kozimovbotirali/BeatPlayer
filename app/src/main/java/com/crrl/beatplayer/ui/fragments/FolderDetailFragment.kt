@@ -22,18 +22,17 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentFolderDetailBinding
-import com.crrl.beatplayer.extensions.inflateWithBinding
-import com.crrl.beatplayer.extensions.observe
-import com.crrl.beatplayer.extensions.toIDList
+import com.crrl.beatplayer.extensions.*
+import com.crrl.beatplayer.models.MediaItemData
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.ui.adapters.SongAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.viewmodels.FavoriteViewModel
 import com.crrl.beatplayer.ui.viewmodels.FolderViewModel
 import com.crrl.beatplayer.ui.viewmodels.PlaylistViewModel
-import com.crrl.beatplayer.utils.PlayerConstants.FAVORITE_NAME
-import com.crrl.beatplayer.utils.PlayerConstants.FOLDER_KEY
-import com.crrl.beatplayer.utils.PlayerConstants.FOLDER_TYPE
+import com.crrl.beatplayer.utils.BeatConstants.FAVORITE_NAME
+import com.crrl.beatplayer.utils.BeatConstants.FOLDER_KEY
+import kotlinx.android.synthetic.main.layout_recyclerview.*
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -64,7 +63,7 @@ class FolderDetailFragment : BaseFragment<Song>() {
         binding.isLoading = true
         binding.name = arguments?.getString(FAVORITE_NAME)
 
-        songAdapter = SongAdapter(context, mainViewModel).apply {
+        songAdapter = SongAdapter(context, songDetailViewModel).apply {
             showHeader = true
             isAlbumDetail = true
             itemClickListener = this@FolderDetailFragment
@@ -74,7 +73,10 @@ class FolderDetailFragment : BaseFragment<Song>() {
             initNeeded(Song(), emptyList(), folder.id)
             binding.folder = folder
             folderViewModel.getSongsByFolder(folder.realPath).observe(this) {
-                songAdapter.updateDataSet(it)
+                if (!songAdapter.songList.deepEquals(it)) {
+                    mainViewModel.reloadQueueIds(it.toIDList(), binding.folder!!.name)
+                    songAdapter.updateDataSet(it)
+                }
                 binding.isLoading = false
                 if (it.isEmpty()) {
                     favoriteViewModel.deleteFavorites(longArrayOf(folder.id))
@@ -86,18 +88,27 @@ class FolderDetailFragment : BaseFragment<Song>() {
             }
         }
 
-        mainViewModel.getLastSong().observe(this){ song ->
-            val position = songAdapter.songList.indexOfFirst { it.compare(song)} + 1
+        songDetailViewModel.lastData.observe(this) { mediaItemData ->
+            val position = songAdapter.songList.indexOfFirst { it.id == mediaItemData.id } + 1
+            if(settingsUtility.didStop){
+                songAdapter.notifyDataSetChanged()
+                settingsUtility.didStop = false
+            } else songAdapter.notifyItemChanged(position)
+        }
+
+        songDetailViewModel.currentState.observe(this) {
+            val mediaItemData = songDetailViewModel.currentData.value ?: MediaItemData()
+            val position = songAdapter.songList.indexOfFirst { it.id == mediaItemData.id } + 1
             songAdapter.notifyItemChanged(position)
         }
 
-        mainViewModel.getCurrentSong().observe(this) { song ->
-            val position = songAdapter.songList.indexOfFirst { it.compare(song) } + 1
+        songDetailViewModel.currentData.observe(this) { mediaItemData ->
+            val position = songAdapter.songList.indexOfFirst { it.id == mediaItemData.id } + 1
             songAdapter.notifyItemChanged(position)
         }
 
         binding.apply {
-            songList.apply {
+            list.apply {
                 layoutManager = LinearLayoutManager(context)
                 adapter = songAdapter
                 (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
@@ -112,25 +123,17 @@ class FolderDetailFragment : BaseFragment<Song>() {
         }
     }
 
-    private fun updateSongList() {
-        val id = arguments?.getString(FOLDER_KEY)!!
-        mainViewModel.update(songAdapter.songList.toIDList())
-        mainViewModel.settingsUtility.currentSongList = "$FOLDER_TYPE<,>$id"
-    }
-
     override fun onItemClick(view: View, position: Int, item: Song) {
-        mainViewModel.update(item)
-        updateSongList()
+        val extras = getExtraBundle(songAdapter.songList.toIDList(), binding.folder!!.name)
+        mainViewModel.mediaItemClicked(item.toMediaItem(), extras)
     }
 
     override fun onShuffleClick(view: View) {
-        updateSongList()
-        mainViewModel.update(mainViewModel.random())
     }
 
     override fun onPlayAllClick(view: View) {
-        mainViewModel.update(songAdapter.songList.first())
-        updateSongList()
+        val extras = getExtraBundle(songAdapter.songList.toIDList(), binding.folder!!.name)
+        mainViewModel.mediaItemClicked(songAdapter.songList.first().toMediaItem(), extras)
     }
 
     override fun onPopupMenuClick(view: View, position: Int, item: Song, itemList: List<Song>) {

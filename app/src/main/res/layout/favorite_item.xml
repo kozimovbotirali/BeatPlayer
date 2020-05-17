@@ -19,7 +19,7 @@
 
         <import type="android.view.View" />
 
-        <import type="com.crrl.beatplayer.utils.PlayerConstants" />
+        <import type="com.crrl.beatplayer.utils.BeatConstants" />
 
         <variable
             name="favorite"

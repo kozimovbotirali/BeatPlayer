@@ -16,20 +16,25 @@ package com.crrl.beatplayer.ui.activities
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
+import android.support.v4.media.session.PlaybackStateCompat
 import android.view.View
 import androidx.databinding.DataBindingUtil
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.extensions.*
+import com.crrl.beatplayer.models.PlaybackState
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.ui.activities.base.BaseActivity
 import com.crrl.beatplayer.ui.fragments.*
 import com.crrl.beatplayer.ui.viewmodels.FavoriteViewModel
 import com.crrl.beatplayer.ui.viewmodels.PlaylistViewModel
-import com.crrl.beatplayer.utils.PlayerConstants
-import com.crrl.beatplayer.utils.PlayerConstants.FAVORITE_ID
-import com.crrl.beatplayer.utils.PlayerConstants.NOW_PLAYING
-import com.crrl.beatplayer.utils.PlayerConstants.PLAY_LIST_DETAIL
+import com.crrl.beatplayer.ui.viewmodels.SongDetailViewModel
+import com.crrl.beatplayer.ui.viewmodels.SongViewModel
+import com.crrl.beatplayer.utils.BeatConstants
+import com.crrl.beatplayer.utils.BeatConstants.BIND_STATE_BOUND
+import com.crrl.beatplayer.utils.BeatConstants.FAVORITE_ID
+import com.crrl.beatplayer.utils.BeatConstants.NOW_PLAYING
+import com.crrl.beatplayer.utils.BeatConstants.PLAY_LIST_DETAIL
+import com.crrl.beatplayer.utils.SettingsUtility
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_SHORT
 import com.google.gson.Gson
 import org.koin.android.ext.android.inject
@@ -39,63 +44,78 @@ class MainActivity : BaseActivity() {
 
     private val playListViewModel by inject<PlaylistViewModel>()
     private val favoriteViewModel by inject<FavoriteViewModel>()
+    private val songViewModel by inject<SongViewModel>()
+    private val songDetailViewModel by inject<SongDetailViewModel>()
+    private val settingsUtility by inject<SettingsUtility>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         init(savedInstanceState)
     }
 
+    override fun onStop() {
+        super.onStop()
+        settingsUtility.didStop = true
+    }
+
     private fun init(savedInstanceState: Bundle?) {
         viewModel.binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-
-        viewModel.getCurrentSongList().observe(this) {
-            viewModel.musicService.updateData(it)
-        }
 
         if (savedInstanceState == null) {
             replaceFragment(
                 R.id.nav_host_fragment,
                 LibraryFragment(),
-                PlayerConstants.LIBRARY
+                BeatConstants.LIBRARY
             )
-            if (!isPermissionsGranted()) return
-            Handler().postDelayed({
-                viewModel.update(viewModel.settingsUtility.currentSongSelected.toSong())
-            }, 200)
+        }
+        if (!isPermissionsGranted()) return
+
+        songDetailViewModel.update(BIND_STATE_BOUND)
+
+        songDetailViewModel.time.observe(this) {
+            val total = songDetailViewModel.currentData.value?.duration ?: 0
+            viewModel.binding.progressCircular.apply {
+                val t = progress.percentToMs(total).fixToStep(1000)
+                if (t != it) {
+                    progress = it.fixToPercent(total).fixPercentBounds()
+                }
+            }
+        }
+
+        songDetailViewModel.currentState.observe(this) {
+            songDetailViewModel.update(it.position)
+            if (it.state == PlaybackStateCompat.STATE_PLAYING) {
+                songDetailViewModel.update(BIND_STATE_BOUND)
+            } else songDetailViewModel.update()
         }
 
         viewModel.binding.let {
-            it.viewModel = viewModel
+            it.viewModel = songDetailViewModel
             it.executePendingBindings()
 
             it.lifecycleOwner = this
         }
 
         viewModel.binding.title.isSelected = true
-        viewModel.getCurrentSong().observe(this) {
-            val fragment = supportFragmentManager.findFragmentByTag(NOW_PLAYING)
-            if (it.id != -1L) {
-                viewModel.settingsUtility.currentSongSelected = Gson().toJson(it)
-                if (fragment == null) {
-                    viewModel.showMiniPlayer()
-                }
-                updateView(it)
-            } else viewModel.hideMiniPlayer()
-        }
+
+        songDetailViewModel.currentData
+            .observe(this) {
+                val fragment = supportFragmentManager.findFragmentByTag(NOW_PLAYING)
+                if (it.id !in arrayOf(0L, -1L)) {
+                    if (fragment == null) {
+                        viewModel.showMiniPlayer()
+                    } else viewModel.hideMiniPlayer()
+                } else viewModel.hideMiniPlayer()
+            }
     }
 
     fun onSongLyricClick(v: View) {
         addFragment(
             R.id.nav_host_fragment,
             LyricFragment(),
-            PlayerConstants.LYRIC,
+            BeatConstants.LYRIC,
             true
         )
-    }
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.showMiniPlayer()
     }
 
     fun onSongInfoClick(v: View) {
@@ -126,7 +146,7 @@ class MainActivity : BaseActivity() {
         data ?: return
         data.extras ?: return
         val name = data.extras!!.getString(PLAY_LIST_DETAIL)
-        val songs = Gson().fromJson<List<Song>>(data.extras!!.getString("SONGS"))
+        val songs = Gson().fromJson<List<Song>>(data.extras?.getString("SONGS")!!)
         if (requestCode == 1) {
             if (resultCode == Activity.RESULT_CANCELED) {
                 createPlayList(name, songs)
@@ -165,8 +185,18 @@ class MainActivity : BaseActivity() {
         }
     }
 
+    fun playPauseClick(view: View) {
+        val mediaItemData = songDetailViewModel.currentState.value ?: PlaybackState()
+        if (mediaItemData.state == PlaybackStateCompat.STATE_PLAYING) {
+            viewModel.transportControls()?.pause()
+        } else {
+            viewModel.transportControls()?.play()
+        }
+    }
+
     fun toggleAddToFav(v: View) {
-        val song = viewModel.getCurrentSong().value ?: return
+        val mediaItemData = songDetailViewModel.currentData.value ?: return
+        val song = songViewModel.getSongById(mediaItemData.id)
         if (!favoriteViewModel.favExist(FAVORITE_ID)) return
         if (favoriteViewModel.songExist(song.id)) {
             val resp = favoriteViewModel.deleteSongByFavorite(FAVORITE_ID, longArrayOf(song.id))
@@ -189,6 +219,5 @@ class MainActivity : BaseActivity() {
         if (resp > 0) view.snackbar(CUSTOM, ok, LENGTH_SHORT, custom = custom)
     }
 
-    private fun updateView(song: Song) = viewModel.update(song)
     fun isPermissionsGranted() = permissionsGranted
 }

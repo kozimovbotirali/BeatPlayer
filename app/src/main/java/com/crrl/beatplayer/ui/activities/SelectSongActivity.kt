@@ -31,9 +31,8 @@ import com.crrl.beatplayer.interfaces.ItemClickListener
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.ui.activities.base.BaseActivity
 import com.crrl.beatplayer.ui.adapters.SelectSongAdapter
-import com.crrl.beatplayer.ui.viewmodels.MainViewModel
 import com.crrl.beatplayer.ui.viewmodels.SongViewModel
-import com.crrl.beatplayer.utils.PlayerConstants.PLAY_LIST_DETAIL
+import com.crrl.beatplayer.utils.BeatConstants.PLAY_LIST_DETAIL
 import com.google.gson.Gson
 import org.koin.android.ext.android.inject
 
@@ -44,7 +43,6 @@ class SelectSongActivity : BaseActivity(), ItemClickListener<Song> {
     private lateinit var binding: ActivitySelectSongBinding
 
     private val songViewModel by inject<SongViewModel>()
-    private val mainViewModel by inject<MainViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         postponeEnterTransition()
@@ -69,10 +67,6 @@ class SelectSongActivity : BaseActivity(), ItemClickListener<Song> {
             (binding.root.parent as? ViewGroup)?.doOnPreDraw {
                 startPostponedEnterTransition()
             }
-        }
-
-        mainViewModel.getCurrentSong().observe(this){
-            songAdapter.notifyDataSetChanged()
         }
 
         binding.let {

@@ -31,7 +31,7 @@ import com.crrl.beatplayer.ui.widgets.stylers.ItemStyle
 import com.crrl.beatplayer.utils.GeneralUtils.drawRoundRectShape
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.android.synthetic.main.input_dialog_item.view.*
-import kotlinx.android.synthetic.main.input_dialog_parent.view.*
+import kotlinx.android.synthetic.main.parent_dialog_layout.view.*
 import java.util.*
 
 class InputDialog(
@@ -53,7 +53,7 @@ class InputDialog(
         savedInstanceState: Bundle?
     ): View? {
         // Inflate base view
-        val view = inflater.inflate(R.layout.input_dialog_parent, container, false)
+        val view = inflater.inflate(R.layout.parent_dialog_layout, container, false)
 
         // Set up view
         initView(view)
@@ -110,9 +110,7 @@ class InputDialog(
                 //Add root view
                 item.root = view
 
-                //Execute listeners' methods for each case (Kotlin or Java)
                 item.action?.invoke(item)
-                item.actionListener?.onAlertItemClick(item)
             }
         }
 
@@ -127,9 +125,7 @@ class InputDialog(
                 item.input = view.text.text.toString()
                 dismiss()
 
-                //Execute listeners' methods for each case (Kotlin or Java)
                 item.action?.invoke(item)
-                item.actionListener?.onAlertItemClick(item)
             }
         }
     }

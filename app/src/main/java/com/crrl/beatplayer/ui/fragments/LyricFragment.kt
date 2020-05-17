@@ -14,7 +14,6 @@
 package com.crrl.beatplayer.ui.fragments
 
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -22,14 +21,15 @@ import android.view.ViewGroup
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentLyricBinding
 import com.crrl.beatplayer.extensions.inflateWithBinding
-import com.crrl.beatplayer.extensions.observe
-import com.crrl.beatplayer.extensions.setCustomColor
 import com.crrl.beatplayer.ui.fragments.base.BaseSongDetailFragment
+import com.crrl.beatplayer.ui.viewmodels.SongDetailViewModel
+import org.koin.android.ext.android.inject
 
 
 class LyricFragment : BaseSongDetailFragment() {
 
     private lateinit var binding: FragmentLyricBinding
+    private val songDetailView by inject<SongDetailViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,7 +46,7 @@ class LyricFragment : BaseSongDetailFragment() {
 
     private fun init() {
         binding.let {
-            it.viewModel = mainViewModel
+            it.viewModel = songDetailView
             it.lifecycleOwner = this
             it.executePendingBindings()
         }

@@ -15,7 +15,7 @@
     <item>
         <shape>
             <solid android:color="?colorPrimarySecondary2" />
-            <corners android:topRightRadius="@dimen/album_item_radius" android:topLeftRadius="@dimen/album_item_radius" />
+            <corners android:radius="@dimen/album_item_radius" />
         </shape>
     </item>
 </selector>

@@ -14,7 +14,6 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
-
         <import type="android.view.View" />
         <variable
             name="viewModel"
@@ -25,12 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/song_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:paddingBottom="@dimen/song_item_size" />
+        <include layout="@layout/layout_recyclerview" />
 
         <TextView
             android:layout_width="wrap_content"

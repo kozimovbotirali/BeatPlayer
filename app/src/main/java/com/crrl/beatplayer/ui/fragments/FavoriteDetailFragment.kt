@@ -22,17 +22,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentFavoriteDetailBinding
-import com.crrl.beatplayer.extensions.inflateWithBinding
-import com.crrl.beatplayer.extensions.observe
-import com.crrl.beatplayer.extensions.safeActivity
-import com.crrl.beatplayer.extensions.toIDList
+import com.crrl.beatplayer.extensions.*
+import com.crrl.beatplayer.models.MediaItemData
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.ui.adapters.SongAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.viewmodels.FavoriteViewModel
 import com.crrl.beatplayer.ui.viewmodels.PlaylistViewModel
-import com.crrl.beatplayer.utils.PlayerConstants
-import com.crrl.beatplayer.utils.PlayerConstants.FAVORITE_TYPE
+import com.crrl.beatplayer.utils.BeatConstants
+import kotlinx.android.synthetic.main.layout_recyclerview.*
 import org.koin.android.ext.android.inject
 
 class FavoriteDetailFragment : BaseFragment<Song>() {
@@ -59,10 +57,10 @@ class FavoriteDetailFragment : BaseFragment<Song>() {
     }
 
     private fun init() {
-        val id = arguments!!.getLong(PlayerConstants.FAVORITE_KEY)
+        val id = arguments!!.getLong(BeatConstants.FAVORITE_KEY)
         binding.favorite = favoriteViewModel.getFavorite(id)
 
-        songAdapter = SongAdapter(context, mainViewModel).apply {
+        songAdapter = SongAdapter(context, songDetailViewModel).apply {
             showHeader = true
             isAlbumDetail = true
             itemClickListener = this@FavoriteDetailFragment
@@ -72,26 +70,36 @@ class FavoriteDetailFragment : BaseFragment<Song>() {
             if (it.isEmpty()) {
                 favoriteViewModel.deleteFavorites(longArrayOf(id))
                 safeActivity.onBackPressed()
-            } else {
+            } else if (!songAdapter.songList.deepEquals(it)) {
                 songAdapter.updateDataSet(it)
+                mainViewModel.reloadQueueIds(it.toIDList(), binding.favorite!!.title)
                 (view?.parent as? ViewGroup)?.doOnPreDraw {
                     startPostponedEnterTransition()
                 }
             }
         }
 
-        mainViewModel.getLastSong().observe(this){ song ->
-            val position = songAdapter.songList.indexOfFirst { it.compare(song)} + 1
+        songDetailViewModel.lastData.observe(this) { mediaItemData ->
+            val position = songAdapter.songList.indexOfFirst { it.id == mediaItemData.id } + 1
+            if(settingsUtility.didStop){
+                songAdapter.notifyDataSetChanged()
+                settingsUtility.didStop = false
+            } else songAdapter.notifyItemChanged(position)
+        }
+
+        songDetailViewModel.currentState.observe(this) {
+            val mediaItemData = songDetailViewModel.currentData.value ?: MediaItemData()
+            val position = songAdapter.songList.indexOfFirst { it.id == mediaItemData.id } + 1
             songAdapter.notifyItemChanged(position)
         }
 
-        mainViewModel.getCurrentSong().observe(this) { song ->
-            val position = songAdapter.songList.indexOfFirst { it.compare(song) } + 1
+        songDetailViewModel.currentData.observe(this) { mediaItemData ->
+            val position = songAdapter.songList.indexOfFirst { it.id == mediaItemData.id } + 1
             songAdapter.notifyItemChanged(position)
         }
 
         binding.apply {
-            songList.apply {
+            list.apply {
                 layoutManager = LinearLayoutManager(context)
                 adapter = songAdapter
                 (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
@@ -105,25 +113,17 @@ class FavoriteDetailFragment : BaseFragment<Song>() {
         }
     }
 
-    private fun updateSongList() {
-        val id = arguments!!.getLong(PlayerConstants.FAVORITE_KEY)
-        mainViewModel.update(songAdapter.songList.toIDList())
-        mainViewModel.settingsUtility.currentSongList = "$FAVORITE_TYPE<,>$id"
-    }
-
     override fun onItemClick(view: View, position: Int, item: Song) {
-        mainViewModel.update(item)
-        updateSongList()
+        val extras = getExtraBundle(songAdapter.songList.toIDList(), binding.favorite!!.title)
+        mainViewModel.mediaItemClicked(item.toMediaItem(), extras)
     }
 
     override fun onShuffleClick(view: View) {
-        updateSongList()
-        mainViewModel.update(mainViewModel.random())
     }
 
     override fun onPlayAllClick(view: View) {
-        mainViewModel.update(songAdapter.songList.first())
-        updateSongList()
+        val extras = getExtraBundle(songAdapter.songList.toIDList(), binding.favorite!!.title)
+        mainViewModel.mediaItemClicked(songAdapter.songList.first().toMediaItem(), extras)
     }
 
     override fun onPopupMenuClick(view: View, position: Int, item: Song, itemList: List<Song>) {

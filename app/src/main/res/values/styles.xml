@@ -34,7 +34,6 @@
         <item name="subTitleTextColor">@color/colorSubTitleTextDark</item>
         <item name="bodyTextColor">@color/colorBodyTextDark</item>
         <item name="btnTintColor">@color/colorTitleTextDark</item>
-        <item name="android:windowTranslucentStatus">true</item>
     </style>
 
     <style name="AppTheme.Light" parent="AppThemeParent.Light">
@@ -52,7 +51,6 @@
         <item name="subTitleTextColor">@color/colorSubTitleTextLight</item>
         <item name="bodyTextColor">@color/colorBodyTextLight</item>
         <item name="btnTintColor">@color/colorTitleTextLight</item>
-        <item name="android:windowTranslucentStatus">true</item>
     </style>
 
     <style name="AppTheme.Auto" parent="AppThemeParent.Light">
@@ -70,8 +68,6 @@
         <item name="subTitleTextColor">@color/colorSubTitleTextLight</item>
         <item name="bodyTextColor">@color/colorBodyTextLight</item>
         <item name="btnTintColor">@color/colorTitleTextLight</item>
-        <item name="android:windowLightStatusBar">true</item>
-        <item name="android:windowTranslucentStatus">true</item>
     </style>
 
     <!-- VIEW STYLES -->
@@ -114,4 +110,7 @@
         <item name="android:windowSoftInputMode">adjustResize</item>
     </style>
 
+    <style name="RecyclerViewOverScrollColor">
+        <item name="android:colorPrimary">?colorAccent</item>
+    </style>
 </resources>

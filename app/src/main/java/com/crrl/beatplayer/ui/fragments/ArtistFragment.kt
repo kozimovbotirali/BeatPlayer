@@ -31,8 +31,8 @@ import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.viewmodels.ArtistViewModel
 import com.crrl.beatplayer.ui.widgets.actions.AlertItemAction
 import com.crrl.beatplayer.ui.widgets.stylers.AlertItemTheme
+import com.crrl.beatplayer.utils.BeatConstants
 import com.crrl.beatplayer.utils.GeneralUtils
-import com.crrl.beatplayer.utils.PlayerConstants
 import com.crrl.beatplayer.utils.SortModes
 import org.koin.android.ext.android.inject
 
@@ -56,16 +56,16 @@ class ArtistFragment : BaseFragment<Artist>() {
     }
 
     private fun init() {
-        val sc = if (GeneralUtils.getRotation(safeActivity) == GeneralUtils.VERTICAL) 2 else 5
+        val sc = if (GeneralUtils.getOrientation(safeActivity) == GeneralUtils.PORTRAIT) 2 else 5
 
-        artistAdapter = ArtistAdapter(context, mainViewModel).apply {
+        artistAdapter = ArtistAdapter(context).apply {
             showHeader = true
             itemClickListener = this@ArtistFragment
             spanCount = sc
         }
 
         binding.apply {
-            artistList.apply {
+            list.apply {
                 layoutManager = GridLayoutManager(context!!, sc).apply {
                     spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                         override fun getSpanSize(position: Int): Int {
@@ -124,11 +124,11 @@ class ArtistFragment : BaseFragment<Artist>() {
 
     override fun onItemClick(view: View, position: Int, item: Artist) {
         val extras = Bundle()
-        extras.putLong(PlayerConstants.ARTIST_KEY, item.id)
+        extras.putLong(BeatConstants.ARTIST_KEY, item.id)
         activity!!.addFragment(
             R.id.nav_host_fragment,
             ArtistDetailFragment(),
-            PlayerConstants.ARTIST_DETAIL,
+            BeatConstants.ARTIST_DETAIL,
             true,
             extras
         )

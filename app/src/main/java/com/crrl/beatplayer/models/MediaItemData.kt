@@ -21,7 +21,8 @@ class MediaItemData(
     val album: String = "",
     val artist: String = "",
     val albumId: Long = 0,
-    val duration: Int = 0
+    val duration: Int = 0,
+    val description: String = ""
 
 ) {
     companion object {
@@ -35,7 +36,9 @@ class MediaItemData(
                     artist = metaData.getString(MediaMetadataCompat.METADATA_KEY_ARTIST) ?: "",
                     duration = metaData.getLong(MediaMetadataCompat.METADATA_KEY_DURATION).toInt(),
                     albumId = metaData.getString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI)
-                        ?.toLong() ?: 0
+                        ?.toLong() ?: 0,
+                    description = metaData.getString(MediaMetadataCompat.METADATA_KEY_DISPLAY_DESCRIPTION)
+                        ?: ""
                 )
             }
             return MediaItemData()

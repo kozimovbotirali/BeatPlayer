@@ -18,22 +18,14 @@
         <variable
             name="folder"
             type="com.crrl.beatplayer.models.Folder" />
-        <variable
-            name="position"
-            type="Integer" />
-
-        <variable
-            name="size"
-            type="Integer" />
     </data>
 
     <RelativeLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="70dp"
-        app:position="@{position}"
-        app:size="@{size}"
         android:clickable="true"
+        android:background="@drawable/list_item_ripple"
         android:focusable="true">
 
         <ImageView

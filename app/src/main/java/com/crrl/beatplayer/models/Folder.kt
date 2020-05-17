@@ -16,7 +16,7 @@ package com.crrl.beatplayer.models
 import android.database.Cursor
 import com.crrl.beatplayer.extensions.fixedName
 import com.crrl.beatplayer.extensions.fixedPath
-import com.crrl.beatplayer.utils.PlayerConstants.FOLDER_TYPE
+import com.crrl.beatplayer.utils.BeatConstants.FOLDER_TYPE
 import com.google.gson.Gson
 import java.io.File
 

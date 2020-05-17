@@ -20,10 +20,6 @@
         <variable
             name="artist"
             type="com.crrl.beatplayer.models.Artist" />
-
-        <variable
-            name="viewModel"
-            type="com.crrl.beatplayer.ui.viewmodels.MainViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

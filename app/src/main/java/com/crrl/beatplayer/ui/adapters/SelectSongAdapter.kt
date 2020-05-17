@@ -57,8 +57,6 @@ class SelectSongAdapter(
         fun bind(song: Song) {
             binding.apply {
                 this.song = song
-                this.position = adapterPosition
-                this.size = itemCount
                 executePendingBindings()
 
                 container.setOnClickListener(this@ViewHolderSong)

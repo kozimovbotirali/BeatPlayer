@@ -22,9 +22,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentSongBinding
-import com.crrl.beatplayer.extensions.inflateWithBinding
-import com.crrl.beatplayer.extensions.observe
-import com.crrl.beatplayer.extensions.toIDList
+import com.crrl.beatplayer.extensions.*
+import com.crrl.beatplayer.models.MediaItemData
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.ui.adapters.SongAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
@@ -32,8 +31,9 @@ import com.crrl.beatplayer.ui.viewmodels.PlaylistViewModel
 import com.crrl.beatplayer.ui.viewmodels.SongViewModel
 import com.crrl.beatplayer.ui.widgets.actions.AlertItemAction
 import com.crrl.beatplayer.ui.widgets.stylers.AlertItemTheme
-import com.crrl.beatplayer.utils.PlayerConstants.SONG_TYPE
+import com.crrl.beatplayer.utils.SettingsUtility
 import com.crrl.beatplayer.utils.SortModes
+import kotlinx.android.synthetic.main.layout_recyclerview.*
 import org.koin.android.ext.android.inject
 
 class SongFragment : BaseFragment<Song>() {
@@ -58,29 +58,41 @@ class SongFragment : BaseFragment<Song>() {
     }
 
     private fun init() {
-        songAdapter = SongAdapter(activity, mainViewModel).apply {
+        songAdapter = SongAdapter(activity, songDetailViewModel).apply {
             showHeader = true
             itemClickListener = this@SongFragment
         }
 
-        binding.songList.apply {
+        list.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = songAdapter
             (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         }
 
-        mainViewModel.getLastSong().observe(this){ song ->
-            val position = songAdapter.songList.indexOfFirst { it.compare(song)} + 1
+        songDetailViewModel.lastData.observe(this) { mediaItemData ->
+            val position = songAdapter.songList.indexOfFirst { it.id == mediaItemData.id } + 1
+            if(settingsUtility.didStop){
+                songAdapter.notifyDataSetChanged()
+                settingsUtility.didStop = false
+            } else songAdapter.notifyItemChanged(position)
+        }
+
+        songDetailViewModel.currentState.observe(this) {
+            val mediaItemData = songDetailViewModel.currentData.value ?: MediaItemData()
+            val position = songAdapter.songList.indexOfFirst { it.id == mediaItemData.id } + 1
             songAdapter.notifyItemChanged(position)
         }
 
-        mainViewModel.getCurrentSong().observe(this) { song ->
-            val position = songAdapter.songList.indexOfFirst { it.compare(song) } + 1
+        songDetailViewModel.currentData.observe(this) { mediaItemData ->
+            val position = songAdapter.songList.indexOfFirst { it.id == mediaItemData.id } + 1
             songAdapter.notifyItemChanged(position)
         }
 
         viewModel.getSongList().observe(this) {
-            songAdapter.updateDataSet(it)
+            if (!songAdapter.songList.deepEquals(it)) {
+                songAdapter.updateDataSet(it)
+                mainViewModel.reloadQueueIds(it.toIDList(), getString(R.string.all_songs))
+            }
         }
 
         binding.let {
@@ -102,7 +114,6 @@ class SongFragment : BaseFragment<Song>() {
                 action.selected = true
                 mainViewModel.settingsUtility.songSortOrder =
                     SortModes.SongModes.SONG_DEFAULT
-                reloadAdapter()
             },
             AlertItemAction(
                 context!!.getString(R.string.sort_az),
@@ -111,7 +122,6 @@ class SongFragment : BaseFragment<Song>() {
             ) { action ->
                 action.selected = true
                 mainViewModel.settingsUtility.songSortOrder = SortModes.SongModes.SONG_A_Z
-                reloadAdapter()
             },
             AlertItemAction(
                 context!!.getString(R.string.sort_za),
@@ -120,7 +130,6 @@ class SongFragment : BaseFragment<Song>() {
             ) { action ->
                 action.selected = true
                 mainViewModel.settingsUtility.songSortOrder = SortModes.SongModes.SONG_Z_A
-                reloadAdapter()
             },
             AlertItemAction(
                 context!!.getString(R.string.sort_duration),
@@ -130,7 +139,6 @@ class SongFragment : BaseFragment<Song>() {
                 action.selected = true
                 mainViewModel.settingsUtility.songSortOrder =
                     SortModes.SongModes.SONG_DURATION
-                reloadAdapter()
             },
             AlertItemAction(
                 context!!.getString(R.string.sort_year),
@@ -139,7 +147,6 @@ class SongFragment : BaseFragment<Song>() {
             ) { action ->
                 action.selected = true
                 mainViewModel.settingsUtility.songSortOrder = SortModes.SongModes.SONG_YEAR
-                reloadAdapter()
             },
             AlertItemAction(
                 context!!.getString(R.string.sort_last_added),
@@ -149,28 +156,16 @@ class SongFragment : BaseFragment<Song>() {
                 action.selected = true
                 mainViewModel.settingsUtility.songSortOrder =
                     SortModes.SongModes.SONG_LAST_ADDED
-                reloadAdapter()
             }
         ))
     }
 
-    private fun reloadAdapter() {
-        viewModel.update()
-    }
-
-    private fun updateSongList() {
-        mainViewModel.update(songAdapter.songList.toIDList())
-        mainViewModel.settingsUtility.currentSongList = "$SONG_TYPE<,>"
-    }
-
     override fun onItemClick(view: View, position: Int, item: Song) {
-        mainViewModel.update(item)
-        updateSongList()
+        val extras = getExtraBundle(songAdapter.songList.toIDList(), getString(R.string.all_songs))
+        mainViewModel.mediaItemClicked(item.toMediaItem(), extras)
     }
 
     override fun onShuffleClick(view: View) {
-        updateSongList()
-        mainViewModel.update(mainViewModel.random())
     }
 
     override fun onSortClick(view: View) {
@@ -178,8 +173,8 @@ class SongFragment : BaseFragment<Song>() {
     }
 
     override fun onPlayAllClick(view: View) {
-        mainViewModel.update(songAdapter.songList.first())
-        updateSongList()
+        val extras = getExtraBundle(songAdapter.songList.toIDList(), getString(R.string.all_songs))
+        mainViewModel.mediaItemClicked(songAdapter.songList.first().toMediaItem(), extras)
     }
 
     override fun onPopupMenuClick(view: View, position: Int, item: Song, itemList: List<Song>) {

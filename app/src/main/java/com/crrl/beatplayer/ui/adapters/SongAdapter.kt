@@ -13,7 +13,6 @@
 
 package com.crrl.beatplayer.ui.adapters
 
-import android.app.Activity
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
@@ -21,24 +20,25 @@ import androidx.recyclerview.widget.RecyclerView
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.SongItemBinding
 import com.crrl.beatplayer.databinding.SongItemHeaderBinding
-import com.crrl.beatplayer.extensions.*
+import com.crrl.beatplayer.extensions.hide
+import com.crrl.beatplayer.extensions.inflateWithBinding
+import com.crrl.beatplayer.extensions.setAll
 import com.crrl.beatplayer.interfaces.ItemClickListener
 import com.crrl.beatplayer.models.Song
-import com.crrl.beatplayer.ui.viewmodels.MainViewModel
+import com.crrl.beatplayer.ui.viewmodels.SongDetailViewModel
 
 private const val HEADER_TYPE = 0
 private const val ITEM_TYPE = 1
 
 class SongAdapter(
     private val context: Context?,
-    private val mainViewModel: MainViewModel
+    private val songDetailViewModel: SongDetailViewModel
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     val songList = mutableListOf<Song>()
     var showHeader = false
     var isPlaylist = false
     var isAlbumDetail = false
-    var isSearchView = false
     var itemClickListener: ItemClickListener<Song>? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -97,19 +97,9 @@ class SongAdapter(
         }
     }
 
-    fun getPosition(position: Int): Int {
-        return if (showHeader) {
-            if (position == 0) {
-                position
-            } else position - 1
-        } else position
-    }
-
     fun updateDataSet(newList: List<Song>) {
-        if (!songList.deepEquals(newList)) {
-            songList.setAll(newList.toMutableList())
-            notifyDataSetChanged()
-        }
+        songList.setAll(newList.toMutableList())
+        notifyDataSetChanged()
     }
 
     inner class ViewHolderSong(private val binding: SongItemBinding) :
@@ -118,12 +108,9 @@ class SongAdapter(
         fun bind(song: Song) {
             binding.apply {
                 this.song = song
-                position = adapterPosition
                 this.size = itemCount
-                this.isSearch = isSearchView
+                this.viewModel = songDetailViewModel
                 executePendingBindings()
-
-                if (songList.isNotEmpty()) setSelectedSongColor(this, song)
 
                 container.setOnClickListener(this@ViewHolderSong)
                 itemMenu.setOnClickListener(this@ViewHolderSong)
@@ -146,30 +133,6 @@ class SongAdapter(
                     )
                 }
         }
-
-        private fun setSelectedSongColor(binding: SongItemBinding, song: Song) {
-            context as Activity
-            val currentSong = mainViewModel.getCurrentSong().value ?: return
-            binding.apply {
-                if (currentSong.compare(song)) {
-                    val color = context.getColorByTheme(R.attr.colorAccentOpacity)
-                    song.isSelected = true
-                    title.isSelected = true
-                    title.setCustomColor(context.getColorByTheme(R.attr.colorAccent))
-                    artist.setCustomColor(color, opacity = true)
-                    sep.setCustomColor(color, opacity = true)
-                    album.setCustomColor(color, opacity = true)
-                } else {
-                    song.isSelected = false
-                    val color = context.getColorByTheme(R.attr.subTitleTextColor)
-                    title.setCustomColor(context.getColorByTheme(R.attr.titleTextColor))
-                    artist.setCustomColor(color)
-                    sep.setCustomColor(color)
-                    album.setCustomColor(color)
-                }
-            }
-            songList[getPosition(adapterPosition)] = song
-        }
     }
 
     inner class ViewHolderSongHeader(private val binding: SongItemHeaderBinding) :
@@ -178,7 +141,6 @@ class SongAdapter(
         fun bind(songCount: Int) {
             binding.apply {
                 this.songCount = songCount
-                viewModel = mainViewModel
                 if (isAlbumDetail) sortSong.hide()
                 if (isPlaylist) {
                     sortSong.hide()
