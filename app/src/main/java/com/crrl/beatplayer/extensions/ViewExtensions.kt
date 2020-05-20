@@ -23,6 +23,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.OvershootInterpolator
 import android.widget.*
@@ -78,8 +79,8 @@ fun View?.hide(animated: Boolean = false) {
 
 fun MusicVisualizer?.hide(animated: Boolean = false) {
     val view = this ?: return
-    val duration = if (animated) 150L else 0L
-    please(duration, AccelerateInterpolator()) {
+    val duration = if (animated) 250L else 0L
+    please(duration, AccelerateDecelerateInterpolator()) {
         animate(view) {
             originalPosition()
         }
@@ -88,8 +89,8 @@ fun MusicVisualizer?.hide(animated: Boolean = false) {
 
 fun MusicVisualizer?.show(animated: Boolean = false) {
     val view = this ?: return
-    val duration = if (animated) 150L else 0L
-    please(duration, AccelerateInterpolator()) {
+    val duration = if (animated) 250L else 0L
+    please(duration, AccelerateDecelerateInterpolator()) {
         animate(view) {
             this.leftOfItsParent(marginDp = 25f)
         }
@@ -98,8 +99,8 @@ fun MusicVisualizer?.show(animated: Boolean = false) {
 
 fun View?.slideRight(animated: Boolean = false) {
     val view = this ?: return
-    val duration = if (animated) 150L else 0L
-    please(duration, AccelerateInterpolator()) {
+    val duration = if (animated) 250L else 0L
+    please(duration, AccelerateDecelerateInterpolator()) {
         animate(view) {
             leftOfItsParent(65f)
         }
@@ -108,8 +109,8 @@ fun View?.slideRight(animated: Boolean = false) {
 
 fun View?.slideLeft(animated: Boolean = false) {
     val view = this ?: return
-    val duration = if (animated) 150L else 0L
-    please(duration, AccelerateInterpolator()) {
+    val duration = if (animated) 250L else 0L
+    please(duration, AccelerateDecelerateInterpolator()) {
         animate(view) {
             originalPosition()
         }
@@ -118,7 +119,7 @@ fun View?.slideLeft(animated: Boolean = false) {
 
 fun View?.scaleUp() {
     val view = this ?: return
-    please(150, AccelerateInterpolator()) {
+    please(250, AccelerateDecelerateInterpolator()) {
         animate(view) {
             originalScale()
         }
@@ -127,9 +128,9 @@ fun View?.scaleUp() {
 
 fun View?.scaleDown() {
     val view = this ?: return
-    please(150, AccelerateInterpolator()) {
+    please(250, AccelerateDecelerateInterpolator()) {
         animate(view) {
-            scale(0.8f, 0.8f)
+            scale(0.6f, 0.6f)
         }
     }.start()
 }

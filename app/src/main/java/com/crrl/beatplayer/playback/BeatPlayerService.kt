@@ -83,6 +83,10 @@ class BeatPlayerService : MediaBrowserServiceCompat(), KoinComponent {
         beatPlayer.onCompletion {
             notifications.updateNotification(getSession())
         }
+
+        beatPlayer.onQueueEnd{
+            notifications.updateNotification(getSession())
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {

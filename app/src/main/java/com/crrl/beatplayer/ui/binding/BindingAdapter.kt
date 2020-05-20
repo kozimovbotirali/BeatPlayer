@@ -15,7 +15,7 @@ package com.crrl.beatplayer.ui.binding
 
 import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
-import android.support.v4.media.session.PlaybackStateCompat.STATE_PLAYING
+import android.support.v4.media.session.PlaybackStateCompat.*
 import android.text.Html
 import android.view.View
 import android.widget.ImageButton
@@ -40,6 +40,8 @@ import com.crrl.beatplayer.utils.BeatConstants.ALBUM_TYPE
 import com.crrl.beatplayer.utils.BeatConstants.ARTIST_TYPE
 import com.crrl.beatplayer.utils.BeatConstants.FAVORITE_TYPE
 import com.crrl.beatplayer.utils.BeatConstants.FOLDER_TYPE
+import com.crrl.beatplayer.utils.BeatConstants.REPEAT_ALL
+import com.crrl.beatplayer.utils.BeatConstants.REPEAT_ONE
 import com.crrl.beatplayer.utils.GeneralUtils.PORTRAIT
 import com.crrl.beatplayer.utils.GeneralUtils.dip2px
 import com.crrl.beatplayer.utils.GeneralUtils.getAlbumArtUri
@@ -113,10 +115,26 @@ fun isSongFav(view: ImageButton, isFav: Boolean) {
 
 @BindingAdapter("app:playState")
 fun setPlayState(view: ImageView, state: Int) {
-    if (state == STATE_PLAYING) {
-        view.setImageResource(R.drawable.ic_pause)
-    } else {
-        view.setImageResource(R.drawable.ic_play)
+    when (state) {
+        STATE_PLAYING -> view.setImageResource(R.drawable.ic_pause)
+        else -> view.setImageResource(R.drawable.ic_play)
+    }
+}
+
+@BindingAdapter("app:repeatState")
+fun setRepeatState(view: ImageView, state: Int) {
+    when (state) {
+        REPEAT_MODE_ONE -> view.apply { setImageResource(R.drawable.ic_repeat_one) }
+        REPEAT_MODE_ALL -> view.setImageResource(R.drawable.ic_repeat_all)
+        else -> view.setImageResource(R.drawable.ic_repeat)
+    }
+}
+
+@BindingAdapter("app:shuffleState")
+fun setShuffleState(view: ImageView, state: Int) {
+    when (state) {
+        SHUFFLE_MODE_ALL -> view.setImageResource(R.drawable.ic_shuffle_all)
+        else -> view.setImageResource(R.drawable.ic_shuffle)
     }
 }
 

@@ -17,6 +17,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.media.session.PlaybackStateCompat
+import android.support.v4.media.session.PlaybackStateCompat.*
 import android.view.View
 import androidx.databinding.DataBindingUtil
 import com.crrl.beatplayer.R
@@ -185,10 +186,26 @@ class MainActivity : BaseActivity() {
 
     fun playPauseClick(view: View) {
         val mediaItemData = songDetailViewModel.currentState.value ?: PlaybackState()
-        if (mediaItemData.state == PlaybackStateCompat.STATE_PLAYING) {
-            viewModel.transportControls()?.pause()
-        } else {
-            viewModel.transportControls()?.play()
+        when (mediaItemData.state) {
+            STATE_PLAYING -> viewModel.transportControls()?.pause()
+            else -> viewModel.transportControls()?.play()
+        }
+    }
+
+    fun shuffleModeClick(view: View) {
+        val mediaItemData = songDetailViewModel.currentState.value ?: PlaybackState()
+        when(mediaItemData.shuffleMode){
+            SHUFFLE_MODE_ALL -> viewModel.transportControls()?.setShuffleMode(SHUFFLE_MODE_NONE)
+            else -> viewModel.transportControls()?.setShuffleMode(SHUFFLE_MODE_ALL)
+        }
+    }
+
+    fun repeatModeClick(view: View) {
+        val mediaItemData = songDetailViewModel.currentState.value ?: PlaybackState()
+        when (mediaItemData.repeatMode) {
+            REPEAT_MODE_ONE -> viewModel.transportControls()?.setRepeatMode(REPEAT_MODE_ALL)
+            REPEAT_MODE_ALL -> viewModel.transportControls()?.setRepeatMode(REPEAT_MODE_NONE)
+            else -> viewModel.transportControls()?.setRepeatMode(REPEAT_MODE_ONE)
         }
     }
 

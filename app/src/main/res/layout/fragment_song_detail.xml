@@ -141,6 +141,7 @@
                     android:layout_height="match_parent"
                     android:clickable="false"
                     android:focusable="false"
+                    android:gravity="center"
                     android:text="@{viewModel.currentData.description}"
                     android:textColor="?bodyTextColor"/>
             </LinearLayout>
@@ -297,7 +298,8 @@
                 android:background="@drawable/btn_ripple_header_with_background"
                 android:contentDescription="@string/cover"
                 android:src="@drawable/ic_shuffle"
-                android:tint="?bodyTextColor"
+                android:onClick="shuffleModeClick"
+                app:shuffleState="@{viewModel.currentState.shuffleMode}"
                 app:layout_constraintBottom_toBottomOf="@+id/lyrics_container"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/lyrics_container" />
@@ -310,7 +312,8 @@
                 android:background="@drawable/btn_ripple_header_with_background"
                 android:contentDescription="@string/cover"
                 android:src="@drawable/ic_repeat"
-                android:tint="?bodyTextColor"
+                android:onClick="repeatModeClick"
+                app:repeatState="@{viewModel.currentState.repeatMode}"
                 app:layout_constraintBottom_toBottomOf="@+id/lyrics_container"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/lyrics_container" />

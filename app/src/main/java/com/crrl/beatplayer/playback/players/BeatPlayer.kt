@@ -16,6 +16,7 @@ package com.crrl.beatplayer.playback.players
 import android.app.Application
 import android.app.PendingIntent
 import android.os.Bundle
+import android.os.Handler
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.MediaMetadataCompat.*
 import android.support.v4.media.session.MediaSessionCompat
@@ -23,10 +24,7 @@ import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v4.media.session.PlaybackStateCompat.*
 import androidx.core.net.toUri
 import com.crrl.beatplayer.R
-import com.crrl.beatplayer.alias.OnCompletion
-import com.crrl.beatplayer.alias.OnError
-import com.crrl.beatplayer.alias.OnIsPlaying
-import com.crrl.beatplayer.alias.OnPrepared
+import com.crrl.beatplayer.alias.*
 import com.crrl.beatplayer.extensions.isPlaying
 import com.crrl.beatplayer.extensions.position
 import com.crrl.beatplayer.extensions.toQueueInfo
@@ -63,6 +61,7 @@ interface BeatPlayer {
     fun onPrepared(prepared: OnPrepared<BeatPlayer>)
     fun onError(error: OnError<BeatPlayer>)
     fun onCompletion(completion: OnCompletion<BeatPlayer>)
+    fun onQueueEnd(queueEnd: OnQueueEndWithNoneRepeat<BeatPlayer>)
     fun updatePlaybackState(applier: PlaybackStateCompat.Builder.() -> Unit)
     fun setPlaybackState(state: PlaybackStateCompat)
     fun updateData(list: LongArray = longArrayOf(), title: String = "")
@@ -84,6 +83,7 @@ class BeatPlayerImplementation(
     private var preparedCallback: OnPrepared<BeatPlayer> = {}
     private var errorCallback: OnError<BeatPlayer> = {}
     private var completionCallback: OnCompletion<BeatPlayer> = {}
+    private var queueEndCallback: OnQueueEndWithNoneRepeat<BeatPlayer> = {}
 
     private var metadataBuilder = MediaMetadataCompat.Builder()
     private var stateBuilder = createDefaultPlaybackState()
@@ -122,7 +122,7 @@ class BeatPlayerImplementation(
                 REPEAT_MODE_ALL -> {
                     controller.transportControls.sendCustomAction(REPEAT_ALL, null)
                 }
-                else -> controller.transportControls.skipToNext()
+                else -> if(queueUtils.nextSongId == null) goToStart() else nextSong()
             }
         }
     }
@@ -197,9 +197,7 @@ class BeatPlayerImplementation(
     }
 
     override fun nextSong() {
-        queueUtils.nextSongId?.let {
-            playSong(it)
-        } ?: pause()
+        queueUtils.nextSongId?.let { playSong(it) }
     }
 
     override fun repeatSong() {
@@ -270,6 +268,10 @@ class BeatPlayerImplementation(
         this.completionCallback = completion
     }
 
+    override fun onQueueEnd(queueEnd: OnQueueEndWithNoneRepeat<BeatPlayer>) {
+        this.queueEndCallback = queueEnd
+    }
+
     override fun updatePlaybackState(applier: PlaybackStateCompat.Builder.() -> Unit) {
         applier(stateBuilder)
         setPlaybackState(stateBuilder.build())
@@ -321,6 +323,22 @@ class BeatPlayerImplementation(
             setState(queueData.state, queueData.seekPos, 1F)
             setExtras(extras)
         }
+    }
+
+    private fun goToStart(){
+        isInitialized = false
+
+        updatePlaybackState {
+            setState(STATE_STOPPED, 0, 1F)
+        }
+
+        queueUtils.currentSongId = queueUtils.queue.first()
+
+        val song = songsRepository.getSongForId(queueUtils.currentSongId)
+        Handler().postDelayed({
+            setMetaData(song)
+            queueEndCallback(this)
+        }, 250)
     }
 
     private fun setMetaData(song: Song) {

@@ -25,7 +25,9 @@ import com.crrl.beatplayer.utils.BeatConstants.QUEUE_INFO_KEY
 import com.crrl.beatplayer.utils.BeatConstants.QUEUE_LIST_KEY
 import com.crrl.beatplayer.utils.BeatConstants.QUEUE_LIST_TYPE_KEY
 import com.crrl.beatplayer.utils.BeatConstants.REMOVE_SONG
+import com.crrl.beatplayer.utils.BeatConstants.REPEAT_ALL
 import com.crrl.beatplayer.utils.BeatConstants.REPEAT_MODE
+import com.crrl.beatplayer.utils.BeatConstants.REPEAT_ONE
 import com.crrl.beatplayer.utils.BeatConstants.RESTORE_MEDIA_SESSION
 import com.crrl.beatplayer.utils.BeatConstants.SEEK_TO
 import com.crrl.beatplayer.utils.BeatConstants.SET_MEDIA_STATE
@@ -107,8 +109,11 @@ class MediaSessionCallback(
     override fun onCustomAction(action: String?, extras: Bundle?) {
         when (action) {
             SET_MEDIA_STATE -> setSavedMediaSessionState()
+            REPEAT_ONE -> musicPlayer.repeatSong()
+            REPEAT_ALL -> musicPlayer.repeatQueue()
             RESTORE_MEDIA_SESSION -> restoreMediaSession()
             REMOVE_SONG -> musicPlayer.removeFromQueue(extras?.getLong(SONG_KEY)!!)
+
             UPDATE_QUEUE -> extras?.let {
                 musicPlayer.updateData(
                     it.getLongArray(QUEUE_LIST_KEY)!!,
