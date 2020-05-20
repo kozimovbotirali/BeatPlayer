@@ -61,6 +61,8 @@ class BeatPlayerService : MediaBrowserServiceCompat(), KoinComponent {
     override fun onCreate() {
         super.onCreate()
 
+        beatPlayer.setData()
+
         sessionToken = beatPlayer.getSession().sessionToken
         becomingNoisyReceiver = BecomingNoisyReceiver(this, sessionToken!!)
 

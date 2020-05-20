@@ -64,7 +64,7 @@ class SongDetailFragment : BaseSongDetailFragment() {
         }
 
         songDetailViewModel.time.observe(this) {
-            val total = songDetailViewModel.currentData.value?.let { it.duration } ?: 0
+            val total = songDetailViewModel.currentData.value?.duration ?: 0
             binding.seekBar.apply {
                 val t = progress.percentToMs(total).fixToStep(1000)
                 if (t != it) {

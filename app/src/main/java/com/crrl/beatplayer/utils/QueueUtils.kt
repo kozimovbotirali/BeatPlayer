@@ -57,8 +57,8 @@ class QueueUtilsImplementation(
     override var queue: LongArray = longArrayOf()
         set(value) {
             field = value
-            if (field.isNotEmpty()) {
-                mediaSession.setQueue(field.toQueue(songsRepository))
+            if (value.isNotEmpty()) {
+                mediaSession.setQueue(value.toQueue(songsRepository))
             }
         }
 
@@ -68,7 +68,7 @@ class QueueUtilsImplementation(
                 value
             } else context.getString(R.string.all_songs)
 
-            mediaSession.setQueueTitle(field)
+            mediaSession.setQueueTitle(value)
         }
 
     override val currentSong: Song

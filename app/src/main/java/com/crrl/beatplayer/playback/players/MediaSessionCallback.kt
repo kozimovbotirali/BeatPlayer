@@ -17,6 +17,7 @@ import android.os.Bundle
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v4.media.session.PlaybackStateCompat.STATE_NONE
+import com.crrl.beatplayer.extensions.toIdList
 import com.crrl.beatplayer.extensions.toMediaId
 import com.crrl.beatplayer.repository.SongsRepository
 import com.crrl.beatplayer.utils.BeatConstants
@@ -127,8 +128,11 @@ class MediaSessionCallback(
     }
 
     private fun restoreMediaSession() {
-        musicPlayer.setPlaybackState(mediaSession.controller.playbackState)
         mediaSession.setMetadata(mediaSession.controller.metadata)
+        musicPlayer.setPlaybackState(mediaSession.controller.playbackState)
+        musicPlayer.setData(
+            mediaSession.controller.queue.toIdList(),
+            mediaSession.controller.queueTitle.toString()
+        )
     }
-
 }

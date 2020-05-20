@@ -67,6 +67,8 @@ class NotificationsImplementation(
         val artistName = mediaSession.controller.metadata.getString(METADATA_KEY_ARTIST)
         val trackName = mediaSession.controller.metadata.getString(METADATA_KEY_TITLE)
         val artwork = mediaSession.controller.metadata.getBitmap(METADATA_KEY_ALBUM_ART)
+        val description =
+            mediaSession.controller.metadata.getString(METADATA_KEY_DISPLAY_DESCRIPTION)
         val isPlaying = mediaSession.isPlaying()
 
         val playButtonResId = if (isPlaying) {
@@ -93,8 +95,8 @@ class NotificationsImplementation(
             setLargeIcon(artwork)
             setContentIntent(clickIntent)
             setContentTitle(trackName)
-            setContentText(artistName)
-            setSubText(albumName)
+            setContentText(context.getString(R.string.with_separator, artistName, albumName))
+            setSubText(description)
             setColorized(true)
             setShowWhen(false)
             setVisibility(NotificationCompat.VISIBILITY_PUBLIC)

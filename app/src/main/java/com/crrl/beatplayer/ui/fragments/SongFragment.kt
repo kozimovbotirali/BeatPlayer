@@ -31,7 +31,6 @@ import com.crrl.beatplayer.ui.viewmodels.PlaylistViewModel
 import com.crrl.beatplayer.ui.viewmodels.SongViewModel
 import com.crrl.beatplayer.ui.widgets.actions.AlertItemAction
 import com.crrl.beatplayer.ui.widgets.stylers.AlertItemTheme
-import com.crrl.beatplayer.utils.SettingsUtility
 import com.crrl.beatplayer.utils.SortModes
 import kotlinx.android.synthetic.main.layout_recyclerview.*
 import org.koin.android.ext.android.inject
@@ -71,7 +70,7 @@ class SongFragment : BaseFragment<Song>() {
 
         songDetailViewModel.lastData.observe(this) { mediaItemData ->
             val position = songAdapter.songList.indexOfFirst { it.id == mediaItemData.id } + 1
-            if(settingsUtility.didStop){
+            if (settingsUtility.didStop) {
                 songAdapter.notifyDataSetChanged()
                 settingsUtility.didStop = false
             } else songAdapter.notifyItemChanged(position)
@@ -91,7 +90,8 @@ class SongFragment : BaseFragment<Song>() {
         viewModel.getSongList().observe(this) {
             if (!songAdapter.songList.deepEquals(it)) {
                 songAdapter.updateDataSet(it)
-                mainViewModel.reloadQueueIds(it.toIDList(), getString(R.string.all_songs))
+                if (songAdapter.songList.isNotEmpty())
+                    mainViewModel.reloadQueueIds(it.toIDList(), getString(R.string.all_songs))
             }
         }
 
@@ -104,7 +104,7 @@ class SongFragment : BaseFragment<Song>() {
         createDialog()
     }
 
-    private fun createDialog(){
+    private fun createDialog() {
         dialog = buildSortModesDialog(listOf(
             AlertItemAction(
                 context!!.getString(R.string.sort_default),

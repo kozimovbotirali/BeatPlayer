@@ -103,7 +103,6 @@ class SongDetailViewModel(
         }
     }
 
-
     fun update(newTime: Int) {
         timeLiveData.postValue(newTime)
     }

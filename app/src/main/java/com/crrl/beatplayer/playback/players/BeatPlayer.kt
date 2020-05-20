@@ -316,6 +316,7 @@ class BeatPlayerImplementation(
             putInt(REPEAT_MODE, queueData.repeatMode)
             putInt(SHUFFLE_MODE, queueData.shuffleMode)
         }
+
         updatePlaybackState {
             setState(queueData.state, queueData.seekPos, 1F)
             setExtras(extras)

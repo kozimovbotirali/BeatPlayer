@@ -70,8 +70,6 @@ class MainActivity : BaseActivity() {
         }
         if (!isPermissionsGranted()) return
 
-        songDetailViewModel.update(BIND_STATE_BOUND)
-
         songDetailViewModel.time.observe(this) {
             val total = songDetailViewModel.currentData.value?.duration ?: 0
             viewModel.binding.progressCircular.apply {
