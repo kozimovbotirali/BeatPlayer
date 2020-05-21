@@ -16,14 +16,14 @@ package com.crrl.beatplayer.playback.players
 import android.os.Bundle
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
+import android.support.v4.media.session.PlaybackStateCompat.SHUFFLE_MODE_ALL
 import android.support.v4.media.session.PlaybackStateCompat.STATE_NONE
 import com.crrl.beatplayer.extensions.toIdList
 import com.crrl.beatplayer.extensions.toMediaId
 import com.crrl.beatplayer.repository.SongsRepository
 import com.crrl.beatplayer.utils.BeatConstants
+import com.crrl.beatplayer.utils.BeatConstants.PLAY_ALL_SHUFFLED
 import com.crrl.beatplayer.utils.BeatConstants.QUEUE_INFO_KEY
-import com.crrl.beatplayer.utils.BeatConstants.QUEUE_LIST_KEY
-import com.crrl.beatplayer.utils.BeatConstants.QUEUE_LIST_TYPE_KEY
 import com.crrl.beatplayer.utils.BeatConstants.REMOVE_SONG
 import com.crrl.beatplayer.utils.BeatConstants.REPEAT_ALL
 import com.crrl.beatplayer.utils.BeatConstants.REPEAT_MODE
@@ -114,11 +114,28 @@ class MediaSessionCallback(
             RESTORE_MEDIA_SESSION -> restoreMediaSession()
             REMOVE_SONG -> musicPlayer.removeFromQueue(extras?.getLong(SONG_KEY)!!)
 
-            UPDATE_QUEUE -> extras?.let {
-                musicPlayer.updateData(
-                    it.getLongArray(QUEUE_LIST_KEY)!!,
-                    it.getString(QUEUE_LIST_TYPE_KEY)!!
-                )
+            UPDATE_QUEUE -> {
+                extras ?: return
+
+                val queue = extras.getLongArray(QUEUE_INFO_KEY) ?: longArrayOf()
+                val queueTitle = extras.getString(BeatConstants.SONG_LIST_NAME) ?: ""
+
+                musicPlayer.setData(queue, queueTitle)
+            }
+
+            PLAY_ALL_SHUFFLED -> {
+                extras ?: return
+
+                val controller = mediaSession.controller ?: return
+
+                val queue = extras.getLongArray(QUEUE_INFO_KEY) ?: longArrayOf()
+                val queueTitle = extras.getString(BeatConstants.SONG_LIST_NAME) ?: ""
+
+                musicPlayer.setData(queue, queueTitle)
+
+                controller.transportControls.setShuffleMode(SHUFFLE_MODE_ALL)
+
+                musicPlayer.nextSong()
             }
         }
     }

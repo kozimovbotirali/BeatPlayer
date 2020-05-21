@@ -155,16 +155,12 @@ class AlbumAdapter(private val context: Context?) :
                 executePendingBindings()
 
                 sortAlbum.setOnClickListener(this@ViewHolderAlbumHeader)
-                playAllAlbum.setOnClickListener(this@ViewHolderAlbumHeader)
             }
         }
 
         override fun onClick(view: View) {
             if (itemClickListener != null)
-                when (view.id) {
-                    R.id.play_all_album -> itemClickListener!!.onPlayAllClick(view)
-                    R.id.sort_album -> itemClickListener!!.onSortClick(view)
-                }
+                itemClickListener!!.onSortClick(view)
         }
     }
 }

@@ -28,6 +28,8 @@ import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.ui.adapters.SongAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.viewmodels.PlaylistViewModel
+import com.crrl.beatplayer.utils.BeatConstants
+import com.crrl.beatplayer.utils.BeatConstants.PLAY_ALL_SHUFFLED
 import com.crrl.beatplayer.utils.BeatConstants.PLAY_LIST_DETAIL
 import kotlinx.android.synthetic.main.layout_recyclerview.*
 import org.koin.android.ext.android.inject
@@ -114,6 +116,8 @@ class PlaylistDetailFragment : BaseFragment<Song>() {
     }
 
     override fun onShuffleClick(view: View) {
+        val extras = getExtraBundle(songAdapter.songList.toIDList(), binding.playlist!!.name)
+        mainViewModel.transportControls()?.sendCustomAction(PLAY_ALL_SHUFFLED, extras)
     }
 
     override fun onPlayAllClick(view: View) {

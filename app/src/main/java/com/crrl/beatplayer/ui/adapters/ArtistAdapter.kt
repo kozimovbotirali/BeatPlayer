@@ -141,16 +141,12 @@ class ArtistAdapter(private val context: Context?) :
                 executePendingBindings()
 
                 sortArtist.setOnClickListener(this@ViewHolderAlbumHeader)
-                playAllArtist.setOnClickListener(this@ViewHolderAlbumHeader)
             }
         }
 
         override fun onClick(view: View) {
             if (itemClickListener != null)
-                when (view.id) {
-                    R.id.play_all_artist -> itemClickListener!!.onPlayAllClick(view)
-                    R.id.sort_artist -> itemClickListener!!.onSortClick(view)
-                }
+                itemClickListener!!.onSortClick(view)
         }
     }
 }

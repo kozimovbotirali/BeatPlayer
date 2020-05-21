@@ -132,6 +132,8 @@ class AlbumDetailFragment : BaseFragment<Song>() {
     }
 
     override fun onShuffleClick(view: View) {
+        val extras = getExtraBundle(songAdapter.songList.toIDList(), album.title)
+        mainViewModel.transportControls()?.sendCustomAction(BeatConstants.PLAY_ALL_SHUFFLED, extras)
     }
 
     override fun onPlayAllClick(view: View) {
