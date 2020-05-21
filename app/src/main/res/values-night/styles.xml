@@ -27,7 +27,5 @@
         <item name="subTitleTextColor">@color/colorSubTitleTextDark</item>
         <item name="bodyTextColor">@color/colorBodyTextDark</item>
         <item name="btnTintColor">@color/colorTitleTextDark</item>
-        <item name="android:windowLightStatusBar">false</item>
-        <item name="android:windowTranslucentStatus">true</item>
     </style>
 </resources>
