@@ -25,19 +25,33 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?colorPrimary">
+        android:background="?colorPrimary"
+        android:clickable="true"
+        android:focusable="true">
+
+        <ImageButton
+            android:id="@+id/back"
+            android:layout_width="@dimen/btn_size"
+            android:layout_height="@dimen/btn_size"
+            android:background="@drawable/btn_ripple"
+            android:contentDescription="@string/cover"
+            android:onClick="back"
+            android:tint="?colorAccent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/info_container"
+            app:layout_constraintBottom_toBottomOf="@+id/info_container"
+            app:srcCompat="@drawable/ic_back" />
 
         <LinearLayout
-            android:id="@+id/folder_list_container"
+            android:id="@+id/info_container"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="@dimen/margin_12"
-            android:layout_marginTop="@dimen/margin_12"
             android:clickable="true"
             android:focusable="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/menu"
+            app:layout_constraintStart_toEndOf="@+id/back"
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
@@ -62,21 +76,25 @@
                 android:textSize="@dimen/title_text_size" />
         </LinearLayout>
 
-        <View
-            android:id="@+id/view"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:background="@drawable/album_detail_shape"
-            android:clickable="true"
-            android:focusable="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/folder_list_container" />
+        <ImageButton
+            android:id="@+id/menu"
+            android:layout_width="@dimen/btn_size"
+            android:layout_height="@dimen/btn_size"
+            android:background="@drawable/btn_ripple"
+            android:contentDescription="@string/cover"
+            android:onClick="toggleAddToFav"
+            android:src="@drawable/ic_more"
+            android:tint="?colorAccent"
+            app:layout_constraintBottom_toBottomOf="@+id/info_container"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/info_container"/>
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:background="@drawable/album_detail_shape"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/folder_list_container">
+            app:layout_constraintTop_toBottomOf="@+id/info_container">
 
             <ProgressBar
                 android:layout_width="wrap_content"
@@ -107,11 +125,8 @@
                         android:textColor="?subTitleTextColor"
                         android:text="@{viewModel.getLyrics(viewModel.currentData)}"
                         android:textSize="18sp" />
-
                 </LinearLayout>
             </ScrollView>
-
         </FrameLayout>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
