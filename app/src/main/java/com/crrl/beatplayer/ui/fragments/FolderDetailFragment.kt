@@ -60,33 +60,23 @@ class FolderDetailFragment : BaseFragment<Song>() {
     }
 
     fun init() {
-        val id = arguments?.getString(FOLDER_KEY)!!
-        binding.isLoading = true
-        binding.name = arguments?.getString(FAVORITE_NAME)
+        val id = arguments?.getLong(FOLDER_KEY)!!
+        val folder = folderViewModel.getFolder(id)
 
         songAdapter = SongAdapter(context, songDetailViewModel).apply {
             showHeader = true
             isAlbumDetail = true
             itemClickListener = this@FolderDetailFragment
         }
-        postponeEnterTransition()
-        folderViewModel.getFolder(id).observe(this){ folder ->
-            initNeeded(Song(), emptyList(), folder.id)
-            binding.folder = folder
-            folderViewModel.getSongsByFolder(folder.realPath).observe(this) {
-                if (!songAdapter.songList.deepEquals(it)) {
-                    mainViewModel.reloadQueueIds(it.toIDList(), binding.folder!!.name)
-                    songAdapter.updateDataSet(it)
-                }
-                binding.isLoading = false
-                if (it.isEmpty()) {
-                    favoriteViewModel.deleteFavorites(longArrayOf(folder.id))
-                    activity?.onBackPressed()
-                }
-                (view?.parent as? ViewGroup)?.doOnPreDraw {
-                    startPostponedEnterTransition()
-                }
+
+        initNeeded(Song(), emptyList(), id)
+
+        folderViewModel.getSongsByFolder(folder.ids).observe(this) {
+            if (!songAdapter.songList.deepEquals(it)) {
+                mainViewModel.reloadQueueIds(it.toIDList(), binding.folder!!.name)
+                songAdapter.updateDataSet(it)
             }
+
         }
 
         songDetailViewModel.lastData.observe(this) { mediaItemData ->
@@ -120,6 +110,7 @@ class FolderDetailFragment : BaseFragment<Song>() {
         binding.let {
             it.mainViewModel = mainViewModel
             it.lifecycleOwner = this
+            it.folder = folder
             it.executePendingBindings()
         }
     }

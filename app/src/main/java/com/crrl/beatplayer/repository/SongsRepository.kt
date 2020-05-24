@@ -29,6 +29,7 @@ import com.crrl.beatplayer.utils.SettingsUtility
 
 interface SongsRepository {
     fun loadSongs(): List<Song>
+    fun getSongs(): List<Song>
     fun getSongForId(id: Long): Song
     fun search(searchString: String, limit: Int = Int.MAX_VALUE): List<Song>
     fun deleteTracks(ids: LongArray): Int
@@ -45,6 +46,11 @@ class SongsRepositoryImplementation(context: Context) : SongsRepository {
             .toList(true) {
                 Song.createFromCursor(this)
             }
+    }
+
+    override fun getSongs(): List<Song> {
+        return makeSongCursor(null, null, "_data")
+            .toList(true, Song.Companion::createFromFolderCursor)
     }
 
     override fun getSongForId(id: Long): Song {
@@ -118,8 +124,17 @@ class SongsRepositoryImplementation(context: Context) : SongsRepository {
         if (!selection.isNullOrEmpty()) {
             selectionStatement.append(" AND $selection")
         }
-        val projection =
-            arrayOf("_id", "title", "artist", "album", "duration", "track", "artist_id", "album_id")
+        val projection = arrayOf(
+            "_id",
+            "title",
+            "artist",
+            "album",
+            "duration",
+            "track",
+            "artist_id",
+            "album_id",
+            "_data"
+        )
 
         return contentResolver.query(
             EXTERNAL_CONTENT_URI,

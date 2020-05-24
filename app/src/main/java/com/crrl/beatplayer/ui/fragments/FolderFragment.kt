@@ -17,6 +17,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentFolderBinding
@@ -27,8 +28,6 @@ import com.crrl.beatplayer.models.Folder
 import com.crrl.beatplayer.ui.adapters.FolderAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.viewmodels.FolderViewModel
-import com.crrl.beatplayer.utils.BeatConstants
-import com.crrl.beatplayer.utils.BeatConstants.FAVORITE_NAME
 import com.crrl.beatplayer.utils.BeatConstants.FOLDER_KEY
 import kotlinx.android.synthetic.main.layout_recyclerview.*
 import org.koin.android.ext.android.inject
@@ -63,6 +62,7 @@ class FolderFragment : BaseFragment<Folder>() {
                 adapter = folderAdapter
             }
         }
+
         viewModel.getFolders().observe(this) {
             folderAdapter.updateDataSet(it)
         }
@@ -75,15 +75,12 @@ class FolderFragment : BaseFragment<Folder>() {
     }
 
     override fun onItemClick(view: View, position: Int, item: Folder) {
-        val extras = Bundle()
-        extras.putString(FOLDER_KEY, item.realPath)
-        extras.putString(FAVORITE_NAME, item.name)
         activity!!.addFragment(
             R.id.nav_host_fragment,
             FolderDetailFragment(),
-            BeatConstants.FOLDER_KEY,
+            FOLDER_KEY,
             true,
-            extras
+            bundleOf(FOLDER_KEY to item.id)
         )
     }
 }

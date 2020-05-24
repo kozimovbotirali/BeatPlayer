@@ -13,7 +13,6 @@
 
 package com.crrl.beatplayer.models
 
-import android.database.Cursor
 import com.crrl.beatplayer.extensions.fixedName
 import com.crrl.beatplayer.extensions.fixedPath
 import com.crrl.beatplayer.utils.BeatConstants.FOLDER_TYPE
@@ -24,25 +23,25 @@ class Folder(
     val id: Long = -1,
     val name: String = "",
     val albumId: Long = -1,
-    val fakePath: String = "",
-    val realPath: String = "",
-    var songCount: Int = 0
+    val path: String = "",
+    val ids: LongArray = longArrayOf()
 ) : MediaItem(id) {
+
     companion object {
-        fun createFromCursor(cursor: Cursor): Folder {
+        fun fromSong(song: Song, songs: LongArray): Folder {
             return Folder(
-                cursor.getLong(0),
-                File(File(cursor.getString(2)).parent!!).fixedName(),
-                cursor.getLong(1),
-                File(File(cursor.getString(2)).parent!!).fixedPath(),
-                "${File(cursor.getString(2)).parent}/"
+                song.id,
+                File(song.path).fixedName(),
+                song.albumId,
+                File(song.path).fixedPath(),
+                songs
             )
         }
     }
 
     override fun compare(other: MediaItem): Boolean {
         other as Folder
-        return id == other.id && name == other.name && albumId == other.albumId && realPath == other.realPath && songCount == other.songCount
+        return id == other.id && name == other.name && albumId == other.albumId
     }
 
     override fun toString(): String {
@@ -50,6 +49,6 @@ class Folder(
     }
 
     fun toFavorite(): Favorite {
-        return Favorite(id, name, realPath, albumId, 0, songCount, FOLDER_TYPE)
+        return Favorite(id, name, path, albumId, 0, ids.size, FOLDER_TYPE)
     }
 }

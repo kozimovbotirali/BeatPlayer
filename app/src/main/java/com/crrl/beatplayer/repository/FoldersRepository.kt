@@ -13,105 +13,35 @@
 
 package com.crrl.beatplayer.repository
 
-import android.content.Context
-import android.database.Cursor
-import android.provider.MediaStore
-import android.text.TextUtils
-import com.crrl.beatplayer.extensions.toList
+import com.crrl.beatplayer.extensions.toIDList
 import com.crrl.beatplayer.models.Folder
 import com.crrl.beatplayer.models.Song
-import com.crrl.beatplayer.utils.SettingsUtility
-import java.util.*
 
 interface FoldersRepository {
-    fun getFolder(path: String): Folder
     fun getFolders(): List<Folder>
-    fun getSongsForIds(path: String): List<Song>
+    fun getFolder(id: Long): Folder
+    fun getSongs(ids: LongArray): List<Song>
 }
 
-class FoldersRepositoryImplementation(context: Context) : FoldersRepository {
-
-    private val contentResolver = context.contentResolver
-    private val settingsUtility = SettingsUtility(context)
-
-
-    override fun getFolder(path: String): Folder {
-        val songList = makeFolderCursor("rtrim(_data, replace(_data, '/', '')) = ?", arrayOf(path)).toList(true, Folder.Companion::createFromCursor)
-        val folderList = mutableListOf<Folder>()
-        songList.groupBy { it.fakePath }.map { pair ->
-            folderList.add(pair.value.first().apply {
-                songCount = pair.value.size
-            })
-        }
-        return folderList.first()
-    }
+class FoldersRepositoryImplementation(
+    private val songsRepository: SongsRepository
+) : FoldersRepository {
 
     override fun getFolders(): List<Folder> {
-        val songList = makeFolderCursor(null, null).toList(true, Folder.Companion::createFromCursor)
-        val folderList = mutableListOf<Folder>()
-        songList.sortBy { it.name.toLowerCase(Locale.ROOT) }
-        songList.groupBy { it.fakePath }.map { pair ->
-            folderList.add(pair.value.first().apply {
-                songCount = pair.value.size
-            })
-        }
-        return folderList
+        return songsRepository.getSongs().groupBy { it.path }.map {
+            Folder.fromSong(it.value.first(), it.value.toIDList())
+        }.sortedBy { it.name }
     }
 
-    override fun getSongsForIds(path: String): List<Song> {
-        return makeFolderSongCursor("rtrim(_data, replace(_data, '/', '')) = ?", arrayOf(path))
-            .toList(true) { Song.createFromCursor(this) }
+    override fun getFolder(id: Long): Folder {
+        return songsRepository.getSongs().groupBy { it.path }.filter {
+            it.value.first().id == id
+        }.map {
+            Folder.fromSong(it.value.first(), it.value.toIDList())
+        }.firstOrNull() ?: Folder()
     }
 
-    private fun makeFolderCursor(
-        selection: String?,
-        paramArrayOfString: Array<String>?,
-        sortOrder: String = ""
-    ): Cursor? {
-        val selectionStatement = StringBuilder("is_music=1 AND title != ''")
-
-        if (!TextUtils.isEmpty(selection)) {
-            selectionStatement.append(" AND $selection")
-        }
-        return contentResolver.query(
-            MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-            arrayOf(
-                "_id",
-                "album_id",
-                "_data"
-            ),
-            selectionStatement.toString(),
-            paramArrayOfString,
-            sortOrder
-        )
-    }
-
-    private fun makeFolderSongCursor(
-        selection: String?,
-        paramArrayOfString: Array<String>?,
-        sortOrder: String = ""
-    ): Cursor? {
-        var selectionStatement = "title != ''"
-
-        if (!TextUtils.isEmpty(selection)) {
-            selectionStatement = "$selectionStatement AND $selection"
-        }
-        return contentResolver.query(
-            MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-            arrayOf(
-                "_id",
-                "title",
-                "artist",
-                "album",
-                "duration",
-                "track",
-                "artist_id",
-                "album_id",
-                "_data"
-            ),
-            selectionStatement,
-            paramArrayOfString,
-            sortOrder
-        )
+    override fun getSongs(ids: LongArray): List<Song> {
+        return songsRepository.getSongsForIds(ids)
     }
 }

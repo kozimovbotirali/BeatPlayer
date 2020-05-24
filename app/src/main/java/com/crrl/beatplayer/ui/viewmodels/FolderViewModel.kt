@@ -25,10 +25,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
 class FolderViewModel(
-    private val repositoryFol: FoldersRepository
+    private val repository: FoldersRepository
 ) : CoroutineViewModel(Main) {
 
-    private val currentFolder = MutableLiveData<Folder>()
     private val foldersData: MutableLiveData<List<Folder>> = MutableLiveData()
     private val songByFolder: MutableLiveData<List<Song>> = MutableLiveData()
 
@@ -36,18 +35,18 @@ class FolderViewModel(
     fun getFolders(): LiveData<List<Folder>> {
         launch {
             val folders = withContext(IO) {
-                repositoryFol.getFolders()
+                repository.getFolders()
             }
             foldersData.postValue(folders)
         }
         return foldersData
     }
 
-    fun getSongsByFolder(path: String): LiveData<List<Song>> {
+    fun getSongsByFolder(ids: LongArray): LiveData<List<Song>> {
         launch {
             while (true) {
                 val songs = withContext(IO) {
-                    repositoryFol.getSongsForIds(path)
+                    repository.getSongs(ids)
                 }
                 songByFolder.postValue(songs)
                 delay(1000)
@@ -56,13 +55,7 @@ class FolderViewModel(
         return songByFolder
     }
 
-    fun getFolder(path: String): LiveData<Folder> {
-        launch {
-            val folder = withContext(IO) {
-                repositoryFol.getFolder(path)
-            }
-            currentFolder.postValue(folder)
-        }
-        return currentFolder
+    fun getFolder(id: Long): Folder {
+        return repository.getFolder(id)
     }
 }
