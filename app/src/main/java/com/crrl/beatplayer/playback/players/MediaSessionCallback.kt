@@ -24,6 +24,8 @@ import com.crrl.beatplayer.repository.SongsRepository
 import com.crrl.beatplayer.utils.BeatConstants
 import com.crrl.beatplayer.utils.BeatConstants.PLAY_ALL_SHUFFLED
 import com.crrl.beatplayer.utils.BeatConstants.QUEUE_INFO_KEY
+import com.crrl.beatplayer.utils.BeatConstants.QUEUE_LIST_KEY
+import com.crrl.beatplayer.utils.BeatConstants.QUEUE_LIST_TYPE_KEY
 import com.crrl.beatplayer.utils.BeatConstants.REMOVE_SONG
 import com.crrl.beatplayer.utils.BeatConstants.REPEAT_ALL
 import com.crrl.beatplayer.utils.BeatConstants.REPEAT_MODE
@@ -33,6 +35,7 @@ import com.crrl.beatplayer.utils.BeatConstants.SEEK_TO
 import com.crrl.beatplayer.utils.BeatConstants.SET_MEDIA_STATE
 import com.crrl.beatplayer.utils.BeatConstants.SHUFFLE_MODE
 import com.crrl.beatplayer.utils.BeatConstants.SONG_KEY
+import com.crrl.beatplayer.utils.BeatConstants.SONG_LIST_NAME
 import com.crrl.beatplayer.utils.BeatConstants.UPDATE_QUEUE
 
 class MediaSessionCallback(
@@ -117,10 +120,10 @@ class MediaSessionCallback(
             UPDATE_QUEUE -> {
                 extras ?: return
 
-                val queue = extras.getLongArray(QUEUE_INFO_KEY) ?: longArrayOf()
-                val queueTitle = extras.getString(BeatConstants.SONG_LIST_NAME) ?: ""
+                val queue = extras.getLongArray(QUEUE_LIST_KEY) ?: longArrayOf()
+                val queueTitle = extras.getString(QUEUE_LIST_TYPE_KEY) ?: ""
 
-                musicPlayer.setData(queue, queueTitle)
+                musicPlayer.updateData(queue, queueTitle)
             }
 
             PLAY_ALL_SHUFFLED -> {
@@ -129,7 +132,7 @@ class MediaSessionCallback(
                 val controller = mediaSession.controller ?: return
 
                 val queue = extras.getLongArray(QUEUE_INFO_KEY) ?: longArrayOf()
-                val queueTitle = extras.getString(BeatConstants.SONG_LIST_NAME) ?: ""
+                val queueTitle = extras.getString(SONG_LIST_NAME) ?: ""
 
                 musicPlayer.setData(queue, queueTitle)
 
