@@ -93,7 +93,7 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:singleLine="true"
-                    android:text="@{folder.fakePath}"
+                    android:text="@{folder.path}"
                     android:textColor="?subTitleTextColor"
                     android:textSize="@dimen/sub_title_text_size" />
             </LinearLayout>

@@ -20,6 +20,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.crrl.beatplayer.R
@@ -133,26 +134,22 @@ class SearchFragment : BaseFragment<MediaItem>(), TextWatcher {
     }
 
     private fun albumClicked(item: Album) {
-        val extras = Bundle()
-        extras.putLong(BeatConstants.ALBUM_KEY, item.id)
         activity!!.addFragment(
             R.id.nav_host_fragment,
             AlbumDetailFragment(),
             BeatConstants.ALBUM_DETAIL,
             true,
-            extras
+            bundleOf(BeatConstants.ALBUM_KEY to item.id)
         )
     }
 
     private fun artistClicked(item: Artist) {
-        val extras = Bundle()
-        extras.putLong(BeatConstants.ARTIST_KEY, item.id)
         activity!!.addFragment(
             R.id.nav_host_fragment,
             ArtistDetailFragment(),
             BeatConstants.ARTIST_DETAIL,
             true,
-            extras
+            bundleOf(BeatConstants.ARTIST_KEY to item.id)
         )
     }
 

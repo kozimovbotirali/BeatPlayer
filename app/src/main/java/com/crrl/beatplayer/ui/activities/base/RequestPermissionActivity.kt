@@ -21,10 +21,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.crrl.beatplayer.db.DBHelper
 import com.crrl.beatplayer.models.Favorite
-import com.crrl.beatplayer.repository.FavoritesRepository
-import com.crrl.beatplayer.repository.FavoritesRepositoryImplementation
-import com.crrl.beatplayer.repository.PlaylistRepository
-import com.crrl.beatplayer.repository.PlaylistRepositoryImplementation
+import com.crrl.beatplayer.repository.*
 import com.crrl.beatplayer.utils.BeatConstants.FAVORITE_ID
 import com.crrl.beatplayer.utils.BeatConstants.FAVORITE_NAME
 import com.crrl.beatplayer.utils.BeatConstants.FAVORITE_TYPE
@@ -55,13 +52,14 @@ open class RequestPermissionActivity : AppCompatActivity() {
         }
         val frF: FavoritesRepositoryImplementation = get()
         val frP: PlaylistRepositoryImplementation = get()
+
         try {
             createFavList(frF)
         } catch (ex: SQLiteException) {
             createDB(frF)
         }
         try {
-            frP.getPlayLists()
+            frP.getPlaylist(-1)
         } catch (ex: SQLiteException) {
             createDB(frP)
         }

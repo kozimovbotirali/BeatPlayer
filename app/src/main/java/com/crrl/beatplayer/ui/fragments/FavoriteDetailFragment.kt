@@ -73,7 +73,7 @@ class FavoriteDetailFragment : BaseFragment<Song>() {
                 safeActivity.onBackPressed()
             } else if (!songAdapter.songList.deepEquals(it)) {
                 songAdapter.updateDataSet(it)
-                mainViewModel.reloadQueueIds(it.toIDList(), binding.favorite!!.title)
+                mainViewModel.reloadQueueIds(it.toIDList(), getString(R.string.favorite_music))
                 (view?.parent as? ViewGroup)?.doOnPreDraw {
                     startPostponedEnterTransition()
                 }
@@ -115,17 +115,17 @@ class FavoriteDetailFragment : BaseFragment<Song>() {
     }
 
     override fun onItemClick(view: View, position: Int, item: Song) {
-        val extras = getExtraBundle(songAdapter.songList.toIDList(), binding.favorite!!.title)
+        val extras = getExtraBundle(songAdapter.songList.toIDList(), getString(R.string.favorite_music))
         mainViewModel.mediaItemClicked(item.toMediaItem(), extras)
     }
 
     override fun onShuffleClick(view: View) {
-        val extras = getExtraBundle(songAdapter.songList.toIDList(), binding.favorite!!.title)
+        val extras = getExtraBundle(songAdapter.songList.toIDList(), getString(R.string.favorite_music))
         mainViewModel.transportControls()?.sendCustomAction(PLAY_ALL_SHUFFLED, extras)
     }
 
     override fun onPlayAllClick(view: View) {
-        val extras = getExtraBundle(songAdapter.songList.toIDList(), binding.favorite!!.title)
+        val extras = getExtraBundle(songAdapter.songList.toIDList(), getString(R.string.favorite_music))
         mainViewModel.mediaItemClicked(songAdapter.songList.first().toMediaItem(), extras)
     }
 

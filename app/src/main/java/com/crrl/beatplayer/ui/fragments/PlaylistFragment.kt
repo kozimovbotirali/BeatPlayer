@@ -18,6 +18,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast.LENGTH_SHORT
+import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.crrl.beatplayer.R
@@ -90,10 +91,11 @@ class PlaylistFragment : BaseFragment<Playlist>() {
 
 
     override fun onItemClick(view: View, position: Int, item: Playlist) {
-        val extras = Bundle()
-        extras.putLong(PLAY_LIST_DETAIL, item.id)
         activity!!.addFragment(
-            R.id.nav_host_fragment, PlaylistDetailFragment(), PLAY_LIST_DETAIL, extras = extras
+            R.id.nav_host_fragment,
+            PlaylistDetailFragment(),
+            PLAY_LIST_DETAIL,
+            extras = bundleOf(PLAY_LIST_DETAIL to item.id)
         )
     }
 

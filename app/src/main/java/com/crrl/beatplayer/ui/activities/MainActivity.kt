@@ -19,6 +19,7 @@ import android.os.Bundle
 import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v4.media.session.PlaybackStateCompat.*
 import android.view.View
+import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.extensions.*
@@ -170,10 +171,11 @@ class MainActivity : BaseActivity() {
                 )
                 return
             }
-            val extras = Bundle()
-            extras.putLong(PLAY_LIST_DETAIL, id)
             addFragment(
-                R.id.nav_host_fragment, PlaylistDetailFragment(), PLAY_LIST_DETAIL, extras = extras
+                R.id.nav_host_fragment,
+                PlaylistDetailFragment(),
+                PLAY_LIST_DETAIL,
+                extras = bundleOf(PLAY_LIST_DETAIL to id)
             )
         } else {
             viewModel.binding.mainContainer.snackbar(

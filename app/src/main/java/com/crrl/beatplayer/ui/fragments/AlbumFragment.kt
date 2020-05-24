@@ -19,6 +19,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.GridLayoutManager
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentAlbumBinding
@@ -139,14 +140,12 @@ class AlbumFragment : BaseFragment<Album>() {
     }
 
     override fun onItemClick(view: View, position: Int, item: Album) {
-        val extras = Bundle()
-        extras.putLong(ALBUM_KEY, item.id)
         activity!!.addFragment(
             R.id.nav_host_fragment,
             AlbumDetailFragment(),
             BeatConstants.ALBUM_DETAIL,
             true,
-            extras
+            bundleOf(ALBUM_KEY to item.id)
         )
     }
 

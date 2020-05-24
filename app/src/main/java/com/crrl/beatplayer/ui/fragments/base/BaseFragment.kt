@@ -23,6 +23,7 @@ import android.widget.Toast.LENGTH_LONG
 import android.widget.Toast.LENGTH_SHORT
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.extensions.*
 import com.crrl.beatplayer.interfaces.ItemClickListener
@@ -350,7 +351,7 @@ open class BaseFragment<T : MediaItem> : CoroutineFragment(), ItemClickListener<
         if (currentId == id)
             mainViewModel.transportControls()?.skipToNext()
         mainViewModel.transportControls()
-            ?.sendCustomAction(REMOVE_SONG, Bundle().apply { putLong(SONG_KEY, id) })
+            ?.sendCustomAction(REMOVE_SONG, bundleOf(SONG_KEY to id))
     }
 
     open fun onBackPressed(): Boolean {

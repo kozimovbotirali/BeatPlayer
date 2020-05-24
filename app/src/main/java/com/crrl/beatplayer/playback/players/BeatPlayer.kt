@@ -23,6 +23,7 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v4.media.session.PlaybackStateCompat.*
 import androidx.core.net.toUri
+import androidx.core.os.bundleOf
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.alias.*
 import com.crrl.beatplayer.extensions.isPlaying
@@ -314,10 +315,10 @@ class BeatPlayerImplementation(
         setData(queueIds, queueData.name)
         setMetaData(queueUtils.currentSong)
 
-        val extras = Bundle().apply {
-            putInt(REPEAT_MODE, queueData.repeatMode)
-            putInt(SHUFFLE_MODE, queueData.shuffleMode)
-        }
+        val extras = bundleOf(
+            REPEAT_MODE to queueData.repeatMode,
+            SHUFFLE_MODE to queueData.shuffleMode
+        )
 
         updatePlaybackState {
             setState(queueData.state, queueData.seekPos, 1F)

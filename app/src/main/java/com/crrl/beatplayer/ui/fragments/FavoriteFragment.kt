@@ -17,6 +17,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.GridLayoutManager
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentFavoriteBinding
@@ -88,48 +89,42 @@ class FavoriteFragment : BaseFragment<Favorite>() {
     }
 
     override fun onItemClick(view: View, position: Int, item: Favorite) {
-        val extras = Bundle()
-
         when (item.type) {
             ARTIST_TYPE -> {
-                extras.putLong(BeatConstants.ARTIST_KEY, item.id)
+
                 activity!!.addFragment(
                     R.id.nav_host_fragment,
                     ArtistDetailFragment(),
                     ARTIST_DETAIL,
                     true,
-                    extras
+                    bundleOf(BeatConstants.ARTIST_KEY to item.id)
                 )
             }
             ALBUM_TYPE -> {
-                extras.putLong(ALBUM_KEY, item.id)
                 activity!!.addFragment(
                     R.id.nav_host_fragment,
                     AlbumDetailFragment(),
                     ALBUM_DETAIL,
                     true,
-                    extras
+                    bundleOf(ALBUM_KEY to item.id)
                 )
             }
             FOLDER_TYPE -> {
-                extras.putString(FOLDER_KEY, item.artist)
-                extras.putString(FAVORITE_NAME, item.title)
                 activity!!.addFragment(
                     R.id.nav_host_fragment,
                     FolderDetailFragment(),
                     FOLDER_KEY,
                     true,
-                    extras
+                    bundleOf(FOLDER_KEY to item.id)
                 )
             }
             else -> {
-                extras.putLong(FAVORITE_KEY, item.id)
                 activity!!.addFragment(
                     R.id.nav_host_fragment,
                     FavoriteDetailFragment(),
                     FAVORITE_KEY,
                     true,
-                    extras
+                    bundleOf(FAVORITE_KEY to item.id)
                 )
             }
         }

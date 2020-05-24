@@ -22,6 +22,7 @@ import com.crrl.beatplayer.extensions.toList
 import com.crrl.beatplayer.models.Favorite
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.utils.BeatConstants.FAVORITE_ID
+import com.crrl.beatplayer.utils.BeatConstants.FAVORITE_TYPE
 
 interface FavoritesRepository {
     fun createFavorite(favorite: Favorite): Int
@@ -83,7 +84,7 @@ class FavoritesRepositoryImplementation(context: Context) : DBHelper(context),
             it.playListId = idFavorite
             val contentValues = ContentValues()
             val values = it.values()
-            it.columns(false).mapIndexed { i, column ->
+            it.columns(FAVORITE_TYPE).mapIndexed { i, column ->
                 contentValues.put(column, values[i])
             }
             contentValues
@@ -150,8 +151,7 @@ class FavoritesRepositoryImplementation(context: Context) : DBHelper(context),
     }
 
     override fun getFavorites(): List<Favorite> {
-        val cursor =
-            getRow(TABLE_FAVORITES, "*", "$COLUMN_SONG_COUNT > ?", arrayOf("0"), COLUMN_ID)
+        val cursor = getRow(TABLE_FAVORITES, "*", "$COLUMN_SONG_COUNT > ?", arrayOf("0"), COLUMN_ID)
         if (cursor.isClosed) return emptyList()
         return cursor.toList(true) {
             Favorite.fromCursor(cursor)

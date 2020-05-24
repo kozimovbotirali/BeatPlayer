@@ -18,6 +18,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentArtistDetailBinding
@@ -91,14 +92,12 @@ class ArtistDetailFragment : BaseFragment<MediaItem>() {
     }
 
     private fun albumClicked(item: Album) {
-        val extras = Bundle()
-        extras.putLong(BeatConstants.ALBUM_KEY, item.id)
         activity!!.addFragment(
             R.id.nav_host_fragment,
             AlbumDetailFragment(),
             BeatConstants.ALBUM_DETAIL,
             true,
-            extras
+            bundleOf(BeatConstants.ALBUM_KEY to item.id)
         )
     }
 

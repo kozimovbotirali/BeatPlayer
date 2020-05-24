@@ -29,8 +29,11 @@ import com.crrl.beatplayer.repository.PlaylistRepositoryImplementation.Companion
 import com.crrl.beatplayer.repository.PlaylistRepositoryImplementation.Companion.COLUMN_TITLE
 import com.crrl.beatplayer.repository.PlaylistRepositoryImplementation.Companion.COLUMN_TRACK
 import com.crrl.beatplayer.utils.BeatConstants
+import com.crrl.beatplayer.utils.BeatConstants.FAVORITE_TYPE
+import com.crrl.beatplayer.utils.BeatConstants.FOLDER_TYPE
 import com.crrl.beatplayer.utils.BeatConstants.SONG_TYPE
 import com.crrl.beatplayer.utils.GeneralUtils.getAlbumArtUri
+import java.io.File
 
 data class Song(
     val id: Long = -1,
@@ -77,6 +80,20 @@ data class Song(
                     .toString()
             )
         }
+
+        fun createFromFolderCursor(cursor: Cursor): Song {
+            return Song(
+                id = cursor.getLong(0),
+                title = cursor.getString(1),
+                artist = cursor.getString(2),
+                album = cursor.getString(3),
+                duration = cursor.getInt(4),
+                trackNumber = cursor.getInt(5),
+                artistId = cursor.getLong(6),
+                albumId = cursor.getLong(7),
+                path = File(cursor.getString(8)).parent!!
+            )
+        }
     }
 
     override fun compare(other: MediaItem): Boolean {
@@ -87,7 +104,7 @@ data class Song(
     }
 
 
-    fun columns(isPlaylist: Boolean = true): Array<String> {
+    fun columns(type: String): Array<String> {
         return arrayOf(
             COLUMN_ID,
             COLUMN_TITLE,
@@ -97,7 +114,10 @@ data class Song(
             COLUMN_TRACK,
             COLUMN_ARTIST_ID,
             COLUMN_ALBUM_ID,
-            if (isPlaylist) COLUMN_PLAYLIST else COLUMN_FAVORITE
+            when (type) {
+                FAVORITE_TYPE -> COLUMN_FAVORITE
+                else -> COLUMN_PLAYLIST
+            }
         )
     }
 
