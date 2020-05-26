@@ -84,7 +84,7 @@ class BeatPlayerService : MediaBrowserServiceCompat(), KoinComponent {
             notifications.updateNotification(getSession())
         }
 
-        beatPlayer.onQueueEnd{
+        beatPlayer.onQueueEnd {
             notifications.updateNotification(getSession())
         }
     }
@@ -196,8 +196,9 @@ class BeatPlayerService : MediaBrowserServiceCompat(), KoinComponent {
                 )
             }
             BeatConstants.FOLDER_TYPE -> GlobalScope.launch {
+                val ids = Gson().fromJson<LongArray>(mediaId.caller ?: "{}")
                 list.addAll(
-                    foldersRepository.getSongsForIds(mediaId.caller ?: "").toMediaItemList()
+                    foldersRepository.getSongs(ids).toMediaItemList()
                 )
             }
             BeatConstants.FAVORITE_TYPE -> GlobalScope.launch {
