@@ -15,7 +15,7 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@android:id/background">
         <shape android:shape="rectangle">
-            <gradient android:angle="180" android:centerColor="?colorPrimarySecondary2" android:centerX="0.8" android:endColor="@color/transparent" android:startColor="?colorPrimarySecondary2" />
+            <solid android:color="?colorPrimarySecondary2"/>
         </shape>
     </item>
 </selector>
