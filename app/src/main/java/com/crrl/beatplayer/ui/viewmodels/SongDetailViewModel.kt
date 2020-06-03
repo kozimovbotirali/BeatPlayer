@@ -45,7 +45,7 @@ class SongDetailViewModel(
 
     private var state = BIND_STATE_CANCELED
 
-    private val currentDataBase = MutableLiveData<MediaItemData>().apply { value = MediaItemData() }
+    private val currentDataBase = MutableLiveData<MediaItemData>()
     val currentData: LiveData<MediaItemData> = currentDataBase
 
     private val lastDataBase = MutableLiveData<MediaItemData>()

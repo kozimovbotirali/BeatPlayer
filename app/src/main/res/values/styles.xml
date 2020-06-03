@@ -34,6 +34,7 @@
         <item name="subTitleTextColor">@color/colorSubTitleTextDark</item>
         <item name="bodyTextColor">@color/colorBodyTextDark</item>
         <item name="btnTintColor">@color/colorTitleTextDark</item>
+        <item name="android:windowLightStatusBar">false</item>
     </style>
 
     <style name="AppTheme.Light" parent="AppThemeParent.Light">
@@ -51,6 +52,7 @@
         <item name="subTitleTextColor">@color/colorSubTitleTextLight</item>
         <item name="bodyTextColor">@color/colorBodyTextLight</item>
         <item name="btnTintColor">@color/colorTitleTextLight</item>
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 
     <style name="AppTheme.Auto" parent="AppThemeParent.Light">
@@ -68,6 +70,7 @@
         <item name="subTitleTextColor">@color/colorSubTitleTextLight</item>
         <item name="bodyTextColor">@color/colorBodyTextLight</item>
         <item name="btnTintColor">@color/colorTitleTextLight</item>
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 
     <!-- VIEW STYLES -->

@@ -60,7 +60,7 @@ class MediaSessionCallback(
         extras ?: return
         val songId = mediaId.toMediaId().mediaId!!.toLong()
         val queue = extras.getLongArray(QUEUE_INFO_KEY)
-        val queueTitle = extras.getString(BeatConstants.SONG_LIST_NAME)
+        val queueTitle = extras.getString(SONG_LIST_NAME)
         val seekTo = extras.getInt(SEEK_TO)
 
         if (queue != null) {

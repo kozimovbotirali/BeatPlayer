@@ -26,20 +26,20 @@ class SongViewModel(
     private val songsRepository: SongsRepository
 ) : CoroutineViewModel(Main) {
 
-    private val songsData: MutableLiveData<List<Song>> = MutableLiveData()
-    private val songsSelected: MutableLiveData<MutableList<Song>> = MutableLiveData()
+    private val songsData = MutableLiveData<List<Song>>().apply { value = mutableListOf() }
+    private val songsSelected = MutableLiveData<MutableList<Song>>().apply { value = mutableListOf() }
 
     fun update() {
         launch {
             val songs = withContext(IO) {
                 songsRepository.loadSongs()
             }
-            if(songs.isNotEmpty()) songsData.postValue(songs)
+            if (songs.isNotEmpty()) songsData.postValue(songs)
         }
     }
 
-    fun update(list: MutableList<Song>) {
-        songsSelected.postValue(list)
+    fun update(song: MutableList<Song>) {
+        songsSelected.postValue(song)
     }
 
     fun getSongList(): LiveData<List<Song>> {
@@ -48,7 +48,6 @@ class SongViewModel(
     }
 
     fun selectedSongs(): LiveData<MutableList<Song>> {
-        if(songsSelected.value == null) songsSelected.value = mutableListOf()
         return songsSelected
     }
 

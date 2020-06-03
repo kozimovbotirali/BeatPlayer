@@ -75,9 +75,7 @@ object BeatConstants {
     const val PLAY_LIST_TYPE = "Playlist"
 
     const val READ_ONLY_MODE = "r"
-    const val READ_AND_WRITE_MODE = "rw"
-    const val EOF = -1
-    const val APP_PACKAGE_NAME = "com.crrl.beatplayer.dev"
+
     val ARTWORK_URI: Uri = Uri.parse("content://media/external/audio/albumart")
     val SONG_URI: Uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
 }
