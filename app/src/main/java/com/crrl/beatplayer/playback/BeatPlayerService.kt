@@ -31,7 +31,6 @@ import com.crrl.beatplayer.playback.players.BeatPlayer
 import com.crrl.beatplayer.playback.receivers.BecomingNoisyReceiver
 import com.crrl.beatplayer.repository.*
 import com.crrl.beatplayer.utils.BeatConstants
-import com.crrl.beatplayer.utils.BeatConstants.APP_PACKAGE_NAME
 import com.crrl.beatplayer.utils.BeatConstants.NEXT
 import com.crrl.beatplayer.utils.BeatConstants.NOTIFICATION_ID
 import com.crrl.beatplayer.utils.BeatConstants.PLAY_PAUSE
@@ -136,7 +135,7 @@ class BeatPlayerService : MediaBrowserServiceCompat(), KoinComponent {
         clientUid: Int,
         rootHints: Bundle?
     ): BrowserRoot? {
-        val caller = if (clientPackageName == APP_PACKAGE_NAME) {
+        val caller = if (clientPackageName == applicationContext.packageName) {
             CALLER_SELF
         } else {
             CALLER_OTHER

@@ -29,7 +29,6 @@ import org.koin.android.ext.android.inject
 class LyricFragment : BaseSongDetailFragment() {
 
     private lateinit var binding: FragmentLyricBinding
-    private val songDetailView by inject<SongDetailViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,7 +45,7 @@ class LyricFragment : BaseSongDetailFragment() {
 
     private fun init() {
         binding.let {
-            it.viewModel = songDetailView
+            it.viewModel = songDetailViewModel
             it.lifecycleOwner = this
             it.executePendingBindings()
         }

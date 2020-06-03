@@ -13,6 +13,7 @@
 
 package com.crrl.beatplayer.models
 
+import android.content.Context
 import com.crrl.beatplayer.extensions.fixedName
 import com.crrl.beatplayer.extensions.fixedPath
 import com.crrl.beatplayer.utils.BeatConstants.FOLDER_TYPE
@@ -28,12 +29,12 @@ class Folder(
 ) : MediaItem(id) {
 
     companion object {
-        fun fromSong(song: Song, songs: LongArray): Folder {
+        fun fromSong(song: Song, songs: LongArray, context: Context): Folder {
             return Folder(
                 song.id,
-                File(song.path).fixedName(),
+                File(song.path).fixedName(context),
                 song.albumId,
-                File(song.path).fixedPath(),
+                File(song.path).fixedPath(context),
                 songs
             )
         }

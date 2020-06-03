@@ -41,4 +41,6 @@
 
     <color name="colorAccent">#0788F1</color>
     <color name="primary">#F2F2F2</color>
+
+    <color name="ic_launcher_background">#262626</color>
 </resources>
