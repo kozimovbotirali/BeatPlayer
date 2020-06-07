@@ -144,7 +144,7 @@ class SongDetailFragment : BaseSongDetailFragment(), GestureDetector.OnGestureLi
             else -> {
             }
         }
-        return@OnTouchListener true
+        true
     }
     
     override fun onDown(event: MotionEvent): Boolean {
