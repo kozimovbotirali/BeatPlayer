@@ -42,7 +42,7 @@ class SongDetailFragment : BaseSongDetailFragment(), GestureDetector.OnGestureLi
     private var binding by AutoClearBinding<FragmentSongDetailBinding>(this)
     private val songViewModel by sharedViewModel<SongViewModel>()
     private lateinit var gestureDetector: GestureDetector
-    val MIN_FLING_VELOCITY = 800
+    private val minFlingVelocity = 800
     
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -157,7 +157,7 @@ class SongDetailFragment : BaseSongDetailFragment(), GestureDetector.OnGestureLi
         velocityX: Float,
         velocityY: Float
     ): Boolean {
-        if (velocityX.absoluteValue > MIN_FLING_VELOCITY) {
+        if (velocityX.absoluteValue > minFlingVelocity) {
             if (velocityX < 0) {
                 mainViewModel.transportControls()?.skipToNext()
             } else {
