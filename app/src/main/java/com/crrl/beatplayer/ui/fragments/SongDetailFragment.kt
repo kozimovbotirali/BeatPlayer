@@ -18,6 +18,7 @@ import android.os.Bundle
 import android.support.v4.media.session.PlaybackStateCompat
 import android.view.GestureDetector
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import com.crrl.beatplayer.R
@@ -33,12 +34,15 @@ import com.crrl.beatplayer.utils.GeneralUtils.getSongUri
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import kotlin.math.absoluteValue
 
-class SongDetailFragment : BaseSongDetailFragment() {
+class SongDetailFragment : BaseSongDetailFragment(), GestureDetector.OnGestureListener {
 
     private var binding by AutoClearBinding<FragmentSongDetailBinding>(this)
     private val songViewModel by sharedViewModel<SongViewModel>()
     private lateinit var gestureDetector: GestureDetector
+    val MIN_FLING_VELOCITY = 800
+    
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -127,5 +131,39 @@ class SongDetailFragment : BaseSongDetailFragment() {
                 }
             }
         }
+    }
+    
+    override fun onDown(event: MotionEvent): Boolean {
+        return true
+    }
+
+    override fun onFling(
+        e1: MotionEvent,
+        e2: MotionEvent,
+        velocityX: Float,
+        velocityY: Float
+    ): Boolean {
+        if (velocityX.absoluteValue > MIN_FLING_VELOCITY) {
+            if (velocityX < 0) {
+                mainViewModel.transportControls()?.skipToNext()
+            } else {
+                mainViewModel.transportControls()?.skipToPrevious()
+            }
+        }
+        return true
+    }
+
+    override fun onShowPress(e: MotionEvent?) {
+    }
+
+    override fun onSingleTapUp(e: MotionEvent?): Boolean {
+        return true
+    }
+
+    override fun onLongPress(e: MotionEvent?) {
+    }
+
+    override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean {
+        return true
     }
 }
