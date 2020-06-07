@@ -31,6 +31,7 @@ import com.crrl.beatplayer.utils.AutoClearBinding
 import com.crrl.beatplayer.utils.BeatConstants.BIND_STATE_BOUND
 import com.crrl.beatplayer.utils.GeneralUtils
 import com.crrl.beatplayer.utils.GeneralUtils.getSongUri
+import kotlinx.android.synthetic.main.fragment_song_detail.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
@@ -98,6 +99,7 @@ class SongDetailFragment : BaseSongDetailFragment(), GestureDetector.OnGestureLi
     
     private fun initSwipeGestures() {
         gestureDetector = GestureDetector(activity, this)
+        now_playing_cover.setOnTouchListener(touchListener)
     }
 
     override fun onDetach() {
@@ -131,6 +133,10 @@ class SongDetailFragment : BaseSongDetailFragment(), GestureDetector.OnGestureLi
                 }
             }
         }
+    }
+    
+    private var touchListener: View.OnTouchListener = View.OnTouchListener {
+            v: View, motionEvent: MotionEvent -> gestureDetector.onTouchEvent(motionEvent)
     }
     
     override fun onDown(event: MotionEvent): Boolean {
