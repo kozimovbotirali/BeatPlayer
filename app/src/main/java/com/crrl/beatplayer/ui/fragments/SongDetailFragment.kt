@@ -93,48 +93,6 @@ class SongDetailFragment : BaseSongDetailFragment() {
             it.executePendingBindings()
         }
     }
-    
-    private fun initSwipeGestures() {
-        gestureDetector =
-            GestureDetector(activity, object : GestureDetector.OnGestureListener {
-                override fun onDown(event: MotionEvent): Boolean {
-                    return true
-                }
-
-                override fun onFling(
-                    e1: MotionEvent,
-                    e2: MotionEvent,
-                    velocityX: Float,
-                    velocityY: Float
-                ): Boolean {
-                    if (velocityX.absoluteValue > minFlingVelocity) {
-                        if (velocityX < 0) {
-                            mainViewModel.transportControls()?.skipToNext()
-                        } else {
-                            mainViewModel.transportControls()?.skipToPrevious()
-                        }
-                    }
-                    return true
-                }
-
-                override fun onShowPress(e: MotionEvent?) {
-                    Timber.e("onShowPress detected")
-                }
-
-                override fun onSingleTapUp(e: MotionEvent?): Boolean {
-                    return true
-                }
-
-                override fun onLongPress(e: MotionEvent?) {
-                    Timber.e("onLongPress detected")
-                }
-
-                override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean {
-                    return true
-                }
-            })
-        now_playing_cover.setOnTouchListener(touchListener)
-    }
 
     override fun onDetach() {
         super.onDetach()
@@ -179,5 +137,47 @@ class SongDetailFragment : BaseSongDetailFragment() {
             }
         }
         true
+    }
+    
+    private fun initSwipeGestures() {
+        gestureDetector =
+            GestureDetector(activity, object : GestureDetector.OnGestureListener {
+                override fun onDown(event: MotionEvent): Boolean {
+                    return true
+                }
+
+                override fun onFling(
+                    e1: MotionEvent,
+                    e2: MotionEvent,
+                    velocityX: Float,
+                    velocityY: Float
+                ): Boolean {
+                    if (velocityX.absoluteValue > minFlingVelocity) {
+                        if (velocityX < 0) {
+                            mainViewModel.transportControls()?.skipToNext()
+                        } else {
+                            mainViewModel.transportControls()?.skipToPrevious()
+                        }
+                    }
+                    return true
+                }
+
+                override fun onShowPress(e: MotionEvent?) {
+                    Timber.e("onShowPress detected")
+                }
+
+                override fun onSingleTapUp(e: MotionEvent?): Boolean {
+                    return true
+                }
+
+                override fun onLongPress(e: MotionEvent?) {
+                    Timber.e("onLongPress detected")
+                }
+
+                override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean {
+                    return true
+                }
+            })
+        now_playing_cover.setOnTouchListener(touchListener)
     }
 }
