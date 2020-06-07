@@ -35,6 +35,7 @@ import kotlinx.android.synthetic.main.fragment_song_detail.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import timber.log.Timber
 import kotlin.math.absoluteValue
 
 class SongDetailFragment : BaseSongDetailFragment(), GestureDetector.OnGestureListener {
@@ -168,6 +169,7 @@ class SongDetailFragment : BaseSongDetailFragment(), GestureDetector.OnGestureLi
     }
 
     override fun onShowPress(e: MotionEvent?) {
+        Timber.e("onShowPress detected")
     }
 
     override fun onSingleTapUp(e: MotionEvent?): Boolean {
@@ -175,6 +177,7 @@ class SongDetailFragment : BaseSongDetailFragment(), GestureDetector.OnGestureLi
     }
 
     override fun onLongPress(e: MotionEvent?) {
+        Timber.e("onLongPress detected")
     }
 
     override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean {
