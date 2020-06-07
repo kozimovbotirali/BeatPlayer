@@ -16,6 +16,7 @@ package com.crrl.beatplayer.ui.fragments
 
 import android.os.Bundle
 import android.support.v4.media.session.PlaybackStateCompat
+import android.view.GestureDetector
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,6 +38,7 @@ class SongDetailFragment : BaseSongDetailFragment() {
 
     private var binding by AutoClearBinding<FragmentSongDetailBinding>(this)
     private val songViewModel by sharedViewModel<SongViewModel>()
+    private lateinit var gestureDetector: GestureDetector
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -48,6 +50,7 @@ class SongDetailFragment : BaseSongDetailFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         init()
+        initSwipeGestures()
     }
 
     private fun init() {
@@ -87,6 +90,10 @@ class SongDetailFragment : BaseSongDetailFragment() {
             it.lifecycleOwner = this
             it.executePendingBindings()
         }
+    }
+    
+    private fun initSwipeGestures() {
+        gestureDetector = GestureDetector(activity, this)
     }
 
     override fun onDetach() {
