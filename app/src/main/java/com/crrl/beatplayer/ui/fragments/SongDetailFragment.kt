@@ -16,11 +16,7 @@ package com.crrl.beatplayer.ui.fragments
 
 import android.os.Bundle
 import android.support.v4.media.session.PlaybackStateCompat
-import android.view.GestureDetector
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentSongDetailBinding
 import com.crrl.beatplayer.extensions.*
@@ -38,7 +34,7 @@ import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import timber.log.Timber
 import kotlin.math.absoluteValue
 
-class SongDetailFragment : BaseSongDetailFragment(), GestureDetector.OnGestureListener {
+class SongDetailFragment : BaseSongDetailFragment() {
 
     private var binding by AutoClearBinding<FragmentSongDetailBinding>(this)
     private val songViewModel by sharedViewModel<SongViewModel>()
@@ -99,7 +95,44 @@ class SongDetailFragment : BaseSongDetailFragment(), GestureDetector.OnGestureLi
     }
     
     private fun initSwipeGestures() {
-        gestureDetector = GestureDetector(activity, this)
+        gestureDetector =
+            GestureDetector(activity, object : GestureDetector.OnGestureListener {
+                override fun onDown(event: MotionEvent): Boolean {
+                    return true
+                }
+
+                override fun onFling(
+                    e1: MotionEvent,
+                    e2: MotionEvent,
+                    velocityX: Float,
+                    velocityY: Float
+                ): Boolean {
+                    if (velocityX.absoluteValue > minFlingVelocity) {
+                        if (velocityX < 0) {
+                            mainViewModel.transportControls()?.skipToNext()
+                        } else {
+                            mainViewModel.transportControls()?.skipToPrevious()
+                        }
+                    }
+                    return true
+                }
+
+                override fun onShowPress(e: MotionEvent?) {
+                    Timber.e("onShowPress detected")
+                }
+
+                override fun onSingleTapUp(e: MotionEvent?): Boolean {
+                    return true
+                }
+
+                override fun onLongPress(e: MotionEvent?) {
+                    Timber.e("onLongPress detected")
+                }
+
+                override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean {
+                    return true
+                }
+            })
         now_playing_cover.setOnTouchListener(touchListener)
     }
 
@@ -146,41 +179,5 @@ class SongDetailFragment : BaseSongDetailFragment(), GestureDetector.OnGestureLi
             }
         }
         true
-    }
-    
-    override fun onDown(event: MotionEvent): Boolean {
-        return true
-    }
-
-    override fun onFling(
-        e1: MotionEvent,
-        e2: MotionEvent,
-        velocityX: Float,
-        velocityY: Float
-    ): Boolean {
-        if (velocityX.absoluteValue > minFlingVelocity) {
-            if (velocityX < 0) {
-                mainViewModel.transportControls()?.skipToNext()
-            } else {
-                mainViewModel.transportControls()?.skipToPrevious()
-            }
-        }
-        return true
-    }
-
-    override fun onShowPress(e: MotionEvent?) {
-        Timber.e("onShowPress detected")
-    }
-
-    override fun onSingleTapUp(e: MotionEvent?): Boolean {
-        return true
-    }
-
-    override fun onLongPress(e: MotionEvent?) {
-        Timber.e("onLongPress detected")
-    }
-
-    override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean {
-        return true
     }
 }
