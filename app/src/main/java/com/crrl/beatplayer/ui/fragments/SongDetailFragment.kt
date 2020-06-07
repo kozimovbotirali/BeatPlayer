@@ -137,6 +137,14 @@ class SongDetailFragment : BaseSongDetailFragment(), GestureDetector.OnGestureLi
     
     private var touchListener: View.OnTouchListener = View.OnTouchListener {
             v: View, motionEvent: MotionEvent -> gestureDetector.onTouchEvent(motionEvent)
+        when (motionEvent.action) {
+            MotionEvent.ACTION_DOWN -> {
+            }
+            MotionEvent.ACTION_UP -> v.performClick()
+            else -> {
+            }
+        }
+        return@OnTouchListener true
     }
     
     override fun onDown(event: MotionEvent): Boolean {
