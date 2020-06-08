@@ -146,6 +146,7 @@ class BeatPlayerService : MediaBrowserServiceCompat(), KoinComponent {
     override fun onDestroy() {
         saveCurrentData()
         beatPlayer.release()
+        notifications.clearNotifications()
         super.onDestroy()
     }
 

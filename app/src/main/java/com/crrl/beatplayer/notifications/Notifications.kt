@@ -43,8 +43,8 @@ import androidx.media.app.NotificationCompat as NotificationMediaCompat
 interface Notifications {
 
     fun updateNotification(mediaSession: MediaSessionCompat)
-
     fun buildNotification(mediaSession: MediaSessionCompat): Notification
+    fun clearNotifications()
 }
 
 class NotificationsImplementation(
@@ -113,6 +113,10 @@ class NotificationsImplementation(
         }
 
         return builder.build()
+    }
+
+    override fun clearNotifications() {
+        notificationManager.cancel(NOTIFICATION_ID)
     }
 
     private fun getPreviousAction(context: Context): NotificationCompat.Action {
