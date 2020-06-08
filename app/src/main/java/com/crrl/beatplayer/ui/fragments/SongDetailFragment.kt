@@ -16,9 +16,7 @@ package com.crrl.beatplayer.ui.fragments
 
 import android.os.Bundle
 import android.support.v4.media.session.PlaybackStateCompat
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentSongDetailBinding
 import com.crrl.beatplayer.extensions.*
@@ -29,14 +27,20 @@ import com.crrl.beatplayer.utils.AutoClearBinding
 import com.crrl.beatplayer.utils.BeatConstants.BIND_STATE_BOUND
 import com.crrl.beatplayer.utils.GeneralUtils
 import com.crrl.beatplayer.utils.GeneralUtils.getSongUri
+import kotlinx.android.synthetic.main.fragment_song_detail.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import timber.log.Timber
+import kotlin.math.absoluteValue
 
 class SongDetailFragment : BaseSongDetailFragment() {
 
     private var binding by AutoClearBinding<FragmentSongDetailBinding>(this)
     private val songViewModel by sharedViewModel<SongViewModel>()
+    private lateinit var gestureDetector: GestureDetector
+    private val minFlingVelocity = 800
+    
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -48,6 +52,7 @@ class SongDetailFragment : BaseSongDetailFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         init()
+        initSwipeGestures()
     }
 
     private fun init() {
@@ -120,5 +125,59 @@ class SongDetailFragment : BaseSongDetailFragment() {
                 }
             }
         }
+    }
+    
+    private var touchListener: View.OnTouchListener = View.OnTouchListener {
+            v: View, motionEvent: MotionEvent -> gestureDetector.onTouchEvent(motionEvent)
+        when (motionEvent.action) {
+            MotionEvent.ACTION_DOWN -> {
+            }
+            MotionEvent.ACTION_UP -> v.performClick()
+            else -> {
+            }
+        }
+        true
+    }
+    
+    private fun initSwipeGestures() {
+        gestureDetector =
+            GestureDetector(activity, object : GestureDetector.OnGestureListener {
+                override fun onDown(event: MotionEvent): Boolean {
+                    return true
+                }
+
+                override fun onFling(
+                    e1: MotionEvent,
+                    e2: MotionEvent,
+                    velocityX: Float,
+                    velocityY: Float
+                ): Boolean {
+                    if (velocityX.absoluteValue > minFlingVelocity) {
+                        if (velocityX < 0) {
+                            mainViewModel.transportControls()?.skipToNext()
+                        } else {
+                            mainViewModel.transportControls()?.skipToPrevious()
+                        }
+                    }
+                    return true
+                }
+
+                override fun onShowPress(e: MotionEvent?) {
+                    Timber.e("onShowPress detected")
+                }
+
+                override fun onSingleTapUp(e: MotionEvent?): Boolean {
+                    return true
+                }
+
+                override fun onLongPress(e: MotionEvent?) {
+                    Timber.e("onLongPress detected")
+                }
+
+                override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean {
+                    return true
+                }
+            })
+        now_playing_cover.setOnTouchListener(touchListener)
     }
 }
