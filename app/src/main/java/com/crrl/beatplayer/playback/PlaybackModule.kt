@@ -26,7 +26,12 @@ val playbackModule = module {
     } bind (BeatMediaPlayer::class)
 
     factory {
+        AudioFocusHelperImplementation(get())
+    } bind (AudioFocusHelper::class)
+
+    factory {
         BeatPlayerImplementation(
+            get(),
             get(),
             get(),
             get(),

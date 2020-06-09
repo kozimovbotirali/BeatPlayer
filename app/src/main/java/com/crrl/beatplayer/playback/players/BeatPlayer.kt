@@ -15,7 +15,6 @@ package com.crrl.beatplayer.playback.players
 
 import android.app.Application
 import android.app.PendingIntent
-import android.os.Bundle
 import android.os.Handler
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.MediaMetadataCompat.*
@@ -31,6 +30,7 @@ import com.crrl.beatplayer.extensions.position
 import com.crrl.beatplayer.extensions.toQueueInfo
 import com.crrl.beatplayer.extensions.toQueueList
 import com.crrl.beatplayer.models.Song
+import com.crrl.beatplayer.playback.AudioFocusHelper
 import com.crrl.beatplayer.repository.SongsRepository
 import com.crrl.beatplayer.utils.BeatConstants.REPEAT_ALL
 import com.crrl.beatplayer.utils.BeatConstants.REPEAT_MODE
@@ -75,7 +75,8 @@ class BeatPlayerImplementation(
     private val musicPlayer: BeatMediaPlayer,
     private val songsRepository: SongsRepository,
     private val settingsUtility: SettingsUtility,
-    private val queueUtils: QueueUtils
+    private val queueUtils: QueueUtils,
+    audioFocusHelper: AudioFocusHelper
 ) : BeatPlayer {
 
     private var isInitialized: Boolean = false
@@ -93,7 +94,12 @@ class BeatPlayerImplementation(
         MediaSessionCompat(context, context.getString(R.string.app_name)).apply {
             setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
             setCallback(
-                MediaSessionCallback(this, this@BeatPlayerImplementation, songsRepository)
+                MediaSessionCallback(
+                    this,
+                    this@BeatPlayerImplementation,
+                    audioFocusHelper,
+                    songsRepository
+                )
             )
             setPlaybackState(stateBuilder.build())
 

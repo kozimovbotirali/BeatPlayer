@@ -13,15 +13,15 @@
 
 package com.crrl.beatplayer.playback.players
 
+import android.media.AudioManager
 import android.os.Bundle
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import android.support.v4.media.session.PlaybackStateCompat.SHUFFLE_MODE_ALL
-import android.support.v4.media.session.PlaybackStateCompat.STATE_NONE
+import android.support.v4.media.session.PlaybackStateCompat.*
 import com.crrl.beatplayer.extensions.toIdList
 import com.crrl.beatplayer.extensions.toMediaId
+import com.crrl.beatplayer.playback.AudioFocusHelper
 import com.crrl.beatplayer.repository.SongsRepository
-import com.crrl.beatplayer.utils.BeatConstants
 import com.crrl.beatplayer.utils.BeatConstants.PLAY_ALL_SHUFFLED
 import com.crrl.beatplayer.utils.BeatConstants.QUEUE_INFO_KEY
 import com.crrl.beatplayer.utils.BeatConstants.QUEUE_LIST_KEY
@@ -37,17 +37,59 @@ import com.crrl.beatplayer.utils.BeatConstants.SHUFFLE_MODE
 import com.crrl.beatplayer.utils.BeatConstants.SONG_KEY
 import com.crrl.beatplayer.utils.BeatConstants.SONG_LIST_NAME
 import com.crrl.beatplayer.utils.BeatConstants.UPDATE_QUEUE
+import timber.log.Timber
 
 class MediaSessionCallback(
     private val mediaSession: MediaSessionCompat,
     private val musicPlayer: BeatPlayer,
+    private val audioFocusHelper: AudioFocusHelper,
     private val songsRepository: SongsRepository
 ) : MediaSessionCompat.Callback() {
-    override fun onPause() = musicPlayer.pause()
 
-    override fun onPlay() = musicPlayer.playSong()
+    init {
+        audioFocusHelper.onAudioFocusGain {
+            Timber.d("GAIN")
+            val isPlaying = musicPlayer.getSession().controller.playbackState.state == STATE_PLAYING
+            if (isAudioFocusGranted && !isPlaying) {
+                musicPlayer.playSong()
+            } else audioFocusHelper.setVolume(AudioManager.ADJUST_RAISE)
+            isAudioFocusGranted = false
+        }
+        audioFocusHelper.onAudioFocusLoss {
+            Timber.d("LOSS")
+            abandonPlayback()
+            isAudioFocusGranted = false
+            musicPlayer.pause()
+        }
+
+        audioFocusHelper.onAudioFocusLossTransient {
+            Timber.d("TRANSIENT")
+            val isPlaying = musicPlayer.getSession().controller.playbackState.state == STATE_PLAYING
+            if (isPlaying) {
+                isAudioFocusGranted = true
+                musicPlayer.pause()
+            }
+        }
+
+        audioFocusHelper.onAudioFocusLossTransientCanDuck {
+            Timber.d("TRANSIENT_CAN_DUCK")
+            audioFocusHelper.setVolume(AudioManager.ADJUST_LOWER)
+        }
+    }
+
+    override fun onPause() {
+        Timber.d("onPause()")
+        musicPlayer.pause()
+    }
+
+    override fun onPlay() {
+        Timber.d("onPlay()")
+        if (audioFocusHelper.requestPlayback())
+            musicPlayer.playSong()
+    }
 
     override fun onPlayFromSearch(query: String?, extras: Bundle?) {
+        Timber.d("onPlayFromSearch()")
         query?.let {
             val song = songsRepository.search(query, 1)
             if (song.isNotEmpty()) {
@@ -57,6 +99,7 @@ class MediaSessionCallback(
     }
 
     override fun onPlayFromMediaId(mediaId: String, extras: Bundle?) {
+        Timber.d("onPlayFromMediaId()")
         extras ?: return
         val songId = mediaId.toMediaId().mediaId!!.toLong()
         val queue = extras.getLongArray(QUEUE_INFO_KEY)
@@ -74,27 +117,34 @@ class MediaSessionCallback(
         musicPlayer.playSong(songId)
     }
 
-    override fun onSeekTo(pos: Long) = musicPlayer.seekTo(pos.toInt())
+    override fun onSeekTo(pos: Long) {
+        Timber.d("onSeekTo()")
+        musicPlayer.seekTo(pos.toInt())
+    }
 
     override fun onSkipToNext() {
+        Timber.d("onSkipToNext()")
         musicPlayer.nextSong()
     }
 
     override fun onSkipToPrevious() {
+        Timber.d("onSkipToPrevious()")
         musicPlayer.previousSong()
     }
 
-    override fun onStop() = musicPlayer.stop()
+    override fun onStop() {
+        Timber.d("onStop()")
+        musicPlayer.stop()
+    }
 
     override fun onSetRepeatMode(repeatMode: Int) {
         super.onSetRepeatMode(repeatMode)
         val bundle = mediaSession.controller.playbackState.extras ?: Bundle()
         musicPlayer.setPlaybackState(
-            PlaybackStateCompat.Builder(mediaSession.controller.playbackState)
+            Builder(mediaSession.controller.playbackState)
                 .setExtras(bundle.apply {
                     putInt(REPEAT_MODE, repeatMode)
-                }
-                ).build()
+                }).build()
         )
     }
 

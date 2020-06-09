@@ -13,6 +13,7 @@
 
 package com.crrl.beatplayer.alias
 
+import com.crrl.beatplayer.playback.AudioFocusHelper
 import com.crrl.beatplayer.playback.players.BeatPlayer
 
 typealias OnPrepared<T> = T.() -> Unit
@@ -21,3 +22,7 @@ typealias OnCompletion<T> = T.() -> Unit
 typealias OnQueueEndWithNoneRepeat<T> = T.() -> Unit
 typealias OnIsPlaying = BeatPlayer.(playing: Boolean) -> Unit
 typealias LiveDataFilter<T> = (T) -> Boolean
+typealias OnAudioFocusGain = AudioFocusHelper.() -> Unit
+typealias OnAudioFocusLoss = AudioFocusHelper.() -> Unit
+typealias OnAudioFocusLossTransient = AudioFocusHelper.() -> Unit
+typealias OnAudioFocusLossTransientCanDuck = AudioFocusHelper.() -> Unit
