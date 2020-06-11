@@ -26,13 +26,14 @@ import com.crrl.beatplayer.extensions.getColorByTheme
 import com.crrl.beatplayer.extensions.snackbar
 import com.crrl.beatplayer.ui.activities.SettingsActivity
 import com.crrl.beatplayer.ui.fragments.SearchFragment
-import com.crrl.beatplayer.ui.viewmodels.MainViewModel
 import com.crrl.beatplayer.utils.BeatConstants
+import com.crrl.beatplayer.utils.SettingsUtility
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_SHORT
 import com.skydoves.powermenu.MenuAnimation
 import com.skydoves.powermenu.OnMenuItemClickListener
 import com.skydoves.powermenu.PowerMenu
 import com.skydoves.powermenu.PowerMenuItem
+import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.android.ext.android.inject
 
 
@@ -40,7 +41,8 @@ open class BaseActivity : RequestPermissionActivity() {
 
     private var currentTheme: String? = null
     private var powerMenu: PowerMenu? = null
-    protected val viewModel by inject<MainViewModel>()
+
+    private val settingsUtility by inject<SettingsUtility>()
 
     private val onMenuItemClickListener = OnMenuItemClickListener<PowerMenuItem> { position, _ ->
         when (position) {
@@ -50,7 +52,7 @@ open class BaseActivity : RequestPermissionActivity() {
                 if (intent.resolveActivity(packageManager) != null) {
                     startActivityForResult(intent, 2)
                 } else {
-                    viewModel.binding.mainContainer.snackbar(
+                    main_container.snackbar(
                         DEFAULT,
                         getString(R.string.no_eq),
                         LENGTH_SHORT
@@ -84,13 +86,13 @@ open class BaseActivity : RequestPermissionActivity() {
 
     override fun onResume() {
         super.onResume()
-        if (viewModel.settingsUtility.currentTheme != currentTheme) {
+        if (settingsUtility.currentTheme != currentTheme) {
             recreateActivity()
         }
     }
 
     private fun init() {
-        currentTheme = viewModel.settingsUtility.currentTheme
+        currentTheme = settingsUtility.currentTheme
         setAppTheme(currentTheme!!)
 
         powerMenu = initPopUpMenu().setOnMenuItemClickListener(onMenuItemClickListener).build()

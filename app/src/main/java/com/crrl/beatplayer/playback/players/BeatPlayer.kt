@@ -15,6 +15,7 @@ package com.crrl.beatplayer.playback.players
 
 import android.app.Application
 import android.app.PendingIntent
+import android.os.Bundle
 import android.os.Handler
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.MediaMetadataCompat.*
@@ -32,6 +33,7 @@ import com.crrl.beatplayer.extensions.toQueueList
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.playback.AudioFocusHelper
 import com.crrl.beatplayer.repository.SongsRepository
+import com.crrl.beatplayer.utils.BeatConstants.BY_UI_KEY
 import com.crrl.beatplayer.utils.BeatConstants.REPEAT_ALL
 import com.crrl.beatplayer.utils.BeatConstants.REPEAT_MODE
 import com.crrl.beatplayer.utils.BeatConstants.REPEAT_ONE
@@ -44,11 +46,11 @@ import com.crrl.beatplayer.utils.SettingsUtility
 
 interface BeatPlayer {
     fun getSession(): MediaSessionCompat
-    fun playSong()
+    fun playSong(extras: Bundle = bundleOf(BY_UI_KEY to true))
     fun playSong(id: Long)
     fun playSong(song: Song)
     fun seekTo(position: Int)
-    fun pause()
+    fun pause(extras: Bundle = bundleOf(BY_UI_KEY to true))
     fun nextSong()
     fun repeatSong()
     fun repeatQueue()
@@ -81,7 +83,7 @@ class BeatPlayerImplementation(
 
     private var isInitialized: Boolean = false
 
-    private var isPlayingCallback: OnIsPlaying = {}
+    private var isPlayingCallback: OnIsPlaying = { _, _ -> }
     private var preparedCallback: OnPrepared<BeatPlayer> = {}
     private var errorCallback: OnError<BeatPlayer> = {}
     private var completionCallback: OnCompletion<BeatPlayer> = {}
@@ -129,17 +131,18 @@ class BeatPlayerImplementation(
                 REPEAT_MODE_ALL -> {
                     controller.transportControls.sendCustomAction(REPEAT_ALL, null)
                 }
-                else -> if(queueUtils.nextSongId == null) goToStart() else nextSong()
+                else -> if (queueUtils.nextSongId == null) goToStart() else nextSong()
             }
         }
     }
 
     override fun getSession(): MediaSessionCompat = mediaSession
 
-    override fun playSong() {
+    override fun playSong(extras: Bundle) {
         if (isInitialized) {
             updatePlaybackState {
                 setState(STATE_PLAYING, mediaSession.position(), 1F)
+                setExtras(extras)
             }
             musicPlayer.play()
             return
@@ -169,6 +172,7 @@ class BeatPlayerImplementation(
             isInitialized = false
             updatePlaybackState {
                 setState(STATE_PAUSED, 0, 1F)
+                setExtras(bundleOf(BY_UI_KEY to false))
             }
         }
         setMetaData(song)
@@ -194,11 +198,12 @@ class BeatPlayerImplementation(
         }
     }
 
-    override fun pause() {
+    override fun pause(extras: Bundle) {
         if (musicPlayer.isPlaying() && isInitialized) {
             musicPlayer.pause()
             updatePlaybackState {
                 setState(STATE_PAUSED, mediaSession.position(), 1F)
+                setExtras(extras)
             }
         }
     }
@@ -291,9 +296,9 @@ class BeatPlayerImplementation(
             mediaSession.setShuffleMode(bundle.getInt(SHUFFLE_MODE))
         }
         if (state.isPlaying) {
-            isPlayingCallback(this, true)
+            isPlayingCallback(this, true, state.extras?.getBoolean(BY_UI_KEY)!!)
         } else {
-            isPlayingCallback(this, false)
+            isPlayingCallback(this, false, state.extras?.getBoolean(BY_UI_KEY)!!)
         }
     }
 
@@ -332,7 +337,7 @@ class BeatPlayerImplementation(
         }
     }
 
-    private fun goToStart(){
+    private fun goToStart() {
         isInitialized = false
 
         updatePlaybackState {

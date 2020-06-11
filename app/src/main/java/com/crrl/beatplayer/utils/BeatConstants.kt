@@ -31,7 +31,8 @@ object BeatConstants {
     const val PLAY_ALL_SHUFFLED = "action_play_all_shuffled"
     const val UPDATE_QUEUE = "action_update_queue"
     const val SET_MEDIA_STATE = "action_set_media_state"
-    const val RESTORE_MEDIA_SESSION = "action_restore_media_session"
+    const val PLAY_ACTION = "action_play"
+    const val PAUSE_ACTION = "action_pause"
 
     const val REPEAT_MODE = "repeat_mode"
     const val SHUFFLE_MODE = "shuffle_mode"
@@ -54,6 +55,7 @@ object BeatConstants {
     const val QUEUE_INFO_KEY = "queue_info_key"
     const val QUEUE_LIST_KEY = "queue_list_key"
     const val QUEUE_LIST_TYPE_KEY = "queue_list_type_key"
+    const val BY_UI_KEY = "by_ui_key"
 
     const val LIBRARY = "library_fragment"
     const val SONG_LIST_NAME = "song_list_name"

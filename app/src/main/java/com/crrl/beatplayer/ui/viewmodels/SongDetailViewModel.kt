@@ -74,13 +74,13 @@ class SongDetailViewModel(
 
     private val nowMediaMetadataObserver = Observer<MediaMetadataCompat> { mediaMetaData ->
         mediaMetaData?.let {
-            currentDataBase.postValue(MediaItemData.pullMediaMetadata(it))
+            currentDataBase.postValue(MediaItemData.pullMediaMetadata(it) ?: return@let)
         }
     }
 
     private val lastMediaMetadataObserver = Observer<MediaMetadataCompat> { mediaMetaData ->
         mediaMetaData?.let {
-            lastDataBase.postValue(MediaItemData.pullMediaMetadata(it))
+            lastDataBase.postValue(MediaItemData.pullMediaMetadata(it) ?: return@let)
         }
     }
 
@@ -140,20 +140,12 @@ class SongDetailViewModel(
         return isSongFavLiveData
     }
 
-    fun getLyrics(mediaItemData: MediaItemData): LiveData<String> {
-        loadLyrics(mediaItemData)
+    fun getLyrics(): LiveData<String> {
         return lyrics
     }
 
-    private fun loadLyrics(mediaItemData: MediaItemData) {
-        GlobalScope.launch {
-            val lyric = withContext(IO) {
-                LyricsExtractor.getLyric(mediaItemData) ?: context.getString(R.string.no_lyrics)
-            }
-            if (mediaItemData.id == mediaItemData.id && lyric != lyrics.value) {
-                lyrics.postValue(lyric)
-            }
-        }
+    fun updateLyrics(lyric: String? = null) {
+        lyrics.postValue(lyric)
     }
 
     override fun onCleared() {

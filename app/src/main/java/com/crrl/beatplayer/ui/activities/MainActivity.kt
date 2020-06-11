@@ -27,10 +27,7 @@ import com.crrl.beatplayer.models.PlaybackState
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.ui.activities.base.BaseActivity
 import com.crrl.beatplayer.ui.fragments.*
-import com.crrl.beatplayer.ui.viewmodels.FavoriteViewModel
-import com.crrl.beatplayer.ui.viewmodels.PlaylistViewModel
-import com.crrl.beatplayer.ui.viewmodels.SongDetailViewModel
-import com.crrl.beatplayer.ui.viewmodels.SongViewModel
+import com.crrl.beatplayer.ui.viewmodels.*
 import com.crrl.beatplayer.utils.BeatConstants
 import com.crrl.beatplayer.utils.BeatConstants.BIND_STATE_BOUND
 import com.crrl.beatplayer.utils.BeatConstants.FAVORITE_ID
@@ -40,6 +37,7 @@ import com.crrl.beatplayer.utils.SettingsUtility
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_SHORT
 import com.google.gson.Gson
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class MainActivity : BaseActivity() {
@@ -49,6 +47,8 @@ class MainActivity : BaseActivity() {
     private val songViewModel by inject<SongViewModel>()
     private val songDetailViewModel by inject<SongDetailViewModel>()
     private val settingsUtility by inject<SettingsUtility>()
+
+    private val viewModel by viewModel<MainViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -196,7 +196,7 @@ class MainActivity : BaseActivity() {
 
     fun shuffleModeClick(view: View) {
         val mediaItemData = songDetailViewModel.currentState.value ?: PlaybackState()
-        when(mediaItemData.shuffleMode){
+        when (mediaItemData.shuffleMode) {
             SHUFFLE_MODE_ALL -> viewModel.transportControls()?.setShuffleMode(SHUFFLE_MODE_NONE)
             else -> viewModel.transportControls()?.setShuffleMode(SHUFFLE_MODE_ALL)
         }

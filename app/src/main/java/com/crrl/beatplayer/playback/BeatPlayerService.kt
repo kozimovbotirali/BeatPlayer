@@ -18,6 +18,7 @@ import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat.METADATA_KEY_MEDIA_ID
 import android.support.v4.media.session.PlaybackStateCompat.STATE_NONE
+import androidx.core.os.bundleOf
 import androidx.media.MediaBrowserServiceCompat
 import androidx.media.session.MediaButtonReceiver
 import com.crrl.beatplayer.R
@@ -31,8 +32,11 @@ import com.crrl.beatplayer.playback.players.BeatPlayer
 import com.crrl.beatplayer.playback.receivers.BecomingNoisyReceiver
 import com.crrl.beatplayer.repository.*
 import com.crrl.beatplayer.utils.BeatConstants
+import com.crrl.beatplayer.utils.BeatConstants.BY_UI_KEY
 import com.crrl.beatplayer.utils.BeatConstants.NEXT
 import com.crrl.beatplayer.utils.BeatConstants.NOTIFICATION_ID
+import com.crrl.beatplayer.utils.BeatConstants.PAUSE_ACTION
+import com.crrl.beatplayer.utils.BeatConstants.PLAY_ACTION
 import com.crrl.beatplayer.utils.BeatConstants.PLAY_PAUSE
 import com.crrl.beatplayer.utils.BeatConstants.PREVIOUS
 import com.crrl.beatplayer.utils.SettingsUtility
@@ -45,6 +49,10 @@ import org.koin.core.KoinComponent
 import org.koin.core.inject
 
 class BeatPlayerService : MediaBrowserServiceCompat(), KoinComponent {
+
+    companion object {
+        var IS_RUNNING = false
+    }
 
     private lateinit var becomingNoisyReceiver: BecomingNoisyReceiver
 
@@ -65,18 +73,17 @@ class BeatPlayerService : MediaBrowserServiceCompat(), KoinComponent {
         sessionToken = beatPlayer.getSession().sessionToken
         becomingNoisyReceiver = BecomingNoisyReceiver(this, sessionToken!!)
 
-        beatPlayer.onPlayingState { isPlaying ->
+        beatPlayer.onPlayingState { isPlaying, byUi ->
             if (isPlaying) {
                 startForeground(NOTIFICATION_ID, notifications.buildNotification(getSession()))
                 becomingNoisyReceiver.register()
             } else {
                 becomingNoisyReceiver.unregister()
-                stopForeground(false)
                 saveCurrentData()
+                stopForeground(byUi)
+                if (!byUi) notifications.updateNotification(getSession())
             }
-
-            if (getSession().controller.playbackState.state != 0)
-                notifications.updateNotification(getSession())
+            IS_RUNNING = isPlaying
         }
 
         beatPlayer.onCompletion {
@@ -100,8 +107,14 @@ class BeatPlayerService : MediaBrowserServiceCompat(), KoinComponent {
             PLAY_PAUSE -> {
                 controller.playbackState?.let { playbackState ->
                     when {
-                        playbackState.isPlaying -> controller.transportControls.pause()
-                        playbackState.isPlayEnabled -> controller.transportControls.play()
+                        playbackState.isPlaying -> controller.transportControls.sendCustomAction(
+                            PLAY_ACTION,
+                            bundleOf(BY_UI_KEY to false)
+                        )
+                        playbackState.isPlayEnabled -> controller.transportControls.sendCustomAction(
+                            PAUSE_ACTION,
+                            bundleOf(BY_UI_KEY to false)
+                        )
                     }
                 }
             }
@@ -141,13 +154,6 @@ class BeatPlayerService : MediaBrowserServiceCompat(), KoinComponent {
             CALLER_OTHER
         }
         return BrowserRoot(MediaId("-1", null, caller).toString(), null)
-    }
-
-    override fun onDestroy() {
-        saveCurrentData()
-        beatPlayer.release()
-        notifications.clearNotifications()
-        super.onDestroy()
     }
 
     private fun saveCurrentData() {

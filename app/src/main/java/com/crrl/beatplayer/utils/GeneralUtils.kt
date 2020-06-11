@@ -26,18 +26,13 @@ import android.graphics.drawable.shapes.RoundRectShape
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
-import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import com.crrl.beatplayer.R
-import com.crrl.beatplayer.extensions.CUSTOM
-import com.crrl.beatplayer.extensions.snackbar
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.utils.BeatConstants.ARTWORK_URI
 import com.crrl.beatplayer.utils.BeatConstants.SONG_URI
-import com.google.android.material.snackbar.BaseTransientBottomBar
 import java.io.FileInputStream
 import java.io.FileNotFoundException
 
@@ -140,23 +135,9 @@ object GeneralUtils {
     }
 
     fun getStoragePaths(context: Context): List<String> {
-        println(context.packageName)
         return ContextCompat.getExternalFilesDirs(context, null).map {
             it.path.replace("/Android/data/${context.packageName}/files", "")
         }
-    }
-
-    fun showSnackBar(view: View?, resp: Int, type: Int, @StringRes message: Int) {
-        val custom = when (type) {
-            1 -> R.drawable.ic_success
-            else -> R.drawable.ic_dislike
-        }
-        if (resp > 0) view.snackbar(
-            CUSTOM,
-            view!!.context.getString(message),
-            BaseTransientBottomBar.LENGTH_SHORT,
-            custom = custom
-        )
     }
 
     /**
