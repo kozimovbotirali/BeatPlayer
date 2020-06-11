@@ -78,7 +78,10 @@ class SongDetailFragment : BaseSongDetailFragment() {
             }
         }
 
-        binding.sharedSong.setOnClickListener { shareItem() }
+        binding.apply{
+            sharedSong.setOnClickListener { shareItem() }
+            songTitle.isSelected = true
+        }
 
         songDetailViewModel.currentState.observe(this) {
             songDetailViewModel.update(it.position)
