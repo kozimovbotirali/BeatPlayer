@@ -31,6 +31,7 @@ interface SongsRepository {
     fun loadSongs(): List<Song>
     fun getSongs(): List<Song>
     fun getSongForId(id: Long): Song
+    fun getSongForPath(path: String): Song
     fun search(searchString: String, limit: Int = Int.MAX_VALUE): List<Song>
     fun deleteTracks(ids: LongArray): Int
     fun getSongsForIds(ids: LongArray): List<Song>
@@ -55,6 +56,17 @@ class SongsRepositoryImplementation(context: Context) : SongsRepository {
 
     override fun getSongForId(id: Long): Song {
         val cursor = makeSongCursor("_id=$id", null)!!
+        cursor.use {
+            return if (it.moveToFirst()) {
+                Song.createFromCursor(it)
+            } else {
+                Song()
+            }
+        }
+    }
+
+    override fun getSongForPath(path: String): Song {
+        val cursor = makeSongCursor("_data=?", arrayOf(path))!!
         cursor.use {
             return if (it.moveToFirst()) {
                 Song.createFromCursor(it)

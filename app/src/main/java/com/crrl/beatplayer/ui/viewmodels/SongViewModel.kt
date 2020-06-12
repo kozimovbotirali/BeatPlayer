@@ -58,4 +58,8 @@ class SongViewModel(
     fun getSongById(id: Long): Song {
         return songsRepository.getSongForId(id)
     }
+
+    fun getSongFromPath(path: String): Song {
+        return songsRepository.getSongForPath(path)
+    }
 }

@@ -38,6 +38,7 @@ import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_SHORT
 import com.google.gson.Gson
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
 
 
 class MainActivity : BaseActivity() {
@@ -107,6 +108,7 @@ class MainActivity : BaseActivity() {
                     } else viewModel.hideMiniPlayer()
                 } else viewModel.hideMiniPlayer()
             }
+        handlePlaybackIntent(intent)
     }
 
     fun onSongLyricClick(v: View) {
@@ -234,6 +236,28 @@ class MainActivity : BaseActivity() {
             else -> R.drawable.ic_dislike
         }
         if (resp > 0) view.snackbar(CUSTOM, ok, LENGTH_SHORT, custom = custom)
+    }
+
+    private fun handlePlaybackIntent(intent: Intent?) {
+        intent?.action ?: return
+
+        when (intent.action!!) {
+            Intent.ACTION_VIEW -> {
+                val path = intent.data?.path ?: return
+                Timber.d("path: $path")
+                // Some file managers still send a file path instead of media uri,
+                // so data needs to be verified.
+                val song = if (path.endsWith(".mp3")) {
+                    // Get song from a path
+                    songViewModel.getSongFromPath(path)
+                } else {
+                    // Get song by id if it is a media uri
+                    // The last part of a URI is the id, so just need to get it
+                    songViewModel.getSongById(path.split("/").last().toLong())
+                }
+                viewModel.mediaItemClicked(song.toMediaItem(), null)
+            }
+        }
     }
 
     fun isPermissionsGranted() = permissionsGranted

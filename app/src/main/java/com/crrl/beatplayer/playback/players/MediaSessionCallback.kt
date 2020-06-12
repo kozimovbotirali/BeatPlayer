@@ -100,11 +100,11 @@ class MediaSessionCallback(
 
     override fun onPlayFromMediaId(mediaId: String, extras: Bundle?) {
         Timber.d("onPlayFromMediaId()")
-        extras ?: return
+
         val songId = mediaId.toMediaId().mediaId!!.toLong()
-        val queue = extras.getLongArray(QUEUE_INFO_KEY)
-        val queueTitle = extras.getString(SONG_LIST_NAME)
-        val seekTo = extras.getInt(SEEK_TO)
+        val queue = extras?.getLongArray(QUEUE_INFO_KEY)
+        val queueTitle = extras?.getString(SONG_LIST_NAME)
+        val seekTo = extras?.getInt(SEEK_TO) ?: 0
 
         if (queue != null) {
             musicPlayer.setData(queue, queueTitle!!)
@@ -212,7 +212,7 @@ class MediaSessionCallback(
         )
     }
 
-    private fun playOnFocus(extras: Bundle = bundleOf(BY_UI_KEY to true)){
+    private fun playOnFocus(extras: Bundle = bundleOf(BY_UI_KEY to true)) {
         if (audioFocusHelper.requestPlayback())
             musicPlayer.playSong(extras)
     }
