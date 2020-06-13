@@ -165,8 +165,8 @@ class MediaSessionCallback(
             REPEAT_ONE -> musicPlayer.repeatSong()
             REPEAT_ALL -> musicPlayer.repeatQueue()
             REMOVE_SONG -> musicPlayer.removeFromQueue(extras?.getLong(SONG_KEY)!!)
-            PLAY_ACTION -> musicPlayer.pause(extras ?: bundleOf(BY_UI_KEY to true))
-            PAUSE_ACTION -> playOnFocus(extras ?: bundleOf(BY_UI_KEY to true))
+            PAUSE_ACTION -> musicPlayer.pause(extras ?: bundleOf(BY_UI_KEY to true))
+            PLAY_ACTION -> playOnFocus(extras ?: bundleOf(BY_UI_KEY to true))
 
             UPDATE_QUEUE -> {
                 extras ?: return

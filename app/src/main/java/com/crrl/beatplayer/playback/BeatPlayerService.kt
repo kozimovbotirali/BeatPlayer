@@ -108,11 +108,11 @@ class BeatPlayerService : MediaBrowserServiceCompat(), KoinComponent {
                 controller.playbackState?.let { playbackState ->
                     when {
                         playbackState.isPlaying -> controller.transportControls.sendCustomAction(
-                            PLAY_ACTION,
+                            PAUSE_ACTION,
                             bundleOf(BY_UI_KEY to false)
                         )
                         playbackState.isPlayEnabled -> controller.transportControls.sendCustomAction(
-                            PAUSE_ACTION,
+                            PLAY_ACTION,
                             bundleOf(BY_UI_KEY to false)
                         )
                     }
