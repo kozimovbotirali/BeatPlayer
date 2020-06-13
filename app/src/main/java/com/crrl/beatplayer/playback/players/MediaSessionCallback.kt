@@ -13,15 +13,12 @@
 
 package com.crrl.beatplayer.playback.players
 
-import android.media.AudioManager
 import android.os.Bundle
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat.*
 import androidx.core.os.bundleOf
-import com.crrl.beatplayer.extensions.isPlaying
 import com.crrl.beatplayer.extensions.toIdList
 import com.crrl.beatplayer.extensions.toMediaId
-import com.crrl.beatplayer.playback.AudioFocusHelper
 import com.crrl.beatplayer.repository.SongsRepository
 import com.crrl.beatplayer.utils.BeatConstants.BY_UI_KEY
 import com.crrl.beatplayer.utils.BeatConstants.PAUSE_ACTION
@@ -45,38 +42,8 @@ import timber.log.Timber
 class MediaSessionCallback(
     private val mediaSession: MediaSessionCompat,
     private val musicPlayer: BeatPlayer,
-    private val audioFocusHelper: AudioFocusHelper,
     private val songsRepository: SongsRepository
 ) : MediaSessionCompat.Callback() {
-
-    init {
-        audioFocusHelper.onAudioFocusGain {
-            Timber.d("GAIN")
-            if (isAudioFocusGranted && !musicPlayer.getSession().isPlaying()) {
-                musicPlayer.playSong()
-            } else audioFocusHelper.setVolume(AudioManager.ADJUST_RAISE)
-            isAudioFocusGranted = false
-        }
-        audioFocusHelper.onAudioFocusLoss {
-            Timber.d("LOSS")
-            abandonPlayback()
-            isAudioFocusGranted = false
-            musicPlayer.pause()
-        }
-
-        audioFocusHelper.onAudioFocusLossTransient {
-            Timber.d("TRANSIENT")
-            if (musicPlayer.getSession().isPlaying()) {
-                isAudioFocusGranted = true
-                musicPlayer.pause()
-            }
-        }
-
-        audioFocusHelper.onAudioFocusLossTransientCanDuck {
-            Timber.d("TRANSIENT_CAN_DUCK")
-            audioFocusHelper.setVolume(AudioManager.ADJUST_LOWER)
-        }
-    }
 
     override fun onPause() {
         Timber.d("onPause()")
@@ -85,7 +52,7 @@ class MediaSessionCallback(
 
     override fun onPlay() {
         Timber.d("onPlay()")
-        playOnFocus()
+        musicPlayer.playSong()
     }
 
     override fun onPlayFromSearch(query: String?, extras: Bundle?) {
@@ -166,7 +133,7 @@ class MediaSessionCallback(
             REPEAT_ALL -> musicPlayer.repeatQueue()
             REMOVE_SONG -> musicPlayer.removeFromQueue(extras?.getLong(SONG_KEY)!!)
             PAUSE_ACTION -> musicPlayer.pause(extras ?: bundleOf(BY_UI_KEY to true))
-            PLAY_ACTION -> playOnFocus(extras ?: bundleOf(BY_UI_KEY to true))
+            PLAY_ACTION -> musicPlayer.playSong(extras ?: bundleOf(BY_UI_KEY to true))
 
             UPDATE_QUEUE -> {
                 extras ?: return
@@ -210,10 +177,5 @@ class MediaSessionCallback(
             mediaSession.controller.queue.toIdList(),
             mediaSession.controller.queueTitle.toString()
         )
-    }
-
-    private fun playOnFocus(extras: Bundle = bundleOf(BY_UI_KEY to true)) {
-        if (audioFocusHelper.requestPlayback())
-            musicPlayer.playSong(extras)
     }
 }

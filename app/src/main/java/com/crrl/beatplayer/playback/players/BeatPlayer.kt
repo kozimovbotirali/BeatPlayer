@@ -15,6 +15,7 @@ package com.crrl.beatplayer.playback.players
 
 import android.app.Application
 import android.app.PendingIntent
+import android.media.AudioManager
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.media.MediaMetadataCompat
@@ -34,6 +35,7 @@ import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.playback.AudioFocusHelper
 import com.crrl.beatplayer.repository.SongsRepository
 import com.crrl.beatplayer.utils.BeatConstants.BY_UI_KEY
+import com.crrl.beatplayer.utils.BeatConstants.PLAY_ACTION
 import com.crrl.beatplayer.utils.BeatConstants.REPEAT_ALL
 import com.crrl.beatplayer.utils.BeatConstants.REPEAT_MODE
 import com.crrl.beatplayer.utils.BeatConstants.REPEAT_ONE
@@ -42,6 +44,7 @@ import com.crrl.beatplayer.utils.GeneralUtils.getAlbumArtBitmap
 import com.crrl.beatplayer.utils.GeneralUtils.getSongUri
 import com.crrl.beatplayer.utils.QueueUtils
 import com.crrl.beatplayer.utils.SettingsUtility
+import timber.log.Timber
 
 
 interface BeatPlayer {
@@ -78,7 +81,7 @@ class BeatPlayerImplementation(
     private val songsRepository: SongsRepository,
     private val settingsUtility: SettingsUtility,
     private val queueUtils: QueueUtils,
-    audioFocusHelper: AudioFocusHelper
+    private val audioFocusHelper: AudioFocusHelper
 ) : BeatPlayer {
 
     private var isInitialized: Boolean = false
@@ -99,7 +102,6 @@ class BeatPlayerImplementation(
                 MediaSessionCallback(
                     this,
                     this@BeatPlayerImplementation,
-                    audioFocusHelper,
                     songsRepository
                 )
             )
@@ -115,6 +117,34 @@ class BeatPlayerImplementation(
 
     init {
         queueUtils.setMediaSession(mediaSession)
+        
+        audioFocusHelper.onAudioFocusGain {
+            Timber.d("GAIN")
+            if (isAudioFocusGranted && !getSession().isPlaying()) {
+                playSong()
+            } else audioFocusHelper.setVolume(AudioManager.ADJUST_RAISE)
+            isAudioFocusGranted = false
+        }
+        audioFocusHelper.onAudioFocusLoss {
+            Timber.d("LOSS")
+            abandonPlayback()
+            isAudioFocusGranted = false
+            pause()
+        }
+
+        audioFocusHelper.onAudioFocusLossTransient {
+            Timber.d("TRANSIENT")
+            if (getSession().isPlaying()) {
+                isAudioFocusGranted = true
+                pause()
+            }
+        }
+
+        audioFocusHelper.onAudioFocusLossTransientCanDuck {
+            Timber.d("TRANSIENT_CAN_DUCK")
+            audioFocusHelper.setVolume(AudioManager.ADJUST_LOWER)
+        }
+
         musicPlayer.onPrepared {
             preparedCallback(this@BeatPlayerImplementation)
             playSong()
@@ -144,7 +174,8 @@ class BeatPlayerImplementation(
                 setState(STATE_PLAYING, mediaSession.position(), 1F)
                 setExtras(extras)
             }
-            musicPlayer.play()
+            if (audioFocusHelper.requestPlayback())
+                musicPlayer.play()
             return
         }
         musicPlayer.reset()
