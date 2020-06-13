@@ -130,7 +130,7 @@ fun View?.scaleDown() {
     val view = this ?: return
     please(250, AccelerateDecelerateInterpolator()) {
         animate(view) {
-            scale(0.6f, 0.6f)
+            scale(0.9f, 0.9f)
         }
     }.start()
 }

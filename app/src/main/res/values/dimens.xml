@@ -34,7 +34,7 @@
     <dimen name="list_item_ripple_radius">25dp</dimen>
     <dimen name="song_item_cover_radius">12dp</dimen>
     <dimen name="app_bar_size">55dp</dimen>
-    <dimen name="song_item_size">100dp</dimen>
+    <dimen name="song_item_size">80dp</dimen>
     <dimen name="margin_34">34dp</dimen>
     <dimen name="margin_8">8dp</dimen>
     <dimen name="padding_14">14dp</dimen>

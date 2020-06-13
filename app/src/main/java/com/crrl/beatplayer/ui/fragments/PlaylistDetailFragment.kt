@@ -121,6 +121,7 @@ class PlaylistDetailFragment : BaseFragment<Song>() {
     }
 
     override fun onPlayAllClick(view: View) {
+        if(songAdapter.songList.isEmpty()) return
         val extras = getExtraBundle(songAdapter.songList.toIDList(), binding.playlist!!.name)
         mainViewModel.mediaItemClicked(songAdapter.songList.first().toMediaItem(), extras)
     }

@@ -21,7 +21,7 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val mainModel = module {
-    factory {
+    single {
         val component = ComponentName(get(), BeatPlayerService::class.java)
         PlaybackConnectionImplementation(get(), component)
     } bind PlaybackConnection::class

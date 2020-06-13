@@ -13,6 +13,7 @@
 
 package com.crrl.beatplayer.repository
 
+import android.content.Context
 import com.crrl.beatplayer.extensions.toIDList
 import com.crrl.beatplayer.models.Folder
 import com.crrl.beatplayer.models.Song
@@ -24,12 +25,13 @@ interface FoldersRepository {
 }
 
 class FoldersRepositoryImplementation(
+    private val context: Context,
     private val songsRepository: SongsRepository
 ) : FoldersRepository {
 
     override fun getFolders(): List<Folder> {
         return songsRepository.getSongs().groupBy { it.path }.map {
-            Folder.fromSong(it.value.first(), it.value.toIDList())
+            Folder.fromSong(it.value.first(), it.value.toIDList(), context)
         }.sortedBy { it.name }
     }
 
@@ -37,7 +39,7 @@ class FoldersRepositoryImplementation(
         return songsRepository.getSongs().groupBy { it.path }.filter {
             it.value.first().id == id
         }.map {
-            Folder.fromSong(it.value.first(), it.value.toIDList())
+            Folder.fromSong(it.value.first(), it.value.toIDList(), context)
         }.firstOrNull() ?: Folder()
     }
 

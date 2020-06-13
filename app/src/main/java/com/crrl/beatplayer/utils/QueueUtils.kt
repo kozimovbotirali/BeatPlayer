@@ -87,7 +87,10 @@ class QueueUtilsImplementation(
             val nextIndex = currentSongIndex + 1
             val controller = mediaSession.controller
             return when {
-                controller.shuffleMode == PlaybackStateCompat.SHUFFLE_MODE_ALL -> getRandomIndex()
+                controller.shuffleMode == PlaybackStateCompat.SHUFFLE_MODE_ALL -> {
+                    val index = getRandomIndex()
+                    if(index >= 0) index else null
+                }
                 nextIndex < queue.size -> nextIndex
                 else -> null
             }
@@ -118,6 +121,7 @@ class QueueUtilsImplementation(
     }
 
     private fun getRandomIndex(): Int {
+        if(queue.isEmpty()) return -1
         if (queue.size == 1) return 0
         val randomSong = Random.nextInt(0, queue.size - 1)
         if (randomSong == currentSongIndex) return getRandomIndex()

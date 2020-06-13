@@ -21,6 +21,7 @@ import android.os.PowerManager
 import com.crrl.beatplayer.alias.OnCompletion
 import com.crrl.beatplayer.alias.OnError
 import com.crrl.beatplayer.alias.OnPrepared
+import timber.log.Timber
 
 interface BeatMediaPlayer {
     fun play()
@@ -49,8 +50,7 @@ class BeatMediaPlayerImplementation(internal val context: Application) : BeatMed
     private val mediaPlayer: MediaPlayer
         get() {
             if (mediaPlayerBase == null) {
-                mediaPlayerBase =
-                    createPlayer(this)
+                mediaPlayerBase = createPlayer(this)
             }
             return mediaPlayerBase ?: throw IllegalStateException("Impossible")
         }
@@ -107,7 +107,11 @@ class BeatMediaPlayerImplementation(internal val context: Application) : BeatMed
     }
 
     override fun reset() {
-        mediaPlayer.reset()
+        try {
+            mediaPlayer.reset()
+        } catch (ex: java.lang.IllegalStateException){
+            Timber.e(ex)
+        }
     }
 
     override fun release() {

@@ -41,10 +41,9 @@ import kotlinx.coroutines.launch
 import androidx.media.app.NotificationCompat as NotificationMediaCompat
 
 interface Notifications {
-
     fun updateNotification(mediaSession: MediaSessionCompat)
-
     fun buildNotification(mediaSession: MediaSessionCompat): Notification
+    fun clearNotifications()
 }
 
 class NotificationsImplementation(
@@ -53,6 +52,7 @@ class NotificationsImplementation(
 ) : Notifications {
 
     override fun updateNotification(mediaSession: MediaSessionCompat) {
+        if (!BeatPlayerService.IS_RUNNING) return
         GlobalScope.launch {
             notificationManager.notify(NOTIFICATION_ID, buildNotification(mediaSession))
         }
@@ -113,6 +113,10 @@ class NotificationsImplementation(
         }
 
         return builder.build()
+    }
+
+    override fun clearNotifications() {
+        notificationManager.cancel(NOTIFICATION_ID)
     }
 
     private fun getPreviousAction(context: Context): NotificationCompat.Action {

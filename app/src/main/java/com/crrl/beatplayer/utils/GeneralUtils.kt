@@ -26,28 +26,19 @@ import android.graphics.drawable.shapes.RoundRectShape
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
-import android.view.View
-import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import androidx.annotation.StringRes
+import androidx.core.content.ContextCompat
 import com.crrl.beatplayer.R
-import com.crrl.beatplayer.extensions.CUSTOM
-import com.crrl.beatplayer.extensions.snackbar
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.utils.BeatConstants.ARTWORK_URI
 import com.crrl.beatplayer.utils.BeatConstants.SONG_URI
-import com.google.android.material.snackbar.BaseTransientBottomBar
 import java.io.FileInputStream
 import java.io.FileNotFoundException
 
 
 object GeneralUtils {
 
-    const val VERTICAL_TOP = 2
-    const val VERTICAL_BOTTOM = 0
-    const val HORIZONTAL_RIGHT = 1
-    const val HORIZONTAL_LEFT = 3
     const val PORTRAIT = ORIENTATION_PORTRAIT
 
     val screenWidth: Int
@@ -55,11 +46,6 @@ object GeneralUtils {
 
     val screenHeight: Int
         get() = Resources.getSystem().displayMetrics.heightPixels
-
-    @Throws(IllegalArgumentException::class)
-    fun getRotation(context: Context): Int {
-        return (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.rotation
-    }
 
     fun getOrientation(context: Context): Int {
         return context.resources.configuration.orientation
@@ -148,17 +134,10 @@ object GeneralUtils {
         } else Color.BLACK
     }
 
-    fun showSnackBar(view: View?, resp: Int, type: Int, @StringRes message: Int) {
-        val custom = when (type) {
-            1 -> R.drawable.ic_success
-            else -> R.drawable.ic_dislike
+    fun getStoragePaths(context: Context): List<String> {
+        return ContextCompat.getExternalFilesDirs(context, null).map {
+            it.path.replace("/Android/data/${context.packageName}/files", "")
         }
-        if (resp > 0) view.snackbar(
-            CUSTOM,
-            view!!.context.getString(message),
-            BaseTransientBottomBar.LENGTH_SHORT,
-            custom = custom
-        )
     }
 
     /**
@@ -182,39 +161,6 @@ object GeneralUtils {
         return oval
     }
 
-    private fun getFormattedText(targetText: String, text: String?): String {
-        val formattedText = StringBuilder()
-        targetText.mapIndexed { index, targetChar ->
-            if (index < text!!.length)
-                if (targetChar.equals(text[index], true)) {
-                    formattedText.append(targetChar)
-                }
-        }
-        return formattedText.toString()
-    }
-
-    fun tintMatchedText(song: Song, text: String?, color: String): Song {
-        val title = song.title.split("$text", ignoreCase = true)
-            .joinToString("<font color=\"$color\">${getFormattedText(song.title, text)}</font>")
-        return Song(
-            song.id,
-            song.albumId,
-            song.artistId,
-            title,
-            song.artist,
-            song.album,
-            song.duration,
-            song.trackNumber,
-            song.path,
-            song.isFav,
-            song.isSelected,
-            song.playListId
-        )
-    }
-
-    fun isOreo() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-
-    fun getAlbumArtUri(albumId: Long): Uri = withAppendedId(ARTWORK_URI, albumId)
     fun getAlbumArtBitmap(context: Context, albumId: Long?): Bitmap? {
         if (albumId == null) return null
         return try {
@@ -224,5 +170,7 @@ object GeneralUtils {
         }
     }
 
+    fun isOreo() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+    fun getAlbumArtUri(albumId: Long): Uri = withAppendedId(ARTWORK_URI, albumId)
     fun getSongUri(songId: Long): Uri = withAppendedId(SONG_URI, songId)
 }

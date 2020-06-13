@@ -48,13 +48,10 @@ class PlaybackConnectionImplementation(
     serviceComponent: ComponentName
 ) : PlaybackConnection {
 
-    override val isConnected = MutableLiveData<Boolean>().apply { postValue(false) }
-    override val playbackState =
-        MutableLiveData<PlaybackStateCompat>().apply { postValue(NONE_PLAYBACK_STATE) }
-    override val lastPlayed =
-        MutableLiveData<MediaMetadataCompat>().apply { postValue(NONE_PLAYING) }
-    override val nowPlaying =
-        MutableLiveData<MediaMetadataCompat>().apply { postValue(NONE_PLAYING) }
+    override val isConnected = MutableLiveData<Boolean>()
+    override val playbackState = MutableLiveData<PlaybackStateCompat>()
+    override val lastPlayed = MutableLiveData<MediaMetadataCompat>()
+    override val nowPlaying = MutableLiveData<MediaMetadataCompat>()
     override val queueLiveData = MutableLiveData<Queue>()
     override var mediaController: MediaControllerCompat? = null
 
@@ -93,8 +90,9 @@ class PlaybackConnectionImplementation(
         }
 
         override fun onMetadataChanged(metadata: MediaMetadataCompat?) {
+            metadata ?: return
             lastPlayed.postValue(nowPlaying.value ?: NONE_PLAYING)
-            nowPlaying.postValue(metadata ?: NONE_PLAYING)
+            nowPlaying.postValue(metadata)
         }
 
         override fun onQueueChanged(queue: MutableList<MediaSessionCompat.QueueItem>?) {
