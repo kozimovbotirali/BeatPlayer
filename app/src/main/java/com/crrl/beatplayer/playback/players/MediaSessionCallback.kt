@@ -114,7 +114,7 @@ class MediaSessionCallback(
             musicPlayer.seekTo(seekTo)
         }
 
-        musicPlayer.playSong(songId)
+        playOnFocus()
     }
 
     override fun onSeekTo(pos: Long) {
