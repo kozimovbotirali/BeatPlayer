@@ -71,14 +71,14 @@ class ArtistDetailFragment : BaseFragment<MediaItem>() {
             artistDetail = true
         }
 
-        binding.apply {
-            list.apply {
-                layoutManager = LinearLayoutManager(context)
-                adapter = albumAdapter
-            }
-            addFavorites.setOnClickListener { toggleAddFav() }
+        list.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = albumAdapter
+            clipToOutline = true
         }
 
+        binding. addFavorites.setOnClickListener { toggleAddFav() }
+        
         artistViewModel.getArtistAlbums(artist.id).observe(this) {
             albumAdapter.updateDataSet(it)
         }
