@@ -51,6 +51,7 @@ import com.skydoves.powermenu.MenuAnimation
 import com.skydoves.powermenu.OnMenuItemClickListener
 import com.skydoves.powermenu.PowerMenu
 import com.skydoves.powermenu.PowerMenuItem
+import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
@@ -115,11 +116,11 @@ open class BaseFragment<T : MediaItem> : CoroutineFragment(), ItemClickListener<
             listOf(currentItem as Song)
         )
         if (added > 0)
-            mainViewModel.binding.mainContainer.snackbar(
+            main_container.snackbar(
                 SUCCESS, getString(R.string.song_added_success), LENGTH_SHORT
             )
         else
-            mainViewModel.binding.mainContainer.snackbar(
+            main_container.snackbar(
                 ERROR,
                 getString(R.string.song_added_error),
                 LENGTH_SHORT,
@@ -170,7 +171,7 @@ open class BaseFragment<T : MediaItem> : CoroutineFragment(), ItemClickListener<
             })
             addItem(AlertItemAction("OK", false, AlertItemTheme.ACCEPT) { action ->
                 val exists = playlistViewModel.exists(action.input!!)
-                if (exists) mainViewModel.binding.mainContainer.snackbar(
+                if (exists) main_container.snackbar(
                     ERROR,
                     getString(R.string.playlist_name_error),
                     LENGTH_SHORT,
@@ -188,13 +189,13 @@ open class BaseFragment<T : MediaItem> : CoroutineFragment(), ItemClickListener<
         if (song != null) {
             val id = playlistViewModel.create(name, listOf(song))
             if (id != -1L) {
-                mainViewModel.binding.mainContainer.snackbar(
+                main_container.snackbar(
                     SUCCESS,
                     getString(R.string.playlist_added_success),
                     LENGTH_SHORT
                 )
             } else {
-                mainViewModel.binding.mainContainer.snackbar(
+                main_container.snackbar(
                     ERROR,
                     getString(R.string.playlist_added_error, name),
                     LENGTH_LONG
@@ -265,13 +266,13 @@ open class BaseFragment<T : MediaItem> : CoroutineFragment(), ItemClickListener<
         val resp = songViewModel.delete(longArrayOf(id))
         favoriteViewModel.update(currentParentId, id)
         if (resp > 0) {
-            mainViewModel.binding.root.snackbar(
+            main_container.snackbar(
                 SUCCESS,
                 getString(R.string.deleted_ok),
                 LENGTH_SHORT
             )
             tidyUp(id)
-        } else mainViewModel.binding.root.snackbar(ERROR,
+        } else main_container.snackbar(ERROR,
             getString(R.string.deleted_err),
             LENGTH_SHORT,
             action = getString(R.string.retry),
@@ -315,13 +316,13 @@ open class BaseFragment<T : MediaItem> : CoroutineFragment(), ItemClickListener<
     private fun addToList(playListId: Long, song: Song) {
         val added = playlistViewModel.addToPlaylist(playListId, listOf(song))
         if (added != -1L)
-            mainViewModel.binding.mainContainer.snackbar(
+            main_container.snackbar(
                 SUCCESS,
                 getString(R.string.song_added_success),
                 LENGTH_SHORT
             )
         else
-            mainViewModel.binding.mainContainer.snackbar(
+            main_container.snackbar(
                 ERROR,
                 getString(R.string.song_added_error),
                 LENGTH_SHORT

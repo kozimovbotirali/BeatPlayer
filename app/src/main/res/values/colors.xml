@@ -17,7 +17,7 @@
     <color name="colorAccentDark">#0788F1</color>
     <color name="colorAccentDarkOpacity">#800788F1</color>
     <color name="colorPrimaryDarkSecondary">#000000</color>
-    <color name="colorPrimaryDarkSecondary2">#252525</color>
+    <color name="colorPrimaryDarkSecondary2">#262626</color>
     <color name="colorPrimaryDarkOpacity">#4D000000</color>
     <color name="colorTitleTextDark">#FCFAFD</color>
     <color name="colorSubTitleTextDark">#CECECE</color>
@@ -41,4 +41,6 @@
 
     <color name="colorAccent">#0788F1</color>
     <color name="primary">#F2F2F2</color>
+
+    <color name="ic_launcher_background">#262626</color>
 </resources>

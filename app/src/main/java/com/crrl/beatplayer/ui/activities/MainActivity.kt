@@ -27,10 +27,7 @@ import com.crrl.beatplayer.models.PlaybackState
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.ui.activities.base.BaseActivity
 import com.crrl.beatplayer.ui.fragments.*
-import com.crrl.beatplayer.ui.viewmodels.FavoriteViewModel
-import com.crrl.beatplayer.ui.viewmodels.PlaylistViewModel
-import com.crrl.beatplayer.ui.viewmodels.SongDetailViewModel
-import com.crrl.beatplayer.ui.viewmodels.SongViewModel
+import com.crrl.beatplayer.ui.viewmodels.*
 import com.crrl.beatplayer.utils.BeatConstants
 import com.crrl.beatplayer.utils.BeatConstants.BIND_STATE_BOUND
 import com.crrl.beatplayer.utils.BeatConstants.FAVORITE_ID
@@ -40,6 +37,8 @@ import com.crrl.beatplayer.utils.SettingsUtility
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_SHORT
 import com.google.gson.Gson
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
 
 
 class MainActivity : BaseActivity() {
@@ -49,6 +48,8 @@ class MainActivity : BaseActivity() {
     private val songViewModel by inject<SongViewModel>()
     private val songDetailViewModel by inject<SongDetailViewModel>()
     private val settingsUtility by inject<SettingsUtility>()
+
+    private val viewModel by viewModel<MainViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -107,6 +108,7 @@ class MainActivity : BaseActivity() {
                     } else viewModel.hideMiniPlayer()
                 } else viewModel.hideMiniPlayer()
             }
+        handlePlaybackIntent(intent)
     }
 
     fun onSongLyricClick(v: View) {
@@ -196,7 +198,7 @@ class MainActivity : BaseActivity() {
 
     fun shuffleModeClick(view: View) {
         val mediaItemData = songDetailViewModel.currentState.value ?: PlaybackState()
-        when(mediaItemData.shuffleMode){
+        when (mediaItemData.shuffleMode) {
             SHUFFLE_MODE_ALL -> viewModel.transportControls()?.setShuffleMode(SHUFFLE_MODE_NONE)
             else -> viewModel.transportControls()?.setShuffleMode(SHUFFLE_MODE_ALL)
         }
@@ -234,6 +236,28 @@ class MainActivity : BaseActivity() {
             else -> R.drawable.ic_dislike
         }
         if (resp > 0) view.snackbar(CUSTOM, ok, LENGTH_SHORT, custom = custom)
+    }
+
+    private fun handlePlaybackIntent(intent: Intent?) {
+        intent?.action ?: return
+
+        when (intent.action!!) {
+            Intent.ACTION_VIEW -> {
+                val path = intent.data?.path ?: return
+                Timber.d("path: $path")
+                // Some file managers still send a file path instead of media uri,
+                // so data needs to be verified.
+                val song = if (path.endsWith(".mp3")) {
+                    // Get song from a path
+                    songViewModel.getSongFromPath(path)
+                } else {
+                    // Get song by id if it is a media uri
+                    // The last part of a URI is the id, so just need to get it
+                    songViewModel.getSongById(path.split("/").last().toLong())
+                }
+                viewModel.mediaItemClicked(song.toMediaItem(), null)
+            }
+        }
     }
 
     fun isPermissionsGranted() = permissionsGranted

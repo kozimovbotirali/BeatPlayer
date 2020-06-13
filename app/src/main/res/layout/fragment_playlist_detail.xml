@@ -36,40 +36,72 @@
             layout="@layout/layout_recyclerview"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginTop="@dimen/margin_12"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/play_list_container" />
+            app:layout_constraintTop_toBottomOf="@id/back" />
+
+        <ImageButton
+            android:id="@+id/back"
+            android:layout_width="@dimen/btn_size"
+            android:layout_height="@dimen/btn_size"
+            android:background="@drawable/btn_ripple"
+            android:contentDescription="@string/cover"
+            android:onClick="back"
+            android:tint="?colorAccent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_back" />
+
+        <ImageButton
+            android:id="@+id/search"
+            android:layout_width="@dimen/btn_size"
+            android:layout_height="@dimen/btn_size"
+            android:background="@drawable/btn_ripple"
+            android:contentDescription="@string/cover"
+            android:onClick="search"
+            android:src="@drawable/ic_search"
+            android:tint="?colorAccent"
+            app:layout_constraintBottom_toBottomOf="@+id/folder_list_container"
+            app:layout_constraintEnd_toStartOf="@id/menu"
+            app:layout_constraintTop_toTopOf="@+id/folder_list_container" />
+
+        <ImageButton
+            android:id="@+id/menu"
+            android:layout_width="@dimen/btn_size"
+            android:layout_height="@dimen/btn_size"
+            android:background="@drawable/btn_ripple"
+            android:contentDescription="@string/cover"
+            android:onClick="menu"
+            android:src="@drawable/ic_more"
+            android:tint="?colorAccent"
+            app:layout_constraintBottom_toBottomOf="@+id/folder_list_container"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/folder_list_container" />
 
         <LinearLayout
-            android:id="@+id/play_list_container"
+            android:id="@+id/folder_list_container"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="@dimen/margin_12"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:paddingTop="@dimen/padding_12"
+            android:paddingBottom="@dimen/padding_12"
+            app:layout_constraintBottom_toBottomOf="@+id/back"
+            app:layout_constraintEnd_toStartOf="@+id/search"
+            app:layout_constraintStart_toEndOf="@+id/back"
+            app:layout_constraintTop_toTopOf="@+id/back">
 
             <TextView
                 style="@style/TitleTextAppearance"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
+                android:layout_marginStart="7dp"
+                android:layout_marginEnd="7dp"
                 android:layout_weight="1"
-                android:gravity="center"
+                android:gravity="start"
                 android:maxLines="1"
                 android:text="@{playlist.name}"
-                android:textColor="?titleTextColor" />
-
-            <TextView
-                android:id="@+id/sub_title"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:maxLines="1"
-                android:padding="7dp"
-                android:text="@{@plurals/number_of_songs(viewModel.getSongs(playlist.id).size, viewModel.getSongs(playlist.id).size)}"
-                android:textColor="?colorAccent"
-                android:textSize="@dimen/title_text_size" />
+                android:textColor="?subTitleTextColor"
+                android:textSize="@dimen/text_size_18" />
         </LinearLayout>
 
         <TextView

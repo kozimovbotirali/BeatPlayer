@@ -31,6 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingEnd="@dimen/padding_12"
+            android:paddingBottom="@dimen/song_item_size"
             android:background="@drawable/song_detail_cover_frame"
             android:clipToPadding="false"
             android:nestedScrollingEnabled="true"

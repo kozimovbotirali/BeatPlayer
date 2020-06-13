@@ -26,22 +26,21 @@ class MediaItemData(
 
 ) {
     companion object {
-        fun pullMediaMetadata(metaData: MediaMetadataCompat?): MediaItemData {
-            metaData?.let {
-                val mediaId = metaData.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID)
-                return MediaItemData(
-                    id = if (mediaId == "") 0 else mediaId.toLong(),
-                    title = metaData.getString(MediaMetadataCompat.METADATA_KEY_TITLE) ?: "",
-                    album = metaData.getString(MediaMetadataCompat.METADATA_KEY_ALBUM) ?: "",
-                    artist = metaData.getString(MediaMetadataCompat.METADATA_KEY_ARTIST) ?: "",
-                    duration = metaData.getLong(MediaMetadataCompat.METADATA_KEY_DURATION).toInt(),
-                    albumId = metaData.getString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI)
-                        ?.toLong() ?: 0,
-                    description = metaData.getString(MediaMetadataCompat.METADATA_KEY_DISPLAY_DESCRIPTION)
-                        ?: ""
-                )
-            }
-            return MediaItemData()
+        fun pullMediaMetadata(metaData: MediaMetadataCompat?): MediaItemData? {
+            metaData ?: return null
+            val mediaId = metaData.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID)
+            val data = MediaItemData(
+                id = if (mediaId == "") -1 else mediaId.toLong(),
+                title = metaData.getString(MediaMetadataCompat.METADATA_KEY_TITLE) ?: "",
+                album = metaData.getString(MediaMetadataCompat.METADATA_KEY_ALBUM) ?: "",
+                artist = metaData.getString(MediaMetadataCompat.METADATA_KEY_ARTIST) ?: "",
+                duration = metaData.getLong(MediaMetadataCompat.METADATA_KEY_DURATION).toInt(),
+                albumId = metaData.getString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI)
+                    ?.toLong() ?: 0,
+                description = metaData.getString(MediaMetadataCompat.METADATA_KEY_DISPLAY_DESCRIPTION)
+                    ?: ""
+            )
+            return if (data.id != -1L) data else null
         }
     }
 }

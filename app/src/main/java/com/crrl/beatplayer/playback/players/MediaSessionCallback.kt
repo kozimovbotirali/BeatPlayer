@@ -15,13 +15,14 @@ package com.crrl.beatplayer.playback.players
 
 import android.os.Bundle
 import android.support.v4.media.session.MediaSessionCompat
-import android.support.v4.media.session.PlaybackStateCompat
-import android.support.v4.media.session.PlaybackStateCompat.SHUFFLE_MODE_ALL
-import android.support.v4.media.session.PlaybackStateCompat.STATE_NONE
+import android.support.v4.media.session.PlaybackStateCompat.*
+import androidx.core.os.bundleOf
 import com.crrl.beatplayer.extensions.toIdList
 import com.crrl.beatplayer.extensions.toMediaId
 import com.crrl.beatplayer.repository.SongsRepository
-import com.crrl.beatplayer.utils.BeatConstants
+import com.crrl.beatplayer.utils.BeatConstants.BY_UI_KEY
+import com.crrl.beatplayer.utils.BeatConstants.PAUSE_ACTION
+import com.crrl.beatplayer.utils.BeatConstants.PLAY_ACTION
 import com.crrl.beatplayer.utils.BeatConstants.PLAY_ALL_SHUFFLED
 import com.crrl.beatplayer.utils.BeatConstants.QUEUE_INFO_KEY
 import com.crrl.beatplayer.utils.BeatConstants.QUEUE_LIST_KEY
@@ -30,24 +31,32 @@ import com.crrl.beatplayer.utils.BeatConstants.REMOVE_SONG
 import com.crrl.beatplayer.utils.BeatConstants.REPEAT_ALL
 import com.crrl.beatplayer.utils.BeatConstants.REPEAT_MODE
 import com.crrl.beatplayer.utils.BeatConstants.REPEAT_ONE
-import com.crrl.beatplayer.utils.BeatConstants.RESTORE_MEDIA_SESSION
 import com.crrl.beatplayer.utils.BeatConstants.SEEK_TO
 import com.crrl.beatplayer.utils.BeatConstants.SET_MEDIA_STATE
 import com.crrl.beatplayer.utils.BeatConstants.SHUFFLE_MODE
 import com.crrl.beatplayer.utils.BeatConstants.SONG_KEY
 import com.crrl.beatplayer.utils.BeatConstants.SONG_LIST_NAME
 import com.crrl.beatplayer.utils.BeatConstants.UPDATE_QUEUE
+import timber.log.Timber
 
 class MediaSessionCallback(
     private val mediaSession: MediaSessionCompat,
     private val musicPlayer: BeatPlayer,
     private val songsRepository: SongsRepository
 ) : MediaSessionCompat.Callback() {
-    override fun onPause() = musicPlayer.pause()
 
-    override fun onPlay() = musicPlayer.playSong()
+    override fun onPause() {
+        Timber.d("onPause()")
+        musicPlayer.pause()
+    }
+
+    override fun onPlay() {
+        Timber.d("onPlay()")
+        musicPlayer.playSong()
+    }
 
     override fun onPlayFromSearch(query: String?, extras: Bundle?) {
+        Timber.d("onPlayFromSearch()")
         query?.let {
             val song = songsRepository.search(query, 1)
             if (song.isNotEmpty()) {
@@ -57,11 +66,12 @@ class MediaSessionCallback(
     }
 
     override fun onPlayFromMediaId(mediaId: String, extras: Bundle?) {
-        extras ?: return
+        Timber.d("onPlayFromMediaId()")
+
         val songId = mediaId.toMediaId().mediaId!!.toLong()
-        val queue = extras.getLongArray(QUEUE_INFO_KEY)
-        val queueTitle = extras.getString(BeatConstants.SONG_LIST_NAME)
-        val seekTo = extras.getInt(SEEK_TO)
+        val queue = extras?.getLongArray(QUEUE_INFO_KEY)
+        val queueTitle = extras?.getString(SONG_LIST_NAME)
+        val seekTo = extras?.getInt(SEEK_TO) ?: 0
 
         if (queue != null) {
             musicPlayer.setData(queue, queueTitle!!)
@@ -74,27 +84,34 @@ class MediaSessionCallback(
         musicPlayer.playSong(songId)
     }
 
-    override fun onSeekTo(pos: Long) = musicPlayer.seekTo(pos.toInt())
+    override fun onSeekTo(pos: Long) {
+        Timber.d("onSeekTo()")
+        musicPlayer.seekTo(pos.toInt())
+    }
 
     override fun onSkipToNext() {
+        Timber.d("onSkipToNext()")
         musicPlayer.nextSong()
     }
 
     override fun onSkipToPrevious() {
+        Timber.d("onSkipToPrevious()")
         musicPlayer.previousSong()
     }
 
-    override fun onStop() = musicPlayer.stop()
+    override fun onStop() {
+        Timber.d("onStop()")
+        musicPlayer.stop()
+    }
 
     override fun onSetRepeatMode(repeatMode: Int) {
         super.onSetRepeatMode(repeatMode)
         val bundle = mediaSession.controller.playbackState.extras ?: Bundle()
         musicPlayer.setPlaybackState(
-            PlaybackStateCompat.Builder(mediaSession.controller.playbackState)
+            Builder(mediaSession.controller.playbackState)
                 .setExtras(bundle.apply {
                     putInt(REPEAT_MODE, repeatMode)
-                }
-                ).build()
+                }).build()
         )
     }
 
@@ -102,7 +119,7 @@ class MediaSessionCallback(
         super.onSetShuffleMode(shuffleMode)
         val bundle = mediaSession.controller.playbackState.extras ?: Bundle()
         musicPlayer.setPlaybackState(
-            PlaybackStateCompat.Builder(mediaSession.controller.playbackState)
+            Builder(mediaSession.controller.playbackState)
                 .setExtras(bundle.apply {
                     putInt(SHUFFLE_MODE, shuffleMode)
                 }).build()
@@ -114,8 +131,9 @@ class MediaSessionCallback(
             SET_MEDIA_STATE -> setSavedMediaSessionState()
             REPEAT_ONE -> musicPlayer.repeatSong()
             REPEAT_ALL -> musicPlayer.repeatQueue()
-            RESTORE_MEDIA_SESSION -> restoreMediaSession()
             REMOVE_SONG -> musicPlayer.removeFromQueue(extras?.getLong(SONG_KEY)!!)
+            PAUSE_ACTION -> musicPlayer.pause(extras ?: bundleOf(BY_UI_KEY to true))
+            PLAY_ACTION -> musicPlayer.playSong(extras ?: bundleOf(BY_UI_KEY to true))
 
             UPDATE_QUEUE -> {
                 extras ?: return

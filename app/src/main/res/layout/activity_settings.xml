@@ -14,13 +14,6 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <data>
-
-        <variable
-            name="viewModel"
-            type="com.crrl.beatplayer.ui.viewmodels.MainViewModel" />
-    </data>
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -40,18 +33,16 @@
 
         <TextView
             android:id="@+id/activity_title"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
             android:layout_weight="1"
-            android:gravity="center"
             android:maxLines="1"
             android:padding="7dp"
             android:text="@string/settings"
             android:textColor="?subTitleTextColor"
             android:textSize="@dimen/text_size_16"
-            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/back"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/back"
             app:layout_constraintTop_toTopOf="@+id/back" />
 

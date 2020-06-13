@@ -45,7 +45,6 @@ class SettingsActivity : BaseActivity() {
         dialog = buildThemeDialog()
 
         binding.let {
-            it.viewModel = viewModel
             it.executePendingBindings()
 
             it.lifecycleOwner = this

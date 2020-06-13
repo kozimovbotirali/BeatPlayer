@@ -12,7 +12,6 @@
   ~ limitations under the License.
   -->
 
-<bitmap
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<bitmap xmlns:android="http://schemas.android.com/apk/res/android"
     android:src="@drawable/app_icon"
-    android:tint="?subTitleTextColor" />
+    android:tint="?colorAccent" />

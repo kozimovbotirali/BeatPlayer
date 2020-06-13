@@ -13,7 +13,11 @@
 
 package com.crrl.beatplayer.extensions
 
+import android.content.Context
 import android.os.Environment
+import android.os.Environment.MEDIA_MOUNTED
+import com.crrl.beatplayer.utils.GeneralUtils
+import com.crrl.beatplayer.utils.GeneralUtils.getStoragePaths
 import timber.log.Timber
 import java.io.File
 
@@ -21,35 +25,17 @@ private const val INTERNAL_STORAGE = "/Internal Storage"
 private const val EXTERNAL_STORAGE = "/SD Card"
 private const val MEGA_BYTES_SIZE = 1048576
 
-fun File?.fixedPath(): String {
-    try {
-        val fixedPath =
-            StringBuilder(if (Environment.isExternalStorageEmulated(this!!)) INTERNAL_STORAGE else EXTERNAL_STORAGE)
-        val parts = path.split("/")
-        for ((i, part) in parts.withIndex()) {
-            if (i > if (fixedPath.contains(EXTERNAL_STORAGE)) 2 else 3) {
-                fixedPath.append("/$part")
-            }
-        }
-        return fixedPath.toString()
-    } catch (ex: IllegalArgumentException) {
-        Timber.e(ex)
+fun File.fixedPath(context: Context): String {
+    val storagePaths = getStoragePaths(context)
+    return if (path.contains(storagePaths[0])) {
+        path.replace(storagePaths[0], INTERNAL_STORAGE)
+    } else {
+        path.replace(storagePaths[1], EXTERNAL_STORAGE)
     }
-    return this?.name!!
 }
 
-fun File?.fixedName(): String {
-    try {
-        val fixedPath =
-            if (Environment.isExternalStorageEmulated(this!!)) INTERNAL_STORAGE else EXTERNAL_STORAGE
-        val parts = path.split("/")
-        return if ((parts.size == 3 && fixedPath == EXTERNAL_STORAGE) || (parts.size == 4 && fixedPath == INTERNAL_STORAGE)) fixedPath.substring(
-            fixedPath.indexOf("/") + 1
-        ) else parts[parts.size - 1]
-    } catch (ex: IllegalArgumentException) {
-        Timber.e(ex)
-    }
-    return this?.name!!
+fun File.fixedName(context: Context): String{
+    return File(fixedPath(context)).name
 }
 
 fun File.sizeMB(): String? {

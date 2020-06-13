@@ -98,14 +98,14 @@ class FolderDetailFragment : BaseFragment<Song>() {
             songAdapter.notifyItemChanged(position)
         }
 
-        binding.apply {
-            list.apply {
-                layoutManager = LinearLayoutManager(context)
-                adapter = songAdapter
-                (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
-            }
-            addFavorites.setOnClickListener { toggleAddFav() }
+        list.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = songAdapter
+            clipToOutline = true
+            (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         }
+
+        binding.addFavorites.setOnClickListener { toggleAddFav() }
 
         binding.let {
             it.mainViewModel = mainViewModel

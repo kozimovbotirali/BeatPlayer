@@ -47,7 +47,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="@dimen/margin_12"
+            android:paddingVertical="@dimen/margin_12"
             android:clickable="true"
             android:focusable="true"
             app:layout_constraintEnd_toStartOf="@+id/menu"
@@ -55,12 +55,16 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
+                android:id="@+id/title"
                 style="@style/TitleTextAppearance"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:maxLines="1"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
                 android:text="@{viewModel.currentData.title}"
                 android:textColor="?titleTextColor" />
 
@@ -83,7 +87,8 @@
             android:background="@drawable/btn_ripple"
             android:contentDescription="@string/cover"
             android:onClick="toggleAddToFav"
-            android:src="@drawable/ic_more"
+            android:src="@drawable/ic_no_favorite"
+            app:isFav="@{viewModel.isSongFav(viewModel.currentData.id)}"
             android:tint="?colorAccent"
             app:layout_constraintBottom_toBottomOf="@+id/info_container"
             app:layout_constraintEnd_toEndOf="parent"
@@ -100,32 +105,25 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:visibility="@{viewModel.getLyrics(viewModel.currentData) != null ? View.GONE : View.VISIBLE}" />
+                android:visibility="@{viewModel.lyrics != null ? View.GONE : View.VISIBLE}" />
 
             <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/song_lyrics"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/song_lyrics"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="20dp"
-                        android:layout_marginTop="12dp"
-                        android:layout_marginRight="20dp"
-                        android:ellipsize="end"
-                        android:paddingTop="20dp"
-                        android:paddingBottom="150dp"
-                        android:textColor="?subTitleTextColor"
-                        android:text="@{viewModel.getLyrics(viewModel.currentData)}"
-                        android:textSize="18sp" />
-                </LinearLayout>
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginRight="20dp"
+                    android:ellipsize="end"
+                    android:paddingTop="20dp"
+                    android:paddingBottom="150dp"
+                    android:textColor="?subTitleTextColor"
+                    android:text="@{viewModel.lyrics}"
+                    android:textSize="18sp" />
             </ScrollView>
         </FrameLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

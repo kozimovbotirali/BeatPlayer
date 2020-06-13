@@ -93,7 +93,7 @@ class ArtistsRepositoryImplementation(context: Context) : ArtistsRepository {
         }
         return contentResolver.query(
             MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
-            arrayOf(ALBUM_ID, ALBUM, ARTIST, NUMBER_OF_SONGS, FIRST_YEAR),
+            arrayOf("_id", "album", "artist", "numsongs", "minyear"),
             "artist_id = ?",
             arrayOf("$artistID"),
             SortModes.AlbumModes.ALBUM_A_Z
