@@ -19,7 +19,7 @@ import com.crrl.beatplayer.playback.players.BeatPlayer
 typealias OnPrepared<T> = T.() -> Unit
 typealias OnError<T> = T.(error: Throwable) -> Unit
 typealias OnCompletion<T> = T.() -> Unit
-typealias OnQueueEndWithNoneRepeat<T> = T.() -> Unit
+typealias OnMetaDataChanged = BeatPlayer.() -> Unit
 typealias OnIsPlaying = BeatPlayer.(playing: Boolean, byUi: Boolean) -> Unit
 typealias LiveDataFilter<T> = (T) -> Boolean
 typealias OnAudioFocusGain = AudioFocusHelper.() -> Unit

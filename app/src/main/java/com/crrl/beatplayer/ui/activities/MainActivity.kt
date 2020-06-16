@@ -71,8 +71,11 @@ class MainActivity : BaseActivity() {
                 BeatConstants.LIBRARY
             )
         }
-        if (!isPermissionsGranted()) return
+        if (isPermissionsGranted()) finishCreatingView()
 
+    }
+
+    private fun finishCreatingView(){
         songDetailViewModel.time.observe(this) {
             val total = songDetailViewModel.currentData.value?.duration ?: 0
             viewModel.binding.progressCircular.apply {
@@ -127,6 +130,18 @@ class MainActivity : BaseActivity() {
             NOW_PLAYING,
             true
         )
+    }
+
+    override fun onPermissionsGrantResult(result: Boolean) {
+        super.onPermissionsGrantResult(result)
+        if(result){
+            replaceFragment(
+                R.id.nav_host_fragment,
+                LibraryFragment(),
+                BeatConstants.LIBRARY
+            )
+            finishCreatingView();
+        }
     }
 
     override fun onBackPressed() {

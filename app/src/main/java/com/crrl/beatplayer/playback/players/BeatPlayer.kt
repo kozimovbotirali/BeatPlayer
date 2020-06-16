@@ -34,7 +34,6 @@ import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.playback.AudioFocusHelper
 import com.crrl.beatplayer.repository.SongsRepository
 import com.crrl.beatplayer.utils.BeatConstants.BY_UI_KEY
-import com.crrl.beatplayer.utils.BeatConstants.PLAY_ACTION
 import com.crrl.beatplayer.utils.BeatConstants.REPEAT_ALL
 import com.crrl.beatplayer.utils.BeatConstants.REPEAT_MODE
 import com.crrl.beatplayer.utils.BeatConstants.REPEAT_ONE
@@ -65,7 +64,7 @@ interface BeatPlayer {
     fun onPrepared(prepared: OnPrepared<BeatPlayer>)
     fun onError(error: OnError<BeatPlayer>)
     fun onCompletion(completion: OnCompletion<BeatPlayer>)
-    fun onQueueEnd(queueEnd: OnQueueEndWithNoneRepeat<BeatPlayer>)
+    fun onQueueEnd(queueEnd: OnMetaDataChanged)
     fun updatePlaybackState(applier: PlaybackStateCompat.Builder.() -> Unit)
     fun setPlaybackState(state: PlaybackStateCompat)
     fun updateData(list: LongArray = longArrayOf(), title: String = "")
@@ -88,7 +87,7 @@ class BeatPlayerImplementation(
     private var preparedCallback: OnPrepared<BeatPlayer> = {}
     private var errorCallback: OnError<BeatPlayer> = {}
     private var completionCallback: OnCompletion<BeatPlayer> = {}
-    private var queueEndCallback: OnQueueEndWithNoneRepeat<BeatPlayer> = {}
+    private var metaDataChangedCallback: OnMetaDataChanged = {}
 
     private var metadataBuilder = MediaMetadataCompat.Builder()
     private var stateBuilder = createDefaultPlaybackState()
@@ -281,8 +280,8 @@ class BeatPlayerImplementation(
         this.completionCallback = completion
     }
 
-    override fun onQueueEnd(queueEnd: OnQueueEndWithNoneRepeat<BeatPlayer>) {
-        this.queueEndCallback = queueEnd
+    override fun onQueueEnd(queueEnd: OnMetaDataChanged) {
+        this.metaDataChangedCallback = queueEnd
     }
 
     override fun updatePlaybackState(applier: PlaybackStateCompat.Builder.() -> Unit) {
@@ -307,6 +306,7 @@ class BeatPlayerImplementation(
         if (title == queueUtils.queueTitle) {
             queueUtils.queue = list
             queueUtils.queueTitle = title
+            setMetaData(queueUtils.currentSong)
         }
     }
 
@@ -350,7 +350,6 @@ class BeatPlayerImplementation(
         val song = songsRepository.getSongForId(queueUtils.currentSongId)
         Handler().postDelayed({
             setMetaData(song)
-            queueEndCallback(this)
         }, 250)
     }
 
@@ -367,6 +366,7 @@ class BeatPlayerImplementation(
             putBitmap(METADATA_KEY_ALBUM_ART, artwork)
         }.build()
         mediaSession.setMetadata(mediaMetadata)
+        metaDataChangedCallback(this)
     }
 }
 

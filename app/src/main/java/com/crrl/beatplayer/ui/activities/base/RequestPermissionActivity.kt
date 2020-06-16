@@ -21,7 +21,10 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.crrl.beatplayer.db.DBHelper
 import com.crrl.beatplayer.models.Favorite
-import com.crrl.beatplayer.repository.*
+import com.crrl.beatplayer.repository.FavoritesRepository
+import com.crrl.beatplayer.repository.FavoritesRepositoryImplementation
+import com.crrl.beatplayer.repository.PlaylistRepository
+import com.crrl.beatplayer.repository.PlaylistRepositoryImplementation
 import com.crrl.beatplayer.utils.BeatConstants.FAVORITE_ID
 import com.crrl.beatplayer.utils.BeatConstants.FAVORITE_NAME
 import com.crrl.beatplayer.utils.BeatConstants.FAVORITE_TYPE
@@ -30,10 +33,15 @@ import org.koin.android.ext.android.get
 
 open class RequestPermissionActivity : AppCompatActivity() {
 
+    // TODO. Make a permission manager
+
+    companion object{
+        private const val REQUEST_PERMISSIONS_CODE = 7444
+    }
+
     protected var permissionsGranted: Boolean = false
 
     val playlistRepository: PlaylistRepository = get()
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,7 +77,7 @@ open class RequestPermissionActivity : AppCompatActivity() {
         return if (checkSelfPermission(READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             true
         } else {
-            requestPermissions(arrayOf(READ_EXTERNAL_STORAGE), 3)
+            requestPermissions(arrayOf(READ_EXTERNAL_STORAGE), REQUEST_PERMISSIONS_CODE)
             false
         }
     }
@@ -99,7 +107,7 @@ open class RequestPermissionActivity : AppCompatActivity() {
         return if (checkSelfPermission(WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             true
         } else {
-            requestPermissions(arrayOf(WRITE_EXTERNAL_STORAGE), 2)
+            requestPermissions(arrayOf(WRITE_EXTERNAL_STORAGE), REQUEST_PERMISSIONS_CODE)
             false
         }
     }
@@ -111,6 +119,10 @@ open class RequestPermissionActivity : AppCompatActivity() {
         overridePendingTransition(0, 0)
     }
 
+    protected open fun onPermissionsGrantResult(result: Boolean) {
+        permissionsGranted = result
+    }
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
@@ -118,12 +130,8 @@ open class RequestPermissionActivity : AppCompatActivity() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
-            2 -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    recreateActivity()
-                } else {
-                    finish()
-                }
+            REQUEST_PERMISSIONS_CODE -> {
+                onPermissionsGrantResult(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)
             }
         }
     }

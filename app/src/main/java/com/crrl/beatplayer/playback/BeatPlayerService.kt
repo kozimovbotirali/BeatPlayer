@@ -86,10 +86,6 @@ class BeatPlayerService : MediaBrowserServiceCompat(), KoinComponent {
             IS_RUNNING = isPlaying
         }
 
-        beatPlayer.onCompletion {
-            notifications.updateNotification(getSession())
-        }
-
         beatPlayer.onQueueEnd {
             notifications.updateNotification(getSession())
         }
