@@ -22,6 +22,7 @@ import com.crrl.beatplayer.repository.FavoritesRepositoryImplementation.Companio
 import com.crrl.beatplayer.repository.FavoritesRepositoryImplementation.Companion.COLUMN_TYPE
 import com.crrl.beatplayer.repository.FavoritesRepositoryImplementation.Companion.COLUMN_YEAR
 import com.crrl.beatplayer.utils.BeatConstants.ARTIST_TYPE
+import com.crrl.beatplayer.utils.BeatConstants.FAVORITE_TYPE
 import com.crrl.beatplayer.utils.BeatConstants.FOLDER_TYPE
 
 class Favorite(
@@ -64,7 +65,7 @@ class Favorite(
     }
 
     fun getIdByType(): Long {
-        return if (type == ARTIST_TYPE || type == FOLDER_TYPE) artistId else id
+        return if (type in listOf(ARTIST_TYPE, FOLDER_TYPE, FAVORITE_TYPE)) artistId else id
     }
 
     override fun compare(other: MediaItem): Boolean {

@@ -67,6 +67,7 @@ class FavoritesRepositoryImplementation(context: Context) : DBHelper(context),
         db?.execSQL(getPlusTriggerQuery())
         db?.execSQL(getMinusTriggerQuery())
         db?.execSQL(getDeleteSongs())
+        db?.execSQL(getFavoriteCoverIdTrigger())
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
@@ -182,11 +183,6 @@ class FavoritesRepositoryImplementation(context: Context) : DBHelper(context),
         }
     }
 
-    private fun getSongs(id: Long): List<Song> {
-        val cursor = getRow(TABLE_SONGS, "*", "$COLUMN_ID = ?", arrayOf("$id"))
-        return cursor.toList(true, Song.Companion::createFromPlaylistCursor)
-    }
-
     private fun getCreateFavoritesQuery(): String {
         return "CREATE TABLE $TABLE_FAVORITES (" +
                 "$COLUMN_ID INTEGER PRIMARY KEY, " +
@@ -236,6 +232,18 @@ class FavoritesRepositoryImplementation(context: Context) : DBHelper(context),
                 "AFTER DELETE ON $TABLE_FAVORITES\n" +
                 "BEGIN\n" +
                 "    DELETE FROM $TABLE_SONGS WHERE $COLUMN_FAVORITE = OLD.$COLUMN_ID;\n" +
+                "END"
+    }
+
+    private fun getFavoriteCoverIdTrigger(): String {
+        return "CREATE TRIGGER ${TABLE_FAVORITES}_COVER_ID\n" +
+                "AFTER UPDATE ON $TABLE_FAVORITES\n" +
+                "BEGIN\n" +
+                "   UPDATE $TABLE_FAVORITES " +
+                "       SET $COLUMN_ARTIST_ID = (" +
+                "           SELECT $COLUMN_ALBUM_ID " +
+                "           FROM $TABLE_SONGS LIMIT 1) " +
+                "           WHERE $COLUMN_ID = OLD.$COLUMN_ID;\n" +
                 "END"
     }
 }
