@@ -36,3 +36,11 @@ fun String.toMediaId(): MediaId {
         MediaId(parts[0].trim(), parts[1].trim(), parts[2].trim())
     else MediaId()
 }
+
+fun String.fixName(): String {
+    val index = indexOf("(")
+    val nameFixed = if (index != -1) {
+        substring(0, index)
+    } else this
+    return nameFixed.trim()
+}

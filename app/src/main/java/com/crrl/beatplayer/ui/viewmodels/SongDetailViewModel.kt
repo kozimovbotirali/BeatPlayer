@@ -19,7 +19,6 @@ import android.support.v4.media.session.PlaybackStateCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import com.crrl.beatplayer.R
 import com.crrl.beatplayer.models.MediaItemData
 import com.crrl.beatplayer.models.PlaybackState
 import com.crrl.beatplayer.models.Queue
@@ -29,7 +28,6 @@ import com.crrl.beatplayer.ui.viewmodels.base.CoroutineViewModel
 import com.crrl.beatplayer.utils.BeatConstants.BIND_STATE_BOUND
 import com.crrl.beatplayer.utils.BeatConstants.BIND_STATE_CANCELED
 import com.crrl.beatplayer.utils.BeatConstants.SET_MEDIA_STATE
-import com.crrl.beatplayer.utils.LyricsExtractor
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.GlobalScope
@@ -38,7 +36,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class SongDetailViewModel(
-    private val context: Context,
     private val favoritesRepository: FavoritesRepository,
     mediaPlaybackConnection: PlaybackConnection
 ) : CoroutineViewModel(Main) {

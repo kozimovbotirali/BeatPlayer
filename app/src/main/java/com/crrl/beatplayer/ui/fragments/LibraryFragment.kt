@@ -21,15 +21,23 @@ import androidx.viewpager.widget.ViewPager
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentLibraryBinding
 import com.crrl.beatplayer.extensions.inflateWithBinding
+import com.crrl.beatplayer.extensions.observe
 import com.crrl.beatplayer.extensions.safeActivity
+import com.crrl.beatplayer.models.MediaItemData
 import com.crrl.beatplayer.ui.activities.MainActivity
 import com.crrl.beatplayer.ui.adapters.ViewPagerAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseSongDetailFragment
+import com.crrl.beatplayer.utils.AutoClearBinding
+import com.crrl.beatplayer.utils.LyricsExtractor
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class LibraryFragment : BaseSongDetailFragment() {
 
-    private lateinit var binding: FragmentLibraryBinding
+    private var binding by AutoClearBinding<FragmentLibraryBinding>(this)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,8 +47,8 @@ class LibraryFragment : BaseSongDetailFragment() {
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         if ((activity as MainActivity).isPermissionsGranted()) init()
         binding.apply {
             viewModel = mainViewModel
@@ -52,6 +60,10 @@ class LibraryFragment : BaseSongDetailFragment() {
     }
 
     private fun init() {
+        songDetailViewModel.currentData.observe(this) {
+            loadLyrics(it)
+        }
+
         binding.apply {
             initViewPager(binding.pagerSortMode)
             tabsContainer.setupWithViewPager(pagerSortMode)
@@ -79,6 +91,16 @@ class LibraryFragment : BaseSongDetailFragment() {
                 }
             })
             setCurrentItem(mainViewModel.settingsUtility.startPageIndexSelected, false)
+        }
+    }
+
+    private fun loadLyrics(mediaItemData: MediaItemData) {
+        songDetailViewModel.updateLyrics()
+        GlobalScope.launch {
+            val lyric = withContext(IO) {
+                LyricsExtractor.getLyric(mediaItemData) ?: getString(R.string.no_lyrics)
+            }
+            songDetailViewModel.updateLyrics(lyric)
         }
     }
 }

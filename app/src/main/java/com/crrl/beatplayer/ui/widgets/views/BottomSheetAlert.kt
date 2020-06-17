@@ -87,9 +87,7 @@ class BottomSheetAlert(
             )
 
             container.background = background
-
             bottom_container.visibility = GONE
-            container.background = background
         }
 
         // Inflate action views
@@ -105,7 +103,11 @@ class BottomSheetAlert(
             val action = view.findViewById<Button>(R.id.action)
             val indicator = view.findViewById<View>(R.id.indicator)
 
-            action.text = item.title
+            action.apply {
+                text = item.title
+                if (items.indexOf(item) == items.size - 1)
+                    setBackgroundResource(R.drawable.list_item_ripple_bottom)
+            }
 
             // Click listener for action.
             action.setOnClickListener {

@@ -97,19 +97,15 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:background="@drawable/album_detail_shape"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/info_container">
 
-            <ProgressBar
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:visibility="@{viewModel.lyrics != null ? View.GONE : View.VISIBLE}" />
-
             <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent"
+                app:clipToOutline="@{true}"
+                android:background="@drawable/album_detail_shape"
+                android:theme="@style/RecyclerViewOverScrollColor">
 
                 <TextView
                     android:id="@+id/song_lyrics"
@@ -125,6 +121,12 @@
                     android:text="@{viewModel.lyrics}"
                     android:textSize="18sp" />
             </ScrollView>
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="@{viewModel.lyrics != null ? View.GONE : View.VISIBLE}" />
         </FrameLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
