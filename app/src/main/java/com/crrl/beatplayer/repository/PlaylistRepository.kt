@@ -47,6 +47,8 @@ class PlaylistRepositoryImplementation(context: Context) : DBHelper(context),
         const val COLUMN_NAME = "name"
         const val COLUMN_SONG_COUNT = "song_count"
 
+        const val COLUMN_COVER_ID = "cover_id"
+
         const val COLUMN_TITLE = "title"
         const val COLUMN_ARTIST = "artist"
         const val COLUMN_ALBUM = "album"
@@ -64,6 +66,7 @@ class PlaylistRepositoryImplementation(context: Context) : DBHelper(context),
         db?.execSQL(getPlusTriggerQuery())
         db?.execSQL(getMinusTriggerQuery())
         db?.execSQL(getDeleteSongs())
+        db?.execSQL(getPlaylistCoverIdTrigger())
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
@@ -73,7 +76,7 @@ class PlaylistRepositoryImplementation(context: Context) : DBHelper(context),
     }
 
     override fun createPlaylist(name: String, songs: List<Song>): Long {
-        val playlist = Playlist(getPlayListsCount() + 1L, name, 0)
+        val playlist = Playlist(getPlayListsCount() + 1L, name, -1, 0)
         insertRow(TABLE_PLAYLIST, playlist.columns(), playlist.values()).toLong()
         addToPlaylist(playlist.id, songs)
         return playlist.id
@@ -125,13 +128,6 @@ class PlaylistRepositoryImplementation(context: Context) : DBHelper(context),
         }
     }
 
-    fun getSong(): List<Song> {
-        val cursor = getRow(TABLE_SONGS, "*")
-        return cursor.toList(true) {
-            Song.createFromPlaylistCursor(this)
-        }
-    }
-
     override fun removeFromPlaylist(playlistId: Long, id: Long) {
         deleteRow(TABLE_SONGS, "$COLUMN_ID = ?", arrayOf("$id"))
     }
@@ -144,6 +140,7 @@ class PlaylistRepositoryImplementation(context: Context) : DBHelper(context),
         return "CREATE TABLE $TABLE_PLAYLIST (" +
                 "$COLUMN_ID INTEGER PRIMARY KEY, " +
                 "$COLUMN_NAME TEXT, " +
+                "$COLUMN_COVER_ID INTEGER, " +
                 "$COLUMN_SONG_COUNT INTEGER" +
                 ")"
     }
@@ -190,5 +187,18 @@ class PlaylistRepositoryImplementation(context: Context) : DBHelper(context),
 
     private fun getIndexQuery(): String {
         return "CREATE INDEX idx_$TABLE_SONGS ON $TABLE_SONGS($COLUMN_ID, $COLUMN_PLAYLIST)"
+    }
+
+    private fun getPlaylistCoverIdTrigger(): String {
+        return "CREATE TRIGGER ${TABLE_PLAYLIST}_COVER_ID\n" +
+                "AFTER UPDATE ON ${TABLE_PLAYLIST}\n" +
+                "BEGIN\n" +
+                "   UPDATE $TABLE_PLAYLIST " +
+                "       SET $COLUMN_COVER_ID = (" +
+                "           SELECT $COLUMN_ALBUM_ID " +
+                "               FROM $TABLE_SONGS " +
+                "               WHERE $COLUMN_PLAYLIST = OLD.${COLUMN_ID} LIMIT 1) " +
+                "   WHERE $COLUMN_ID = OLD.${COLUMN_ID};\n" +
+                "END"
     }
 }

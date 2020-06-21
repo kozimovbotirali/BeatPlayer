@@ -31,16 +31,36 @@
             app:paddingEnd="@dimen/padding_15"
             app:paddingStart="@dimen/padding_12" />
 
-        <TextView
+        <LinearLayout
+            android:id="@+id/linearLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_12"
+            android:layout_marginEnd="@dimen/margin_12"
+            android:layout_marginBottom="140dp"
             android:layout_gravity="center"
-            android:layout_marginBottom="@dimen/song_item_size"
-            android:text="@string/no_playlist"
-            android:textColor="?titleTextColor"
-            android:textSize="@dimen/text_size_18"
-            android:textStyle="bold"
-            android:visibility="@{viewModel.playLists().size > 0 ? View.GONE : View.VISIBLE}" />
+            android:orientation="vertical"
+            android:visibility="@{viewModel.playLists().size() > 0 ? View.GONE : View.VISIBLE}">
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/no_playlist"
+                android:textColor="?subTitleTextColor"
+                android:textSize="@dimen/text_size_18"
+                android:gravity="center"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/global_padding_top"
+                android:gravity="center"
+                android:text="@string/playlist_tip"
+                android:textColor="?bodyTextColor"
+                android:textSize="@dimen/text_size_14" />
+        </LinearLayout>
 
         <ImageButton
             android:id="@+id/createPlayList"
@@ -49,6 +69,7 @@
             android:layout_gravity="bottom|end"
             android:layout_marginEnd="20dp"
             android:layout_marginBottom="140dp"
+            android:tint="@color/white"
             android:background="@drawable/btn_play_background"
             android:contentDescription="@string/cover"
             android:elevation="3dp"

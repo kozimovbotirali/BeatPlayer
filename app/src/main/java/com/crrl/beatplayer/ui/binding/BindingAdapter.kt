@@ -40,8 +40,6 @@ import com.crrl.beatplayer.utils.BeatConstants.ALBUM_TYPE
 import com.crrl.beatplayer.utils.BeatConstants.ARTIST_TYPE
 import com.crrl.beatplayer.utils.BeatConstants.FAVORITE_TYPE
 import com.crrl.beatplayer.utils.BeatConstants.FOLDER_TYPE
-import com.crrl.beatplayer.utils.BeatConstants.REPEAT_ALL
-import com.crrl.beatplayer.utils.BeatConstants.REPEAT_ONE
 import com.crrl.beatplayer.utils.GeneralUtils.PORTRAIT
 import com.crrl.beatplayer.utils.GeneralUtils.dip2px
 import com.crrl.beatplayer.utils.GeneralUtils.getAlbumArtUri

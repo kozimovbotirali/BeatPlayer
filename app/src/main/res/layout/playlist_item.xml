@@ -11,9 +11,11 @@
   ~ limitations under the License.
   -->
 
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <variable
             name="playlist"
             type="com.crrl.beatplayer.models.Playlist" />
@@ -23,29 +25,30 @@
         android:id="@+id/container"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/list_item_ripple"
+        android:clickable="true"
+        android:focusable="true"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:clickable="true"
-        android:background="@drawable/list_item_ripple"
-        android:focusable="true">
+        android:paddingTop="@dimen/padding_12"
+        android:paddingBottom="@dimen/padding_12">
 
         <ImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="12dp"
-            android:scaleType="centerInside"
-            android:src="@drawable/ic_playlist"
-            android:tint="?btnTintColor" />
+            android:background="@drawable/song_cover_frame"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_empty_cover"
+            app:albumId="@{playlist.albumId}" />
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:gravity="center_vertical"
+            android:layout_marginStart="@dimen/margin_12"
             android:layout_weight="1"
+            android:gravity="center_vertical"
             android:orientation="vertical">
 
             <TextView
@@ -61,9 +64,9 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="3dp"
                 android:singleLine="true"
+                android:text="@{@plurals/number_of_songs(playlist.songCount, playlist.songCount)}"
                 android:textColor="?subTitleTextColor"
-                android:textSize="@dimen/sub_title_text_size"
-                android:text="@{@plurals/number_of_songs(playlist.songCount, playlist.songCount)}" />
+                android:textSize="@dimen/sub_title_text_size" />
 
         </LinearLayout>
 

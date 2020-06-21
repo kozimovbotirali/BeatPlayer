@@ -94,6 +94,7 @@
     <string name="search_tip">Escribe el nombre de un álbum, un artista o una canción y verás los resultados aquí.</string>
     <string name="all_songs">Todas las pistas</string>
     <string name="no_eq">Tu dispositivo no tiene ecualizador.</string>
+    <string name="playlist_tip">Crea algunas listas de reproducción y serán listadas aquí./</string>
 
     <plurals name="number_of_songs" tools:ignore="UnusedQuantity">
         <item quantity="zero">%d Pistas</item>

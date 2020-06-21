@@ -106,6 +106,7 @@
     <string name="search_tip">Type the name of an album, an artist or a song and you\'ll see the results here.</string>
     <string name="all_songs">All tracks</string>
     <string name="no_eq">Your device does not have a equalizer.</string>
+    <string name="playlist_tip">Create some playlists, and they\'ll be listed here.</string>
 
     <plurals name="number_of_songs">
         <item quantity="zero">%d Tracks</item>
