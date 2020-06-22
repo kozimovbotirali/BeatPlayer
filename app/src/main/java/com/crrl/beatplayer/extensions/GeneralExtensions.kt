@@ -18,8 +18,6 @@ import android.os.Bundle
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
 import com.crrl.beatplayer.utils.BeatConstants.QUEUE_INFO_KEY
 import com.crrl.beatplayer.utils.BeatConstants.SEEK_TO_POS
 import com.crrl.beatplayer.utils.BeatConstants.SONG_LIST_NAME
@@ -36,6 +34,12 @@ fun MediaSessionCompat.position(): Long {
 fun MediaSessionCompat.isPlaying(): Boolean {
     return controller.playbackState.state == PlaybackStateCompat.STATE_PLAYING
 }
+
+inline val MediaSessionCompat.repeatMode
+    get() = controller.repeatMode
+
+inline val MediaSessionCompat.shuffleMode
+    get() = controller.shuffleMode
 
 inline val PlaybackStateCompat.isPrepared
     get() = (state == PlaybackStateCompat.STATE_BUFFERING) ||
@@ -75,10 +79,9 @@ fun getExtraBundle(queue: LongArray, title: String, seekTo: Int?): Bundle? {
     return bundle
 }
 
-fun <X, Y> LiveData<X>.map(mapper: (X) -> Y) =
-    Transformations.map(this, mapper)
-
 @Suppress("UNCHECKED_CAST")
 fun <T> Context.systemService(name: String): T {
     return getSystemService(name) as T
 }
+
+operator fun Bundle.plus(other: Bundle) = this.apply { putAll(other) }

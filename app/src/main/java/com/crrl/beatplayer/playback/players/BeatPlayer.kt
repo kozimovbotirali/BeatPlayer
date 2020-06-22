@@ -26,10 +26,7 @@ import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.alias.*
-import com.crrl.beatplayer.extensions.isPlaying
-import com.crrl.beatplayer.extensions.position
-import com.crrl.beatplayer.extensions.toQueueInfo
-import com.crrl.beatplayer.extensions.toQueueList
+import com.crrl.beatplayer.extensions.*
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.playback.AudioFocusHelper
 import com.crrl.beatplayer.repository.SongsRepository
@@ -78,7 +75,7 @@ class BeatPlayerImplementation(
     private val songsRepository: SongsRepository,
     private val settingsUtility: SettingsUtility,
     private val queueUtils: QueueUtils,
-    audioFocusHelper: AudioFocusHelper
+    private val audioFocusHelper: AudioFocusHelper
 ) : BeatPlayer {
 
     private var isInitialized: Boolean = false
@@ -99,7 +96,7 @@ class BeatPlayerImplementation(
                 MediaSessionCallback(
                     this,
                     this@BeatPlayerImplementation,
-					audioFocusHelper,
+                    audioFocusHelper,
                     songsRepository
                 )
             )
@@ -142,7 +139,12 @@ class BeatPlayerImplementation(
         if (isInitialized) {
             updatePlaybackState {
                 setState(STATE_PLAYING, mediaSession.position(), 1F)
-                setExtras(extras)
+                setExtras(
+                    extras + bundleOf(
+                        REPEAT_MODE to getSession().repeatMode,
+                        SHUFFLE_MODE to getSession().shuffleMode
+                    )
+                )
             }
             musicPlayer.play()
             return
@@ -162,8 +164,10 @@ class BeatPlayerImplementation(
     }
 
     override fun playSong(id: Long) {
-        val song = songsRepository.getSongForId(id)
-        playSong(song)
+        if (audioFocusHelper.requestPlayback()){
+            val song = songsRepository.getSongForId(id)
+            playSong(song)
+        }
     }
 
     override fun playSong(song: Song) {
@@ -172,7 +176,13 @@ class BeatPlayerImplementation(
             isInitialized = false
             updatePlaybackState {
                 setState(STATE_PAUSED, 0, 1F)
-                setExtras(bundleOf(BY_UI_KEY to false))
+                setExtras(
+                    bundleOf(
+                        BY_UI_KEY to false,
+                        REPEAT_MODE to getSession().repeatMode,
+                        SHUFFLE_MODE to getSession().shuffleMode
+                    )
+                )
             }
         }
         setMetaData(song)
@@ -203,7 +213,12 @@ class BeatPlayerImplementation(
             musicPlayer.pause()
             updatePlaybackState {
                 setState(STATE_PAUSED, mediaSession.position(), 1F)
-                setExtras(extras)
+                setExtras(
+                    extras + bundleOf(
+                        REPEAT_MODE to getSession().repeatMode,
+                        SHUFFLE_MODE to getSession().shuffleMode
+                    )
+                )
             }
         }
     }

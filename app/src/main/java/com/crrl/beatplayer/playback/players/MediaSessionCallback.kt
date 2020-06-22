@@ -114,8 +114,7 @@ class MediaSessionCallback(
             musicPlayer.seekTo(seekTo)
         }
 
-        if (audioFocusHelper.requestPlayback())
-            musicPlayer.playSong(songId)
+        musicPlayer.playSong(songId)
     }
 
     override fun onSeekTo(pos: Long) {
@@ -212,7 +211,7 @@ class MediaSessionCallback(
             mediaSession.controller.queueTitle.toString()
         )
     }
-	
+
 	private fun playOnFocus(extras: Bundle = bundleOf(BY_UI_KEY to true)) {
         if (audioFocusHelper.requestPlayback())
             musicPlayer.playSong(extras)
