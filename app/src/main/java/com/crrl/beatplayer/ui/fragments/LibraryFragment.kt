@@ -96,7 +96,7 @@ class LibraryFragment : BaseSongDetailFragment() {
 
     private fun loadLyrics(mediaItemData: MediaItemData) {
         songDetailViewModel.updateLyrics()
-        GlobalScope.launch {
+        launch {
             val lyric = withContext(IO) {
                 LyricsExtractor.getLyric(mediaItemData) ?: getString(R.string.no_lyrics)
             }
