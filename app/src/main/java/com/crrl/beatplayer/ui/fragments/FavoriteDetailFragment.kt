@@ -61,7 +61,7 @@ class FavoriteDetailFragment : BaseFragment<Song>() {
         val id = arguments!!.getLong(BeatConstants.FAVORITE_KEY)
         binding.favorite = favoriteViewModel.getFavorite(id)
 
-        songAdapter = SongAdapter(context, songDetailViewModel).apply {
+        songAdapter = SongAdapter().apply {
             showHeader = true
             isAlbumDetail = true
             itemClickListener = this@FavoriteDetailFragment
@@ -78,25 +78,6 @@ class FavoriteDetailFragment : BaseFragment<Song>() {
                     startPostponedEnterTransition()
                 }
             }
-        }
-
-        songDetailViewModel.lastData.observe(this) { mediaItemData ->
-            val position = songAdapter.songList.indexOfFirst { it.id == mediaItemData.id } + 1
-            if(settingsUtility.didStop){
-                songAdapter.notifyDataSetChanged()
-                settingsUtility.didStop = false
-            } else songAdapter.notifyItemChanged(position)
-        }
-
-        songDetailViewModel.currentState.observe(this) {
-            val mediaItemData = songDetailViewModel.currentData.value ?: MediaItemData()
-            val position = songAdapter.songList.indexOfFirst { it.id == mediaItemData.id } + 1
-            songAdapter.notifyItemChanged(position)
-        }
-
-        songDetailViewModel.currentData.observe(this) { mediaItemData ->
-            val position = songAdapter.songList.indexOfFirst { it.id == mediaItemData.id } + 1
-            songAdapter.notifyItemChanged(position)
         }
 
         binding.apply {

@@ -13,7 +13,6 @@
 
 package com.crrl.beatplayer.ui.adapters
 
-import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -25,15 +24,11 @@ import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.extensions.setAll
 import com.crrl.beatplayer.interfaces.ItemClickListener
 import com.crrl.beatplayer.models.Song
-import com.crrl.beatplayer.ui.viewmodels.SongDetailViewModel
 
 private const val HEADER_TYPE = 0
 private const val ITEM_TYPE = 1
 
-class SongAdapter(
-    private val context: Context?,
-    private val songDetailViewModel: SongDetailViewModel
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class SongAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     val songList = mutableListOf<Song>()
     var showHeader = false
@@ -109,7 +104,6 @@ class SongAdapter(
             binding.apply {
                 this.song = song
                 this.size = itemCount
-                this.viewModel = songDetailViewModel
                 executePendingBindings()
 
                 container.setOnClickListener(this@ViewHolderSong)

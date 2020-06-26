@@ -27,9 +27,12 @@ import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.view.inputmethod.InputMethodManager
+import android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT
 import android.widget.EditText
 import androidx.core.content.ContextCompat
 import com.crrl.beatplayer.R
+import com.crrl.beatplayer.extensions.systemService
+import com.crrl.beatplayer.extensions.toFileDescriptor
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.utils.BeatConstants.ARTWORK_URI
 import com.crrl.beatplayer.utils.BeatConstants.SONG_URI
@@ -73,12 +76,7 @@ object GeneralUtils {
     }
 
     fun audio2Raw(context: Context, uri: Uri): ByteArray? {
-        val parcelFileDescriptor = try {
-            context.contentResolver.openFileDescriptor(uri, BeatConstants.READ_ONLY_MODE, null)
-                ?: return null
-        } catch (ex: FileNotFoundException) {
-            return null
-        }
+        val parcelFileDescriptor = uri.toFileDescriptor(context) ?: return null
         val fis = FileInputStream(parcelFileDescriptor.fileDescriptor)
         val data = try {
             fis.readBytes()
@@ -89,20 +87,17 @@ object GeneralUtils {
         return data
     }
 
-    fun toggleShowKeyBoard(context: Context?, editText: EditText, show: Boolean) {
+    fun toggleShowKeyBoard(context: Context, editText: EditText, show: Boolean) {
+        val imm = context.systemService<InputMethodManager>(Context.INPUT_METHOD_SERVICE)
         if (show) {
             editText.apply {
                 requestFocus()
-                val imm =
-                    context!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-                imm!!.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
+                imm.showSoftInput(this, SHOW_IMPLICIT)
             }
         } else {
             editText.apply {
                 clearFocus()
-                val imm =
-                    context!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-                imm!!.hideSoftInputFromWindow(editText.windowToken, 0)
+                imm.hideSoftInputFromWindow(editText.windowToken, 0)
             }
         }
     }

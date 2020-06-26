@@ -16,7 +16,6 @@ package com.crrl.beatplayer.ui.activities
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v4.media.session.PlaybackStateCompat.*
 import android.view.View
 import androidx.core.os.bundleOf
@@ -71,8 +70,7 @@ class MainActivity : BaseActivity() {
                 BeatConstants.LIBRARY
             )
         }
-        if (isPermissionsGranted()) finishCreatingView()
-
+        if (didPermissionsGrant()) finishCreatingView()
     }
 
     private fun finishCreatingView(){
@@ -88,7 +86,7 @@ class MainActivity : BaseActivity() {
 
         songDetailViewModel.currentState.observe(this) {
             songDetailViewModel.update(it.position)
-            if (it.state == PlaybackStateCompat.STATE_PLAYING) {
+            if (it.state == STATE_PLAYING) {
                 songDetailViewModel.update(BIND_STATE_BOUND)
             } else songDetailViewModel.update()
         }
@@ -97,10 +95,10 @@ class MainActivity : BaseActivity() {
             it.viewModel = songDetailViewModel
             it.executePendingBindings()
 
+            it.title.isSelected = true
+
             it.lifecycleOwner = this
         }
-
-        viewModel.binding.title.isSelected = true
 
         songDetailViewModel.currentData
             .observe(this) {
@@ -140,7 +138,7 @@ class MainActivity : BaseActivity() {
                 LibraryFragment(),
                 BeatConstants.LIBRARY
             )
-            finishCreatingView();
+            finishCreatingView()
         }
     }
 
@@ -246,11 +244,8 @@ class MainActivity : BaseActivity() {
             0 -> getString(R.string.song_no_fav_ok)
             else -> getString(R.string.song_fav_ok)
         }
-        val custom = when (type) {
-            1 -> R.drawable.ic_success
-            else -> R.drawable.ic_dislike
-        }
-        if (resp > 0) view.snackbar(CUSTOM, ok, LENGTH_SHORT, custom = custom)
+
+        if (resp > 0) view.snackbar(SUCCESS, ok, LENGTH_SHORT)
     }
 
     private fun handlePlaybackIntent(intent: Intent?) {
@@ -275,5 +270,5 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    fun isPermissionsGranted() = permissionsGranted
+    fun didPermissionsGrant() = permissionsGranted
 }

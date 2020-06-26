@@ -64,7 +64,7 @@ class AlbumDetailFragment : BaseFragment<Song>() {
         val id = arguments!!.getLong(BeatConstants.ALBUM_KEY)
         album = albumViewModel.getAlbum(id)
         initNeeded(Song(), emptyList(), id)
-        songAdapter = SongAdapter(context, songDetailViewModel).apply {
+        songAdapter = SongAdapter().apply {
             itemClickListener = this@AlbumDetailFragment
             showHeader = true
             isAlbumDetail = true
@@ -95,25 +95,6 @@ class AlbumDetailFragment : BaseFragment<Song>() {
                 favoriteViewModel.deleteFavorite(id)
                 safeActivity.onBackPressed()
             }
-        }
-
-        songDetailViewModel.currentData.observe(this) { mediaItemData ->
-            val position = songAdapter.songList.indexOfFirst { it.id == mediaItemData.id } + 1
-            songAdapter.notifyItemChanged(position)
-        }
-
-        songDetailViewModel.currentState.observe(this) {
-            val mediaItemData = songDetailViewModel.currentData.value ?: MediaItemData()
-            val position = songAdapter.songList.indexOfFirst { it.id == mediaItemData.id } + 1
-            songAdapter.notifyItemChanged(position)
-        }
-
-        songDetailViewModel.lastData.observe(this) { mediaItemData ->
-            val position = songAdapter.songList.indexOfFirst { it.id == mediaItemData.id } + 1
-            if(settingsUtility.didStop){
-                songAdapter.notifyDataSetChanged()
-                settingsUtility.didStop = false
-            } else songAdapter.notifyItemChanged(position)
         }
 
         binding.let {
@@ -152,10 +133,10 @@ class AlbumDetailFragment : BaseFragment<Song>() {
     private fun toggleAddFav() {
         if (favoriteViewModel.favExist(album.id)) {
             val resp = favoriteViewModel.deleteFavorites(longArrayOf(album.id))
-            showSnackBar(view, resp, 0, R.string.album_no_fav_ok)
+            showSnackBar(view, resp, R.string.album_no_fav_ok)
         } else {
             val resp = favoriteViewModel.create(album.toFavorite())
-            showSnackBar(view, resp, 1, R.string.album_fav_ok)
+            showSnackBar(view, resp, R.string.album_fav_ok)
         }
     }
 }

@@ -124,10 +124,10 @@ class ArtistDetailFragment : BaseFragment<MediaItem>() {
     private fun toggleAddFav() {
         if (favoriteViewModel.favExist(artist.id)) {
             val resp = favoriteViewModel.deleteFavorites(longArrayOf(artist.id))
-            showSnackBar(view, resp, 0, R.string.artist_no_fav_ok)
+            showSnackBar(view, resp, R.string.artist_no_fav_ok)
         } else {
             val resp = favoriteViewModel.create(artist.toFavorite())
-            showSnackBar(view, resp, 1, R.string.artist_fav_ok)
+            showSnackBar(view, resp, R.string.artist_fav_ok)
         }
     }
 }

@@ -19,9 +19,6 @@
             name="song"
             type="com.crrl.beatplayer.models.Song" />
         <variable
-            name="viewModel"
-            type="com.crrl.beatplayer.ui.viewmodels.SongDetailViewModel" />
-        <variable
             name="size"
             type="Integer" />
     </data>
@@ -30,29 +27,16 @@
         android:layout_width="match_parent"
         android:layout_height="70dp">
 
-        <com.crrl.beatplayer.ui.widgets.MusicVisualizer
-            android:id="@+id/visualizer"
-            android:layout_width="30dp"
-            android:layout_height="40dp"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="-40dp"
-            android:layout_marginEnd="@dimen/margin_10"
-            android:tint="?colorAccent"
-            app:show="@{safeUnbox(viewModel.currentData.id == song.id)}"
-            app:state="@{safeUnbox(viewModel.currentState.state)}" />
-
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_toStartOf="@+id/item_menu"
-            android:layout_toEndOf="@id/visualizer"
-            app:slide="@{safeUnbox(viewModel.currentData.id == song.id)}"
-            app:state="@{safeUnbox(viewModel.currentState.state)}">
+            android:layout_alignParentStart="true">
 
             <ImageView
                 android:id="@+id/cover"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="@dimen/song_cover_size"
+                android:layout_height="@dimen/song_cover_size"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="15dp"
@@ -91,9 +75,7 @@
                         android:maxLines="1"
                         android:textColor="?titleTextColor"
                         android:textSize="@dimen/title_text_size"
-                        app:html="@{song.title}"
-                        app:marquee="@{true}"
-                        app:selected="@{safeUnbox(viewModel.currentData.id == song.id)}" />
+                        app:html="@{song.title}" />
                 </RelativeLayout>
 
                 <LinearLayout
@@ -109,9 +91,7 @@
                         android:singleLine="true"
                         android:text="@{song.artist}"
                         android:textColor="?subTitleTextColor"
-                        android:textSize="@dimen/sub_title_text_size"
-                        app:marquee="@{false}"
-                        app:selected="@{safeUnbox(viewModel.currentData.id == song.id)}" />
+                        android:textSize="@dimen/sub_title_text_size" />
 
                     <TextView
                         android:id="@+id/sep"
@@ -123,9 +103,7 @@
                         android:singleLine="true"
                         android:text="@string/separator"
                         android:textColor="?subTitleTextColor"
-                        android:textSize="@dimen/sub_title_text_size"
-                        app:marquee="@{false}"
-                        app:selected="@{safeUnbox(viewModel.currentData.id == song.id)}" />
+                        android:textSize="@dimen/sub_title_text_size" />
 
                     <TextView
                         android:id="@+id/album"
@@ -135,9 +113,7 @@
                         android:singleLine="true"
                         android:text="@{song.album}"
                         android:textColor="?subTitleTextColor"
-                        android:textSize="@dimen/sub_title_text_size"
-                        app:marquee="@{false}"
-                        app:selected="@{safeUnbox(viewModel.currentData.id == song.id)}" />
+                        android:textSize="@dimen/sub_title_text_size" />
                 </LinearLayout>
             </LinearLayout>
         </RelativeLayout>
@@ -159,11 +135,11 @@
 
         <ImageButton
             android:id="@+id/item_menu"
-            android:layout_width="@dimen/btn_size"
-            android:layout_height="@dimen/btn_size"
+            android:layout_width="@dimen/btn_size_header"
+            android:layout_height="@dimen/btn_size_header"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:background="@drawable/btn_ripple"
+            android:background="@drawable/btn_ripple_header"
             android:src="@drawable/ic_more"
             android:contentDescription="@string/cover"
             android:tint="?subTitleTextColor" />

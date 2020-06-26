@@ -95,6 +95,7 @@
     <string name="all_songs">Todas las pistas</string>
     <string name="no_eq">Tu dispositivo no tiene ecualizador.</string>
     <string name="playlist_tip">Crea algunas listas de reproducción y serán listadas aquí./</string>
+    <string name="op_err">Ha ocurrido un error.</string>
 
     <plurals name="number_of_songs" tools:ignore="UnusedQuantity">
         <item quantity="zero">%d Pistas</item>

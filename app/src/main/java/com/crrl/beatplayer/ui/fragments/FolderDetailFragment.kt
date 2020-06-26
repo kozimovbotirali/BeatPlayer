@@ -63,7 +63,7 @@ class FolderDetailFragment : BaseFragment<Song>() {
         val id = arguments?.getLong(FOLDER_KEY)!!
         val folder = folderViewModel.getFolder(id)
 
-        songAdapter = SongAdapter(context, songDetailViewModel).apply {
+        songAdapter = SongAdapter().apply {
             showHeader = true
             isAlbumDetail = true
             itemClickListener = this@FolderDetailFragment
@@ -77,25 +77,6 @@ class FolderDetailFragment : BaseFragment<Song>() {
                 songAdapter.updateDataSet(it)
             }
 
-        }
-
-        songDetailViewModel.lastData.observe(this) { mediaItemData ->
-            val position = songAdapter.songList.indexOfFirst { it.id == mediaItemData.id } + 1
-            if(settingsUtility.didStop){
-                songAdapter.notifyDataSetChanged()
-                settingsUtility.didStop = false
-            } else songAdapter.notifyItemChanged(position)
-        }
-
-        songDetailViewModel.currentState.observe(this) {
-            val mediaItemData = songDetailViewModel.currentData.value ?: MediaItemData()
-            val position = songAdapter.songList.indexOfFirst { it.id == mediaItemData.id } + 1
-            songAdapter.notifyItemChanged(position)
-        }
-
-        songDetailViewModel.currentData.observe(this) { mediaItemData ->
-            val position = songAdapter.songList.indexOfFirst { it.id == mediaItemData.id } + 1
-            songAdapter.notifyItemChanged(position)
         }
 
         list.apply {
@@ -141,10 +122,10 @@ class FolderDetailFragment : BaseFragment<Song>() {
     private fun toggleAddFav() {
         if (favoriteViewModel.favExist(binding.folder!!.id)) {
             val resp = favoriteViewModel.deleteFavorites(longArrayOf(binding.folder!!.id))
-            showSnackBar(view, resp, 0, R.string.folder_no_fav_ok)
+            showSnackBar(view, resp, R.string.folder_no_fav_ok)
         } else {
             val resp = favoriteViewModel.create(binding.folder!!.toFavorite())
-            showSnackBar(view, resp, 1, R.string.folder_fav_ok)
+            showSnackBar(view, resp, R.string.folder_fav_ok)
         }
     }
 }

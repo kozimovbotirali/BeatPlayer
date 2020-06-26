@@ -35,6 +35,7 @@ interface SongsRepository {
     fun search(searchString: String, limit: Int = Int.MAX_VALUE): List<Song>
     fun deleteTracks(ids: LongArray): Int
     fun getSongsForIds(ids: LongArray): List<Song>
+    fun getPath(id: Long): String
 }
 
 class SongsRepositoryImplementation(context: Context) : SongsRepository {
@@ -124,6 +125,17 @@ class SongsRepositoryImplementation(context: Context) : SongsRepository {
 
         return makeSongCursor(selection, null)
             .toList(true) { Song.createFromCursor(this) }
+    }
+
+    override fun getPath(id: Long): String {
+        val cursor = makeSongCursor("_id=?", arrayOf("$id"))!!
+        cursor.use {
+            return if (it.moveToFirst()) {
+                cursor.getString(8)
+            } else {
+                ""
+            }
+        }
     }
 
     @SuppressLint("Recycle")

@@ -314,15 +314,16 @@ open class BaseFragment<T : MediaItem> : CoroutineFragment(), ItemClickListener<
     }
 
     private fun addToList(playListId: Long, song: Song) {
+        println("HOLA")
         val added = playlistViewModel.addToPlaylist(playListId, listOf(song))
-        if (added != -1L)
-            main_container.snackbar(
+        if (added > 0)
+            mainViewModel.binding.mainContainer.snackbar(
                 SUCCESS,
                 getString(R.string.song_added_success),
                 LENGTH_SHORT
             )
         else
-            main_container.snackbar(
+            mainViewModel.binding.mainContainer.snackbar(
                 ERROR,
                 getString(R.string.song_added_error),
                 LENGTH_SHORT
@@ -340,7 +341,7 @@ open class BaseFragment<T : MediaItem> : CoroutineFragment(), ItemClickListener<
         val sendIntent: Intent = Intent().apply {
             action = Intent.ACTION_SEND
             putExtra(Intent.EXTRA_STREAM, Uri.parse(song.path))
-            type = "audio/mp3"
+            type = "audio/*"
         }
 
         val shareIntent = Intent.createChooser(sendIntent, null)
@@ -368,16 +369,18 @@ open class BaseFragment<T : MediaItem> : CoroutineFragment(), ItemClickListener<
         }
     }
 
-    protected open fun showSnackBar(view: View?, resp: Int, type: Int, @StringRes message: Int) {
-        val custom = when (type) {
-            1 -> R.drawable.ic_success
-            else -> R.drawable.ic_dislike
-        }
-        if (resp > 0) view.snackbar(
-            CUSTOM,
-            getString(message),
-            BaseTransientBottomBar.LENGTH_SHORT,
-            custom = custom
+    protected open fun showSnackBar(
+        view: View?,
+        resp: Int,
+        @StringRes message: Int
+    ) {
+        val type = if (resp > 0) SUCCESS else ERROR
+        val msg = if (resp > 0) message else R.string.op_err
+
+        view.snackbar(
+            type,
+            getString(msg),
+            BaseTransientBottomBar.LENGTH_SHORT
         )
     }
 

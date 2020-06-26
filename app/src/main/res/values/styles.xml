@@ -113,7 +113,7 @@
         <item name="android:windowSoftInputMode">adjustResize</item>
     </style>
 
-    <style name="RecyclerViewOverScrollColor">
+    <style name="OverScrollColor">
         <item name="android:colorPrimary">?colorAccent</item>
     </style>
 </resources>

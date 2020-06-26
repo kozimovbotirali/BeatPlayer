@@ -34,13 +34,12 @@ import com.crrl.beatplayer.utils.BeatConstants.SONG_TYPE
 @Suppress("UNCHECKED_CAST")
 class SearchAdapter(
     activity: Activity,
-    songDetailViewModel: SongDetailViewModel,
     private val viewModel: SearchViewModel,
     itemClickListener: ItemClickListener<MediaItem>,
     private val sc: Int = 2
 ) : RecyclerView.Adapter<SearchAdapter.ViewHolderSearch>() {
 
-    val songAdapter: SongAdapter = SongAdapter(activity, songDetailViewModel).apply {
+    val songAdapter: SongAdapter = SongAdapter().apply {
         this.itemClickListener = itemClickListener as ItemClickListener<Song>
         showHeader = false
     }

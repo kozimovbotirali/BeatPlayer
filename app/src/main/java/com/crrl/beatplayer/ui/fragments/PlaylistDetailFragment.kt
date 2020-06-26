@@ -60,7 +60,7 @@ class PlaylistDetailFragment : BaseFragment<Song>() {
 
         binding.playlist = playlistViewModel.getPlaylist(id)
 
-        songAdapter = SongAdapter(activity, songDetailViewModel).apply {
+        songAdapter = SongAdapter().apply {
             showHeader = true
             isAlbumDetail = true
             itemClickListener = this@PlaylistDetailFragment
@@ -78,25 +78,6 @@ class PlaylistDetailFragment : BaseFragment<Song>() {
                 songAdapter.updateDataSet(it)
                 mainViewModel.reloadQueueIds(it.toIDList(), binding.playlist!!.name)
             }
-        }
-
-        songDetailViewModel.lastData.observe(this) { mediaItemData ->
-            val position = songAdapter.songList.indexOfFirst { it.id == mediaItemData.id } + 1
-            if(settingsUtility.didStop){
-                songAdapter.notifyDataSetChanged()
-                settingsUtility.didStop = false
-            } else songAdapter.notifyItemChanged(position)
-        }
-
-        songDetailViewModel.currentState.observe(this) {
-            val mediaItemData = songDetailViewModel.currentData.value ?: MediaItemData()
-            val position = songAdapter.songList.indexOfFirst { it.id == mediaItemData.id } + 1
-            songAdapter.notifyItemChanged(position)
-        }
-
-        songDetailViewModel.currentData.observe(this) { mediaItemData ->
-            val position = songAdapter.songList.indexOfFirst { it.id == mediaItemData.id } + 1
-            songAdapter.notifyItemChanged(position)
         }
 
         binding.let {

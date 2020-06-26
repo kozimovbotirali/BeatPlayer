@@ -14,15 +14,19 @@
 package com.crrl.beatplayer.extensions
 
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
+import android.os.ParcelFileDescriptor
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
+import com.crrl.beatplayer.utils.BeatConstants
 import com.crrl.beatplayer.utils.BeatConstants.QUEUE_INFO_KEY
 import com.crrl.beatplayer.utils.BeatConstants.SEEK_TO_POS
 import com.crrl.beatplayer.utils.BeatConstants.SONG_LIST_NAME
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import java.io.FileNotFoundException
 
 inline fun <reified T> Gson.fromJson(json: String) =
     this.fromJson<T>(json, object : TypeToken<T>() {}.type)!!
@@ -82,6 +86,14 @@ fun getExtraBundle(queue: LongArray, title: String, seekTo: Int?): Bundle? {
 @Suppress("UNCHECKED_CAST")
 fun <T> Context.systemService(name: String): T {
     return getSystemService(name) as T
+}
+
+fun Uri.toFileDescriptor(context: Context): ParcelFileDescriptor? {
+    return try {
+        context.contentResolver.openFileDescriptor(this, BeatConstants.READ_ONLY_MODE, null) ?: null
+    } catch (ex: FileNotFoundException) {
+        null
+    }
 }
 
 operator fun Bundle.plus(other: Bundle) = this.apply { putAll(other) }

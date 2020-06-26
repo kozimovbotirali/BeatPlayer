@@ -24,20 +24,21 @@ import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.extensions.observe
 import com.crrl.beatplayer.extensions.safeActivity
 import com.crrl.beatplayer.models.MediaItemData
+import com.crrl.beatplayer.repository.SongsRepository
 import com.crrl.beatplayer.ui.activities.MainActivity
 import com.crrl.beatplayer.ui.adapters.ViewPagerAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseSongDetailFragment
 import com.crrl.beatplayer.utils.AutoClearBinding
 import com.crrl.beatplayer.utils.LyricsExtractor
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.koin.android.ext.android.inject
 
 
 class LibraryFragment : BaseSongDetailFragment() {
 
     private var binding by AutoClearBinding<FragmentLibraryBinding>(this)
+    private val songsRepository by inject<SongsRepository>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,10 +50,11 @@ class LibraryFragment : BaseSongDetailFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if ((activity as MainActivity).isPermissionsGranted()) init()
+        val didPermissionsGrant = (safeActivity as MainActivity).didPermissionsGrant()
+        if (didPermissionsGrant) init()
         binding.apply {
             viewModel = mainViewModel
-            isPermissionsGranted = (safeActivity as MainActivity).isPermissionsGranted()
+            this.didPermissionsGrant = didPermissionsGrant
             executePendingBindings()
 
             lifecycleOwner = this@LibraryFragment
@@ -98,7 +100,8 @@ class LibraryFragment : BaseSongDetailFragment() {
         songDetailViewModel.updateLyrics()
         launch {
             val lyric = withContext(IO) {
-                LyricsExtractor.getLyric(mediaItemData) ?: getString(R.string.no_lyrics)
+                LyricsExtractor.getLyric(songsRepository, mediaItemData)
+                    ?: getString(R.string.no_lyrics)
             }
             songDetailViewModel.updateLyrics(lyric)
         }

@@ -23,7 +23,6 @@ import androidx.recyclerview.widget.SimpleItemAnimator
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentSongBinding
 import com.crrl.beatplayer.extensions.*
-import com.crrl.beatplayer.models.MediaItemData
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.ui.adapters.SongAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
@@ -31,7 +30,7 @@ import com.crrl.beatplayer.ui.viewmodels.PlaylistViewModel
 import com.crrl.beatplayer.ui.viewmodels.SongViewModel
 import com.crrl.beatplayer.ui.widgets.actions.AlertItemAction
 import com.crrl.beatplayer.ui.widgets.stylers.AlertItemTheme
-import com.crrl.beatplayer.utils.BeatConstants
+import com.crrl.beatplayer.utils.AutoClearBinding
 import com.crrl.beatplayer.utils.BeatConstants.PLAY_ALL_SHUFFLED
 import com.crrl.beatplayer.utils.SortModes
 import kotlinx.android.synthetic.main.layout_recyclerview.*
@@ -40,7 +39,7 @@ import org.koin.android.ext.android.inject
 class SongFragment : BaseFragment<Song>() {
 
     private lateinit var songAdapter: SongAdapter
-    private lateinit var binding: FragmentSongBinding
+    private var binding by AutoClearBinding<FragmentSongBinding>(this)
 
     private val playlistViewModel by inject<PlaylistViewModel>()
     private val viewModel by inject<SongViewModel>()
@@ -53,13 +52,13 @@ class SongFragment : BaseFragment<Song>() {
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         init()
     }
 
     private fun init() {
-        songAdapter = SongAdapter(activity, songDetailViewModel).apply {
+        songAdapter = SongAdapter().apply {
             showHeader = true
             itemClickListener = this@SongFragment
         }
@@ -70,32 +69,13 @@ class SongFragment : BaseFragment<Song>() {
             (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         }
 
-        songDetailViewModel.lastData.observe(this) { mediaItemData ->
-            val position = songAdapter.songList.indexOfFirst { it.id == mediaItemData.id } + 1
-            if (settingsUtility.didStop) {
-                songAdapter.notifyDataSetChanged()
-                settingsUtility.didStop = false
-            } else songAdapter.notifyItemChanged(position)
-        }
-
-        songDetailViewModel.currentState.observe(this) {
-            val mediaItemData = songDetailViewModel.currentData.value ?: MediaItemData()
-            val position = songAdapter.songList.indexOfFirst { it.id == mediaItemData.id } + 1
-            songAdapter.notifyItemChanged(position)
-        }
-
-        songDetailViewModel.currentData.observe(this) { mediaItemData ->
-            val position = songAdapter.songList.indexOfFirst { it.id == mediaItemData.id } + 1
-            songAdapter.notifyItemChanged(position)
-        }
-
-        viewModel.getSongList().observe(this) {
-            if (!songAdapter.songList.deepEquals(it)) {
+        viewModel.getSongList()
+            .filter { !songAdapter.songList.deepEquals(it) }
+            .observe(this) {
                 songAdapter.updateDataSet(it)
                 if (songAdapter.songList.isNotEmpty())
                     mainViewModel.reloadQueueIds(it.toIDList(), getString(R.string.all_songs))
             }
-        }
 
         binding.let {
             it.viewModel = viewModel
@@ -177,7 +157,7 @@ class SongFragment : BaseFragment<Song>() {
     }
 
     override fun onPlayAllClick(view: View) {
-        if(songAdapter.songList.isEmpty()) return
+        if (songAdapter.songList.isEmpty()) return
         val extras = getExtraBundle(songAdapter.songList.toIDList(), getString(R.string.all_songs))
         mainViewModel.mediaItemClicked(songAdapter.songList.first().toMediaItem(), extras)
     }

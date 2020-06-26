@@ -60,7 +60,7 @@
                 android:layout_marginTop="@dimen/padding_12"
                 android:background="@drawable/song_detail_cover_frame"
                 android:clipToPadding="false"
-                android:theme="@style/RecyclerViewOverScrollColor"
+                android:theme="@style/OverScrollColor"
                 app:clipToOutline="@{true}"
                 android:nestedScrollingEnabled="true"
                 app:type="@{type}" />

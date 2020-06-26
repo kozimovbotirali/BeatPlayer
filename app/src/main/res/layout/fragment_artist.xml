@@ -37,7 +37,7 @@
             android:background="@drawable/song_detail_cover_frame"
             android:clipToPadding="false"
             android:nestedScrollingEnabled="true"
-            android:theme="@style/RecyclerViewOverScrollColor"
+            android:theme="@style/OverScrollColor"
             tools:ignore="RtlSymmetry" />
 
         <TextView

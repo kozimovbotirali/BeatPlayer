@@ -14,8 +14,7 @@ package com.crrl.beatplayer.utils
 
 import com.crrl.beatplayer.extensions.fixName
 import com.crrl.beatplayer.models.MediaItemData
-import com.crrl.beatplayer.utils.GeneralUtils.getSongUri
-import com.jagrosh.jlyrics.Lyrics
+import com.crrl.beatplayer.repository.SongsRepository
 import com.jagrosh.jlyrics.LyricsClient
 import org.jaudiotagger.audio.AudioFileIO
 import org.jaudiotagger.audio.exceptions.CannotReadException
@@ -30,15 +29,17 @@ import java.util.*
 import java.util.concurrent.ExecutionException
 
 object LyricsExtractor {
-    fun getLyric(mediaItemData: MediaItemData): String? {
-        val lyrics = getEmbeddedLyrics(mediaItemData)
+    fun getLyric(songsRepository: SongsRepository, mediaItemData: MediaItemData): String? {
+        val lyrics = getEmbeddedLyrics(songsRepository, mediaItemData)
         return lyrics ?: getOnlineLyrics(mediaItemData)
     }
 
-    private fun getEmbeddedLyrics(mediaItemData: MediaItemData): String? {
+    private fun getEmbeddedLyrics(
+        songsRepository: SongsRepository,
+        mediaItemData: MediaItemData
+    ): String? {
         val lyrics = StringBuilder()
-        val uri = getSongUri(mediaItemData.id)
-        val file = File(Objects.requireNonNull(uri.path))
+        val file = File(Objects.requireNonNull(songsRepository.getPath(mediaItemData.id)))
         try {
             val audioFile = AudioFileIO.read(file)
             lyrics.append(audioFile.tag.getFirst(FieldKey.LYRICS))
@@ -52,21 +53,24 @@ object LyricsExtractor {
             Timber.e(ex)
         } catch (ex: InvalidAudioFrameException) {
             Timber.e(ex)
+        } catch (ex: IllegalArgumentException){
+            Timber.e(ex)
         }
         return if (lyrics.toString().isEmpty()) null else lyrics.toString()
     }
 
     private fun getOnlineLyrics(mediaItemData: MediaItemData): String? {
         val client = LyricsClient()
-        var lyrics: Lyrics? = null
-        try {
-            lyrics = client.getLyrics(
+        val lyrics = try {
+            client.getLyrics(
                 mediaItemData.title.fixName() + " by " + mediaItemData.artist
             ).get()
         } catch (ex: InterruptedException) {
             Timber.e(ex)
+            null
         } catch (ex: ExecutionException) {
             Timber.e(ex)
+            null
         }
         return lyrics?.content
     }

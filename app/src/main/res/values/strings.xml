@@ -107,6 +107,7 @@
     <string name="all_songs">All tracks</string>
     <string name="no_eq">Your device does not have a equalizer.</string>
     <string name="playlist_tip">Create some playlists, and they\'ll be listed here.</string>
+    <string name="op_err">An error has occurred</string>
 
     <plurals name="number_of_songs">
         <item quantity="zero">%d Tracks</item>

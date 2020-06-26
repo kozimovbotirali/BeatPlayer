@@ -49,4 +49,5 @@
     <dimen name="size">40dp</dimen>
     <dimen name="space">6dp</dimen>
     <dimen name="header_count_space">5dp</dimen>
+    <dimen name="song_cover_size">50dp</dimen>
 </resources>
