@@ -33,8 +33,8 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import com.crrl.beatplayer.R
-import com.crrl.beatplayer.ui.widgets.MusicVisualizer
-import com.crrl.beatplayer.ui.widgets.SimpleCustomSnackbar
+import com.crrl.beatplayer.alertdialog.MusicVisualizer
+import com.crrl.beatplayer.alertdialog.SimpleCustomSnackbar
 import com.crrl.beatplayer.utils.GeneralUtils
 import com.github.florent37.kotlin.pleaseanimate.please
 import com.google.android.material.tabs.TabLayout

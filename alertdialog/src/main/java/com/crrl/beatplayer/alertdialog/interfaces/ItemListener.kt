@@ -11,16 +11,11 @@
  * limitations under the License.
  */
 
-package com.crrl.beatplayer.ui.widgets.stylers
+package com.crrl.beatplayer.alertdialog.interfaces
 
-import android.graphics.Color
+import android.view.View
+import com.crrl.beatplayer.alertdialog.actions.AlertItemAction
 
-class InputStyle(
-    var backgroundColor: Int = Color.parseColor("#131313"),
-    val inputColor: Int = Color.parseColor("#434343"),
-    val textColor: Int = Color.parseColor("#FFFFFF"),
-    val hintTextColor: Int = Color.parseColor("#AAAAAA"),
-    val acceptColor: Int = Color.parseColor("#00FF00"),
-    var text: String = "",
-    var cornerRadius: Float = 60f
-) : ItemStyle()
+interface ItemListener {
+    fun updateItem(view: View, alertItemAction: AlertItemAction)
+}

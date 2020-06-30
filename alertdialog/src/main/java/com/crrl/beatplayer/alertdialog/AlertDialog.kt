@@ -11,28 +11,28 @@
  * limitations under the License.
  */
 
-package com.crrl.beatplayer.ui.widgets
+package com.crrl.beatplayer.alertdialog
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
-import com.crrl.beatplayer.ui.widgets.actions.AlertItemAction
-import com.crrl.beatplayer.ui.widgets.stylers.AlertItemStyle
-import com.crrl.beatplayer.ui.widgets.stylers.AlertType
-import com.crrl.beatplayer.ui.widgets.stylers.ItemStyle
-import com.crrl.beatplayer.ui.widgets.views.BottomSheetAlert
-import com.crrl.beatplayer.ui.widgets.views.DialogAlert
-import com.crrl.beatplayer.ui.widgets.views.InputDialog
+import com.crrl.beatplayer.alertdialog.actions.AlertItemAction
+import com.crrl.beatplayer.alertdialog.stylers.AlertItemStyle
+import com.crrl.beatplayer.alertdialog.stylers.AlertType
+import com.crrl.beatplayer.alertdialog.stylers.ItemStyle
+import com.crrl.beatplayer.alertdialog.views.BottomSheetAlert
+import com.crrl.beatplayer.alertdialog.views.DialogAlert
+import com.crrl.beatplayer.alertdialog.views.InputDialog
 
 class AlertDialog(
-    private var title: String,
-    private var message: String,
+    private val title: String,
+    private val message: String,
     private var style: ItemStyle,
-    private var type: AlertType,
+    private val type: AlertType,
     private val inputText: String = ""
 ) {
 
     private var theme: AlertType? = AlertType.DIALOG
-    private var actions: ArrayList<AlertItemAction> = ArrayList()
+    private val actions: ArrayList<AlertItemAction> = ArrayList()
     private var alert: DialogFragment? = null
 
     /**

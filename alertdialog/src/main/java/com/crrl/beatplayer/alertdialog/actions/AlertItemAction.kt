@@ -11,10 +11,10 @@
  * limitations under the License.
  */
 
-package com.crrl.beatplayer.ui.widgets.actions
+package com.crrl.beatplayer.alertdialog.actions
 
 import android.view.View
-import com.crrl.beatplayer.ui.widgets.stylers.AlertItemTheme
+import com.crrl.beatplayer.alertdialog.stylers.AlertItemTheme
 
 class AlertItemAction {
     var title: String

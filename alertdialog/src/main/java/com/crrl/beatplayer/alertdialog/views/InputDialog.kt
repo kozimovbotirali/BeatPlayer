@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-package com.crrl.beatplayer.ui.widgets.views
+package com.crrl.beatplayer.alertdialog.views
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -22,13 +22,13 @@ import android.view.WindowManager
 import android.widget.Button
 import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
-import com.crrl.beatplayer.R
-import com.crrl.beatplayer.interfaces.ItemListener
-import com.crrl.beatplayer.ui.widgets.actions.AlertItemAction
-import com.crrl.beatplayer.ui.widgets.stylers.AlertItemTheme
-import com.crrl.beatplayer.ui.widgets.stylers.InputStyle
-import com.crrl.beatplayer.ui.widgets.stylers.ItemStyle
-import com.crrl.beatplayer.utils.GeneralUtils.drawRoundRectShape
+import com.crrl.beatplayer.alertdialog.R
+import com.crrl.beatplayer.alertdialog.actions.AlertItemAction
+import com.crrl.beatplayer.alertdialog.interfaces.ItemListener
+import com.crrl.beatplayer.alertdialog.stylers.AlertItemTheme
+import com.crrl.beatplayer.alertdialog.stylers.InputStyle
+import com.crrl.beatplayer.alertdialog.stylers.ItemStyle
+import com.crrl.beatplayer.alertdialog.utils.ViewUtils.drawRoundRectShape
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.android.synthetic.main.input_dialog_item.view.*
 import kotlinx.android.synthetic.main.parent_dialog_layout.view.*
@@ -168,7 +168,7 @@ class InputDialog(
                     action.setTextColor(style.hintTextColor)
                 }
                 AlertItemTheme.CANCEL -> {
-                    action.setTextColor(ContextCompat.getColor(context!!, R.color.error))
+                    action.setTextColor(ContextCompat.getColor(context!!, R.color.red))
                 }
                 AlertItemTheme.ACCEPT -> {
                     action.setTextColor(style.acceptColor)

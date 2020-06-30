@@ -11,10 +11,6 @@
  * limitations under the License.
  */
 
-package com.crrl.beatplayer.interfaces
+package com.crrl.beatplayer.alertdialog.stylers
 
-import com.crrl.beatplayer.alertdialog.actions.AlertItemAction
-
-interface AlertItemActionListener {
-    fun onAlertItemClick(action: AlertItemAction)
-}
+open class ItemStyle

@@ -35,7 +35,7 @@ import com.crrl.beatplayer.models.Album
 import com.crrl.beatplayer.models.Favorite
 import com.crrl.beatplayer.models.SearchData
 import com.crrl.beatplayer.models.Song
-import com.crrl.beatplayer.ui.widgets.MusicVisualizer
+import com.crrl.beatplayer.alertdialog.MusicVisualizer
 import com.crrl.beatplayer.utils.BeatConstants.ALBUM_TYPE
 import com.crrl.beatplayer.utils.BeatConstants.ARTIST_TYPE
 import com.crrl.beatplayer.utils.BeatConstants.FAVORITE_TYPE

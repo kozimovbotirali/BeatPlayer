@@ -30,8 +30,8 @@ import com.crrl.beatplayer.models.Artist
 import com.crrl.beatplayer.ui.adapters.ArtistAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.viewmodels.ArtistViewModel
-import com.crrl.beatplayer.ui.widgets.actions.AlertItemAction
-import com.crrl.beatplayer.ui.widgets.stylers.AlertItemTheme
+import com.crrl.beatplayer.alertdialog.actions.AlertItemAction
+import com.crrl.beatplayer.alertdialog.stylers.AlertItemTheme
 import com.crrl.beatplayer.utils.BeatConstants
 import com.crrl.beatplayer.utils.GeneralUtils
 import com.crrl.beatplayer.utils.SortModes

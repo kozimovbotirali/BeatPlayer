@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-package com.crrl.beatplayer.ui.widgets.views
+package com.crrl.beatplayer.alertdialog.views
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -20,13 +20,13 @@ import android.view.View.GONE
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
-import com.crrl.beatplayer.R
-import com.crrl.beatplayer.interfaces.ItemListener
-import com.crrl.beatplayer.ui.widgets.actions.AlertItemAction
-import com.crrl.beatplayer.ui.widgets.stylers.AlertItemStyle
-import com.crrl.beatplayer.ui.widgets.stylers.AlertItemTheme
-import com.crrl.beatplayer.ui.widgets.stylers.ItemStyle
-import com.crrl.beatplayer.utils.GeneralUtils.drawRoundRectShape
+import com.crrl.beatplayer.alertdialog.R
+import com.crrl.beatplayer.alertdialog.interfaces.ItemListener
+import com.crrl.beatplayer.alertdialog.actions.AlertItemAction
+import com.crrl.beatplayer.alertdialog.stylers.AlertItemStyle
+import com.crrl.beatplayer.alertdialog.stylers.AlertItemTheme
+import com.crrl.beatplayer.alertdialog.stylers.ItemStyle
+import com.crrl.beatplayer.alertdialog.utils.ViewUtils.drawRoundRectShape
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.android.synthetic.main.parent_dialog_layout.view.*
 
@@ -106,7 +106,7 @@ class BottomSheetAlert(
             action.apply {
                 text = item.title
                 if (items.indexOf(item) == items.size - 1)
-                    setBackgroundResource(R.drawable.list_item_ripple_bottom)
+                    setBackgroundResource(R.drawable.item_ripple_bottom)
             }
 
             // Click listener for action.

@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-package com.crrl.beatplayer.ui.widgets
+package com.crrl.beatplayer.alertdialog
 
 import android.view.LayoutInflater
 import android.view.View

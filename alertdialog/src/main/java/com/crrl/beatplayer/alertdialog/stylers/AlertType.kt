@@ -11,11 +11,10 @@
  * limitations under the License.
  */
 
-package com.crrl.beatplayer.interfaces
+package com.crrl.beatplayer.alertdialog.stylers
 
-import android.view.View
-import com.crrl.beatplayer.ui.widgets.actions.AlertItemAction
-
-interface ItemListener {
-    fun updateItem(view: View, alertItemAction: AlertItemAction)
+enum class AlertType {
+    BOTTOM_SHEET,
+    DIALOG,
+    INPUT
 }
