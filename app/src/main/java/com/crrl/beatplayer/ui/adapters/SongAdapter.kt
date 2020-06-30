@@ -15,8 +15,10 @@ package com.crrl.beatplayer.ui.adapters
 
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.crrl.beatplayer.R
+import com.crrl.beatplayer.databinding.AlbumDetailSongItemBinding
 import com.crrl.beatplayer.databinding.SongItemBinding
 import com.crrl.beatplayer.databinding.SongItemHeaderBinding
 import com.crrl.beatplayer.extensions.hide
@@ -37,6 +39,11 @@ class SongAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var itemClickListener: ItemClickListener<Song>? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        val viewBindingSong = when{
+            isAlbumDetail -> parent.inflateWithBinding<AlbumDetailSongItemBinding>(R.layout.album_detail_song_item)
+            else -> parent.inflateWithBinding<SongItemBinding>(R.layout.song_item)
+        }
+
         return when (viewType) {
             HEADER_TYPE -> {
                 val viewBinding =
@@ -44,12 +51,11 @@ class SongAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 ViewHolderSongHeader(viewBinding)
             }
             ITEM_TYPE -> {
-                val viewBinding = parent.inflateWithBinding<SongItemBinding>(R.layout.song_item)
-                ViewHolderSong(viewBinding)
+                ViewHolderSong(viewBindingSong)
             }
             else -> {
-                val viewBinding = parent.inflateWithBinding<SongItemBinding>(R.layout.song_item)
-                ViewHolderSong(viewBinding)
+
+                ViewHolderSong(viewBindingSong)
             }
         }
     }
@@ -57,12 +63,8 @@ class SongAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val currentSong = if (!songList.isNullOrEmpty()) getItem(position) else Song()
         when (getItemViewType(position)) {
-            HEADER_TYPE -> {
-                (holder as ViewHolderSongHeader).bind(songList.size)
-            }
-            ITEM_TYPE -> {
-                (holder as ViewHolderSong).bind(currentSong!!)
-            }
+            HEADER_TYPE -> (holder as ViewHolderSongHeader).bind(songList.size)
+            ITEM_TYPE -> (holder as ViewHolderSong).bind(currentSong!!)
         }
     }
 
@@ -97,10 +99,30 @@ class SongAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         notifyDataSetChanged()
     }
 
-    inner class ViewHolderSong(private val binding: SongItemBinding) :
+    inner class ViewHolderSong(private val binding: ViewDataBinding) :
         RecyclerView.ViewHolder(binding.root), View.OnClickListener {
 
-        fun bind(song: Song) {
+        fun bind(currentSong: Song) {
+            when(binding){
+                is SongItemBinding -> bindSong(currentSong)
+                is AlbumDetailSongItemBinding -> bindAlbumSong(currentSong)
+            }
+        }
+
+        private fun bindSong(song: Song) {
+            binding as SongItemBinding
+            binding.apply {
+                this.song = song
+                this.size = itemCount
+                executePendingBindings()
+
+                container.setOnClickListener(this@ViewHolderSong)
+                itemMenu.setOnClickListener(this@ViewHolderSong)
+            }
+        }
+
+        private fun bindAlbumSong(song: Song) {
+            binding as AlbumDetailSongItemBinding
             binding.apply {
                 this.song = song
                 this.size = itemCount

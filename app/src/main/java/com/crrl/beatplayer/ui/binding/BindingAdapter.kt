@@ -102,6 +102,16 @@ fun setTextHtml(view: TextView, html: String) {
     view.setText(Html.fromHtml(html, Html.FROM_HTML_MODE_LEGACY), TextView.BufferType.SPANNABLE)
 }
 
+@BindingAdapter("app:track_number")
+fun setTrackNumber(view: TextView, trackNumber: Int) {
+    val numberStr = when(trackNumber){
+        0 -> "-"
+        else -> trackNumber.toString()
+    }
+
+    view.text = numberStr
+}
+
 @BindingAdapter("app:isFav")
 fun isSongFav(view: ImageButton, isFav: Boolean) {
     if (isFav) {

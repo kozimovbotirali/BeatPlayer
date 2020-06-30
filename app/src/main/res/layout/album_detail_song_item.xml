@@ -26,12 +26,8 @@
     </data>
 
     <RelativeLayout
-        android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:background="@drawable/list_item_ripple"
-        android:clickable="true"
-        android:focusable="true">
+        android:layout_height="70dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -39,28 +35,26 @@
             android:layout_alignParentStart="true"
             android:layout_toStartOf="@+id/item_menu">
 
-            <ImageView
-                android:id="@+id/cover"
+            <TextView
+                android:id="@+id/trackNumber"
                 android:layout_width="@dimen/song_cover_size"
-                android:layout_height="@dimen/song_cover_size"
+                android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:layout_marginStart="@dimen/margin_12"
-                android:background="@drawable/song_cover_frame"
-                android:contentDescription="@string/cover"
-                android:elevation="5dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_empty_cover"
-                app:albumId="@{song.albumId}" />
+                android:layout_marginStart="@dimen/margin_8"
+                android:gravity="center"
+                app:track_number="@{safeUnbox(song.trackNumber)}"
+                android:textColor="?titleTextColor"
+                android:textSize="@dimen/title_text_size" />
 
             <LinearLayout
                 android:id="@+id/textViewContainer"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_centerVertical="true"
-                android:layout_marginStart="@dimen/margin_12"
-                android:layout_marginEnd="@dimen/margin_12"
-                android:layout_toEndOf="@+id/cover"
+                android:layout_marginStart="@dimen/margin_8"
+                android:layout_marginEnd="@dimen/margin_10"
+                android:layout_toEndOf="@+id/trackNumber"
                 android:orientation="vertical"
                 android:paddingBottom="4dp">
 
@@ -123,6 +117,21 @@
                 </LinearLayout>
             </LinearLayout>
         </RelativeLayout>
+
+        <View
+            android:layout_width="@dimen/btn_size"
+            android:layout_height="@dimen/btn_size"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/gradient_background" />
+
+        <View
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/list_item_ripple"
+            android:clickable="true"
+            android:focusable="true" />
 
         <ImageButton
             android:id="@+id/item_menu"
