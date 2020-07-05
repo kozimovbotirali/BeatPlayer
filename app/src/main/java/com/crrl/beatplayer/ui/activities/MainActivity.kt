@@ -32,6 +32,7 @@ import com.crrl.beatplayer.utils.BeatConstants.BIND_STATE_BOUND
 import com.crrl.beatplayer.utils.BeatConstants.FAVORITE_ID
 import com.crrl.beatplayer.utils.BeatConstants.NOW_PLAYING
 import com.crrl.beatplayer.utils.BeatConstants.PLAY_LIST_DETAIL
+import com.crrl.beatplayer.utils.GeneralUtils.getStoragePaths
 import com.crrl.beatplayer.utils.SettingsUtility
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_SHORT
 import com.google.gson.Gson
@@ -257,7 +258,8 @@ class MainActivity : BaseActivity() {
                 Timber.d("path: $path")
                 // Some file managers still send a file path instead of media uri,
                 // so data needs to be verified.
-                val song = if (path.endsWith(".mp3")) {
+                val storagePaths = getStoragePaths(this)
+                val song = if (path.contains(storagePaths[0])) {
                     // Get song from a path
                     songViewModel.getSongFromPath(path)
                 } else {
