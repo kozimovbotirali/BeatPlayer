@@ -106,10 +106,46 @@ open class BaseFragment<T : MediaItem> : CoroutineFragment(), ItemClickListener<
             }
             addItem(
                 AlertItemAction(getString(R.string.new_playlist), false, AlertItemTheme.ACCEPT) {
-                    createDialog(song)
+                    createPlaylistDialog(song)
                 })
         }
         alertPlaylists = alert
+    }
+
+    protected fun createPlaylistDialog(song: Song? = null, inputText: String? = null) {
+        val actions = listOf(
+            AlertItemAction(
+                getString(R.string.cancel),
+                false,
+                AlertItemTheme.ACCEPT
+            ) {},
+            AlertItemAction(
+                getString(R.string.create_playlist_btn),
+                false,
+                AlertItemTheme.ACCEPT
+            ) { action ->
+                val exists = playlistViewModel.exists(action.input)
+                println(exists)
+                if (exists) mainViewModel.binding.mainContainer.snackbar(
+                    ERROR,
+                    getString(R.string.playlist_name_error),
+                    LENGTH_SHORT,
+                    action = getString(R.string.retry),
+                    clickListener = View.OnClickListener {
+                        createPlaylistDialog(song, action.input)
+                    }
+                )
+                else addSongs(action.input, song)
+            }
+        )
+        createInputDialog(
+            getString(R.string.new_playlist),
+            getString(R.string.create_playlist),
+            inputText
+                ?: "${safeActivity.getString(R.string.playlist)} ${addZeros(playlistViewModel.count + 1)}",
+            getString(R.string.input_hint),
+            actions
+        )
     }
 
     private fun addFavorite() {
@@ -150,44 +186,30 @@ open class BaseFragment<T : MediaItem> : CoroutineFragment(), ItemClickListener<
         }
     }
 
-    protected open fun createDialog(song: Song? = null, text: String? = null) {
+    protected open fun createInputDialog(
+        titleText: String,
+        subTitleText: String,
+        inputText: String,
+        hintText: String,
+        actions: List<AlertItemAction>
+    ) {
         val style = InputStyle(
             safeActivity.getColorByTheme(R.attr.colorPrimarySecondary2),
             safeActivity.getColorByTheme(R.attr.colorPrimaryOpacity),
             safeActivity.getColorByTheme(R.attr.titleTextColor),
             safeActivity.getColorByTheme(R.attr.bodyTextColor),
             safeActivity.getColorByTheme(R.attr.colorAccent),
-            text ?: "${safeActivity.getString(R.string.playlist)} ${addZeros(
-                playlistViewModel.count + 1
-            )}",
+            inputText,
             resources.getDimension(R.dimen.bottom_panel_radius)
         )
         AlertDialog(
-            getString(R.string.new_playlist),
-            getString(R.string.create_playlist),
+            titleText,
+            subTitleText,
             style,
             AlertType.INPUT,
-            getString(R.string.input_hint)
+            hintText
         ).apply {
-            addItem(AlertItemAction(getString(R.string.cancel), false, AlertItemTheme.ACCEPT) {})
-            addItem(
-                AlertItemAction(
-                    getString(R.string.create_playlist_btn),
-                    false,
-                    AlertItemTheme.ACCEPT
-                ) { action ->
-                    val exists = playlistViewModel.exists(action.input)
-                    if (exists) main_container.snackbar(
-                        ERROR,
-                        getString(R.string.playlist_name_error),
-                        LENGTH_SHORT,
-                        action = getString(R.string.retry),
-                        clickListener = View.OnClickListener {
-                            createDialog(song, action.input)
-                        }
-                    )
-                    else addSongs(action.input, song)
-                })
+            for (action in actions) addItem(action)
         }.show(safeActivity as AppCompatActivity)
     }
 

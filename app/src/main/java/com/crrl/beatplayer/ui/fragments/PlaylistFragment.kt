@@ -86,7 +86,7 @@ class PlaylistFragment : BaseFragment<Playlist>() {
             it.lifecycleOwner = this
             it.executePendingBindings()
 
-            it.createPlayList.setOnClickListener { createDialog() }
+            it.createPlayList.setOnClickListener { createPlaylistDialog() }
         }
     }
 
