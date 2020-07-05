@@ -34,10 +34,15 @@ import com.crrl.beatplayer.ui.adapters.SearchAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.viewmodels.PlaylistViewModel
 import com.crrl.beatplayer.ui.viewmodels.SearchViewModel
-import com.crrl.beatplayer.utils.BeatConstants
-import com.crrl.beatplayer.utils.GeneralUtils
+import com.crrl.beatplayer.utils.BeatConstants.ALBUM_DETAIL
+import com.crrl.beatplayer.utils.BeatConstants.ALBUM_KEY
+import com.crrl.beatplayer.utils.BeatConstants.ARTIST_DETAIL
+import com.crrl.beatplayer.utils.BeatConstants.ARTIST_KEY
+import com.crrl.beatplayer.utils.BeatConstants.PLAY_LIST_TYPE
+import com.crrl.beatplayer.utils.GeneralUtils.PORTRAIT
+import com.crrl.beatplayer.utils.GeneralUtils.getExtraBundle
+import com.crrl.beatplayer.utils.GeneralUtils.getOrientation
 import com.crrl.beatplayer.utils.GeneralUtils.toggleShowKeyBoard
-import kotlinx.android.synthetic.main.fragment_search.view.*
 import org.koin.android.ext.android.inject
 
 class SearchFragment : BaseFragment<MediaItem>(), TextWatcher {
@@ -60,12 +65,12 @@ class SearchFragment : BaseFragment<MediaItem>(), TextWatcher {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        init(view)
+        init()
+        retainInstance = true
     }
 
-    private fun init(view: View) {
-        val sc =
-            if (GeneralUtils.getOrientation(safeActivity) == GeneralUtils.PORTRAIT) 2 else 5
+    private fun init() {
+        val sc = if (getOrientation(safeActivity) == PORTRAIT) 2 else 5
 
         searchAdapter = SearchAdapter(safeActivity, searchViewModel, this, sc)
 
@@ -76,7 +81,7 @@ class SearchFragment : BaseFragment<MediaItem>(), TextWatcher {
             }
 
             back.setOnClickListener {
-                toggleShowKeyBoard(safeActivity, view.search_src_text, false)
+                toggleShowKeyBoard(safeActivity, searchSrcText, false)
                 activity!!.onBackPressed()
             }
 
@@ -129,7 +134,7 @@ class SearchFragment : BaseFragment<MediaItem>(), TextWatcher {
     }
 
     private fun songClicked(item: Song) {
-        val extras = getExtraBundle(longArrayOf(item.id), BeatConstants.PLAY_LIST_TYPE)
+        val extras = getExtraBundle(longArrayOf(item.id), PLAY_LIST_TYPE)
         mainViewModel.mediaItemClicked(item.toMediaItem(), extras)
     }
 
@@ -137,9 +142,9 @@ class SearchFragment : BaseFragment<MediaItem>(), TextWatcher {
         activity!!.addFragment(
             R.id.nav_host_fragment,
             AlbumDetailFragment(),
-            BeatConstants.ALBUM_DETAIL,
+            ALBUM_DETAIL,
             true,
-            bundleOf(BeatConstants.ALBUM_KEY to item.id)
+            bundleOf(ALBUM_KEY to item.id)
         )
     }
 
@@ -147,9 +152,9 @@ class SearchFragment : BaseFragment<MediaItem>(), TextWatcher {
         activity!!.addFragment(
             R.id.nav_host_fragment,
             ArtistDetailFragment(),
-            BeatConstants.ARTIST_DETAIL,
+            ARTIST_DETAIL,
             true,
-            bundleOf(BeatConstants.ARTIST_KEY to item.id)
+            bundleOf(ARTIST_KEY to item.id)
         )
     }
 

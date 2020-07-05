@@ -22,9 +22,7 @@ import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentArtistDetailBinding
-import com.crrl.beatplayer.extensions.addFragment
-import com.crrl.beatplayer.extensions.inflateWithBinding
-import com.crrl.beatplayer.extensions.observe
+import com.crrl.beatplayer.extensions.*
 import com.crrl.beatplayer.interfaces.ItemClickListener
 import com.crrl.beatplayer.models.Album
 import com.crrl.beatplayer.models.Artist
@@ -59,6 +57,7 @@ class ArtistDetailFragment : BaseFragment<MediaItem>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         init()
+        retainInstance = true
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -77,17 +76,20 @@ class ArtistDetailFragment : BaseFragment<MediaItem>() {
             clipToOutline = true
         }
 
-        binding. addFavorites.setOnClickListener { toggleAddFav() }
-        
-        artistViewModel.getArtistAlbums(artist.id).observe(this) {
-            albumAdapter.updateDataSet(it)
-        }
+        binding.addFavorites.setOnClickListener { toggleAddFav() }
+
+        artistViewModel.getArtistAlbums(artist.id)
+            .filter { !albumAdapter.albumList.deepEquals(it) }
+            .observe(this) {
+                albumAdapter.updateDataSet(it)
+            }
 
         binding.let {
             it.artist = artist
             it.viewModel = mainViewModel
-            it.lifecycleOwner = this
             it.executePendingBindings()
+
+            it.lifecycleOwner = this
         }
     }
 

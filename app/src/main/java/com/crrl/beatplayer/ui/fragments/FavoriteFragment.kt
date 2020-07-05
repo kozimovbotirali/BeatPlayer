@@ -21,10 +21,7 @@ import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.GridLayoutManager
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentFavoriteBinding
-import com.crrl.beatplayer.extensions.addFragment
-import com.crrl.beatplayer.extensions.inflateWithBinding
-import com.crrl.beatplayer.extensions.observe
-import com.crrl.beatplayer.extensions.safeActivity
+import com.crrl.beatplayer.extensions.*
 import com.crrl.beatplayer.models.Favorite
 import com.crrl.beatplayer.ui.adapters.FavoriteAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
@@ -36,11 +33,9 @@ import com.crrl.beatplayer.utils.BeatConstants.ALBUM_TYPE
 import com.crrl.beatplayer.utils.BeatConstants.ARTIST_DETAIL
 import com.crrl.beatplayer.utils.BeatConstants.ARTIST_TYPE
 import com.crrl.beatplayer.utils.BeatConstants.FAVORITE_KEY
-import com.crrl.beatplayer.utils.BeatConstants.FAVORITE_NAME
 import com.crrl.beatplayer.utils.BeatConstants.FOLDER_KEY
 import com.crrl.beatplayer.utils.BeatConstants.FOLDER_TYPE
 import com.crrl.beatplayer.utils.GeneralUtils
-import kotlinx.android.synthetic.main.layout_recyclerview.*
 import org.koin.android.ext.android.inject
 
 class FavoriteFragment : BaseFragment<Favorite>() {
@@ -60,6 +55,7 @@ class FavoriteFragment : BaseFragment<Favorite>() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         init()
+        retainInstance = true
     }
 
     private fun init() {
@@ -70,15 +66,15 @@ class FavoriteFragment : BaseFragment<Favorite>() {
             spanCount = sc
         }
 
-        viewModel.getFavorites().observe(this) {
+        viewModel.getFavorites()
+            .filter { !favoriteAdapter.favoriteList.deepEquals(it) }
+            .observe(this) {
             favoriteAdapter.updateDataSet(it)
         }
 
-        binding.apply {
-            list.apply {
-                layoutManager = GridLayoutManager(context, sc)
-                adapter = favoriteAdapter
-            }
+        binding.list.apply {
+            layoutManager = GridLayoutManager(context, sc)
+            adapter = favoriteAdapter
         }
 
         binding.let {

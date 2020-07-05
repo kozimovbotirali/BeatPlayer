@@ -11,9 +11,9 @@
   ~ limitations under the License.
   -->
 
-<layout xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -33,8 +33,8 @@
             android:orientation="vertical"
             android:paddingStart="@dimen/margin_12"
             android:paddingTop="@dimen/margin_12"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="RtlSymmetry">
 
@@ -44,18 +44,18 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:background="@drawable/album_cover_frame"
+                android:contentDescription="@string/cover"
                 android:scaleType="centerCrop"
-                app:albumId="@{artist.albumId}"
                 android:src="@drawable/ic_empty_cover"
-                android:contentDescription="@string/cover" />
+                app:albumId="@{artist.albumId}" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:baselineAligned="false"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:padding="@dimen/margin_6"
-                android:baselineAligned="false">
+                android:padding="@dimen/margin_6">
 
                 <TextView
                     android:id="@+id/title"
@@ -71,17 +71,15 @@
                     android:textSize="@dimen/title_text_size" />
 
                 <TextView
-                    android:id="@+id/info"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/margin_10"
                     android:layout_marginEnd="@dimen/margin_10"
                     android:gravity="center"
                     android:maxLines="1"
-                    android:text="@{@plurals/number_of_albums(artist.albumCount, artist.albumCount)}"
+                    android:text='@{@plurals/number_of_albums(artist.albumCount, artist.albumCount) + ", " + @plurals/number_of_songs(artist.songCount, artist.songCount)}'
                     android:textColor="?subTitleTextColor"
                     android:textSize="@dimen/sub_title_text_size" />
-
             </LinearLayout>
         </LinearLayout>
 
@@ -95,9 +93,9 @@
             android:clickable="true"
             android:focusable="true"
             android:orientation="vertical"
-            app:layout_constraintStart_toStartOf="@id/container"
-            app:layout_constraintEnd_toEndOf="@id/container"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/container"
+            app:layout_constraintStart_toStartOf="@id/container"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

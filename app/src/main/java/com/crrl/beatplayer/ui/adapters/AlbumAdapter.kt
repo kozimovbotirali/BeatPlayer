@@ -102,10 +102,8 @@ class AlbumAdapter(private val context: Context?) :
     }
 
     fun updateDataSet(newList: List<Album>) {
-        if (!albumList.deepEquals(newList)) {
-            albumList = newList.toMutableList()
-            notifyDataSetChanged()
-        }
+        albumList = newList.toMutableList()
+        notifyDataSetChanged()
     }
 
     inner class ViewHolderAlbum(private val binding: ViewDataBinding) :

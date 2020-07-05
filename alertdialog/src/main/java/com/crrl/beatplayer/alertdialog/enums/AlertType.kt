@@ -11,10 +11,10 @@
  * limitations under the License.
  */
 
-package com.crrl.beatplayer.alertdialog.stylers
+package com.crrl.beatplayer.alertdialog.enums
 
-enum class AlertItemTheme {
-    DEFAULT,
-    CANCEL,
-    ACCEPT
+enum class AlertType {
+    BOTTOM_SHEET,
+    DIALOG,
+    INPUT
 }

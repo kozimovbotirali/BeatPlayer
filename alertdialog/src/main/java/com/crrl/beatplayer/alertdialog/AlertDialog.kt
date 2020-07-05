@@ -14,14 +14,15 @@
 package com.crrl.beatplayer.alertdialog
 
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.DialogFragment
 import com.crrl.beatplayer.alertdialog.actions.AlertItemAction
 import com.crrl.beatplayer.alertdialog.stylers.AlertItemStyle
-import com.crrl.beatplayer.alertdialog.stylers.AlertType
-import com.crrl.beatplayer.alertdialog.stylers.ItemStyle
-import com.crrl.beatplayer.alertdialog.views.BottomSheetAlert
+import com.crrl.beatplayer.alertdialog.enums.AlertType
+import com.crrl.beatplayer.alertdialog.enums.AlertType.*
+import com.crrl.beatplayer.alertdialog.stylers.base.ItemStyle
+import com.crrl.beatplayer.alertdialog.views.BottomSheetDialogAlert
 import com.crrl.beatplayer.alertdialog.views.DialogAlert
 import com.crrl.beatplayer.alertdialog.views.InputDialog
+import com.crrl.beatplayer.alertdialog.views.base.DialogFragmentBase
 
 class AlertDialog(
     private val title: String,
@@ -31,9 +32,9 @@ class AlertDialog(
     private val inputText: String = ""
 ) {
 
-    private var theme: AlertType? = AlertType.DIALOG
+    private var theme: AlertType? = DIALOG
     private val actions: ArrayList<AlertItemAction> = ArrayList()
-    private var alert: DialogFragment? = null
+    private var alert: DialogFragmentBase? = null
 
     /**
      * Add Item to AlertDialog
@@ -51,9 +52,9 @@ class AlertDialog(
      */
     fun show(activity: AppCompatActivity) {
         alert = when (type) {
-            AlertType.BOTTOM_SHEET -> BottomSheetAlert(title, message, actions, style)
-            AlertType.DIALOG -> DialogAlert(title, message, actions, style as AlertItemStyle)
-            AlertType.INPUT -> InputDialog(title, message, actions, style, inputText)
+            BOTTOM_SHEET -> BottomSheetDialogAlert.newInstance(title, message, actions, style)
+            DIALOG -> DialogAlert.newInstance(title, message, actions, style)
+            INPUT -> InputDialog.newInstance(title, message, actions, style, inputText)
         }
         alert?.show(activity.supportFragmentManager, alert?.tag)
     }
@@ -75,7 +76,7 @@ class AlertDialog(
     }
 
     /**
-     * Changes the style directly
+     * Get the style
      * @return style: AlertItemStyle
      */
     fun getStyle(): ItemStyle {

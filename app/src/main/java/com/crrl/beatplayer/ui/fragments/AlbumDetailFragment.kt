@@ -18,14 +18,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.doOnPreDraw
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentAlbumDetailBinding
 import com.crrl.beatplayer.extensions.*
 import com.crrl.beatplayer.models.Album
-import com.crrl.beatplayer.models.MediaItemData
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.ui.adapters.SongAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
@@ -33,9 +31,9 @@ import com.crrl.beatplayer.ui.viewmodels.AlbumViewModel
 import com.crrl.beatplayer.ui.viewmodels.FavoriteViewModel
 import com.crrl.beatplayer.ui.viewmodels.PlaylistViewModel
 import com.crrl.beatplayer.utils.BeatConstants
-import com.crrl.beatplayer.utils.GeneralUtils
+import com.crrl.beatplayer.utils.GeneralUtils.getExtraBundle
+import com.crrl.beatplayer.utils.GeneralUtils.getTotalTime
 import kotlinx.android.synthetic.main.layout_recyclerview.*
-import kotlinx.coroutines.delay
 import org.koin.android.ext.android.inject
 
 class AlbumDetailFragment : BaseFragment<Song>() {
@@ -60,7 +58,6 @@ class AlbumDetailFragment : BaseFragment<Song>() {
     }
 
     private fun init() {
-        postponeEnterTransition()
         val id = arguments!!.getLong(BeatConstants.ALBUM_KEY)
         album = albumViewModel.getAlbum(id)
         initNeeded(Song(), emptyList(), id)
@@ -68,6 +65,7 @@ class AlbumDetailFragment : BaseFragment<Song>() {
             itemClickListener = this@AlbumDetailFragment
             showHeader = true
             isAlbumDetail = true
+            showCover = false
         }
 
         list.apply {
@@ -79,23 +77,17 @@ class AlbumDetailFragment : BaseFragment<Song>() {
 
         binding.addFavorites.setOnClickListener { toggleAddFav() }
 
-        albumViewModel.getSongsByAlbum(album.id)!!.observe(this) {
-            if (!songAdapter.songList.deepEquals(it)) {
+        albumViewModel.getSongsByAlbum(album.id)
+            .filter { !songAdapter.songList.deepEquals(it) }
+            .observe(this) {
                 songAdapter.updateDataSet(it)
                 mainViewModel.reloadQueueIds(it.toIDList(), album.title)
-                binding.totalDuration = GeneralUtils.getTotalTime(songAdapter.songList).toInt()
-                (view as? ViewGroup)?.doOnPreDraw {
-                    launch {
-                        delay(150)
-                        startPostponedEnterTransition()
-                    }
+                binding.totalDuration = getTotalTime(songAdapter.songList).toInt()
+                if (it.isEmpty()) {
+                    favoriteViewModel.deleteFavorite(id)
+                    safeActivity.onBackPressed()
                 }
             }
-            if (it.isEmpty()) {
-                favoriteViewModel.deleteFavorite(id)
-                safeActivity.onBackPressed()
-            }
-        }
 
         binding.let {
             it.viewModel = albumViewModel

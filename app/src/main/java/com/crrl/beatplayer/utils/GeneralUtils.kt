@@ -20,11 +20,12 @@ import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
-import android.graphics.RectF
-import android.graphics.drawable.ShapeDrawable
-import android.graphics.drawable.shapes.RoundRectShape
+import android.graphics.ImageDecoder
 import android.net.Uri
-import android.os.Build
+import android.os.Build.VERSION.SDK_INT
+import android.os.Build.VERSION_CODES.O
+import android.os.Build.VERSION_CODES.P
+import android.os.Bundle
 import android.provider.MediaStore
 import android.view.inputmethod.InputMethodManager
 import android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT
@@ -35,7 +36,10 @@ import com.crrl.beatplayer.extensions.systemService
 import com.crrl.beatplayer.extensions.toFileDescriptor
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.utils.BeatConstants.ARTWORK_URI
+import com.crrl.beatplayer.utils.BeatConstants.SEEK_TO_POS
+import com.crrl.beatplayer.utils.BeatConstants.SONG_LIST_NAME
 import com.crrl.beatplayer.utils.BeatConstants.SONG_URI
+import com.crrl.beatplayer.utils.SettingsUtility.Companion.QUEUE_INFO_KEY
 import java.io.FileInputStream
 import java.io.FileNotFoundException
 
@@ -135,16 +139,43 @@ object GeneralUtils {
         }
     }
 
+    @Suppress("DEPRECATION")
     fun getAlbumArtBitmap(context: Context, albumId: Long?): Bitmap? {
         if (albumId == null) return null
         return try {
-            MediaStore.Images.Media.getBitmap(context.contentResolver, getAlbumArtUri(albumId))
+            when {
+                SDK_INT >= P -> {
+                    val source = ImageDecoder.createSource(
+                        context.contentResolver,
+                        getAlbumArtUri(albumId)
+                    )
+                    ImageDecoder.decodeBitmap(source)
+                }
+                else -> MediaStore.Images.Media.getBitmap(
+                    context.contentResolver,
+                    getAlbumArtUri(albumId)
+                )
+            }
         } catch (e: FileNotFoundException) {
-            BitmapFactory.decodeResource(context.resources, R.drawable.ic_app_logo)
+            BitmapFactory.decodeResource(context.resources, R.drawable.ic_empty_cover)
         }
     }
 
-    fun isOreo() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+    fun getExtraBundle(queue: LongArray, title: String): Bundle? {
+        return getExtraBundle(queue, title, 0)
+    }
+
+    fun getExtraBundle(queue: LongArray, title: String, seekTo: Int?): Bundle? {
+        val bundle = Bundle()
+        bundle.putLongArray(QUEUE_INFO_KEY, queue)
+        bundle.putString(SONG_LIST_NAME, title)
+        if (seekTo != null)
+            bundle.putInt(SEEK_TO_POS, seekTo)
+        else bundle.putInt(SEEK_TO_POS, 0)
+        return bundle
+    }
+
+    fun isOreo() = SDK_INT >= O
     fun getAlbumArtUri(albumId: Long): Uri = withAppendedId(ARTWORK_URI, albumId)
     fun getSongUri(songId: Long): Uri = withAppendedId(SONG_URI, songId)
 }

@@ -17,22 +17,23 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.doOnPreDraw
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentFolderDetailBinding
-import com.crrl.beatplayer.extensions.*
-import com.crrl.beatplayer.models.MediaItemData
+import com.crrl.beatplayer.extensions.deepEquals
+import com.crrl.beatplayer.extensions.inflateWithBinding
+import com.crrl.beatplayer.extensions.observe
+import com.crrl.beatplayer.extensions.toIDList
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.ui.adapters.SongAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.viewmodels.FavoriteViewModel
 import com.crrl.beatplayer.ui.viewmodels.FolderViewModel
 import com.crrl.beatplayer.ui.viewmodels.PlaylistViewModel
-import com.crrl.beatplayer.utils.BeatConstants
-import com.crrl.beatplayer.utils.BeatConstants.FAVORITE_NAME
 import com.crrl.beatplayer.utils.BeatConstants.FOLDER_KEY
+import com.crrl.beatplayer.utils.BeatConstants.PLAY_ALL_SHUFFLED
+import com.crrl.beatplayer.utils.GeneralUtils.getExtraBundle
 import kotlinx.android.synthetic.main.layout_recyclerview.*
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -57,6 +58,7 @@ class FolderDetailFragment : BaseFragment<Song>() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         init()
+        retainInstance = true
     }
 
     fun init() {
@@ -103,7 +105,7 @@ class FolderDetailFragment : BaseFragment<Song>() {
 
     override fun onShuffleClick(view: View) {
         val extras = getExtraBundle(songAdapter.songList.toIDList(), binding.folder!!.name)
-        mainViewModel.transportControls()?.sendCustomAction(BeatConstants.PLAY_ALL_SHUFFLED, extras)
+        mainViewModel.transportControls()?.sendCustomAction(PLAY_ALL_SHUFFLED, extras)
     }
 
     override fun onPlayAllClick(view: View) {

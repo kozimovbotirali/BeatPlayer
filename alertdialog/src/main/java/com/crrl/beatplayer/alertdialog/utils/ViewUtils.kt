@@ -13,9 +13,12 @@
 
 package com.crrl.beatplayer.alertdialog.utils
 
+import android.app.Activity
+import android.graphics.Color
 import android.graphics.RectF
 import android.graphics.drawable.ShapeDrawable
 import android.graphics.drawable.shapes.RoundRectShape
+import android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 
 object ViewUtils {
     /**
@@ -38,4 +41,24 @@ object ViewUtils {
         oval.paint.color = color
         return oval
     }
+}
+
+fun setLightStatusBar(activity: Activity?) {
+    activity ?: return
+
+    val flags = activity.window.decorView.systemUiVisibility or SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+
+    println("HOLA $flags")
+
+    activity.window.decorView.systemUiVisibility = flags
+}
+
+fun clearLightStatusBar(activity: Activity?) {
+    activity ?: return
+
+    val flags = activity.window.decorView.systemUiVisibility xor SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+
+    println("HOLA $flags")
+
+    activity.window.decorView.systemUiVisibility = flags
 }

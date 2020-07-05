@@ -17,21 +17,19 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.doOnPreDraw
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentFavoriteDetailBinding
 import com.crrl.beatplayer.extensions.*
-import com.crrl.beatplayer.models.MediaItemData
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.ui.adapters.SongAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.viewmodels.FavoriteViewModel
 import com.crrl.beatplayer.ui.viewmodels.PlaylistViewModel
-import com.crrl.beatplayer.utils.BeatConstants
+import com.crrl.beatplayer.utils.BeatConstants.FAVORITE_KEY
 import com.crrl.beatplayer.utils.BeatConstants.PLAY_ALL_SHUFFLED
-import kotlinx.android.synthetic.main.layout_recyclerview.*
+import com.crrl.beatplayer.utils.GeneralUtils.getExtraBundle
 import org.koin.android.ext.android.inject
 
 class FavoriteDetailFragment : BaseFragment<Song>() {
@@ -52,13 +50,13 @@ class FavoriteDetailFragment : BaseFragment<Song>() {
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        postponeEnterTransition()
         super.onActivityCreated(savedInstanceState)
         init()
+        retainInstance = true
     }
 
     private fun init() {
-        val id = arguments!!.getLong(BeatConstants.FAVORITE_KEY)
+        val id = arguments!!.getLong(FAVORITE_KEY)
         binding.favorite = favoriteViewModel.getFavorite(id)
 
         songAdapter = SongAdapter().apply {
@@ -74,9 +72,6 @@ class FavoriteDetailFragment : BaseFragment<Song>() {
             } else if (!songAdapter.songList.deepEquals(it)) {
                 songAdapter.updateDataSet(it)
                 mainViewModel.reloadQueueIds(it.toIDList(), getString(R.string.favorite_music))
-                (view?.parent as? ViewGroup)?.doOnPreDraw {
-                    startPostponedEnterTransition()
-                }
             }
         }
 
@@ -96,17 +91,20 @@ class FavoriteDetailFragment : BaseFragment<Song>() {
     }
 
     override fun onItemClick(view: View, position: Int, item: Song) {
-        val extras = getExtraBundle(songAdapter.songList.toIDList(), getString(R.string.favorite_music))
+        val extras =
+            getExtraBundle(songAdapter.songList.toIDList(), getString(R.string.favorite_music))
         mainViewModel.mediaItemClicked(item.toMediaItem(), extras)
     }
 
     override fun onShuffleClick(view: View) {
-        val extras = getExtraBundle(songAdapter.songList.toIDList(), getString(R.string.favorite_music))
+        val extras =
+            getExtraBundle(songAdapter.songList.toIDList(), getString(R.string.favorite_music))
         mainViewModel.transportControls()?.sendCustomAction(PLAY_ALL_SHUFFLED, extras)
     }
 
     override fun onPlayAllClick(view: View) {
-        val extras = getExtraBundle(songAdapter.songList.toIDList(), getString(R.string.favorite_music))
+        val extras =
+            getExtraBundle(songAdapter.songList.toIDList(), getString(R.string.favorite_music))
         mainViewModel.mediaItemClicked(songAdapter.songList.first().toMediaItem(), extras)
     }
 

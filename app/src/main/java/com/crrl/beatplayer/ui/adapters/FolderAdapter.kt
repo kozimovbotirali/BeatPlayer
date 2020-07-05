@@ -40,10 +40,8 @@ class FolderAdapter(private val context: Context?) :
     }
 
     fun updateDataSet(newList: List<Folder>) {
-        if (!folderList.deepEquals(newList)) {
-            folderList = newList.toMutableList()
-            notifyDataSetChanged()
-        }
+        folderList = newList.toMutableList()
+        notifyDataSetChanged()
     }
 
     private fun getItem(position: Int) = folderList[position]

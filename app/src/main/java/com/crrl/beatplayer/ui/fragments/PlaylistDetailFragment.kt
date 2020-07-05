@@ -23,14 +23,13 @@ import androidx.recyclerview.widget.SimpleItemAnimator
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentPlaylistDetailBinding
 import com.crrl.beatplayer.extensions.*
-import com.crrl.beatplayer.models.MediaItemData
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.ui.adapters.SongAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.viewmodels.PlaylistViewModel
-import com.crrl.beatplayer.utils.BeatConstants
 import com.crrl.beatplayer.utils.BeatConstants.PLAY_ALL_SHUFFLED
 import com.crrl.beatplayer.utils.BeatConstants.PLAY_LIST_DETAIL
+import com.crrl.beatplayer.utils.GeneralUtils.getExtraBundle
 import kotlinx.android.synthetic.main.layout_recyclerview.*
 import org.koin.android.ext.android.inject
 
@@ -53,6 +52,7 @@ class PlaylistDetailFragment : BaseFragment<Song>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         init()
+        retainInstance = true
     }
 
     private fun init() {
@@ -73,12 +73,12 @@ class PlaylistDetailFragment : BaseFragment<Song>() {
             (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         }
 
-        playlistViewModel.getSongs(binding.playlist!!.id).observe(this) {
-            if (!songAdapter.songList.deepEquals(it)) {
+        playlistViewModel.getSongs(binding.playlist!!.id)
+            .filter { !songAdapter.songList.deepEquals(it) }
+            .observe(this) {
                 songAdapter.updateDataSet(it)
                 mainViewModel.reloadQueueIds(it.toIDList(), binding.playlist!!.name)
             }
-        }
 
         binding.let {
             it.viewModel = playlistViewModel
@@ -102,7 +102,7 @@ class PlaylistDetailFragment : BaseFragment<Song>() {
     }
 
     override fun onPlayAllClick(view: View) {
-        if(songAdapter.songList.isEmpty()) return
+        if (songAdapter.songList.isEmpty()) return
         val extras = getExtraBundle(songAdapter.songList.toIDList(), binding.playlist!!.name)
         mainViewModel.mediaItemClicked(songAdapter.songList.first().toMediaItem(), extras)
     }

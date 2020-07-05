@@ -21,24 +21,16 @@ import androidx.viewpager.widget.ViewPager
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentLibraryBinding
 import com.crrl.beatplayer.extensions.inflateWithBinding
-import com.crrl.beatplayer.extensions.observe
 import com.crrl.beatplayer.extensions.safeActivity
-import com.crrl.beatplayer.models.MediaItemData
-import com.crrl.beatplayer.repository.SongsRepository
 import com.crrl.beatplayer.ui.activities.MainActivity
 import com.crrl.beatplayer.ui.adapters.ViewPagerAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseSongDetailFragment
 import com.crrl.beatplayer.utils.AutoClearBinding
-import com.crrl.beatplayer.utils.LyricsExtractor
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.withContext
-import org.koin.android.ext.android.inject
 
 
 class LibraryFragment : BaseSongDetailFragment() {
 
     private var binding by AutoClearBinding<FragmentLibraryBinding>(this)
-    private val songsRepository by inject<SongsRepository>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -62,10 +54,6 @@ class LibraryFragment : BaseSongDetailFragment() {
     }
 
     private fun init() {
-        songDetailViewModel.currentData.observe(this) {
-            loadLyrics(it)
-        }
-
         binding.apply {
             initViewPager(binding.pagerSortMode)
             tabsContainer.setupWithViewPager(pagerSortMode)
@@ -89,21 +77,10 @@ class LibraryFragment : BaseSongDetailFragment() {
                 override fun onPageScrollStateChanged(s: Int) = Unit
                 override fun onPageScrolled(p: Int, po: Float, pop: Int) = Unit
                 override fun onPageSelected(p: Int) {
-                    mainViewModel.settingsUtility.startPageIndexSelected = p
+                    settingsUtility.startPageIndexSelected = p
                 }
             })
-            setCurrentItem(mainViewModel.settingsUtility.startPageIndexSelected, false)
-        }
-    }
-
-    private fun loadLyrics(mediaItemData: MediaItemData) {
-        songDetailViewModel.updateLyrics()
-        launch {
-            val lyric = withContext(IO) {
-                LyricsExtractor.getLyric(songsRepository, mediaItemData)
-                    ?: getString(R.string.no_lyrics)
-            }
-            songDetailViewModel.updateLyrics(lyric)
+            setCurrentItem(settingsUtility.startPageIndexSelected, false)
         }
     }
 }

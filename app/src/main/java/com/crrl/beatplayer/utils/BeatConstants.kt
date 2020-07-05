@@ -47,13 +47,10 @@ object BeatConstants {
     const val ARTIST_DETAIL = "artist_detail"
     const val FAVORITE_KEY = "favorite_key"
 
-    const val DID_STOP_KEY = "did_stop_key"
     const val ARTIST_KEY = "artist_key"
     const val ALBUM_KEY = "album_key"
     const val FOLDER_KEY = "folder_key"
     const val SONG_KEY = "song_key"
-    const val QUEUE_INFO_KEY = "queue_info_key"
-    const val QUEUE_LIST_KEY = "queue_list_key"
     const val QUEUE_LIST_TYPE_KEY = "queue_list_type_key"
     const val BY_UI_KEY = "by_ui_key"
 

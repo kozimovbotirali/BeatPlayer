@@ -17,5 +17,10 @@ import android.view.View
 import com.crrl.beatplayer.alertdialog.actions.AlertItemAction
 
 interface ItemListener {
+    /**
+     * This method sets the views style
+     * @param view: View
+     * @param alertItemAction: AlertItemAction
+     */
     fun updateItem(view: View, alertItemAction: AlertItemAction)
 }

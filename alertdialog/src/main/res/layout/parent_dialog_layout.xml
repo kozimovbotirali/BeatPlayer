@@ -21,9 +21,9 @@
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_margin="16dp"
+        android:layout_margin="12dp"
         android:layout_weight="1"
-        android:background="@drawable/album_cover_frame"
+        android:background="@drawable/alert_background"
         android:orientation="vertical">
 
         <LinearLayout
@@ -40,7 +40,6 @@
                 android:gravity="center"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
-                android:textColor="?titleTextColor"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 tools:text="New Playlist" />
@@ -54,7 +53,6 @@
                 android:gravity="center"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
-                android:textColor="?subTitleTextColor"
                 android:textSize="14sp"
                 tools:text="Enter the playlist's name" />
         </LinearLayout>
@@ -62,7 +60,8 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:theme="@style/OverScrollColor">
 
             <LinearLayout
                 android:id="@+id/item_container"
@@ -87,7 +86,6 @@
                 android:paddingBottom="20dp"
                 android:text="@string/cancel"
                 android:textAllCaps="false"
-                android:textColor="?titleTextColor"
                 android:textSize="16sp" />
 
             <View
@@ -96,8 +94,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
-                android:alpha="0.10"
-                android:background="#eee" />
+                android:alpha="0.10" />
 
             <Button
                 android:id="@+id/ok"
@@ -112,7 +109,6 @@
                 android:paddingBottom="20dp"
                 android:text="@string/accept"
                 android:textAllCaps="false"
-                android:textColor="@android:color/white"
                 android:textSize="16sp" />
         </LinearLayout>
     </LinearLayout>

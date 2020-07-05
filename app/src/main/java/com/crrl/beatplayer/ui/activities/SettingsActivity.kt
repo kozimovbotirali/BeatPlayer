@@ -23,8 +23,8 @@ import com.crrl.beatplayer.ui.activities.base.BaseActivity
 import com.crrl.beatplayer.alertdialog.AlertDialog
 import com.crrl.beatplayer.alertdialog.actions.AlertItemAction
 import com.crrl.beatplayer.alertdialog.stylers.AlertItemStyle
-import com.crrl.beatplayer.alertdialog.stylers.AlertItemTheme
-import com.crrl.beatplayer.alertdialog.stylers.AlertType
+import com.crrl.beatplayer.alertdialog.enums.AlertItemTheme
+import com.crrl.beatplayer.alertdialog.enums.AlertType
 import com.crrl.beatplayer.utils.BeatConstants
 import com.crrl.beatplayer.utils.SettingsUtility
 import org.koin.android.ext.android.inject

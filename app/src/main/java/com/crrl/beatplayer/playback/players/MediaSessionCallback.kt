@@ -27,8 +27,6 @@ import com.crrl.beatplayer.utils.BeatConstants.BY_UI_KEY
 import com.crrl.beatplayer.utils.BeatConstants.PAUSE_ACTION
 import com.crrl.beatplayer.utils.BeatConstants.PLAY_ACTION
 import com.crrl.beatplayer.utils.BeatConstants.PLAY_ALL_SHUFFLED
-import com.crrl.beatplayer.utils.BeatConstants.QUEUE_INFO_KEY
-import com.crrl.beatplayer.utils.BeatConstants.QUEUE_LIST_KEY
 import com.crrl.beatplayer.utils.BeatConstants.QUEUE_LIST_TYPE_KEY
 import com.crrl.beatplayer.utils.BeatConstants.REMOVE_SONG
 import com.crrl.beatplayer.utils.BeatConstants.REPEAT_ALL
@@ -40,6 +38,8 @@ import com.crrl.beatplayer.utils.BeatConstants.SHUFFLE_MODE
 import com.crrl.beatplayer.utils.BeatConstants.SONG_KEY
 import com.crrl.beatplayer.utils.BeatConstants.SONG_LIST_NAME
 import com.crrl.beatplayer.utils.BeatConstants.UPDATE_QUEUE
+import com.crrl.beatplayer.utils.SettingsUtility.Companion.QUEUE_INFO_KEY
+import com.crrl.beatplayer.utils.SettingsUtility.Companion.QUEUE_LIST_KEY
 import timber.log.Timber
 
 class MediaSessionCallback(

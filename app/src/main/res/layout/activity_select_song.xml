@@ -83,6 +83,8 @@
             android:layout_height="0dp"
             android:background="@drawable/album_detail_shape"
             android:layout_marginTop="@dimen/global_padding_top"
+            android:theme="@style/OverScrollColor"
+            app:clipToOutline="@{true}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/activity_title" />
 

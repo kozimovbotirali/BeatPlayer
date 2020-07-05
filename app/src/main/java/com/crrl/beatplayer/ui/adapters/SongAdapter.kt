@@ -18,7 +18,7 @@ import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.crrl.beatplayer.R
-import com.crrl.beatplayer.databinding.AlbumDetailSongItemBinding
+import com.crrl.beatplayer.databinding.SongItemNoCoverBinding
 import com.crrl.beatplayer.databinding.SongItemBinding
 import com.crrl.beatplayer.databinding.SongItemHeaderBinding
 import com.crrl.beatplayer.extensions.hide
@@ -34,27 +34,26 @@ class SongAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     val songList = mutableListOf<Song>()
     var showHeader = false
+    var showCover = true
     var isPlaylist = false
     var isAlbumDetail = false
     var itemClickListener: ItemClickListener<Song>? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val viewBindingSong = when{
-            isAlbumDetail -> parent.inflateWithBinding<AlbumDetailSongItemBinding>(R.layout.album_detail_song_item)
-            else -> parent.inflateWithBinding<SongItemBinding>(R.layout.song_item)
+            showCover -> parent.inflateWithBinding<SongItemNoCoverBinding>(R.layout.song_item)
+            else -> parent.inflateWithBinding<SongItemBinding>(R.layout.song_item_no_cover)
         }
 
         return when (viewType) {
             HEADER_TYPE -> {
-                val viewBinding =
-                    parent.inflateWithBinding<SongItemHeaderBinding>(R.layout.song_item_header)
+                val viewBinding = parent.inflateWithBinding<SongItemHeaderBinding>(R.layout.song_item_header)
                 ViewHolderSongHeader(viewBinding)
             }
             ITEM_TYPE -> {
                 ViewHolderSong(viewBindingSong)
             }
             else -> {
-
                 ViewHolderSong(viewBindingSong)
             }
         }
@@ -105,7 +104,7 @@ class SongAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         fun bind(currentSong: Song) {
             when(binding){
                 is SongItemBinding -> bindSong(currentSong)
-                is AlbumDetailSongItemBinding -> bindAlbumSong(currentSong)
+                is SongItemNoCoverBinding -> bindAlbumSong(currentSong)
             }
         }
 
@@ -122,7 +121,7 @@ class SongAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
 
         private fun bindAlbumSong(song: Song) {
-            binding as AlbumDetailSongItemBinding
+            binding as SongItemNoCoverBinding
             binding.apply {
                 this.song = song
                 this.size = itemCount

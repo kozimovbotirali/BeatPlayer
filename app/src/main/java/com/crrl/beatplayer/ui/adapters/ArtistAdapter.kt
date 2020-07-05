@@ -97,10 +97,8 @@ class ArtistAdapter(private val context: Context?) :
     }
 
     fun updateDataSet(newList: List<Artist>) {
-        if (!artistList.deepEquals(newList)) {
-            this.artistList = newList
-            notifyDataSetChanged()
-        }
+        this.artistList = newList
+        notifyDataSetChanged()
     }
 
     inner class ViewHolderArtist(private val binding: ArtistItemBinding) :

@@ -12,10 +12,8 @@
  */
 package com.crrl.beatplayer.utils
 
-import com.crrl.beatplayer.extensions.fixName
 import com.crrl.beatplayer.models.MediaItemData
 import com.crrl.beatplayer.repository.SongsRepository
-import com.jagrosh.jlyrics.LyricsClient
 import org.jaudiotagger.audio.AudioFileIO
 import org.jaudiotagger.audio.exceptions.CannotReadException
 import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException
@@ -26,15 +24,9 @@ import timber.log.Timber
 import java.io.File
 import java.io.IOException
 import java.util.*
-import java.util.concurrent.ExecutionException
 
-object LyricsExtractor {
-    fun getLyric(songsRepository: SongsRepository, mediaItemData: MediaItemData): String? {
-        val lyrics = getEmbeddedLyrics(songsRepository, mediaItemData)
-        return lyrics ?: getOnlineLyrics(mediaItemData)
-    }
-
-    private fun getEmbeddedLyrics(
+object LyricsHelper {
+    fun getEmbeddedLyrics(
         songsRepository: SongsRepository,
         mediaItemData: MediaItemData
     ): String? {
@@ -53,25 +45,9 @@ object LyricsExtractor {
             Timber.e(ex)
         } catch (ex: InvalidAudioFrameException) {
             Timber.e(ex)
-        } catch (ex: IllegalArgumentException){
+        } catch (ex: IllegalArgumentException) {
             Timber.e(ex)
         }
         return if (lyrics.toString().isEmpty()) null else lyrics.toString()
-    }
-
-    private fun getOnlineLyrics(mediaItemData: MediaItemData): String? {
-        val client = LyricsClient()
-        val lyrics = try {
-            client.getLyrics(
-                mediaItemData.title.fixName() + " by " + mediaItemData.artist
-            ).get()
-        } catch (ex: InterruptedException) {
-            Timber.e(ex)
-            null
-        } catch (ex: ExecutionException) {
-            Timber.e(ex)
-            null
-        }
-        return lyrics?.content
     }
 }

@@ -14,36 +14,15 @@
 package com.crrl.beatplayer.alertdialog.actions
 
 import android.view.View
-import com.crrl.beatplayer.alertdialog.stylers.AlertItemTheme
+import androidx.annotation.DrawableRes
+import com.crrl.beatplayer.alertdialog.enums.AlertItemTheme
 
-class AlertItemAction {
-    var title: String
-    var action: ((AlertItemAction) -> Unit)?
-    var theme: AlertItemTheme? = AlertItemTheme.DEFAULT
-    var selected: Boolean
-    var input: String? = null
-    var root: View? = null
-
-    constructor(
-        title: String,
-        selected: Boolean,
-        theme: AlertItemTheme? = AlertItemTheme.DEFAULT,
-        action: (AlertItemAction) -> Unit
-    ) {
-        this.title = title
-        this.selected = selected
-        this.action = action
-        this.theme = theme
-    }
-
-    constructor(
-        title: String,
-        selected: Boolean,
-        theme: AlertItemTheme
-    ) {
-        this.title = title
-        this.selected = selected
-        this.action = null
-        this.theme = theme
-    }
-}
+data class AlertItemAction(
+    val title: String = "",
+    var selected: Boolean = false,
+    val theme: AlertItemTheme? = AlertItemTheme.DEFAULT,
+    @DrawableRes val icon: Int = -1,
+    var input: String = "",
+    var root: View? = null,
+    var action: (AlertItemAction) -> Unit = {}
+)

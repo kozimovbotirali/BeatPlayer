@@ -36,7 +36,6 @@
     <string name="lyrics">Lyrics</string>
     <string name="sort_title">Sort Modes</string>
     <string name="sort_msg">Sort by</string>
-    <string name="sort_default">Default</string>
     <string name="sort_az" translatable="false">A-Z</string>
     <string name="sort_za" translatable="false">Z-A</string>
     <string name="sort_year">Year</string>
@@ -58,6 +57,7 @@
     <string name="share">Share</string>
     <string name="delete">Delete</string>
     <string name="create_playlist">Creating Playlist</string>
+    <string name="create_playlist_btn">Create</string>
     <string name="choose_playlist">Please, choose a playlist.</string>
     <string name="playlist_added_error">Could not create playlist \"%s\".</string>
     <string name="playlist_added_success">Playlist added successfully</string>
@@ -108,6 +108,8 @@
     <string name="no_eq">Your device does not have a equalizer.</string>
     <string name="playlist_tip">Create some playlists, and they\'ll be listed here.</string>
     <string name="op_err">An error has occurred</string>
+    <string name="album_count">Album Count</string>
+    <string name="song_count">Song Count</string>
 
     <plurals name="number_of_songs">
         <item quantity="zero">%d Tracks</item>

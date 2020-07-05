@@ -51,6 +51,7 @@ class PlaylistFragment : BaseFragment<Playlist>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         init()
+        retainInstance = true
     }
 
     private fun init() {

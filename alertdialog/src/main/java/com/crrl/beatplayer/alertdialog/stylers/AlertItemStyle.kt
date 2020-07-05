@@ -14,6 +14,7 @@
 package com.crrl.beatplayer.alertdialog.stylers
 
 import android.graphics.Color
+import com.crrl.beatplayer.alertdialog.stylers.base.ItemStyle
 
 class AlertItemStyle(
     var backgroundColor: Int = Color.parseColor("#F8F8F8"),

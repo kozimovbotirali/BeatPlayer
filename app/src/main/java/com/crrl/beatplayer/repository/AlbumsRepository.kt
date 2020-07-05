@@ -21,7 +21,6 @@ import com.crrl.beatplayer.models.Album
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.utils.BeatConstants
 import com.crrl.beatplayer.utils.SettingsUtility
-import com.crrl.beatplayer.utils.SortModes
 
 interface AlbumsRepository {
     fun getAlbum(id: Long): Album
@@ -50,17 +49,13 @@ class AlbumsRepositoryImplementation(context: Context) : AlbumsRepository {
     }
 
     override fun getSongsForAlbum(albumId: Long): List<Song> {
-        val list = makeAlbumSongCursor(albumId)
+        return makeAlbumSongCursor(albumId)
             .toList(true) { Song.createFromCursor(this, albumId) }
-        SortModes.sortAlbumSongList(list)
-        return list
     }
 
     override fun getAlbums(): List<Album> {
-        val sl = makeAlbumCursor(null, null)
+        return makeAlbumCursor(null, null)
             .toList(true) { Album.createFromCursor(this) }
-        SortModes.sortAlbumList(sl, settingsUtility.albumSortOrder)
-        return sl
     }
 
     override fun search(paramString: String, limit: Int): List<Album> {
@@ -88,14 +83,14 @@ class AlbumsRepositoryImplementation(context: Context) : AlbumsRepository {
         )
     }
 
-    private fun makeAlbumSongCursor(albumID: Long): Cursor? {
-        val selection = "is_music=1 AND title != '' AND album_id=$albumID"
+    private fun makeAlbumSongCursor(albumId: Long): Cursor? {
+        val selection = "is_music = ? AND title != ? AND album_id = ?"
         return contentResolver.query(
             BeatConstants.SONG_URI,
             arrayOf("_id", "title", "artist", "album", "duration", "track", "artist_id", "_data"),
             selection,
-            null,
-            ""
+            arrayOf("1", "''", "$albumId"),
+            settingsUtility.albumSongSortOrder
         )
     }
 }

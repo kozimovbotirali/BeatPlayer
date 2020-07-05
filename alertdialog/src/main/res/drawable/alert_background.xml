@@ -14,6 +14,6 @@
 <shape android:shape="rectangle"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <solid android:color="#202020" />
-    <corners android:radius="16dp" />
+    <solid android:color="#EEEEEE" />
+    <corners android:radius="25dp" />
 </shape>

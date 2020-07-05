@@ -13,12 +13,13 @@
 
 <resources>
 
-    <style name="BottomSheetAlertTheme" parent="Theme.Design.Light.BottomSheetDialog">
+    <style name="BottomSheetAlertTheme" parent="Theme.Design.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/BottomSheetStyle</item>
         <item name="android:fontFamily">@font/product_sans_regular</item>
         <item name="android:windowIsFloating">false</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowSoftInputMode">adjustResize</item>
+        <item name="android:windowLightStatusBar">false</item>
     </style>
 
     <style name="BottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">

@@ -30,8 +30,8 @@ import com.crrl.beatplayer.utils.GeneralUtils.screenWidth
 class FavoriteAdapter(private val context: Context?) :
     RecyclerView.Adapter<FavoriteAdapter.ViewHolderFavorite>() {
 
-    private var favoriteList: MutableList<Favorite> = mutableListOf()
     private var lastClick = 0L
+    var favoriteList: MutableList<Favorite> = mutableListOf()
     var itemClickListener: ItemClickListener<Favorite>? = null
     var spanCount: Int = 0
 
@@ -50,10 +50,8 @@ class FavoriteAdapter(private val context: Context?) :
     }
 
     fun updateDataSet(newList: List<Favorite>) {
-        if (!favoriteList.deepEquals(newList)) {
-            favoriteList = newList.toMutableList()
-            notifyDataSetChanged()
-        }
+        favoriteList = newList.toMutableList()
+        notifyDataSetChanged()
     }
 
     fun getItem(position: Int): Favorite {

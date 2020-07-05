@@ -23,18 +23,19 @@ import com.crrl.beatplayer.databinding.FragmentLyricBinding
 import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.extensions.observe
 import com.crrl.beatplayer.models.MediaItemData
+import com.crrl.beatplayer.repository.SongsRepository
 import com.crrl.beatplayer.ui.fragments.base.BaseSongDetailFragment
 import com.crrl.beatplayer.utils.AutoClearBinding
-import com.crrl.beatplayer.utils.LyricsExtractor
+import com.crrl.beatplayer.utils.LyricsHelper
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.koin.android.ext.android.inject
 
 
 class LyricFragment : BaseSongDetailFragment() {
 
     private var binding by AutoClearBinding<FragmentLyricBinding>(this)
+    private val songsRepository by inject<SongsRepository>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,11 +51,26 @@ class LyricFragment : BaseSongDetailFragment() {
     }
 
     private fun init() {
+        songDetailViewModel.currentData.observe(this) {
+            loadLyrics(it)
+        }
+
         binding.let {
             it.title.isSelected = true
             it.viewModel = songDetailViewModel
             it.lifecycleOwner = this
             it.executePendingBindings()
+        }
+    }
+
+    private fun loadLyrics(mediaItemData: MediaItemData) {
+        songDetailViewModel.updateLyrics()
+        launch {
+            val lyric = withContext(Dispatchers.IO) {
+                LyricsHelper.getEmbeddedLyrics(songsRepository, mediaItemData)
+                    ?: getString(R.string.no_lyrics)
+            }
+            songDetailViewModel.updateLyrics(lyric)
         }
     }
 }
