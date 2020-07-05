@@ -19,13 +19,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.crrl.beatplayer.R
+import com.crrl.beatplayer.alertdialog.utils.ViewUtils.dip2px
 import com.crrl.beatplayer.databinding.ArtistItemBinding
 import com.crrl.beatplayer.databinding.ArtistItemHeaderBinding
-import com.crrl.beatplayer.extensions.deepEquals
 import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.interfaces.ItemClickListener
 import com.crrl.beatplayer.models.Artist
-import com.crrl.beatplayer.utils.GeneralUtils.dip2px
 import com.crrl.beatplayer.utils.GeneralUtils.screenWidth
 
 private const val HEADER_TYPE = 0

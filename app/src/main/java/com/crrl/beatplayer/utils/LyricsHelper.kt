@@ -16,6 +16,7 @@ import com.crrl.beatplayer.models.MediaItemData
 import com.crrl.beatplayer.repository.SongsRepository
 import org.jaudiotagger.audio.AudioFileIO
 import org.jaudiotagger.audio.exceptions.CannotReadException
+import org.jaudiotagger.audio.exceptions.CannotWriteException
 import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException
 import org.jaudiotagger.audio.exceptions.ReadOnlyFileException
 import org.jaudiotagger.tag.FieldKey
@@ -49,5 +50,34 @@ object LyricsHelper {
             Timber.e(ex)
         }
         return if (lyrics.toString().isEmpty()) null else lyrics.toString()
+    }
+
+    fun setEmbeddedLyrics(
+        songsRepository: SongsRepository,
+        id: Long,
+        lyrics: String
+    ): Boolean {
+        val file = File(Objects.requireNonNull(songsRepository.getPath(id)))
+        try {
+            val audioFile = AudioFileIO.read(file)
+            audioFile.tag.setField(FieldKey.LYRICS, lyrics)
+            audioFile.commit()
+            return true
+        } catch (ex: CannotReadException) {
+            Timber.e(ex)
+        } catch (ex: IOException) {
+            Timber.e(ex)
+        } catch (ex: TagException) {
+            Timber.e(ex)
+        } catch (ex: ReadOnlyFileException) {
+            Timber.e(ex)
+        } catch (ex: InvalidAudioFrameException) {
+            Timber.e(ex)
+        } catch (ex: IllegalArgumentException) {
+            Timber.e(ex)
+        } catch (ex: CannotWriteException) {
+            Timber.e(ex)
+        }
+        return false
     }
 }

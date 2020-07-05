@@ -24,8 +24,10 @@ import com.crrl.beatplayer.alertdialog.R
 import com.crrl.beatplayer.alertdialog.actions.AlertItemAction
 import com.crrl.beatplayer.alertdialog.enums.AlertItemTheme
 import com.crrl.beatplayer.alertdialog.extensions.addOnWindowFocusChangeListener
+import com.crrl.beatplayer.alertdialog.extensions.setMargins
 import com.crrl.beatplayer.alertdialog.stylers.InputStyle
 import com.crrl.beatplayer.alertdialog.stylers.base.ItemStyle
+import com.crrl.beatplayer.alertdialog.utils.ViewUtils.dip2px
 import com.crrl.beatplayer.alertdialog.utils.ViewUtils.drawRoundRectShape
 import com.crrl.beatplayer.alertdialog.views.base.DialogFragmentBase
 import kotlinx.android.synthetic.main.input_dialog_item.view.*
@@ -59,22 +61,30 @@ class InputDialog : DialogFragmentBase() {
     }
 
     private fun initView(view: View) {
-        view.title.apply {
-            if (this@InputDialog.title.isEmpty()) {
-                visibility = View.GONE
-            } else {
-                text = this@InputDialog.title
+        view.apply {
+            itemScroll.apply {
+                setMargins(left = dip2px(context, 12), right = dip2px(context, 12))
+                setBackgroundResource(R.drawable.search_text_view_frame)
+                clipToOutline = true
             }
-            setTextColor(style.textColor)
-        }
 
-        view.sub_title.apply {
-            if (message.isEmpty()) {
-                visibility = View.GONE
-            } else {
-                text = message
+            title.apply {
+                if (this@InputDialog.title.isEmpty()) {
+                    visibility = View.GONE
+                } else {
+                    text = this@InputDialog.title
+                }
+                setTextColor(style.textColor)
             }
-            setTextColor(style.textColor)
+
+            sub_title.apply {
+                if (message.isEmpty()) {
+                    visibility = View.GONE
+                } else {
+                    text = message
+                }
+                setTextColor(style.textColor)
+            }
         }
 
         inflateActionsView(view.item_container)

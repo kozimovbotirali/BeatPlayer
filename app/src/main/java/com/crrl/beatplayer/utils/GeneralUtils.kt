@@ -106,11 +106,6 @@ object GeneralUtils {
         }
     }
 
-    fun dip2px(context: Context, dpValue: Int): Int {
-        val scale = context.resources.displayMetrics.density
-        return (dpValue * scale + 0.5f).toInt()
-    }
-
     fun addZeros(number: Int?): String {
         if (number!! < 10) return "00${number}"
         if (number < 100) return "0${number}"

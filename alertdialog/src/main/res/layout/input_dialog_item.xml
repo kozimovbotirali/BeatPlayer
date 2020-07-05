@@ -14,8 +14,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:orientation="vertical">
 
     <EditText
         android:id="@+id/text"
@@ -23,8 +22,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/search_text_view_frame"
         android:padding="16dp"
-        android:textColor="#fff"
+        android:textColor="#000"
         android:textColorHint="#aaa"
         android:textSize="14sp" />
-
 </LinearLayout>

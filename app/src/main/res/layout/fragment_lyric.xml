@@ -15,6 +15,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <import type="android.view.View" />
 
         <variable
@@ -37,19 +38,19 @@
             android:contentDescription="@string/cover"
             android:onClick="back"
             android:tint="?colorAccent"
+            app:layout_constraintBottom_toBottomOf="@+id/info_container"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/info_container"
-            app:layout_constraintBottom_toBottomOf="@+id/info_container"
             app:srcCompat="@drawable/ic_back" />
 
         <LinearLayout
             android:id="@+id/info_container"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingVertical="@dimen/margin_12"
             android:clickable="true"
             android:focusable="true"
+            android:orientation="vertical"
+            android:paddingVertical="@dimen/margin_12"
             app:layout_constraintEnd_toStartOf="@+id/menu"
             app:layout_constraintStart_toEndOf="@+id/back"
             app:layout_constraintTop_toTopOf="parent">
@@ -60,8 +61,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:gravity="center"
                 android:ellipsize="marquee"
+                android:gravity="center"
                 android:marqueeRepeatLimit="marquee_forever"
                 android:scrollHorizontally="true"
                 android:singleLine="true"
@@ -88,11 +89,11 @@
             android:contentDescription="@string/cover"
             android:onClick="toggleAddToFav"
             android:src="@drawable/ic_no_favorite"
-            app:isFav="@{viewModel.isSongFav(viewModel.currentData.id)}"
             android:tint="?colorAccent"
+            app:isFav="@{viewModel.isSongFav(viewModel.currentData.id)}"
             app:layout_constraintBottom_toBottomOf="@+id/info_container"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/info_container"/>
+            app:layout_constraintTop_toTopOf="@+id/info_container" />
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -103,9 +104,9 @@
             <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:clipToOutline="@{true}"
                 android:background="@drawable/album_detail_shape"
-                android:theme="@style/OverScrollColor">
+                android:theme="@style/OverScrollColor"
+                app:clipToOutline="@{true}">
 
                 <TextView
                     android:id="@+id/song_lyrics"
@@ -117,8 +118,8 @@
                     android:ellipsize="end"
                     android:paddingTop="20dp"
                     android:paddingBottom="150dp"
-                    android:textColor="?subTitleTextColor"
                     android:text="@{viewModel.lyrics}"
+                    android:textColor="?subTitleTextColor"
                     android:textSize="18sp" />
             </ScrollView>
 
@@ -128,5 +129,24 @@
                 android:layout_gravity="center"
                 android:visibility="@{viewModel.lyrics != null ? View.GONE : View.VISIBLE}" />
         </FrameLayout>
+
+        <Button
+            android:id="@+id/createPlayList"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/btn_size"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="@dimen/song_item_size"
+            android:background="@drawable/btn_play_background"
+            android:contentDescription="@string/cover"
+            android:drawableStart="@drawable/ic_edit"
+            android:drawablePadding="@dimen/margin_6"
+            android:drawableTint="@color/white"
+            android:elevation="3dp"
+            android:padding="@dimen/padding_12"
+            android:text="@string/new_playlist"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
