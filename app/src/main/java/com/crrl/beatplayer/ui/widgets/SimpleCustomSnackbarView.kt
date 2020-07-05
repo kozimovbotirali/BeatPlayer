@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-package com.crrl.beatplayer.alertdialog
+package com.crrl.beatplayer.ui.widgets
 
 import android.content.Context
 import android.util.AttributeSet
