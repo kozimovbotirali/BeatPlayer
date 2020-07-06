@@ -14,9 +14,6 @@
 package com.crrl.beatplayer.extensions
 
 import android.content.Context
-import android.os.Environment
-import android.os.Environment.MEDIA_MOUNTED
-import com.crrl.beatplayer.utils.GeneralUtils
 import com.crrl.beatplayer.utils.GeneralUtils.getStoragePaths
 import timber.log.Timber
 import java.io.File
@@ -26,15 +23,19 @@ private const val EXTERNAL_STORAGE = "/SD Card"
 private const val MEGA_BYTES_SIZE = 1048576
 
 fun File.fixedPath(context: Context): String {
+    Timber.d("fixedPath()")
     val storagePaths = getStoragePaths(context)
+    Timber.d("path: $storagePaths")
     return if (path.contains(storagePaths[0])) {
         path.replace(storagePaths[0], INTERNAL_STORAGE)
     } else {
-        path.replace(storagePaths[1], EXTERNAL_STORAGE)
+        if (storagePaths.size > 1)
+            path.replace(storagePaths[1], EXTERNAL_STORAGE)
+        else path
     }
 }
 
-fun File.fixedName(context: Context): String{
+fun File.fixedName(context: Context): String {
     return File(fixedPath(context)).name
 }
 
