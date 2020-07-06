@@ -13,6 +13,5 @@
   -->
 
 <full-backup-content>
-    <include domain="sharedpref" path="."/>
-    <exclude domain="sharedpref" path="configs.xml"/>
+    <exclude domain="sharedpref" path="config.xml"/>
 </full-backup-content>
