@@ -18,15 +18,19 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.crrl.beatplayer.R
+import com.crrl.beatplayer.alertdialog.actions.AlertItemAction
+import com.crrl.beatplayer.alertdialog.enums.AlertItemTheme
 import com.crrl.beatplayer.databinding.FragmentLyricBinding
-import com.crrl.beatplayer.extensions.inflateWithBinding
-import com.crrl.beatplayer.extensions.observe
+import com.crrl.beatplayer.extensions.*
 import com.crrl.beatplayer.models.MediaItemData
 import com.crrl.beatplayer.repository.SongsRepository
 import com.crrl.beatplayer.ui.fragments.base.BaseSongDetailFragment
 import com.crrl.beatplayer.utils.AutoClearBinding
 import com.crrl.beatplayer.utils.LyricsHelper
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
@@ -55,12 +59,74 @@ class LyricFragment : BaseSongDetailFragment() {
             loadLyrics(it)
         }
 
+        binding.editLyrics.setOnClickListener {
+            val actions = listOf(
+                AlertItemAction(
+                    getString(R.string.edit_lyrics),
+                    false,
+                    AlertItemTheme.DEFAULT
+                ) {
+                    editLyricsDialog()
+                }
+                /*AlertItemAction(
+                    getString(R.string.sync_lyrics),
+                    false,
+                    AlertItemTheme.DEFAULT
+                ) {
+                    // TODO Create SyncLyrics view
+                }*/
+            )
+
+            buildDialog(
+                getString(R.string.lyrics_type),
+                getString(R.string.lyrics_tip),
+                actions
+            ).show(safeActivity as AppCompatActivity)
+        }
+
         binding.let {
             it.title.isSelected = true
             it.viewModel = songDetailViewModel
             it.lifecycleOwner = this
             it.executePendingBindings()
         }
+    }
+
+    private fun editLyricsDialog(inputText: String? = null) {
+        val actions = listOf(
+            AlertItemAction(
+                getString(R.string.cancel),
+                false,
+                AlertItemTheme.ACCEPT
+            ) {},
+            AlertItemAction(
+                getString(R.string.save),
+                false,
+                AlertItemTheme.ACCEPT
+            ) { action ->
+                val success = LyricsHelper.setEmbeddedLyrics(
+                    songsRepository,
+                    songDetailViewModel.currentData.value!!.id,
+                    action.input
+                )
+                if (success) songDetailViewModel.updateLyrics(action.input)
+                else main_container.snackbar(
+                    ERROR,
+                    getString(R.string.lyrics_edit_error),
+                    Toast.LENGTH_SHORT,
+                    action = getString(R.string.retry),
+                    clickListener = View.OnClickListener {
+                        editLyricsDialog()
+                    })
+            })
+
+        createInputDialog(
+            getString(R.string.edit_lyrics),
+            getString(R.string.new_lyrics),
+            inputText ?: songDetailViewModel.getLyrics().value ?: getString(R.string.empty_lyrics),
+            getString(R.string.edit_lyrics_hint),
+            actions
+        )
     }
 
     private fun loadLyrics(mediaItemData: MediaItemData) {

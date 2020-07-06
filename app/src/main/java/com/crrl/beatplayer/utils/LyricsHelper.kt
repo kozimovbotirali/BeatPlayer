@@ -29,13 +29,16 @@ import java.util.*
 object LyricsHelper {
     fun getEmbeddedLyrics(
         songsRepository: SongsRepository,
-        mediaItemData: MediaItemData
+        mediaItemData: MediaItemData,
+        isSync: Boolean = true
     ): String? {
         val lyrics = StringBuilder()
         val file = File(Objects.requireNonNull(songsRepository.getPath(mediaItemData.id)))
         try {
+            val tag = if (isSync) FieldKey.CUSTOM1 else FieldKey.LYRICS
             val audioFile = AudioFileIO.read(file)
-            lyrics.append(audioFile.tag.getFirst(FieldKey.LYRICS))
+
+            lyrics.append(audioFile.tag.getFirst(tag))
         } catch (ex: CannotReadException) {
             Timber.e(ex)
         } catch (ex: IOException) {
@@ -49,18 +52,26 @@ object LyricsHelper {
         } catch (ex: IllegalArgumentException) {
             Timber.e(ex)
         }
+        if (isSync && lyrics.toString().isEmpty()) return getEmbeddedLyrics(
+            songsRepository,
+            mediaItemData,
+            false
+        )
         return if (lyrics.toString().isEmpty()) null else lyrics.toString()
     }
 
     fun setEmbeddedLyrics(
         songsRepository: SongsRepository,
         id: Long,
-        lyrics: String
+        lyrics: String,
+        isSync: Boolean = false
     ): Boolean {
         val file = File(Objects.requireNonNull(songsRepository.getPath(id)))
         try {
             val audioFile = AudioFileIO.read(file)
-            audioFile.tag.setField(FieldKey.LYRICS, lyrics)
+            val tag = if (isSync) FieldKey.CUSTOM1 else FieldKey.LYRICS
+
+            audioFile.tag.setField(tag, lyrics)
             audioFile.commit()
             return true
         } catch (ex: CannotReadException) {

@@ -110,6 +110,15 @@
     <string name="op_err">An error has occurred</string>
     <string name="album_count">Album Count</string>
     <string name="song_count">Song Count</string>
+    <string name="edit_lyrics">Edit Lyrics</string>
+    <string name="new_lyrics">Please, type or paste the new track lyrics in the text field below.</string>
+    <string name="edit_lyrics_hint">Enter the track lyrics</string>
+    <string name="empty_lyrics">This track has no lyrics yet.</string>
+    <string name="save">Save</string>
+    <string name="lyrics_edit_error">Has occurred an error saving the track lyrics</string>
+    <string name="sync_lyrics">Sync Lyrics</string>
+    <string name="lyrics_type">What do you want to do?</string>
+    <string name="lyrics_tip">Please, select the option you want to use.</string>
 
     <plurals name="number_of_songs">
         <item quantity="zero">%d Tracks</item>
