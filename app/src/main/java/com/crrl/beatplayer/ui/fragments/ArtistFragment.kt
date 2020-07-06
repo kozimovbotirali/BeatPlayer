@@ -93,40 +93,43 @@ class ArtistFragment : BaseFragment<Artist>() {
     }
 
     private fun createDialog() {
-        dialog = buildSortModesDialog(listOf(
-            AlertItemAction(
-                context!!.getString(R.string.sort_az),
-                settingsUtility.artistSortOrder == ARTIST_A_Z,
-                AlertItemTheme.DEFAULT
-            ) {
-                it.selected = true
-                settingsUtility.artistSortOrder = ARTIST_A_Z
-            },
-            AlertItemAction(
-                context!!.getString(R.string.sort_za),
-                settingsUtility.artistSortOrder == ARTIST_Z_A,
-                AlertItemTheme.DEFAULT
-            ) {
-                it.selected = true
-                settingsUtility.artistSortOrder = ARTIST_Z_A
-            },
-            AlertItemAction(
-                context!!.getString(R.string.song_count),
-                settingsUtility.artistSortOrder == ARTIST_SONG_COUNT,
-                AlertItemTheme.DEFAULT
-            ) {
-                it.selected = true
-                settingsUtility.artistSortOrder = ARTIST_SONG_COUNT
-            },
-            AlertItemAction(
-                context!!.getString(R.string.album_count),
-                settingsUtility.artistSortOrder == ARTIST_ALBUM_COUNT,
-                AlertItemTheme.DEFAULT
-            ) {
-                it.selected = true
-                settingsUtility.artistSortOrder = ARTIST_ALBUM_COUNT
-            }
-        ))
+        dialog = buildDialog(
+            getString(R.string.sort_title),
+            getString(R.string.sort_msg),
+            listOf(
+                AlertItemAction(
+                    context!!.getString(R.string.sort_az),
+                    settingsUtility.artistSortOrder == ARTIST_A_Z,
+                    AlertItemTheme.DEFAULT
+                ) {
+                    it.selected = true
+                    settingsUtility.artistSortOrder = ARTIST_A_Z
+                },
+                AlertItemAction(
+                    context!!.getString(R.string.sort_za),
+                    settingsUtility.artistSortOrder == ARTIST_Z_A,
+                    AlertItemTheme.DEFAULT
+                ) {
+                    it.selected = true
+                    settingsUtility.artistSortOrder = ARTIST_Z_A
+                },
+                AlertItemAction(
+                    context!!.getString(R.string.song_count),
+                    settingsUtility.artistSortOrder == ARTIST_SONG_COUNT,
+                    AlertItemTheme.DEFAULT
+                ) {
+                    it.selected = true
+                    settingsUtility.artistSortOrder = ARTIST_SONG_COUNT
+                },
+                AlertItemAction(
+                    context!!.getString(R.string.album_count),
+                    settingsUtility.artistSortOrder == ARTIST_ALBUM_COUNT,
+                    AlertItemTheme.DEFAULT
+                ) {
+                    it.selected = true
+                    settingsUtility.artistSortOrder = ARTIST_ALBUM_COUNT
+                }
+            ))
     }
 
     override fun onItemClick(view: View, position: Int, item: Artist) {

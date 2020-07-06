@@ -93,7 +93,9 @@ class AlbumFragment : BaseFragment<Album>() {
     }
 
     private fun createDialog() {
-        dialog = buildSortModesDialog(
+        dialog = buildDialog(
+            getString(R.string.sort_title),
+            getString(R.string.sort_msg),
             listOf(
                 AlertItemAction(
                     context!!.getString(R.string.sort_az),

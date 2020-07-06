@@ -168,7 +168,7 @@ open class BaseFragment<T : MediaItem> : CoroutineFragment(), ItemClickListener<
                 })
     }
 
-    protected fun buildSortModesDialog(actions: List<AlertItemAction>): AlertDialog {
+    protected fun buildDialog(titleText: String, subTitleText: String, actions: List<AlertItemAction>): AlertDialog {
         val style = AlertItemStyle()
         style.apply {
             textColor = safeActivity.getColorByTheme(R.attr.titleTextColor)
@@ -177,8 +177,8 @@ open class BaseFragment<T : MediaItem> : CoroutineFragment(), ItemClickListener<
             cornerRadius = resources.getDimension(R.dimen.bottom_panel_radius)
         }
         return AlertDialog(
-            getString(R.string.sort_title),
-            getString(R.string.sort_msg),
+            titleText,
+            subTitleText,
             style,
             AlertType.BOTTOM_SHEET
         ).apply {

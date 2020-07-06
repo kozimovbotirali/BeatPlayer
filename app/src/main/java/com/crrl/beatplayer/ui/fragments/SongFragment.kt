@@ -89,64 +89,67 @@ class SongFragment : BaseFragment<Song>() {
     }
 
     private fun createDialog() {
-        dialog = buildSortModesDialog(listOf(
-            AlertItemAction(
-                context!!.getString(R.string.sort_az),
-                settingsUtility.songSortOrder == SortModes.SongModes.SONG_A_Z,
-                AlertItemTheme.DEFAULT
-            ) {
-                it.selected = true
-                settingsUtility.songSortOrder = SortModes.SongModes.SONG_A_Z
-            },
-            AlertItemAction(
-                context!!.getString(R.string.sort_za),
-                settingsUtility.songSortOrder == SortModes.SongModes.SONG_Z_A,
-                AlertItemTheme.DEFAULT
-            ) {
-                it.selected = true
-                settingsUtility.songSortOrder = SortModes.SongModes.SONG_Z_A
-            },
-            AlertItemAction(
-                context!!.getString(R.string.album),
-                settingsUtility.songSortOrder == SortModes.SongModes.SONG_ALBUM,
-                AlertItemTheme.DEFAULT
-            ) {
-                it.selected = true
-                settingsUtility.songSortOrder = SortModes.SongModes.SONG_ALBUM
-            },
-            AlertItemAction(
-                context!!.getString(R.string.artist),
-                settingsUtility.songSortOrder == SortModes.SongModes.SONG_ARTIST,
-                AlertItemTheme.DEFAULT
-            ) {
-                it.selected = true
-                settingsUtility.songSortOrder = SortModes.SongModes.SONG_ARTIST
-            },
-            AlertItemAction(
-                context!!.getString(R.string.sort_duration),
-                settingsUtility.songSortOrder == SortModes.SongModes.SONG_DURATION,
-                AlertItemTheme.DEFAULT
-            ) {
-                it.selected = true
-                settingsUtility.songSortOrder = SortModes.SongModes.SONG_DURATION
-            },
-            AlertItemAction(
-                context!!.getString(R.string.sort_year),
-                settingsUtility.songSortOrder == SortModes.SongModes.SONG_YEAR,
-                AlertItemTheme.DEFAULT
-            ) {
-                it.selected = true
-                settingsUtility.songSortOrder = SortModes.SongModes.SONG_YEAR
-            },
-            AlertItemAction(
-                context!!.getString(R.string.sort_last_added),
-                settingsUtility.songSortOrder == SortModes.SongModes.SONG_LAST_ADDED,
-                AlertItemTheme.DEFAULT
-            ) {
-                it.selected = true
-                settingsUtility.songSortOrder = SortModes.SongModes.SONG_LAST_ADDED
-            }
-        ))
+        dialog = buildDialog(
+            getString(R.string.sort_title),
+            getString(R.string.sort_msg),
+            listOf(
+                AlertItemAction(
+                    context!!.getString(R.string.sort_az),
+                    settingsUtility.songSortOrder == SortModes.SongModes.SONG_A_Z,
+                    AlertItemTheme.DEFAULT
+                ) {
+                    it.selected = true
+                    settingsUtility.songSortOrder = SortModes.SongModes.SONG_A_Z
+                },
+                AlertItemAction(
+                    context!!.getString(R.string.sort_za),
+                    settingsUtility.songSortOrder == SortModes.SongModes.SONG_Z_A,
+                    AlertItemTheme.DEFAULT
+                ) {
+                    it.selected = true
+                    settingsUtility.songSortOrder = SortModes.SongModes.SONG_Z_A
+                },
+                AlertItemAction(
+                    context!!.getString(R.string.album),
+                    settingsUtility.songSortOrder == SortModes.SongModes.SONG_ALBUM,
+                    AlertItemTheme.DEFAULT
+                ) {
+                    it.selected = true
+                    settingsUtility.songSortOrder = SortModes.SongModes.SONG_ALBUM
+                },
+                AlertItemAction(
+                    context!!.getString(R.string.artist),
+                    settingsUtility.songSortOrder == SortModes.SongModes.SONG_ARTIST,
+                    AlertItemTheme.DEFAULT
+                ) {
+                    it.selected = true
+                    settingsUtility.songSortOrder = SortModes.SongModes.SONG_ARTIST
+                },
+                AlertItemAction(
+                    context!!.getString(R.string.sort_duration),
+                    settingsUtility.songSortOrder == SortModes.SongModes.SONG_DURATION,
+                    AlertItemTheme.DEFAULT
+                ) {
+                    it.selected = true
+                    settingsUtility.songSortOrder = SortModes.SongModes.SONG_DURATION
+                },
+                AlertItemAction(
+                    context!!.getString(R.string.sort_year),
+                    settingsUtility.songSortOrder == SortModes.SongModes.SONG_YEAR,
+                    AlertItemTheme.DEFAULT
+                ) {
+                    it.selected = true
+                    settingsUtility.songSortOrder = SortModes.SongModes.SONG_YEAR
+                },
+                AlertItemAction(
+                    context!!.getString(R.string.sort_last_added),
+                    settingsUtility.songSortOrder == SortModes.SongModes.SONG_LAST_ADDED,
+                    AlertItemTheme.DEFAULT
+                ) {
+                    it.selected = true
+                    settingsUtility.songSortOrder = SortModes.SongModes.SONG_LAST_ADDED
+                }
+            ))
     }
 
     override fun onItemClick(view: View, position: Int, item: Song) {
