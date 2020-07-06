@@ -171,21 +171,14 @@ class BeatPlayerImplementation(
     }
 
     override fun playSong(song: Song) {
-        if (queueUtils.currentSongId != song.id) {
-            queueUtils.currentSongId = song.id
-            isInitialized = false
-            updatePlaybackState {
-                setState(STATE_PAUSED, 0, 1F)
-                setExtras(
-                    bundleOf(
-                        BY_UI_KEY to false,
-                        REPEAT_MODE to getSession().repeatMode,
-                        SHUFFLE_MODE to getSession().shuffleMode
-                    )
-                )
-            }
+        if(queueUtils.currentSongId != song.id) {
+            setMetaData(song)
         }
-        setMetaData(song)
+        queueUtils.currentSongId = song.id
+        isInitialized = false
+        updatePlaybackState {
+            setState(mediaSession.controller.playbackState.state, 0, 1F)
+        }
         playSong()
     }
 
@@ -228,9 +221,6 @@ class BeatPlayerImplementation(
     }
 
     override fun repeatSong() {
-        updatePlaybackState {
-            setState(STATE_STOPPED, 0, 1F)
-        }
         playSong(queueUtils.currentSongId)
     }
 
@@ -245,7 +235,7 @@ class BeatPlayerImplementation(
     override fun previousSong() {
         queueUtils.previousSongId?.let {
             playSong(it)
-        }
+        } ?: repeatSong()
     }
 
     override fun playNext(id: Long) {
@@ -331,9 +321,6 @@ class BeatPlayerImplementation(
     }
 
     override fun restoreQueueData() {
-        settingsUtility.currentQueueInfo ?: return
-        settingsUtility.currentQueueList ?: return
-
         val queueData = settingsUtility.currentQueueInfo.toQueueInfo()
         val queueIds = settingsUtility.currentQueueList.toQueueList()
 

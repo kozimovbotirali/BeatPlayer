@@ -45,22 +45,7 @@ class MainViewModel(
     lateinit var binding: ActivityMainBinding
 
     fun mediaItemClicked(mediaItem: MediaBrowserCompat.MediaItem, extras: Bundle?) {
-        val nowPlaying = PlaybackConnection.nowPlaying.value
-        val transportControls = PlaybackConnection.transportControls
-
-        val isPrepared = PlaybackConnection.playbackState.value?.isPrepared ?: false
-        if (isPrepared && mediaItem.mediaId!!.toMediaId().mediaId == nowPlaying?.id) {
-            PlaybackConnection.playbackState.value?.let { playbackState ->
-                when {
-                    playbackState.isPlaying -> transportControls?.pause()
-                    playbackState.isPlayEnabled -> transportControls?.play()
-                    else -> {
-                    }
-                }
-            }
-        } else {
-            transportControls?.playFromMediaId(mediaItem.mediaId, extras)
-        }
+        transportControls()?.playFromMediaId(mediaItem.mediaId, extras)
     }
 
     fun transportControls() = PlaybackConnection.transportControls
