@@ -25,6 +25,7 @@ import com.crrl.beatplayer.extensions.toList
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.utils.GeneralUtils.getSongUri
 import com.crrl.beatplayer.utils.SettingsUtility
+import timber.log.Timber
 
 
 interface SongsRepository {
@@ -107,8 +108,13 @@ class SongsRepositoryImplementation(context: Context) : SongsRepository {
             contentResolver.applyBatch(AUTHORITY, operations)
             ids.size
         } catch (e: RemoteException) {
+            Timber.e(e)
             -1
         } catch (e: OperationApplicationException) {
+            Timber.e(e)
+            -1
+        } catch (e: SecurityException){
+            Timber.e(e)
             -1
         }
     }
