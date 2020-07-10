@@ -171,14 +171,12 @@ class BeatPlayerImplementation(
     }
 
     override fun playSong(song: Song) {
-        if(queueUtils.currentSongId != song.id) {
-            setMetaData(song)
-        }
         queueUtils.currentSongId = song.id
         isInitialized = false
         updatePlaybackState {
             setState(mediaSession.controller.playbackState.state, 0, 1F)
         }
+        setMetaData(song)
         playSong()
     }
 
@@ -312,6 +310,7 @@ class BeatPlayerImplementation(
             queueUtils.queue = list
             queueUtils.queueTitle = title
             setMetaData(queueUtils.currentSong)
+            println("ListName = $title")
         }
     }
 
