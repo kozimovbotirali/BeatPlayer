@@ -87,7 +87,7 @@ class BeatPlayerImplementation(
     private var metaDataChangedCallback: OnMetaDataChanged = {}
 
     private var metadataBuilder = MediaMetadataCompat.Builder()
-    private var stateBuilder = createDefaultPlaybackState()
+    private val stateBuilder = createDefaultPlaybackState()
 
     private var mediaSession =
         MediaSessionCompat(context, context.getString(R.string.app_name)).apply {
@@ -310,7 +310,6 @@ class BeatPlayerImplementation(
             queueUtils.queue = list
             queueUtils.queueTitle = title
             setMetaData(queueUtils.currentSong)
-            println("ListName = $title")
         }
     }
 
@@ -342,9 +341,9 @@ class BeatPlayerImplementation(
     private fun goToStart() {
         isInitialized = false
 
-        updatePlaybackState {
-            setState(STATE_STOPPED, 0, 1F)
-        }
+        stop()
+
+        if(queueUtils.queue.isEmpty()) return
 
         queueUtils.currentSongId = queueUtils.queue.first()
 
