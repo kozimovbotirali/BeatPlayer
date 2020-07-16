@@ -16,7 +16,6 @@ package com.crrl.beatplayer.repository
 import android.content.Context
 import android.database.Cursor
 import android.provider.MediaStore
-import android.provider.MediaStore.Audio.Artists.Albums.*
 import com.crrl.beatplayer.extensions.toList
 import com.crrl.beatplayer.models.Album
 import com.crrl.beatplayer.models.Artist
@@ -42,7 +41,6 @@ class ArtistsRepositoryImplementation(context: Context) : ArtistsRepository {
             return if (it.moveToFirst())
                 Artist.createFromCursor(it).apply { albumCount = it.count }
             else Artist()
-
         }
     }
 
@@ -54,9 +52,13 @@ class ArtistsRepositoryImplementation(context: Context) : ArtistsRepository {
 
     private fun toArtistList(list: MutableList<Artist>): MutableList<Artist> {
         val artistList = mutableListOf<Artist>()
-        list.groupBy { it.id }.map {
-            artistList.add(it.value.first().apply { albumCount = it.value.size })
+        list.groupBy { it.id }.map { artist ->
+            artistList.add(artist.value.first().apply {
+                albumCount = artist.value.size
+                songCount = artist.value.sumBy { it.songCount }
+            })
         }
+        SortModes.ArtistModes.sortArtistList(artistList, settingsUtility.artistSortOrder)
         return artistList
     }
 
@@ -106,20 +108,7 @@ class ArtistsRepositoryImplementation(context: Context) : ArtistsRepository {
     ): Cursor {
         return contentResolver.query(
             MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
-            arrayOf("artist_id", "_id", "artist"),
-            selection,
-            paramArrayOfString,
-            settingsUtility.artistSortOrder
-        )!!
-    }
-
-    private fun makeAlbumCursor(
-        selection: String?,
-        paramArrayOfString: Array<String>?
-    ): Cursor {
-        return contentResolver.query(
-            MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
-            arrayOf("_id"),
+            arrayOf("artist_id", "_id", "artist", "numsongs"),
             selection,
             paramArrayOfString,
             null
@@ -127,7 +116,6 @@ class ArtistsRepositoryImplementation(context: Context) : ArtistsRepository {
     }
 
     private fun makeArtistSongCursor(artistId: Long): Cursor? {
-        val artistSongSortOrder = SortModes.SongModes.SONG_A_Z
         val uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
         val selection = "is_music=1 AND title != '' AND artist_id=$artistId"
         return contentResolver.query(
@@ -145,7 +133,7 @@ class ArtistsRepositoryImplementation(context: Context) : ArtistsRepository {
             ),
             selection,
             null,
-            artistSongSortOrder
+            SortModes.SongModes.SONG_A_Z
         )
     }
 }

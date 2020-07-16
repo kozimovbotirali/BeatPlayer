@@ -17,22 +17,23 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.doOnPreDraw
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentFolderDetailBinding
-import com.crrl.beatplayer.extensions.*
-import com.crrl.beatplayer.models.MediaItemData
+import com.crrl.beatplayer.extensions.deepEquals
+import com.crrl.beatplayer.extensions.inflateWithBinding
+import com.crrl.beatplayer.extensions.observe
+import com.crrl.beatplayer.extensions.toIDList
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.ui.adapters.SongAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.viewmodels.FavoriteViewModel
 import com.crrl.beatplayer.ui.viewmodels.FolderViewModel
 import com.crrl.beatplayer.ui.viewmodels.PlaylistViewModel
-import com.crrl.beatplayer.utils.BeatConstants
-import com.crrl.beatplayer.utils.BeatConstants.FAVORITE_NAME
 import com.crrl.beatplayer.utils.BeatConstants.FOLDER_KEY
+import com.crrl.beatplayer.utils.BeatConstants.PLAY_ALL_SHUFFLED
+import com.crrl.beatplayer.utils.GeneralUtils.getExtraBundle
 import kotlinx.android.synthetic.main.layout_recyclerview.*
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -57,13 +58,14 @@ class FolderDetailFragment : BaseFragment<Song>() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         init()
+        retainInstance = true
     }
 
     fun init() {
         val id = arguments?.getLong(FOLDER_KEY)!!
         val folder = folderViewModel.getFolder(id)
 
-        songAdapter = SongAdapter(context, songDetailViewModel).apply {
+        songAdapter = SongAdapter().apply {
             showHeader = true
             isAlbumDetail = true
             itemClickListener = this@FolderDetailFragment
@@ -77,25 +79,6 @@ class FolderDetailFragment : BaseFragment<Song>() {
                 songAdapter.updateDataSet(it)
             }
 
-        }
-
-        songDetailViewModel.lastData.observe(this) { mediaItemData ->
-            val position = songAdapter.songList.indexOfFirst { it.id == mediaItemData.id } + 1
-            if(settingsUtility.didStop){
-                songAdapter.notifyDataSetChanged()
-                settingsUtility.didStop = false
-            } else songAdapter.notifyItemChanged(position)
-        }
-
-        songDetailViewModel.currentState.observe(this) {
-            val mediaItemData = songDetailViewModel.currentData.value ?: MediaItemData()
-            val position = songAdapter.songList.indexOfFirst { it.id == mediaItemData.id } + 1
-            songAdapter.notifyItemChanged(position)
-        }
-
-        songDetailViewModel.currentData.observe(this) { mediaItemData ->
-            val position = songAdapter.songList.indexOfFirst { it.id == mediaItemData.id } + 1
-            songAdapter.notifyItemChanged(position)
         }
 
         list.apply {
@@ -122,7 +105,7 @@ class FolderDetailFragment : BaseFragment<Song>() {
 
     override fun onShuffleClick(view: View) {
         val extras = getExtraBundle(songAdapter.songList.toIDList(), binding.folder!!.name)
-        mainViewModel.transportControls()?.sendCustomAction(BeatConstants.PLAY_ALL_SHUFFLED, extras)
+        mainViewModel.transportControls()?.sendCustomAction(PLAY_ALL_SHUFFLED, extras)
     }
 
     override fun onPlayAllClick(view: View) {
@@ -141,10 +124,10 @@ class FolderDetailFragment : BaseFragment<Song>() {
     private fun toggleAddFav() {
         if (favoriteViewModel.favExist(binding.folder!!.id)) {
             val resp = favoriteViewModel.deleteFavorites(longArrayOf(binding.folder!!.id))
-            showSnackBar(view, resp, 0, R.string.folder_no_fav_ok)
+            showSnackBar(view, resp, R.string.folder_no_fav_ok)
         } else {
             val resp = favoriteViewModel.create(binding.folder!!.toFavorite())
-            showSnackBar(view, resp, 1, R.string.folder_fav_ok)
+            showSnackBar(view, resp, R.string.folder_fav_ok)
         }
     }
 }

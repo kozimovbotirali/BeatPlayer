@@ -26,10 +26,7 @@ import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.alias.*
-import com.crrl.beatplayer.extensions.isPlaying
-import com.crrl.beatplayer.extensions.position
-import com.crrl.beatplayer.extensions.toQueueInfo
-import com.crrl.beatplayer.extensions.toQueueList
+import com.crrl.beatplayer.extensions.*
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.playback.AudioFocusHelper
 import com.crrl.beatplayer.repository.SongsRepository
@@ -78,7 +75,7 @@ class BeatPlayerImplementation(
     private val songsRepository: SongsRepository,
     private val settingsUtility: SettingsUtility,
     private val queueUtils: QueueUtils,
-    audioFocusHelper: AudioFocusHelper
+    private val audioFocusHelper: AudioFocusHelper
 ) : BeatPlayer {
 
     private var isInitialized: Boolean = false
@@ -90,7 +87,7 @@ class BeatPlayerImplementation(
     private var metaDataChangedCallback: OnMetaDataChanged = {}
 
     private var metadataBuilder = MediaMetadataCompat.Builder()
-    private var stateBuilder = createDefaultPlaybackState()
+    private val stateBuilder = createDefaultPlaybackState()
 
     private var mediaSession =
         MediaSessionCompat(context, context.getString(R.string.app_name)).apply {
@@ -99,7 +96,7 @@ class BeatPlayerImplementation(
                 MediaSessionCallback(
                     this,
                     this@BeatPlayerImplementation,
-					audioFocusHelper,
+                    audioFocusHelper,
                     songsRepository
                 )
             )
@@ -142,7 +139,12 @@ class BeatPlayerImplementation(
         if (isInitialized) {
             updatePlaybackState {
                 setState(STATE_PLAYING, mediaSession.position(), 1F)
-                setExtras(extras)
+                setExtras(
+                    extras + bundleOf(
+                        REPEAT_MODE to getSession().repeatMode,
+                        SHUFFLE_MODE to getSession().shuffleMode
+                    )
+                )
             }
             musicPlayer.play()
             return
@@ -162,18 +164,17 @@ class BeatPlayerImplementation(
     }
 
     override fun playSong(id: Long) {
-        val song = songsRepository.getSongForId(id)
-        playSong(song)
+        if (audioFocusHelper.requestPlayback()){
+            val song = songsRepository.getSongForId(id)
+            playSong(song)
+        }
     }
 
     override fun playSong(song: Song) {
-        if (queueUtils.currentSongId != song.id) {
-            queueUtils.currentSongId = song.id
-            isInitialized = false
-            updatePlaybackState {
-                setState(STATE_PAUSED, 0, 1F)
-                setExtras(bundleOf(BY_UI_KEY to false))
-            }
+        queueUtils.currentSongId = song.id
+        isInitialized = false
+        updatePlaybackState {
+            setState(mediaSession.controller.playbackState.state, 0, 1F)
         }
         setMetaData(song)
         playSong()
@@ -203,7 +204,12 @@ class BeatPlayerImplementation(
             musicPlayer.pause()
             updatePlaybackState {
                 setState(STATE_PAUSED, mediaSession.position(), 1F)
-                setExtras(extras)
+                setExtras(
+                    extras + bundleOf(
+                        REPEAT_MODE to getSession().repeatMode,
+                        SHUFFLE_MODE to getSession().shuffleMode
+                    )
+                )
             }
         }
     }
@@ -213,9 +219,6 @@ class BeatPlayerImplementation(
     }
 
     override fun repeatSong() {
-        updatePlaybackState {
-            setState(STATE_STOPPED, 0, 1F)
-        }
         playSong(queueUtils.currentSongId)
     }
 
@@ -230,7 +233,7 @@ class BeatPlayerImplementation(
     override fun previousSong() {
         queueUtils.previousSongId?.let {
             playSong(it)
-        }
+        } ?: repeatSong()
     }
 
     override fun playNext(id: Long) {
@@ -316,9 +319,6 @@ class BeatPlayerImplementation(
     }
 
     override fun restoreQueueData() {
-        settingsUtility.currentQueueInfo ?: return
-        settingsUtility.currentQueueList ?: return
-
         val queueData = settingsUtility.currentQueueInfo.toQueueInfo()
         val queueIds = settingsUtility.currentQueueList.toQueueList()
 
@@ -341,9 +341,9 @@ class BeatPlayerImplementation(
     private fun goToStart() {
         isInitialized = false
 
-        updatePlaybackState {
-            setState(STATE_STOPPED, 0, 1F)
-        }
+        stop()
+
+        if(queueUtils.queue.isEmpty()) return
 
         queueUtils.currentSongId = queueUtils.queue.first()
 

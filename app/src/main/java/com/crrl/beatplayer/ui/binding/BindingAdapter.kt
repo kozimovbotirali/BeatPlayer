@@ -18,6 +18,7 @@ import android.graphics.drawable.Drawable
 import android.support.v4.media.session.PlaybackStateCompat.*
 import android.text.Html
 import android.view.View
+import android.view.View.GONE
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.RelativeLayout
@@ -30,20 +31,17 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withC
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.crrl.beatplayer.R
+import com.crrl.beatplayer.alertdialog.MusicVisualizer
 import com.crrl.beatplayer.extensions.*
 import com.crrl.beatplayer.models.Album
 import com.crrl.beatplayer.models.Favorite
 import com.crrl.beatplayer.models.SearchData
 import com.crrl.beatplayer.models.Song
-import com.crrl.beatplayer.ui.widgets.MusicVisualizer
 import com.crrl.beatplayer.utils.BeatConstants.ALBUM_TYPE
 import com.crrl.beatplayer.utils.BeatConstants.ARTIST_TYPE
 import com.crrl.beatplayer.utils.BeatConstants.FAVORITE_TYPE
 import com.crrl.beatplayer.utils.BeatConstants.FOLDER_TYPE
-import com.crrl.beatplayer.utils.BeatConstants.REPEAT_ALL
-import com.crrl.beatplayer.utils.BeatConstants.REPEAT_ONE
 import com.crrl.beatplayer.utils.GeneralUtils.PORTRAIT
-import com.crrl.beatplayer.utils.GeneralUtils.dip2px
 import com.crrl.beatplayer.utils.GeneralUtils.getAlbumArtUri
 import com.crrl.beatplayer.utils.GeneralUtils.getOrientation
 import com.github.florent37.kotlin.pleaseanimate.please
@@ -102,6 +100,16 @@ fun setImageSize(view: View, width: Int, height: Int) {
 @BindingAdapter("app:html")
 fun setTextHtml(view: TextView, html: String) {
     view.setText(Html.fromHtml(html, Html.FROM_HTML_MODE_LEGACY), TextView.BufferType.SPANNABLE)
+}
+
+@BindingAdapter("app:track_number")
+fun setTrackNumber(view: TextView, trackNumber: Int) {
+    val numberStr = when(trackNumber){
+        0 -> "-"
+        else -> trackNumber.toString()
+    }
+
+    view.text = numberStr
 }
 
 @BindingAdapter("app:isFav")
@@ -163,7 +171,10 @@ fun setTextByType(view: TextView, type: String) {
             ARTIST_TYPE -> context.getString(R.string.artist)
             ALBUM_TYPE -> context.getString(R.string.albums)
             FOLDER_TYPE -> context.getString(R.string.folders)
-            else -> ""
+            else -> {
+                view.visibility = GONE
+                ""
+            }
         }
     }
 }
@@ -172,7 +183,6 @@ fun setTextByType(view: TextView, type: String) {
 fun setTextTitle(view: TextView, favorite: Favorite, detail: Boolean = false) {
     view.apply {
         text = if (favorite.type == FAVORITE_TYPE) {
-            if (!detail) setMargins(top = dip2px(context!!, 29))
             context.getString(R.string.favorite_music)
         } else {
             favorite.title

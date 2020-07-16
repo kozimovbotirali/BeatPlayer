@@ -19,6 +19,7 @@ import android.support.v4.media.session.PlaybackStateCompat
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.extensions.delete
 import com.crrl.beatplayer.extensions.moveElement
+import com.crrl.beatplayer.extensions.position
 import com.crrl.beatplayer.extensions.toQueue
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.repository.SongsRepository
@@ -76,6 +77,7 @@ class QueueUtilsImplementation(
 
     override val previousSongId: Long?
         get() {
+            if(mediaSession.position() >= 5000) return null
             val previousIndex = currentSongIndex - 1
             return if (previousIndex >= 0) {
                 queue[previousIndex]

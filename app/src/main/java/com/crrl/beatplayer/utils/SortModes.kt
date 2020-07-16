@@ -13,77 +13,51 @@
 
 package com.crrl.beatplayer.utils
 
-import android.provider.MediaStore
-import com.crrl.beatplayer.models.Album
+import com.crrl.beatplayer.extensions.setAll
 import com.crrl.beatplayer.models.Artist
-import com.crrl.beatplayer.models.Song
+import java.util.*
 
 object SortModes {
     class SongModes {
         companion object {
-            const val SONG_DEFAULT = MediaStore.Audio.Media.DEFAULT_SORT_ORDER
-            const val SONG_A_Z = MediaStore.Audio.Media.TITLE
+            const val SONG_A_Z = "title"
             const val SONG_Z_A = "$SONG_A_Z DESC"
-            const val SONG_DURATION = MediaStore.Audio.Media.DURATION + " DESC"
-            const val SONG_YEAR = MediaStore.Audio.Media.YEAR
-            const val SONG_LAST_ADDED = MediaStore.Audio.Media.DATE_MODIFIED + " DESC"
-            const val SONG_ALBUM = MediaStore.Audio.Media.ALBUM
-            const val SONG_TRACK =
-                MediaStore.Audio.Media.TRACK + ", " + MediaStore.Audio.Media.DEFAULT_SORT_ORDER
+            const val SONG_DURATION = "duration DESC"
+            const val SONG_YEAR = "year"
+            const val SONG_LAST_ADDED = "date_added DESC"
+            const val SONG_ALBUM = "album"
+            const val SONG_ARTIST = "artist"
+            const val SONG_TRACK = "track, title_key"
         }
     }
 
     class AlbumModes {
         companion object {
-            const val ALBUM_DEFAULT = MediaStore.Audio.Albums.DEFAULT_SORT_ORDER
-            const val ALBUM_A_Z = MediaStore.Audio.Albums.ALBUM
+            const val ALBUM_A_Z = "album"
             const val ALBUM_Z_A = "$ALBUM_A_Z DESC"
-            const val ALBUM_YEAR = "${MediaStore.Audio.Albums.FIRST_YEAR} DESC"
+            const val ALBUM_YEAR = "minyear DESC"
+            const val ALBUM_SONG_COUNT = "numsongs"
+            const val ALBUM_ARTIST = "artist"
         }
     }
 
     class ArtistModes {
         companion object {
-            const val ARTIST_DEFAULT = MediaStore.Audio.Artists.DEFAULT_SORT_ORDER
-            const val ARTIST_A_Z = MediaStore.Audio.Artists.ARTIST
+            const val ARTIST_A_Z = "artist"
             const val ARTIST_Z_A = "$ARTIST_A_Z DESC"
+            const val ARTIST_ALBUM_COUNT = "number_of_albums"
+            const val ARTIST_SONG_COUNT = "numsongs"
+
+            fun sortArtistList(artistList: MutableList<Artist>, sortMode: String) {
+                when (sortMode) {
+                    ARTIST_A_Z -> artistList.sortBy { it.name.toLowerCase(Locale.ROOT) }
+                    ARTIST_Z_A -> artistList.sortByDescending { it.name.toLowerCase(Locale.ROOT) }
+                    ARTIST_SONG_COUNT -> artistList.sortBy { it.songCount }
+                    ARTIST_ALBUM_COUNT -> artistList.sortBy { it.albumCount }
+                }
+            }
         }
     }
 
-    fun sortSongList(songList: MutableList<Song>, sortMode: String) {
-        when (sortMode) {
-            SongModes.SONG_A_Z -> Thread {
-                songList.sortWith(Comparator { a, b ->
-                    a.title.toLowerCase().compareTo(b.title.toLowerCase())
-                })
-            }.start()
-            SongModes.SONG_Z_A -> Thread {
-                songList.sortWith(Comparator { a, b ->
-                    b.title.toLowerCase().compareTo(a.title.toLowerCase())
-                })
-            }.start()
-        }
-    }
 
-    fun sortAlbumList(albumList: MutableList<Album>, sortMode: String) {
-        when (sortMode) {
-            AlbumModes.ALBUM_A_Z -> albumList.sortWith(Comparator { a, b ->
-                a.title.toUpperCase().compareTo(b.title.toUpperCase())
-            })
-            AlbumModes.ALBUM_Z_A -> albumList.sortWith(Comparator { a, b ->
-                b.title.toUpperCase().compareTo(a.title.toUpperCase())
-            })
-        }
-    }
-
-    fun sortAlbumSongList(songList: MutableList<Song>) {
-        songList.sortWith(Comparator { a, b -> a.trackNumber.compareTo(b.trackNumber) })
-    }
-
-    fun sortArtistList(artistList: MutableList<Artist>, sortMode: String) {
-        when (sortMode) {
-            ArtistModes.ARTIST_A_Z -> artistList.sortBy { it.name.toLowerCase() }
-            ArtistModes.ARTIST_Z_A -> artistList.sortByDescending { it.name.toLowerCase() }
-        }
-    }
 }

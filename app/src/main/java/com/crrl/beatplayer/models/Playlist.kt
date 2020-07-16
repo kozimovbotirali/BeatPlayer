@@ -14,6 +14,8 @@
 package com.crrl.beatplayer.models
 
 import android.database.Cursor
+import com.crrl.beatplayer.repository.PlaylistRepositoryImplementation.Companion.COLUMN_ALBUM_ID
+import com.crrl.beatplayer.repository.PlaylistRepositoryImplementation.Companion.COLUMN_COVER_ID
 import com.crrl.beatplayer.repository.PlaylistRepositoryImplementation.Companion.COLUMN_ID
 import com.crrl.beatplayer.repository.PlaylistRepositoryImplementation.Companion.COLUMN_NAME
 import com.crrl.beatplayer.repository.PlaylistRepositoryImplementation.Companion.COLUMN_SONG_COUNT
@@ -22,6 +24,7 @@ import com.google.gson.Gson
 data class Playlist(
     val id: Long = -1,
     val name: String = "",
+    val albumId: Long = -1,
     val songCount: Int = -1
 ) : MediaItem(id) {
     companion object {
@@ -29,7 +32,8 @@ data class Playlist(
             return Playlist(
                 cursor.getLong(0),
                 cursor.getString(1),
-                cursor.getInt(2)
+                cursor.getLong(2),
+                cursor.getInt(3)
             )
         }
     }
@@ -44,10 +48,10 @@ data class Playlist(
     }
 
     fun columns(): Array<String> {
-        return arrayOf(COLUMN_ID, COLUMN_NAME, COLUMN_SONG_COUNT)
+        return arrayOf(COLUMN_ID, COLUMN_NAME, COLUMN_COVER_ID, COLUMN_SONG_COUNT)
     }
 
     fun values(): Array<String> {
-        return arrayOf("$id", name, "$songCount")
+        return arrayOf("$id", name, "-1", "$songCount")
     }
 }

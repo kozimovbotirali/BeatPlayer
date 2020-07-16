@@ -22,17 +22,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.GridLayoutManager
 import com.crrl.beatplayer.R
+import com.crrl.beatplayer.alertdialog.actions.AlertItemAction
+import com.crrl.beatplayer.alertdialog.enums.AlertItemTheme
 import com.crrl.beatplayer.databinding.FragmentAlbumBinding
-import com.crrl.beatplayer.extensions.addFragment
-import com.crrl.beatplayer.extensions.inflateWithBinding
-import com.crrl.beatplayer.extensions.observe
-import com.crrl.beatplayer.extensions.safeActivity
+import com.crrl.beatplayer.extensions.*
 import com.crrl.beatplayer.models.Album
 import com.crrl.beatplayer.ui.adapters.AlbumAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.viewmodels.AlbumViewModel
-import com.crrl.beatplayer.ui.widgets.actions.AlertItemAction
-import com.crrl.beatplayer.ui.widgets.stylers.AlertItemTheme
 import com.crrl.beatplayer.utils.BeatConstants
 import com.crrl.beatplayer.utils.BeatConstants.ALBUM_KEY
 import com.crrl.beatplayer.utils.GeneralUtils
@@ -57,6 +54,7 @@ class AlbumFragment : BaseFragment<Album>() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         init()
+        retainInstance = true
     }
 
     private fun init() {
@@ -79,9 +77,11 @@ class AlbumFragment : BaseFragment<Album>() {
             adapter = albumAdapter
         }
 
-        albumViewModel.getAlbums().observe(this) { list ->
-            albumAdapter.updateDataSet(list)
-        }
+        albumViewModel.getAlbums()
+            .filter { !albumAdapter.albumList.deepEquals(it) }
+            .observe(this) { list ->
+                albumAdapter.updateDataSet(list)
+            }
 
         binding.let {
             it.viewModel = albumViewModel
@@ -92,47 +92,59 @@ class AlbumFragment : BaseFragment<Album>() {
         createDialog()
     }
 
-    private fun createDialog(){
-        dialog = buildSortModesDialog(listOf(
-            AlertItemAction(
-                context!!.getString(R.string.sort_default),
-                mainViewModel.settingsUtility.albumSortOrder == SortModes.AlbumModes.ALBUM_DEFAULT,
-                AlertItemTheme.DEFAULT
-            ) { action ->
-                action.selected = true
-                mainViewModel.settingsUtility.albumSortOrder =
-                    SortModes.AlbumModes.ALBUM_DEFAULT
-                reloadAdapter()
-            },
-            AlertItemAction(
-                context!!.getString(R.string.sort_az),
-                mainViewModel.settingsUtility.albumSortOrder == SortModes.AlbumModes.ALBUM_A_Z,
-                AlertItemTheme.DEFAULT
-            ) { action ->
-                action.selected = true
-                mainViewModel.settingsUtility.albumSortOrder = SortModes.AlbumModes.ALBUM_A_Z
-                reloadAdapter()
-            },
-            AlertItemAction(
-                context!!.getString(R.string.sort_za),
-                mainViewModel.settingsUtility.albumSortOrder == SortModes.AlbumModes.ALBUM_Z_A,
-                AlertItemTheme.DEFAULT
-            ) { action ->
-                action.selected = true
-                mainViewModel.settingsUtility.albumSortOrder = SortModes.AlbumModes.ALBUM_Z_A
-                reloadAdapter()
-            },
-            AlertItemAction(
-                context!!.getString(R.string.sort_year),
-                mainViewModel.settingsUtility.albumSortOrder == SortModes.AlbumModes.ALBUM_YEAR,
-                AlertItemTheme.DEFAULT
-            ) { action ->
-                action.selected = true
-                mainViewModel.settingsUtility.albumSortOrder =
-                    SortModes.AlbumModes.ALBUM_YEAR
-                reloadAdapter()
-            }
-        ))
+    private fun createDialog() {
+        dialog = buildDialog(
+            getString(R.string.sort_title),
+            getString(R.string.sort_msg),
+            listOf(
+                AlertItemAction(
+                    context!!.getString(R.string.sort_az),
+                    settingsUtility.albumSortOrder == SortModes.AlbumModes.ALBUM_A_Z,
+                    AlertItemTheme.DEFAULT
+                ) {
+                    it.selected = true
+                    settingsUtility.albumSortOrder = SortModes.AlbumModes.ALBUM_A_Z
+                    reloadAdapter()
+                },
+                AlertItemAction(
+                    context!!.getString(R.string.sort_za),
+                    settingsUtility.albumSortOrder == SortModes.AlbumModes.ALBUM_Z_A,
+                    AlertItemTheme.DEFAULT
+                ) {
+                    it.selected = true
+                    settingsUtility.albumSortOrder = SortModes.AlbumModes.ALBUM_Z_A
+                    reloadAdapter()
+                },
+                AlertItemAction(
+                    context!!.getString(R.string.sort_year),
+                    settingsUtility.albumSortOrder == SortModes.AlbumModes.ALBUM_YEAR,
+                    AlertItemTheme.DEFAULT
+                ) {
+                    it.selected = true
+                    settingsUtility.albumSortOrder =
+                        SortModes.AlbumModes.ALBUM_YEAR
+                    reloadAdapter()
+                },
+                AlertItemAction(
+                    context!!.getString(R.string.artist),
+                    settingsUtility.albumSortOrder == SortModes.AlbumModes.ALBUM_ARTIST,
+                    AlertItemTheme.DEFAULT
+                ) {
+                    it.selected = true
+                    settingsUtility.albumSortOrder = SortModes.AlbumModes.ALBUM_ARTIST
+                    reloadAdapter()
+                },
+                AlertItemAction(
+                    context!!.getString(R.string.song_count),
+                    settingsUtility.albumSortOrder == SortModes.AlbumModes.ALBUM_SONG_COUNT,
+                    AlertItemTheme.DEFAULT
+                ) {
+                    it.selected = true
+                    settingsUtility.albumSortOrder = SortModes.AlbumModes.ALBUM_SONG_COUNT
+                    reloadAdapter()
+                }
+            )
+        )
     }
 
     private fun reloadAdapter() {

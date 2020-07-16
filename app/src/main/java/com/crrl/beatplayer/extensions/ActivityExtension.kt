@@ -60,19 +60,3 @@ fun Activity?.replaceFragment(
             commit()
         }
 }
-
-fun Context?.getColorByTheme(
-    @AttrRes id: Int
-): Int {
-    val colorAttr: Int? = id
-    val outValue = TypedValue()
-    this?.theme!!.resolveAttribute(colorAttr!!, outValue, true)
-    return outValue.data
-}
-
-fun Activity?.toast(
-    msg: String,
-    dur: Int
-) {
-    Toast.makeText(this, msg, dur).show()
-}

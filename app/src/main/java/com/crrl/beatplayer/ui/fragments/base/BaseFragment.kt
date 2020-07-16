@@ -25,6 +25,12 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import com.crrl.beatplayer.R
+import com.crrl.beatplayer.alertdialog.AlertDialog
+import com.crrl.beatplayer.alertdialog.actions.AlertItemAction
+import com.crrl.beatplayer.alertdialog.enums.AlertItemTheme
+import com.crrl.beatplayer.alertdialog.enums.AlertType
+import com.crrl.beatplayer.alertdialog.stylers.AlertItemStyle
+import com.crrl.beatplayer.alertdialog.stylers.InputStyle
 import com.crrl.beatplayer.extensions.*
 import com.crrl.beatplayer.interfaces.ItemClickListener
 import com.crrl.beatplayer.models.MediaItem
@@ -34,17 +40,13 @@ import com.crrl.beatplayer.ui.activities.SelectSongActivity
 import com.crrl.beatplayer.ui.fragments.FavoriteDetailFragment
 import com.crrl.beatplayer.ui.fragments.PlaylistDetailFragment
 import com.crrl.beatplayer.ui.viewmodels.*
-import com.crrl.beatplayer.ui.widgets.AlertDialog
-import com.crrl.beatplayer.ui.widgets.actions.AlertItemAction
-import com.crrl.beatplayer.ui.widgets.stylers.AlertItemStyle
-import com.crrl.beatplayer.ui.widgets.stylers.AlertItemTheme
-import com.crrl.beatplayer.ui.widgets.stylers.AlertType
-import com.crrl.beatplayer.ui.widgets.stylers.InputStyle
-import com.crrl.beatplayer.utils.BeatConstants
 import com.crrl.beatplayer.utils.BeatConstants.FAVORITE_ID
+import com.crrl.beatplayer.utils.BeatConstants.PLAY_LIST_DETAIL
 import com.crrl.beatplayer.utils.BeatConstants.REMOVE_SONG
 import com.crrl.beatplayer.utils.BeatConstants.SONG_KEY
+import com.crrl.beatplayer.utils.BeatConstants.SONG_TYPE
 import com.crrl.beatplayer.utils.GeneralUtils.addZeros
+import com.crrl.beatplayer.utils.GeneralUtils.getExtraBundle
 import com.crrl.beatplayer.utils.SettingsUtility
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.skydoves.powermenu.MenuAnimation
@@ -104,10 +106,46 @@ open class BaseFragment<T : MediaItem> : CoroutineFragment(), ItemClickListener<
             }
             addItem(
                 AlertItemAction(getString(R.string.new_playlist), false, AlertItemTheme.ACCEPT) {
-                    createDialog(song)
+                    createPlaylistDialog(song)
                 })
         }
         alertPlaylists = alert
+    }
+
+    protected fun createPlaylistDialog(song: Song? = null, inputText: String? = null) {
+        val actions = listOf(
+            AlertItemAction(
+                getString(R.string.cancel),
+                false,
+                AlertItemTheme.ACCEPT
+            ) {},
+            AlertItemAction(
+                getString(R.string.create_playlist_btn),
+                false,
+                AlertItemTheme.ACCEPT
+            ) { action ->
+                val exists = playlistViewModel.exists(action.input)
+                println(exists)
+                if (exists) mainViewModel.binding.mainContainer.snackbar(
+                    ERROR,
+                    getString(R.string.playlist_name_error),
+                    LENGTH_SHORT,
+                    action = getString(R.string.retry),
+                    clickListener = View.OnClickListener {
+                        createPlaylistDialog(song, action.input)
+                    }
+                )
+                else addSongs(action.input, song)
+            }
+        )
+        createInputDialog(
+            getString(R.string.new_playlist),
+            getString(R.string.create_playlist),
+            inputText
+                ?: "${safeActivity.getString(R.string.playlist)} ${addZeros(playlistViewModel.count + 1)}",
+            getString(R.string.input_hint),
+            actions
+        )
     }
 
     private fun addFavorite() {
@@ -130,7 +168,7 @@ open class BaseFragment<T : MediaItem> : CoroutineFragment(), ItemClickListener<
                 })
     }
 
-    protected fun buildSortModesDialog(actions: List<AlertItemAction>): AlertDialog {
+    protected fun buildDialog(titleText: String, subTitleText: String, actions: List<AlertItemAction>): AlertDialog {
         val style = AlertItemStyle()
         style.apply {
             textColor = safeActivity.getColorByTheme(R.attr.titleTextColor)
@@ -139,8 +177,8 @@ open class BaseFragment<T : MediaItem> : CoroutineFragment(), ItemClickListener<
             cornerRadius = resources.getDimension(R.dimen.bottom_panel_radius)
         }
         return AlertDialog(
-            getString(R.string.sort_title),
-            getString(R.string.sort_msg),
+            titleText,
+            subTitleText,
             style,
             AlertType.BOTTOM_SHEET
         ).apply {
@@ -148,40 +186,30 @@ open class BaseFragment<T : MediaItem> : CoroutineFragment(), ItemClickListener<
         }
     }
 
-    protected open fun createDialog(song: Song? = null, text: String? = null) {
+    protected open fun createInputDialog(
+        titleText: String,
+        subTitleText: String,
+        inputText: String,
+        hintText: String,
+        actions: List<AlertItemAction>
+    ) {
         val style = InputStyle(
             safeActivity.getColorByTheme(R.attr.colorPrimarySecondary2),
             safeActivity.getColorByTheme(R.attr.colorPrimaryOpacity),
             safeActivity.getColorByTheme(R.attr.titleTextColor),
             safeActivity.getColorByTheme(R.attr.bodyTextColor),
             safeActivity.getColorByTheme(R.attr.colorAccent),
-            text ?: "${safeActivity.getString(R.string.playlist)} ${addZeros(
-                playlistViewModel.count + 1
-            )}",
+            inputText,
             resources.getDimension(R.dimen.bottom_panel_radius)
         )
         AlertDialog(
-            getString(R.string.new_playlist),
-            getString(R.string.create_playlist),
+            titleText,
+            subTitleText,
             style,
             AlertType.INPUT,
-            getString(R.string.input_hint)
+            hintText
         ).apply {
-            addItem(AlertItemAction("Cancel", false, AlertItemTheme.DEFAULT) {
-            })
-            addItem(AlertItemAction("OK", false, AlertItemTheme.ACCEPT) { action ->
-                val exists = playlistViewModel.exists(action.input!!)
-                if (exists) main_container.snackbar(
-                    ERROR,
-                    getString(R.string.playlist_name_error),
-                    LENGTH_SHORT,
-                    action = getString(R.string.retry),
-                    clickListener = View.OnClickListener {
-                        createDialog(song, action.input)
-                    }
-                )
-                else addSongs(action.input!!, song)
-            })
+            for (action in actions) addItem(action)
         }.show(safeActivity as AppCompatActivity)
     }
 
@@ -203,7 +231,7 @@ open class BaseFragment<T : MediaItem> : CoroutineFragment(), ItemClickListener<
             }
         } else {
             val intent = Intent(safeActivity, SelectSongActivity::class.java).apply {
-                putExtra(BeatConstants.PLAY_LIST_DETAIL, name)
+                putExtra(PLAY_LIST_DETAIL, name)
             }
             safeActivity.startActivityForResult(intent, 1)
         }
@@ -284,10 +312,7 @@ open class BaseFragment<T : MediaItem> : CoroutineFragment(), ItemClickListener<
     private val onMenuItemClickListener = OnMenuItemClickListener<PowerMenuItem> { position, _ ->
         when (position) {
             0 -> {
-                val extras = getExtraBundle(
-                    currentItemList.toIDList(),
-                    BeatConstants.SONG_TYPE
-                )
+                val extras = getExtraBundle(currentItemList.toIDList(), SONG_TYPE)
                 mainViewModel.mediaItemClicked((currentItem as Song).toMediaItem(), extras)
             }
             1 -> {
@@ -315,14 +340,14 @@ open class BaseFragment<T : MediaItem> : CoroutineFragment(), ItemClickListener<
 
     private fun addToList(playListId: Long, song: Song) {
         val added = playlistViewModel.addToPlaylist(playListId, listOf(song))
-        if (added != -1L)
-            main_container.snackbar(
+        if (added > 0)
+            mainViewModel.binding.mainContainer.snackbar(
                 SUCCESS,
                 getString(R.string.song_added_success),
                 LENGTH_SHORT
             )
         else
-            main_container.snackbar(
+            mainViewModel.binding.mainContainer.snackbar(
                 ERROR,
                 getString(R.string.song_added_error),
                 LENGTH_SHORT
@@ -340,7 +365,7 @@ open class BaseFragment<T : MediaItem> : CoroutineFragment(), ItemClickListener<
         val sendIntent: Intent = Intent().apply {
             action = Intent.ACTION_SEND
             putExtra(Intent.EXTRA_STREAM, Uri.parse(song.path))
-            type = "audio/mp3"
+            type = "audio/*"
         }
 
         val shareIntent = Intent.createChooser(sendIntent, null)
@@ -368,16 +393,18 @@ open class BaseFragment<T : MediaItem> : CoroutineFragment(), ItemClickListener<
         }
     }
 
-    protected open fun showSnackBar(view: View?, resp: Int, type: Int, @StringRes message: Int) {
-        val custom = when (type) {
-            1 -> R.drawable.ic_success
-            else -> R.drawable.ic_dislike
-        }
-        if (resp > 0) view.snackbar(
-            CUSTOM,
-            getString(message),
-            BaseTransientBottomBar.LENGTH_SHORT,
-            custom = custom
+    protected open fun showSnackBar(
+        view: View?,
+        resp: Int,
+        @StringRes message: Int
+    ) {
+        val type = if (resp > 0) SUCCESS else ERROR
+        val msg = if (resp > 0) message else R.string.op_err
+
+        view.snackbar(
+            type,
+            getString(msg),
+            BaseTransientBottomBar.LENGTH_SHORT
         )
     }
 

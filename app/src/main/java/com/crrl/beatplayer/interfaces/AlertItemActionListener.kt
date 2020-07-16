@@ -13,7 +13,7 @@
 
 package com.crrl.beatplayer.interfaces
 
-import com.crrl.beatplayer.ui.widgets.actions.AlertItemAction
+import com.crrl.beatplayer.alertdialog.actions.AlertItemAction
 
 interface AlertItemActionListener {
     fun onAlertItemClick(action: AlertItemAction)

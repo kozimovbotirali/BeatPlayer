@@ -25,10 +25,12 @@
     <application
         android:name=".BeatPlayerApplication"
         android:allowBackup="true"
+        android:fullBackupContent="@xml/backup_rules"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="BeatPlayer${appNameSuffix}"
         android:largeHeap="true"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Auto"
@@ -115,8 +117,7 @@
         <service
             android:name=".playback.BeatPlayerService"
             android:enabled="true"
-            android:exported="true">
-
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.media.browse.MediaBrowserService" />
             </intent-filter>

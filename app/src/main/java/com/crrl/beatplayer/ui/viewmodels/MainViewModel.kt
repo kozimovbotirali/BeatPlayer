@@ -24,10 +24,10 @@ import com.crrl.beatplayer.extensions.*
 import com.crrl.beatplayer.playback.PlaybackConnection
 import com.crrl.beatplayer.repository.FavoritesRepository
 import com.crrl.beatplayer.ui.viewmodels.base.CoroutineViewModel
-import com.crrl.beatplayer.utils.BeatConstants.QUEUE_LIST_KEY
 import com.crrl.beatplayer.utils.BeatConstants.QUEUE_LIST_TYPE_KEY
 import com.crrl.beatplayer.utils.BeatConstants.UPDATE_QUEUE
 import com.crrl.beatplayer.utils.SettingsUtility
+import com.crrl.beatplayer.utils.SettingsUtility.Companion.QUEUE_LIST_KEY
 import com.github.florent37.kotlin.pleaseanimate.please
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -35,8 +35,7 @@ import kotlinx.coroutines.withContext
 
 class MainViewModel(
     private val favoritesRepository: FavoritesRepository,
-    private val PlaybackConnection: PlaybackConnection,
-    val settingsUtility: SettingsUtility
+    private val PlaybackConnection: PlaybackConnection
 ) : CoroutineViewModel(Main) {
 
     private val isFavLiveData = MutableLiveData<Boolean>()
@@ -46,22 +45,7 @@ class MainViewModel(
     lateinit var binding: ActivityMainBinding
 
     fun mediaItemClicked(mediaItem: MediaBrowserCompat.MediaItem, extras: Bundle?) {
-        val nowPlaying = PlaybackConnection.nowPlaying.value
-        val transportControls = PlaybackConnection.transportControls
-
-        val isPrepared = PlaybackConnection.playbackState.value?.isPrepared ?: false
-        if (isPrepared && mediaItem.mediaId!!.toMediaId().mediaId == nowPlaying?.id) {
-            PlaybackConnection.playbackState.value?.let { playbackState ->
-                when {
-                    playbackState.isPlaying -> transportControls?.pause()
-                    playbackState.isPlayEnabled -> transportControls?.play()
-                    else -> {
-                    }
-                }
-            }
-        } else {
-            transportControls?.playFromMediaId(mediaItem.mediaId, extras)
-        }
+        transportControls()?.playFromMediaId(mediaItem.mediaId, extras)
     }
 
     fun transportControls() = PlaybackConnection.transportControls

@@ -19,19 +19,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.crrl.beatplayer.R
+import com.crrl.beatplayer.alertdialog.utils.ViewUtils.dip2px
 import com.crrl.beatplayer.databinding.FavoriteItemBinding
-import com.crrl.beatplayer.extensions.deepEquals
 import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.interfaces.ItemClickListener
 import com.crrl.beatplayer.models.Favorite
-import com.crrl.beatplayer.utils.GeneralUtils.dip2px
 import com.crrl.beatplayer.utils.GeneralUtils.screenWidth
 
 class FavoriteAdapter(private val context: Context?) :
     RecyclerView.Adapter<FavoriteAdapter.ViewHolderFavorite>() {
 
-    private var favoriteList: MutableList<Favorite> = mutableListOf()
     private var lastClick = 0L
+    var favoriteList: MutableList<Favorite> = mutableListOf()
     var itemClickListener: ItemClickListener<Favorite>? = null
     var spanCount: Int = 0
 
@@ -50,10 +49,8 @@ class FavoriteAdapter(private val context: Context?) :
     }
 
     fun updateDataSet(newList: List<Favorite>) {
-        if (!favoriteList.deepEquals(newList)) {
-            favoriteList = newList.toMutableList()
-            notifyDataSetChanged()
-        }
+        favoriteList = newList.toMutableList()
+        notifyDataSetChanged()
     }
 
     fun getItem(position: Int): Favorite {

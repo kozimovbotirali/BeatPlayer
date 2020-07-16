@@ -13,11 +13,12 @@
 
 package com.crrl.beatplayer.ui.adapters
 
-import android.content.Context
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.crrl.beatplayer.R
+import com.crrl.beatplayer.databinding.SongItemNoCoverBinding
 import com.crrl.beatplayer.databinding.SongItemBinding
 import com.crrl.beatplayer.databinding.SongItemHeaderBinding
 import com.crrl.beatplayer.extensions.hide
@@ -25,36 +26,35 @@ import com.crrl.beatplayer.extensions.inflateWithBinding
 import com.crrl.beatplayer.extensions.setAll
 import com.crrl.beatplayer.interfaces.ItemClickListener
 import com.crrl.beatplayer.models.Song
-import com.crrl.beatplayer.ui.viewmodels.SongDetailViewModel
 
 private const val HEADER_TYPE = 0
 private const val ITEM_TYPE = 1
 
-class SongAdapter(
-    private val context: Context?,
-    private val songDetailViewModel: SongDetailViewModel
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class SongAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     val songList = mutableListOf<Song>()
     var showHeader = false
+    var showCover = true
     var isPlaylist = false
     var isAlbumDetail = false
     var itemClickListener: ItemClickListener<Song>? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        val viewBindingSong = when{
+            showCover -> parent.inflateWithBinding<SongItemNoCoverBinding>(R.layout.song_item)
+            else -> parent.inflateWithBinding<SongItemBinding>(R.layout.song_item_no_cover)
+        }
+
         return when (viewType) {
             HEADER_TYPE -> {
-                val viewBinding =
-                    parent.inflateWithBinding<SongItemHeaderBinding>(R.layout.song_item_header)
+                val viewBinding = parent.inflateWithBinding<SongItemHeaderBinding>(R.layout.song_item_header)
                 ViewHolderSongHeader(viewBinding)
             }
             ITEM_TYPE -> {
-                val viewBinding = parent.inflateWithBinding<SongItemBinding>(R.layout.song_item)
-                ViewHolderSong(viewBinding)
+                ViewHolderSong(viewBindingSong)
             }
             else -> {
-                val viewBinding = parent.inflateWithBinding<SongItemBinding>(R.layout.song_item)
-                ViewHolderSong(viewBinding)
+                ViewHolderSong(viewBindingSong)
             }
         }
     }
@@ -62,12 +62,8 @@ class SongAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val currentSong = if (!songList.isNullOrEmpty()) getItem(position) else Song()
         when (getItemViewType(position)) {
-            HEADER_TYPE -> {
-                (holder as ViewHolderSongHeader).bind(songList.size)
-            }
-            ITEM_TYPE -> {
-                (holder as ViewHolderSong).bind(currentSong!!)
-            }
+            HEADER_TYPE -> (holder as ViewHolderSongHeader).bind(songList.size)
+            ITEM_TYPE -> (holder as ViewHolderSong).bind(currentSong!!)
         }
     }
 
@@ -102,14 +98,33 @@ class SongAdapter(
         notifyDataSetChanged()
     }
 
-    inner class ViewHolderSong(private val binding: SongItemBinding) :
+    inner class ViewHolderSong(private val binding: ViewDataBinding) :
         RecyclerView.ViewHolder(binding.root), View.OnClickListener {
 
-        fun bind(song: Song) {
+        fun bind(currentSong: Song) {
+            when(binding){
+                is SongItemBinding -> bindSong(currentSong)
+                is SongItemNoCoverBinding -> bindAlbumSong(currentSong)
+            }
+        }
+
+        private fun bindSong(song: Song) {
+            binding as SongItemBinding
             binding.apply {
                 this.song = song
                 this.size = itemCount
-                this.viewModel = songDetailViewModel
+                executePendingBindings()
+
+                container.setOnClickListener(this@ViewHolderSong)
+                itemMenu.setOnClickListener(this@ViewHolderSong)
+            }
+        }
+
+        private fun bindAlbumSong(song: Song) {
+            binding as SongItemNoCoverBinding
+            binding.apply {
+                this.song = song
+                this.size = itemCount
                 executePendingBindings()
 
                 container.setOnClickListener(this@ViewHolderSong)

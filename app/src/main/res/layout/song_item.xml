@@ -15,47 +15,37 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <variable
             name="song"
             type="com.crrl.beatplayer.models.Song" />
-        <variable
-            name="viewModel"
-            type="com.crrl.beatplayer.ui.viewmodels.SongDetailViewModel" />
+
         <variable
             name="size"
             type="Integer" />
     </data>
 
     <RelativeLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="70dp">
-
-        <com.crrl.beatplayer.ui.widgets.MusicVisualizer
-            android:id="@+id/visualizer"
-            android:layout_width="30dp"
-            android:layout_height="40dp"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="-40dp"
-            android:layout_marginEnd="@dimen/margin_10"
-            android:tint="?colorAccent"
-            app:show="@{safeUnbox(viewModel.currentData.id == song.id)}"
-            app:state="@{safeUnbox(viewModel.currentState.state)}" />
+        android:layout_height="70dp"
+        android:background="@drawable/list_item_ripple"
+        android:clickable="true"
+        android:focusable="true">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_toStartOf="@+id/item_menu"
-            android:layout_toEndOf="@id/visualizer"
-            app:slide="@{safeUnbox(viewModel.currentData.id == song.id)}"
-            app:state="@{safeUnbox(viewModel.currentState.state)}">
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@+id/item_menu">
 
             <ImageView
                 android:id="@+id/cover"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="@dimen/song_cover_size"
+                android:layout_height="@dimen/song_cover_size"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:layout_marginStart="15dp"
+                android:layout_marginStart="@dimen/margin_12"
                 android:background="@drawable/song_cover_frame"
                 android:contentDescription="@string/cover"
                 android:elevation="5dp"
@@ -68,8 +58,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_centerVertical="true"
-                android:layout_marginStart="@dimen/margin_8"
-                android:layout_marginEnd="@dimen/margin_10"
+                android:layout_marginStart="@dimen/margin_12"
+                android:layout_marginEnd="@dimen/margin_12"
                 android:layout_toEndOf="@+id/cover"
                 android:orientation="vertical"
                 android:paddingBottom="4dp">
@@ -91,9 +81,7 @@
                         android:maxLines="1"
                         android:textColor="?titleTextColor"
                         android:textSize="@dimen/title_text_size"
-                        app:html="@{song.title}"
-                        app:marquee="@{true}"
-                        app:selected="@{safeUnbox(viewModel.currentData.id == song.id)}" />
+                        app:html="@{song.title}" />
                 </RelativeLayout>
 
                 <LinearLayout
@@ -109,9 +97,7 @@
                         android:singleLine="true"
                         android:text="@{song.artist}"
                         android:textColor="?subTitleTextColor"
-                        android:textSize="@dimen/sub_title_text_size"
-                        app:marquee="@{false}"
-                        app:selected="@{safeUnbox(viewModel.currentData.id == song.id)}" />
+                        android:textSize="@dimen/sub_title_text_size" />
 
                     <TextView
                         android:id="@+id/sep"
@@ -123,9 +109,7 @@
                         android:singleLine="true"
                         android:text="@string/separator"
                         android:textColor="?subTitleTextColor"
-                        android:textSize="@dimen/sub_title_text_size"
-                        app:marquee="@{false}"
-                        app:selected="@{safeUnbox(viewModel.currentData.id == song.id)}" />
+                        android:textSize="@dimen/sub_title_text_size" />
 
                     <TextView
                         android:id="@+id/album"
@@ -135,37 +119,20 @@
                         android:singleLine="true"
                         android:text="@{song.album}"
                         android:textColor="?subTitleTextColor"
-                        android:textSize="@dimen/sub_title_text_size"
-                        app:marquee="@{false}"
-                        app:selected="@{safeUnbox(viewModel.currentData.id == song.id)}" />
+                        android:textSize="@dimen/sub_title_text_size" />
                 </LinearLayout>
             </LinearLayout>
         </RelativeLayout>
 
-        <View
-            android:layout_width="@dimen/btn_size"
-            android:layout_height="@dimen/btn_size"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/gradient_background" />
-
-        <View
-            android:id="@+id/container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/list_item_ripple"
-            android:clickable="true"
-            android:focusable="true" />
-
         <ImageButton
             android:id="@+id/item_menu"
-            android:layout_width="@dimen/btn_size"
-            android:layout_height="@dimen/btn_size"
+            android:layout_width="@dimen/btn_size_header"
+            android:layout_height="@dimen/btn_size_header"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:background="@drawable/btn_ripple"
-            android:src="@drawable/ic_more"
+            android:background="@drawable/btn_ripple_header"
             android:contentDescription="@string/cover"
+            android:src="@drawable/ic_more"
             android:tint="?subTitleTextColor" />
     </RelativeLayout>
 </layout>

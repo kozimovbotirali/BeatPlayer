@@ -51,6 +51,7 @@ class PlaylistFragment : BaseFragment<Playlist>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         init()
+        retainInstance = true
     }
 
     private fun init() {
@@ -85,7 +86,7 @@ class PlaylistFragment : BaseFragment<Playlist>() {
             it.lifecycleOwner = this
             it.executePendingBindings()
 
-            it.createPlayList.setOnClickListener { createDialog() }
+            it.createPlayList.setOnClickListener { createPlaylistDialog() }
         }
     }
 

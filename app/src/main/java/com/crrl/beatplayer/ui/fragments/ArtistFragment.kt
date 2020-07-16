@@ -21,20 +21,20 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.GridLayoutManager
 import com.crrl.beatplayer.R
+import com.crrl.beatplayer.alertdialog.actions.AlertItemAction
+import com.crrl.beatplayer.alertdialog.enums.AlertItemTheme
 import com.crrl.beatplayer.databinding.FragmentArtistBinding
-import com.crrl.beatplayer.extensions.addFragment
-import com.crrl.beatplayer.extensions.inflateWithBinding
-import com.crrl.beatplayer.extensions.observe
-import com.crrl.beatplayer.extensions.safeActivity
+import com.crrl.beatplayer.extensions.*
 import com.crrl.beatplayer.models.Artist
 import com.crrl.beatplayer.ui.adapters.ArtistAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
 import com.crrl.beatplayer.ui.viewmodels.ArtistViewModel
-import com.crrl.beatplayer.ui.widgets.actions.AlertItemAction
-import com.crrl.beatplayer.ui.widgets.stylers.AlertItemTheme
 import com.crrl.beatplayer.utils.BeatConstants
 import com.crrl.beatplayer.utils.GeneralUtils
-import com.crrl.beatplayer.utils.SortModes
+import com.crrl.beatplayer.utils.SortModes.ArtistModes.Companion.ARTIST_ALBUM_COUNT
+import com.crrl.beatplayer.utils.SortModes.ArtistModes.Companion.ARTIST_A_Z
+import com.crrl.beatplayer.utils.SortModes.ArtistModes.Companion.ARTIST_SONG_COUNT
+import com.crrl.beatplayer.utils.SortModes.ArtistModes.Companion.ARTIST_Z_A
 import org.koin.android.ext.android.inject
 
 class ArtistFragment : BaseFragment<Artist>() {
@@ -54,6 +54,7 @@ class ArtistFragment : BaseFragment<Artist>() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         init()
+        retainInstance = true
     }
 
     private fun init() {
@@ -65,22 +66,22 @@ class ArtistFragment : BaseFragment<Artist>() {
             spanCount = sc
         }
 
-        binding.apply {
-            list.apply {
-                layoutManager = GridLayoutManager(context!!, sc).apply {
-                    spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-                        override fun getSpanSize(position: Int): Int {
-                            return if (position == 0) sc else 1
-                        }
+        binding.list.apply {
+            layoutManager = GridLayoutManager(context!!, sc).apply {
+                spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                    override fun getSpanSize(position: Int): Int {
+                        return if (position == 0) sc else 1
                     }
                 }
-                adapter = artistAdapter
             }
+            adapter = artistAdapter
         }
 
-        viewModel.getArtists().observe(this) { list ->
-            artistAdapter.updateDataSet(list)
-        }
+        viewModel.getArtists()
+            .filter { !artistAdapter.artistList.deepEquals(it) }
+            .observe(this) { list ->
+                artistAdapter.updateDataSet(list)
+            }
 
         binding.let {
             it.viewModel = viewModel
@@ -91,36 +92,44 @@ class ArtistFragment : BaseFragment<Artist>() {
         createDialog()
     }
 
-    private fun createDialog(){
-        dialog = buildSortModesDialog(listOf(
-            AlertItemAction(
-                context!!.getString(R.string.sort_default),
-                mainViewModel.settingsUtility.artistSortOrder == SortModes.ArtistModes.ARTIST_DEFAULT,
-                AlertItemTheme.DEFAULT
-            ) { action ->
-                action.selected = true
-                mainViewModel.settingsUtility.artistSortOrder =
-                    SortModes.ArtistModes.ARTIST_DEFAULT
-            },
-            AlertItemAction(
-                context!!.getString(R.string.sort_az),
-                mainViewModel.settingsUtility.artistSortOrder == SortModes.ArtistModes.ARTIST_A_Z,
-                AlertItemTheme.DEFAULT
-            ) { action ->
-                action.selected = true
-                mainViewModel.settingsUtility.artistSortOrder =
-                    SortModes.ArtistModes.ARTIST_A_Z
-            },
-            AlertItemAction(
-                context!!.getString(R.string.sort_za),
-                mainViewModel.settingsUtility.artistSortOrder == SortModes.ArtistModes.ARTIST_Z_A,
-                AlertItemTheme.DEFAULT
-            ) { action ->
-                action.selected = true
-                mainViewModel.settingsUtility.artistSortOrder =
-                    SortModes.ArtistModes.ARTIST_Z_A
-            }
-        ))
+    private fun createDialog() {
+        dialog = buildDialog(
+            getString(R.string.sort_title),
+            getString(R.string.sort_msg),
+            listOf(
+                AlertItemAction(
+                    context!!.getString(R.string.sort_az),
+                    settingsUtility.artistSortOrder == ARTIST_A_Z,
+                    AlertItemTheme.DEFAULT
+                ) {
+                    it.selected = true
+                    settingsUtility.artistSortOrder = ARTIST_A_Z
+                },
+                AlertItemAction(
+                    context!!.getString(R.string.sort_za),
+                    settingsUtility.artistSortOrder == ARTIST_Z_A,
+                    AlertItemTheme.DEFAULT
+                ) {
+                    it.selected = true
+                    settingsUtility.artistSortOrder = ARTIST_Z_A
+                },
+                AlertItemAction(
+                    context!!.getString(R.string.song_count),
+                    settingsUtility.artistSortOrder == ARTIST_SONG_COUNT,
+                    AlertItemTheme.DEFAULT
+                ) {
+                    it.selected = true
+                    settingsUtility.artistSortOrder = ARTIST_SONG_COUNT
+                },
+                AlertItemAction(
+                    context!!.getString(R.string.album_count),
+                    settingsUtility.artistSortOrder == ARTIST_ALBUM_COUNT,
+                    AlertItemTheme.DEFAULT
+                ) {
+                    it.selected = true
+                    settingsUtility.artistSortOrder = ARTIST_ALBUM_COUNT
+                }
+            ))
     }
 
     override fun onItemClick(view: View, position: Int, item: Artist) {

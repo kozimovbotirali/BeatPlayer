@@ -33,6 +33,7 @@ import com.crrl.beatplayer.utils.BeatConstants.FAVORITE_TYPE
 import com.crrl.beatplayer.utils.BeatConstants.FOLDER_TYPE
 import com.crrl.beatplayer.utils.BeatConstants.SONG_TYPE
 import com.crrl.beatplayer.utils.GeneralUtils.getAlbumArtUri
+import com.crrl.beatplayer.utils.GeneralUtils.getSongUri
 import java.io.File
 
 data class Song(
@@ -60,8 +61,7 @@ data class Song(
                 trackNumber = cursor.getInt(5).fix(),
                 artistId = cursor.getLong(6),
                 albumId = if (album_id == 0L) cursor.getLong(7) else album_id,
-                path = ContentUris.withAppendedId(BeatConstants.SONG_URI, cursor.getLong(0))
-                    .toString()
+                path = getSongUri(cursor.getLong(0)).toString()
             )
         }
 
@@ -76,8 +76,7 @@ data class Song(
                 artistId = cursor.getLong(6),
                 albumId = cursor.getLong(7),
                 playListId = cursor.getLong(8),
-                path = ContentUris.withAppendedId(BeatConstants.SONG_URI, cursor.getLong(0))
-                    .toString()
+                path = getSongUri(cursor.getLong(0)).toString()
             )
         }
 

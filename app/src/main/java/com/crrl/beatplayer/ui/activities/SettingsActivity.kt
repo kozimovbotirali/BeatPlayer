@@ -20,11 +20,11 @@ import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.ActivitySettingsBinding
 import com.crrl.beatplayer.extensions.getColorByTheme
 import com.crrl.beatplayer.ui.activities.base.BaseActivity
-import com.crrl.beatplayer.ui.widgets.AlertDialog
-import com.crrl.beatplayer.ui.widgets.actions.AlertItemAction
-import com.crrl.beatplayer.ui.widgets.stylers.AlertItemStyle
-import com.crrl.beatplayer.ui.widgets.stylers.AlertItemTheme
-import com.crrl.beatplayer.ui.widgets.stylers.AlertType
+import com.crrl.beatplayer.alertdialog.AlertDialog
+import com.crrl.beatplayer.alertdialog.actions.AlertItemAction
+import com.crrl.beatplayer.alertdialog.stylers.AlertItemStyle
+import com.crrl.beatplayer.alertdialog.enums.AlertItemTheme
+import com.crrl.beatplayer.alertdialog.enums.AlertType
 import com.crrl.beatplayer.utils.BeatConstants
 import com.crrl.beatplayer.utils.SettingsUtility
 import org.koin.android.ext.android.inject

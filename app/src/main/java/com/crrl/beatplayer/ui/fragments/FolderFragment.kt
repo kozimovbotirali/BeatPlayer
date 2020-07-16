@@ -21,9 +21,7 @@ import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentFolderBinding
-import com.crrl.beatplayer.extensions.addFragment
-import com.crrl.beatplayer.extensions.inflateWithBinding
-import com.crrl.beatplayer.extensions.observe
+import com.crrl.beatplayer.extensions.*
 import com.crrl.beatplayer.models.Folder
 import com.crrl.beatplayer.ui.adapters.FolderAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseFragment
@@ -49,6 +47,7 @@ class FolderFragment : BaseFragment<Folder>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         init()
+        retainInstance = true
     }
 
     private fun init() {
@@ -56,14 +55,14 @@ class FolderFragment : BaseFragment<Folder>() {
             itemClickListener = this@FolderFragment
         }
 
-        binding.apply {
-            list.apply {
-                layoutManager = LinearLayoutManager(context)
-                adapter = folderAdapter
-            }
+        list.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = folderAdapter
         }
 
-        viewModel.getFolders().observe(this) {
+        viewModel.getFolders()
+            .filter { !folderAdapter.folderList.deepEquals(it) }
+            .observe(this) {
             folderAdapter.updateDataSet(it)
         }
 

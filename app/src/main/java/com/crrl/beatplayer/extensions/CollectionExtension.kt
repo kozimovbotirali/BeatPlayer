@@ -48,7 +48,10 @@ internal fun <T> List<T>.optimizeReadOnlyList() = when (size) {
 
 fun <T : MediaItem> Collection<T>.deepEquals(
     list2: Collection<T>
-) = if (size != list2.size) false else zip(list2).all { (elt1, elt2) -> elt1.compare(elt2) }
+) = when {
+    size != list2.size || size == 0 -> false
+    else -> zip(list2).all { (elt1, elt2) -> elt1.compare(elt2) }
+}
 
 fun List<MediaItem>?.toIDList(): LongArray {
     return this?.map { it._id }?.toLongArray() ?: LongArray(0)

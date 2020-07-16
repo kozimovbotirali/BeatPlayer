@@ -31,7 +31,6 @@
     <string name="settings">Ajustes</string>
     <string name="sort_title">Ordenar</string>
     <string name="sort_msg">Ordenar por</string>
-    <string name="sort_default">Defecto</string>
     <string name="sort_duration">Duración</string>
     <string name="sort_last_added">Último Agregado</string>
     <string name="sort_year">Año</string>
@@ -94,6 +93,20 @@
     <string name="search_tip">Escribe el nombre de un álbum, un artista o una canción y verás los resultados aquí.</string>
     <string name="all_songs">Todas las pistas</string>
     <string name="no_eq">Tu dispositivo no tiene ecualizador.</string>
+    <string name="playlist_tip">Crea algunas listas de reproducción y serán listadas aquí.</string>
+    <string name="op_err">Ha ocurrido un error.</string>
+    <string name="create_playlist_btn">Crear</string>
+    <string name="album_count">Cantidad de Albumes</string>
+    <string name="song_count">Cantidad de Pistas</string>
+    <string name="edit_lyrics">Editar Letra</string>
+    <string name="new_lyrics">Por favor, escribe ó pegua la nueva letra de la pista en la caja de texto inferior.</string>
+    <string name="edit_lyrics_hint">Ingresa la letra de la pista.</string>
+    <string name="empty_lyrics">Esta pista aún no tiene letra.</string>
+    <string name="save">Guardar</string>
+    <string name="lyrics_edit_error">Error al guardar la letra de la pista.</string>
+    <string name="sync_lyrics">Sincronizar Letra</string>
+    <string name="lyrics_type">¿Que quieres hacer?</string>
+    <string name="lyrics_tip">Por favor, selecciona la opcion que deseas utilizar.</string>
 
     <plurals name="number_of_songs" tools:ignore="UnusedQuantity">
         <item quantity="zero">%d Pistas</item>

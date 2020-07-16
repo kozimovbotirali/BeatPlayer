@@ -19,18 +19,17 @@ import com.crrl.beatplayer.models.Album
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.repository.AlbumsRepository
 import com.crrl.beatplayer.ui.viewmodels.base.CoroutineViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.withContext
 
 class AlbumViewModel(
     private val repository: AlbumsRepository
-): CoroutineViewModel(Main) {
+) : CoroutineViewModel(Main) {
     private val albumData = MutableLiveData<List<Album>>()
     private val songsByAlbum = MutableLiveData<List<Song>>()
 
-    fun getAlbum(id: Long): Album{
+    fun getAlbum(id: Long): Album {
         return repository.getAlbum(id)
     }
 
@@ -39,9 +38,9 @@ class AlbumViewModel(
         return albumData
     }
 
-    fun getSongsByAlbum(id: Long): LiveData<List<Song>>? {
+    fun getSongsByAlbum(id: Long): LiveData<List<Song>> {
         launch {
-            val list = withContext(Dispatchers.IO) {
+            val list = withContext(IO) {
                 repository.getSongsForAlbum(id)
             }
             songsByAlbum.postValue(list)
@@ -49,9 +48,9 @@ class AlbumViewModel(
         return songsByAlbum
     }
 
-    fun update(){
+    fun update() {
         launch {
-            val albums = withContext(IO){
+            val albums = withContext(IO) {
                 repository.getAlbums()
             }
             albumData.postValue(albums)

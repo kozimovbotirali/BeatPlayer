@@ -20,21 +20,31 @@ import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
-import android.graphics.RectF
-import android.graphics.drawable.ShapeDrawable
-import android.graphics.drawable.shapes.RoundRectShape
+import android.graphics.ImageDecoder
 import android.net.Uri
-import android.os.Build
+import android.os.Build.VERSION.SDK_INT
+import android.os.Build.VERSION_CODES.O
+import android.os.Build.VERSION_CODES.P
+import android.os.Bundle
 import android.provider.MediaStore
 import android.view.inputmethod.InputMethodManager
+import android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT
 import android.widget.EditText
 import androidx.core.content.ContextCompat
 import com.crrl.beatplayer.R
+import com.crrl.beatplayer.extensions.systemService
+import com.crrl.beatplayer.extensions.toFileDescriptor
 import com.crrl.beatplayer.models.Song
 import com.crrl.beatplayer.utils.BeatConstants.ARTWORK_URI
+import com.crrl.beatplayer.utils.BeatConstants.SEEK_TO_POS
+import com.crrl.beatplayer.utils.BeatConstants.SONG_LIST_NAME
 import com.crrl.beatplayer.utils.BeatConstants.SONG_URI
+import com.crrl.beatplayer.utils.SettingsUtility.Companion.QUEUE_INFO_KEY
+import timber.log.Timber
+import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
+import java.lang.IllegalStateException
 
 
 object GeneralUtils {
@@ -73,43 +83,31 @@ object GeneralUtils {
     }
 
     fun audio2Raw(context: Context, uri: Uri): ByteArray? {
-        val parcelFileDescriptor = try {
-            context.contentResolver.openFileDescriptor(uri, BeatConstants.READ_ONLY_MODE, null)
-                ?: return null
-        } catch (ex: FileNotFoundException) {
-            return null
-        }
+        val parcelFileDescriptor = uri.toFileDescriptor(context) ?: return null
         val fis = FileInputStream(parcelFileDescriptor.fileDescriptor)
         val data = try {
             fis.readBytes()
         } catch (ex: Exception) {
+            Timber.e(ex)
             audio2Raw(context, uri)
         }
         fis.close()
         return data
     }
 
-    fun toggleShowKeyBoard(context: Context?, editText: EditText, show: Boolean) {
+    fun toggleShowKeyBoard(context: Context, editText: EditText, show: Boolean) {
+        val imm = context.systemService<InputMethodManager>(Context.INPUT_METHOD_SERVICE)
         if (show) {
             editText.apply {
                 requestFocus()
-                val imm =
-                    context!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-                imm!!.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
+                imm.showSoftInput(this, SHOW_IMPLICIT)
             }
         } else {
             editText.apply {
                 clearFocus()
-                val imm =
-                    context!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-                imm!!.hideSoftInputFromWindow(editText.windowToken, 0)
+                imm.hideSoftInputFromWindow(editText.windowToken, 0)
             }
         }
-    }
-
-    fun dip2px(context: Context, dpValue: Int): Int {
-        val scale = context.resources.displayMetrics.density
-        return (dpValue * scale + 0.5f).toInt()
     }
 
     fun addZeros(number: Int?): String {
@@ -135,42 +133,53 @@ object GeneralUtils {
     }
 
     fun getStoragePaths(context: Context): List<String> {
-        return ContextCompat.getExternalFilesDirs(context, null).map {
-            it.path.replace("/Android/data/${context.packageName}/files", "")
+        return try {
+            val paths: Array<File>? = ContextCompat.getExternalFilesDirs(context, null)
+            paths?.map {
+                it.path.replace("/Android/data/${context.packageName}/files", "")
+            } ?: emptyList()
+        } catch (ex: IllegalStateException) {
+            emptyList()
         }
     }
 
-    /**
-     * This method draws a round rect shape.
-     * @param width: int
-     * @param height: int
-     * @param color: int
-     * @return ShapeDrawable
-     */
-    fun drawRoundRectShape(
-        width: Int,
-        height: Int,
-        color: Int,
-        radius: Float = 30f
-    ): ShapeDrawable {
-        val r = floatArrayOf(radius, radius, radius, radius, radius, radius, radius, radius)
-        val oval = ShapeDrawable(RoundRectShape(r, RectF(), r))
-        oval.intrinsicHeight = height
-        oval.intrinsicWidth = width
-        oval.paint.color = color
-        return oval
-    }
-
+    @Suppress("DEPRECATION")
     fun getAlbumArtBitmap(context: Context, albumId: Long?): Bitmap? {
         if (albumId == null) return null
         return try {
-            MediaStore.Images.Media.getBitmap(context.contentResolver, getAlbumArtUri(albumId))
+            when {
+                SDK_INT >= P -> {
+                    val source = ImageDecoder.createSource(
+                        context.contentResolver,
+                        getAlbumArtUri(albumId)
+                    )
+                    ImageDecoder.decodeBitmap(source)
+                }
+                else -> MediaStore.Images.Media.getBitmap(
+                    context.contentResolver,
+                    getAlbumArtUri(albumId)
+                )
+            }
         } catch (e: FileNotFoundException) {
-            BitmapFactory.decodeResource(context.resources, R.drawable.ic_app_logo)
+            BitmapFactory.decodeResource(context.resources, R.drawable.ic_empty_cover)
         }
     }
 
-    fun isOreo() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+    fun getExtraBundle(queue: LongArray, title: String): Bundle? {
+        return getExtraBundle(queue, title, 0)
+    }
+
+    fun getExtraBundle(queue: LongArray, title: String, seekTo: Int?): Bundle? {
+        val bundle = Bundle()
+        bundle.putLongArray(QUEUE_INFO_KEY, queue)
+        bundle.putString(SONG_LIST_NAME, title)
+        if (seekTo != null)
+            bundle.putInt(SEEK_TO_POS, seekTo)
+        else bundle.putInt(SEEK_TO_POS, 0)
+        return bundle
+    }
+
+    fun isOreo() = SDK_INT >= O
     fun getAlbumArtUri(albumId: Long): Uri = withAppendedId(ARTWORK_URI, albumId)
     fun getSongUri(songId: Long): Uri = withAppendedId(SONG_URI, songId)
 }
