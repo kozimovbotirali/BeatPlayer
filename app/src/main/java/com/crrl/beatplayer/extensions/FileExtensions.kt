@@ -23,15 +23,14 @@ private const val EXTERNAL_STORAGE = "/SD Card"
 private const val MEGA_BYTES_SIZE = 1048576
 
 fun File.fixedPath(context: Context): String {
-    Timber.d("fixedPath()")
     val storagePaths = getStoragePaths(context)
+    val type = path.contains(storagePaths[0])
+    Timber.d("fixedPath()")
     Timber.d("path: $storagePaths")
-    return if (path.contains(storagePaths[0])) {
-        path.replace(storagePaths[0], INTERNAL_STORAGE)
-    } else {
-        if (storagePaths.size > 1)
-            path.replace(storagePaths[1], EXTERNAL_STORAGE)
-        else path
+    return when{
+        storagePaths.isNotEmpty() && type -> path.replace(storagePaths[0], INTERNAL_STORAGE)
+        storagePaths.size > 1 && !type -> path.replace(storagePaths[1], EXTERNAL_STORAGE)
+        else -> path
     }
 }
 

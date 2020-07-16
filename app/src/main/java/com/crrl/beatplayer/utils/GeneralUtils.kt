@@ -40,8 +40,11 @@ import com.crrl.beatplayer.utils.BeatConstants.SEEK_TO_POS
 import com.crrl.beatplayer.utils.BeatConstants.SONG_LIST_NAME
 import com.crrl.beatplayer.utils.BeatConstants.SONG_URI
 import com.crrl.beatplayer.utils.SettingsUtility.Companion.QUEUE_INFO_KEY
+import timber.log.Timber
+import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
+import java.lang.IllegalStateException
 
 
 object GeneralUtils {
@@ -85,6 +88,7 @@ object GeneralUtils {
         val data = try {
             fis.readBytes()
         } catch (ex: Exception) {
+            Timber.e(ex)
             audio2Raw(context, uri)
         }
         fis.close()
@@ -129,8 +133,13 @@ object GeneralUtils {
     }
 
     fun getStoragePaths(context: Context): List<String> {
-        return ContextCompat.getExternalFilesDirs(context, null).map {
-            it.path.replace("/Android/data/${context.packageName}/files", "")
+        return try {
+            val paths: Array<File>? = ContextCompat.getExternalFilesDirs(context, null)
+            paths?.map {
+                it.path.replace("/Android/data/${context.packageName}/files", "")
+            } ?: emptyList()
+        } catch (ex: IllegalStateException) {
+            emptyList()
         }
     }
 
