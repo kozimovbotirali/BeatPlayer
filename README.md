@@ -1,5 +1,8 @@
+[![Donation](https://img.shields.io/badge/Donate-on%20Paypal-blue?logo=paypal)](https://paypal.me/beatplayer)
+[![Telegram Chanel](https://img.shields.io/badge/Chat-on%20Telegram-2CA5E0.svg?logo=telegram)](https://t.me/beatplayerproject)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/3e8e29e3b85a49fbb21e98903627403e)](https://www.codacy.com/manual/Charlieras262/BeatPlayer?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Charlieras262/BeatPlayer&amp;utm_campaign=Badge_Grade)
 [![Build Status](https://travis-ci.org/Charlieras262/BeatPlayer.svg?branch=master)](https://travis-ci.org/Charlieras262/BeatPlayer)
+[![Last Release](https://img.shields.io/badge/Download-1.0.0-green)](https://github.com/Charlieras262/BeatPlayer/releases/download/v1.0.0/app-release.apk)
 
 # BeatPlayer
 Complete Music App built based on Material Designe and with the latest Android Development Tools.
@@ -38,7 +41,7 @@ Developing
 
 # Donations
 The only financing of the project is through donations, if you find it useful, do not hesitate to make a donation :)
-[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://paypal.me/beatplayer?locale.x=es_XC)
+
 ## License
 
 > (c) 2019 Carlos René Ramos López. All rights reserved.
