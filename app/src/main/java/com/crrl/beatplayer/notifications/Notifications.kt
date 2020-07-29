@@ -28,7 +28,7 @@ import androidx.media.session.MediaButtonReceiver.buildMediaButtonPendingIntent
 import androidx.palette.graphics.Palette
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.extensions.isPlaying
-import com.crrl.beatplayer.playback.BeatPlayerService
+import com.crrl.beatplayer.playback.services.BeatPlayerService
 import com.crrl.beatplayer.ui.activities.MainActivity
 import com.crrl.beatplayer.utils.BeatConstants.CHANNEL_ID
 import com.crrl.beatplayer.utils.BeatConstants.NEXT

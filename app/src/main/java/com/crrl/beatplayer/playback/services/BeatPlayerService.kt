@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-package com.crrl.beatplayer.playback
+package com.crrl.beatplayer.playback.services
 
 import android.content.Intent
 import android.os.Bundle
@@ -19,7 +19,6 @@ import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat.METADATA_KEY_MEDIA_ID
 import android.support.v4.media.session.PlaybackStateCompat.STATE_NONE
 import androidx.core.os.bundleOf
-import androidx.media.MediaBrowserServiceCompat
 import androidx.media.session.MediaButtonReceiver
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.extensions.*
@@ -30,6 +29,7 @@ import com.crrl.beatplayer.models.QueueInfo
 import com.crrl.beatplayer.notifications.Notifications
 import com.crrl.beatplayer.playback.players.BeatPlayer
 import com.crrl.beatplayer.playback.receivers.BecomingNoisyReceiver
+import com.crrl.beatplayer.playback.services.base.CoroutineService
 import com.crrl.beatplayer.repository.*
 import com.crrl.beatplayer.utils.BeatConstants
 import com.crrl.beatplayer.utils.BeatConstants.BY_UI_KEY
@@ -42,13 +42,12 @@ import com.crrl.beatplayer.utils.BeatConstants.PREVIOUS
 import com.crrl.beatplayer.utils.SettingsUtility
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.withContext
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
-class BeatPlayerService : MediaBrowserServiceCompat(), KoinComponent {
+class BeatPlayerService : CoroutineService(Main), KoinComponent {
 
     companion object {
         var IS_RUNNING = false
@@ -67,8 +66,6 @@ class BeatPlayerService : MediaBrowserServiceCompat(), KoinComponent {
 
     override fun onCreate() {
         super.onCreate()
-
-        beatPlayer.setData()
 
         sessionToken = beatPlayer.getSession().sessionToken
         becomingNoisyReceiver = BecomingNoisyReceiver(this, sessionToken!!)
@@ -131,7 +128,7 @@ class BeatPlayerService : MediaBrowserServiceCompat(), KoinComponent {
         result: Result<MutableList<MediaBrowserCompat.MediaItem>>
     ) {
         result.detach()
-        GlobalScope.launch {
+        launch {
             val itemList = withContext(IO) {
                 loadChildren(parentId)
             }
@@ -153,7 +150,7 @@ class BeatPlayerService : MediaBrowserServiceCompat(), KoinComponent {
     }
 
     private fun saveCurrentData() {
-        GlobalScope.launch(IO) {
+        launch(IO) {
             val mediaSession = beatPlayer.getSession()
             val controller = mediaSession.controller
             if (controller == null ||
@@ -182,28 +179,28 @@ class BeatPlayerService : MediaBrowserServiceCompat(), KoinComponent {
         val mediaId = parentId.toMediaId()
 
         when (mediaId.type) {
-            BeatConstants.SONG_TYPE -> GlobalScope.launch {
+            BeatConstants.SONG_TYPE -> launch {
                 list.addAll(songsRepository.loadSongs().toMediaItemList())
             }
-            BeatConstants.ALBUM_TYPE -> GlobalScope.launch {
+            BeatConstants.ALBUM_TYPE -> launch {
                 list.addAll(
                     albumsRepository.getSongsForAlbum(mediaId.caller?.toLong() ?: 0)
                         .toMediaItemList()
                 )
             }
-            BeatConstants.PLAY_LIST_TYPE -> GlobalScope.launch {
+            BeatConstants.PLAY_LIST_TYPE -> launch {
                 list.addAll(
                     playlistRepository.getSongsInPlaylist(mediaId.caller?.toLong() ?: 0)
                         .toMediaItemList()
                 )
             }
-            BeatConstants.FOLDER_TYPE -> GlobalScope.launch {
+            BeatConstants.FOLDER_TYPE -> launch {
                 val ids = Gson().fromJson<LongArray>(mediaId.caller ?: "{}")
                 list.addAll(
                     foldersRepository.getSongs(ids).toMediaItemList()
                 )
             }
-            BeatConstants.FAVORITE_TYPE -> GlobalScope.launch {
+            BeatConstants.FAVORITE_TYPE -> launch {
                 list.addAll(
                     favoritesRepository.getSongsForFavorite(mediaId.caller?.toLong() ?: 0)
                         .toMediaItemList()

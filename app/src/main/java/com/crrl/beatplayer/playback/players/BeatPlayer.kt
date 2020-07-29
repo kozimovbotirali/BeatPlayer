@@ -86,7 +86,7 @@ class BeatPlayerImplementation(
     private var completionCallback: OnCompletion<BeatPlayer> = {}
     private var metaDataChangedCallback: OnMetaDataChanged = {}
 
-    private var metadataBuilder = MediaMetadataCompat.Builder()
+    private val metadataBuilder = MediaMetadataCompat.Builder()
     private val stateBuilder = createDefaultPlaybackState()
 
     private var mediaSession =

@@ -14,7 +14,7 @@
 package com.crrl.beatplayer
 
 import android.content.ComponentName
-import com.crrl.beatplayer.playback.BeatPlayerService
+import com.crrl.beatplayer.playback.services.BeatPlayerService
 import com.crrl.beatplayer.playback.PlaybackConnection
 import com.crrl.beatplayer.playback.PlaybackConnectionImplementation
 import org.koin.dsl.bind

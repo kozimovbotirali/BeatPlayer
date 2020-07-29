@@ -115,7 +115,7 @@
         </activity>
 
         <service
-            android:name=".playback.BeatPlayerService"
+            android:name=".playback.services.BeatPlayerService"
             android:enabled="true"
             android:exported="false">
             <intent-filter>
