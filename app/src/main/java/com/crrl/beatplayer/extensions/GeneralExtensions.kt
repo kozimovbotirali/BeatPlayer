@@ -27,10 +27,14 @@ inline fun <reified T> Gson.fromJson(json: String): T =
 
 fun Uri.toFileDescriptor(context: Context): ParcelFileDescriptor? {
     return try {
-        context.contentResolver.openFileDescriptor(this, READ_ONLY_MODE, null) ?: null
+        context.contentResolver.openFileDescriptor(this, READ_ONLY_MODE, null)
     } catch (ex: FileNotFoundException) {
         null
     }
+}
+
+fun ByteArray.optimize(): ByteArray {
+    return copyOfRange(44, (size / 2) - 1)
 }
 
 operator fun Bundle.plus(other: Bundle) = this.apply { putAll(other) }

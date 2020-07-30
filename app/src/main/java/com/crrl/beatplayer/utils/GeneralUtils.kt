@@ -32,6 +32,7 @@ import android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT
 import android.widget.EditText
 import androidx.core.content.ContextCompat
 import com.crrl.beatplayer.R
+import com.crrl.beatplayer.extensions.optimize
 import com.crrl.beatplayer.extensions.systemService
 import com.crrl.beatplayer.extensions.toFileDescriptor
 import com.crrl.beatplayer.models.Song
@@ -86,7 +87,7 @@ object GeneralUtils {
         val parcelFileDescriptor = uri.toFileDescriptor(context) ?: return null
         val fis = FileInputStream(parcelFileDescriptor.fileDescriptor)
         val data = try {
-            fis.readBytes()
+            fis.readBytes().optimize()
         } catch (ex: Exception) {
             Timber.e(ex)
             audio2Raw(context, uri)

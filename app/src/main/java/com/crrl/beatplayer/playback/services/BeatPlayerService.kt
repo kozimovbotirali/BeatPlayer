@@ -83,7 +83,7 @@ class BeatPlayerService : CoroutineService(Main), KoinComponent {
             IS_RUNNING = isPlaying
         }
 
-        beatPlayer.onQueueEnd {
+        beatPlayer.onMetaDataChanged {
             notifications.updateNotification(getSession())
         }
     }

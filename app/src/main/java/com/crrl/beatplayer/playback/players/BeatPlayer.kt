@@ -61,7 +61,7 @@ interface BeatPlayer {
     fun onPrepared(prepared: OnPrepared<BeatPlayer>)
     fun onError(error: OnError<BeatPlayer>)
     fun onCompletion(completion: OnCompletion<BeatPlayer>)
-    fun onQueueEnd(queueEnd: OnMetaDataChanged)
+    fun onMetaDataChanged(metaDataChanged: OnMetaDataChanged)
     fun updatePlaybackState(applier: PlaybackStateCompat.Builder.() -> Unit)
     fun setPlaybackState(state: PlaybackStateCompat)
     fun updateData(list: LongArray = longArrayOf(), title: String = "")
@@ -283,8 +283,8 @@ class BeatPlayerImplementation(
         this.completionCallback = completion
     }
 
-    override fun onQueueEnd(queueEnd: OnMetaDataChanged) {
-        this.metaDataChangedCallback = queueEnd
+    override fun onMetaDataChanged(metaDataChanged: OnMetaDataChanged) {
+        this.metaDataChangedCallback = metaDataChanged
     }
 
     override fun updatePlaybackState(applier: PlaybackStateCompat.Builder.() -> Unit) {
