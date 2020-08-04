@@ -36,7 +36,6 @@ val NONE_PLAYING: MediaMetadataCompat = MediaMetadataCompat.Builder()
 interface PlaybackConnection {
     val isConnected: MutableLiveData<Boolean>
     val playbackState: MutableLiveData<PlaybackStateCompat>
-    val lastPlayed: MutableLiveData<MediaMetadataCompat>
     val nowPlaying: MutableLiveData<MediaMetadataCompat>
     val transportControls: MediaControllerCompat.TransportControls?
     val queueLiveData: MutableLiveData<Queue>
@@ -50,7 +49,6 @@ class PlaybackConnectionImplementation(
 
     override val isConnected = MutableLiveData<Boolean>()
     override val playbackState = MutableLiveData<PlaybackStateCompat>()
-    override val lastPlayed = MutableLiveData<MediaMetadataCompat>()
     override val nowPlaying = MutableLiveData<MediaMetadataCompat>()
     override val queueLiveData = MutableLiveData<Queue>()
     override var mediaController: MediaControllerCompat? = null
@@ -90,9 +88,7 @@ class PlaybackConnectionImplementation(
         }
 
         override fun onMetadataChanged(metadata: MediaMetadataCompat?) {
-            metadata ?: return
-            lastPlayed.postValue(nowPlaying.value ?: NONE_PLAYING)
-            nowPlaying.postValue(metadata)
+            nowPlaying.postValue(metadata ?: NONE_PLAYING)
         }
 
         override fun onQueueChanged(queue: MutableList<MediaSessionCompat.QueueItem>?) {
