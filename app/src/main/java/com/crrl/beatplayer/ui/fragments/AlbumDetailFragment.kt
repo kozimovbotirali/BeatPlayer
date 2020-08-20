@@ -85,7 +85,7 @@ class AlbumDetailFragment : BaseFragment<Song>() {
                 binding.totalDuration = getTotalTime(songAdapter.songList).toInt()
                 if (it.isEmpty()) {
                     favoriteViewModel.deleteFavorite(id)
-                    safeActivity.onBackPressed()
+                    requireActivity().onBackPressed()
                 }
             }
 

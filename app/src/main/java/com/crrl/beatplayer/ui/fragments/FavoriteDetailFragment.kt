@@ -68,7 +68,7 @@ class FavoriteDetailFragment : BaseFragment<Song>() {
         viewModel.songListFavorite(id).observe(this) {
             if (it.isEmpty()) {
                 favoriteViewModel.deleteFavorites(longArrayOf(id))
-                safeActivity.onBackPressed()
+                requireActivity().onBackPressed()
             } else if (!songAdapter.songList.deepEquals(it)) {
                 songAdapter.updateDataSet(it)
                 mainViewModel.reloadQueueIds(it.toIDList(), getString(R.string.favorite_music))

@@ -142,7 +142,7 @@ open class BaseFragment<T : MediaItem> : CoroutineFragment(), ItemClickListener<
             getString(R.string.new_playlist),
             getString(R.string.create_playlist),
             inputText
-                ?: "${safeActivity.getString(R.string.playlist)} ${addZeros(playlistViewModel.count + 1)}",
+                ?: "${requireActivity().getString(R.string.playlist)} ${addZeros(playlistViewModel.count + 1)}",
             getString(R.string.input_hint),
             actions
         )
@@ -171,9 +171,9 @@ open class BaseFragment<T : MediaItem> : CoroutineFragment(), ItemClickListener<
     protected fun buildDialog(titleText: String, subTitleText: String, actions: List<AlertItemAction>): AlertDialog {
         val style = AlertItemStyle()
         style.apply {
-            textColor = safeActivity.getColorByTheme(R.attr.titleTextColor)
-            selectedTextColor = safeActivity.getColorByTheme(R.attr.colorAccent)
-            backgroundColor = safeActivity.getColorByTheme(R.attr.colorPrimarySecondary2)
+            textColor = requireActivity().getColorByTheme(R.attr.titleTextColor)
+            selectedTextColor = requireActivity().getColorByTheme(R.attr.colorAccent)
+            backgroundColor = requireActivity().getColorByTheme(R.attr.colorPrimarySecondary2)
             cornerRadius = resources.getDimension(R.dimen.bottom_panel_radius)
         }
         return AlertDialog(
@@ -194,11 +194,11 @@ open class BaseFragment<T : MediaItem> : CoroutineFragment(), ItemClickListener<
         actions: List<AlertItemAction>
     ) {
         val style = InputStyle(
-            safeActivity.getColorByTheme(R.attr.colorPrimarySecondary2),
-            safeActivity.getColorByTheme(R.attr.colorPrimaryOpacity),
-            safeActivity.getColorByTheme(R.attr.titleTextColor),
-            safeActivity.getColorByTheme(R.attr.bodyTextColor),
-            safeActivity.getColorByTheme(R.attr.colorAccent),
+            requireActivity().getColorByTheme(R.attr.colorPrimarySecondary2),
+            requireActivity().getColorByTheme(R.attr.colorPrimaryOpacity),
+            requireActivity().getColorByTheme(R.attr.titleTextColor),
+            requireActivity().getColorByTheme(R.attr.bodyTextColor),
+            requireActivity().getColorByTheme(R.attr.colorAccent),
             inputText,
             resources.getDimension(R.dimen.bottom_panel_radius)
         )
@@ -210,7 +210,7 @@ open class BaseFragment<T : MediaItem> : CoroutineFragment(), ItemClickListener<
             hintText
         ).apply {
             for (action in actions) addItem(action)
-        }.show(safeActivity as AppCompatActivity)
+        }.show(requireActivity() as AppCompatActivity)
     }
 
     private fun addSongs(name: String, song: Song?) {
@@ -230,10 +230,10 @@ open class BaseFragment<T : MediaItem> : CoroutineFragment(), ItemClickListener<
                 )
             }
         } else {
-            val intent = Intent(safeActivity, SelectSongActivity::class.java).apply {
+            val intent = Intent(requireActivity(), SelectSongActivity::class.java).apply {
                 putExtra(PLAY_LIST_DETAIL, name)
             }
-            safeActivity.startActivityForResult(intent, 1)
+            requireActivity().startActivityForResult(intent, 1)
         }
     }
 
@@ -248,9 +248,9 @@ open class BaseFragment<T : MediaItem> : CoroutineFragment(), ItemClickListener<
             setOnBackgroundClickListener { powerMenu!!.dismiss() }
             setMenuShadow(5f)
             setShowBackground(false)
-            setTextColor(safeActivity.getColorByTheme(R.attr.titleTextColor))
+            setTextColor(requireActivity().getColorByTheme(R.attr.titleTextColor))
             setTextGravity(Gravity.START)
-            setSelectedTextColor(safeActivity.getColorByTheme(R.attr.colorAccent))
+            setSelectedTextColor(requireActivity().getColorByTheme(R.attr.colorAccent))
             setTextSize(16)
             setTextTypeface(
                 Typeface.createFromAsset(
@@ -258,8 +258,8 @@ open class BaseFragment<T : MediaItem> : CoroutineFragment(), ItemClickListener<
                     "fonts/product_sans_regular.ttf"
                 )
             )
-            setMenuColor(safeActivity.getColorByTheme(R.attr.colorPrimarySecondary))
-            setSelectedMenuColor(safeActivity.getColorByTheme(R.attr.colorPrimarySecondary))
+            setMenuColor(requireActivity().getColorByTheme(R.attr.colorPrimarySecondary))
+            setSelectedMenuColor(requireActivity().getColorByTheme(R.attr.colorPrimarySecondary))
             if (this@BaseFragment is PlaylistDetailFragment || this@BaseFragment is FavoriteDetailFragment)
                 addItem(PowerMenuItem(getString(R.string.remove)))
             else {
@@ -271,9 +271,9 @@ open class BaseFragment<T : MediaItem> : CoroutineFragment(), ItemClickListener<
 
     private fun createConfDialog(song: Song): AlertDialog {
         val style = AlertItemStyle().apply {
-            textColor = safeActivity.getColorByTheme(R.attr.titleTextColor)
-            selectedTextColor = safeActivity.getColorByTheme(R.attr.colorAccent)
-            selectedBackgroundColor = safeActivity.getColorByTheme(R.attr.colorAccentOpacity)
+            textColor = requireActivity().getColorByTheme(R.attr.titleTextColor)
+            selectedTextColor = requireActivity().getColorByTheme(R.attr.colorAccent)
+            selectedBackgroundColor = requireActivity().getColorByTheme(R.attr.colorAccentOpacity)
             backgroundColor =
                 activity?.getColorByTheme(R.attr.colorPrimarySecondary2)!!
         }
@@ -318,7 +318,7 @@ open class BaseFragment<T : MediaItem> : CoroutineFragment(), ItemClickListener<
             1 -> {
                 when (this) {
                     is PlaylistDetailFragment, is FavoriteDetailFragment -> shareItem()
-                    else -> alertPlaylists?.show(safeActivity as AppCompatActivity)
+                    else -> alertPlaylists?.show(requireActivity() as AppCompatActivity)
                 }
             }
             2 -> {
@@ -332,7 +332,7 @@ open class BaseFragment<T : MediaItem> : CoroutineFragment(), ItemClickListener<
                 }
             }
             3 -> {
-                createConfDialog(currentItem as Song).show(safeActivity as AppCompatActivity)
+                createConfDialog(currentItem as Song).show(requireActivity() as AppCompatActivity)
             }
         }
         powerMenu!!.dismiss()

@@ -58,7 +58,7 @@ class ArtistFragment : BaseFragment<Artist>() {
     }
 
     private fun init() {
-        val sc = if (GeneralUtils.getOrientation(safeActivity) == GeneralUtils.PORTRAIT) 2 else 5
+        val sc = if (GeneralUtils.getOrientation(requireActivity()) == GeneralUtils.PORTRAIT) 2 else 5
 
         artistAdapter = ArtistAdapter(context).apply {
             showHeader = true
