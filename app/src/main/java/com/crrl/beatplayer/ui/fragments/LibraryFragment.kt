@@ -21,7 +21,6 @@ import androidx.viewpager.widget.ViewPager
 import com.crrl.beatplayer.R
 import com.crrl.beatplayer.databinding.FragmentLibraryBinding
 import com.crrl.beatplayer.extensions.inflateWithBinding
-import com.crrl.beatplayer.extensions.safeActivity
 import com.crrl.beatplayer.ui.activities.MainActivity
 import com.crrl.beatplayer.ui.adapters.ViewPagerAdapter
 import com.crrl.beatplayer.ui.fragments.base.BaseSongDetailFragment
@@ -42,7 +41,7 @@ class LibraryFragment : BaseSongDetailFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val didPermissionsGrant = (safeActivity as MainActivity).didPermissionsGrant()
+        val didPermissionsGrant = (requireActivity() as MainActivity).didPermissionsGrant()
         if (didPermissionsGrant) init()
         binding.apply {
             viewModel = mainViewModel
@@ -61,7 +60,7 @@ class LibraryFragment : BaseSongDetailFragment() {
     }
 
     private fun initViewPager(viewPager: ViewPager) {
-        val listSortModeAdapter = ViewPagerAdapter(safeActivity.supportFragmentManager).apply {
+        val listSortModeAdapter = ViewPagerAdapter(requireActivity().supportFragmentManager).apply {
             addFragment(FavoriteFragment(), getString(R.string.favorites))
             addFragment(PlaylistFragment(), getString(R.string.playlists))
             addFragment(SongFragment(), getString(R.string.songs))

@@ -81,7 +81,7 @@ class LyricFragment : BaseSongDetailFragment() {
                 getString(R.string.lyrics_type),
                 getString(R.string.lyrics_tip),
                 actions
-            ).show(safeActivity as AppCompatActivity)
+            ).show(requireActivity() as AppCompatActivity)
         }
 
         binding.let {

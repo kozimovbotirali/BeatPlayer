@@ -70,9 +70,9 @@ class SearchFragment : BaseFragment<MediaItem>(), TextWatcher {
     }
 
     private fun init() {
-        val sc = if (getOrientation(safeActivity) == PORTRAIT) 2 else 5
+        val sc = if (getOrientation(requireActivity()) == PORTRAIT) 2 else 5
 
-        searchAdapter = SearchAdapter(safeActivity, searchViewModel, this, sc)
+        searchAdapter = SearchAdapter(requireActivity(), searchViewModel, this, sc)
 
         binding.apply {
             searchSrcText.apply {
@@ -81,7 +81,7 @@ class SearchFragment : BaseFragment<MediaItem>(), TextWatcher {
             }
 
             back.setOnClickListener {
-                toggleShowKeyBoard(safeActivity, searchSrcText, false)
+                toggleShowKeyBoard(requireActivity(), searchSrcText, false)
                 activity!!.onBackPressed()
             }
 
@@ -113,7 +113,7 @@ class SearchFragment : BaseFragment<MediaItem>(), TextWatcher {
             is Album -> albumClicked(item)
             is Artist -> artistClicked(item)
         }
-        toggleShowKeyBoard(safeActivity, binding.searchSrcText, false)
+        toggleShowKeyBoard(requireActivity(), binding.searchSrcText, false)
     }
 
     override fun onPopupMenuClick(

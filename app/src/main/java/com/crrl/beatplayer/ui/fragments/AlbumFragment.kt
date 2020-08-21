@@ -58,7 +58,7 @@ class AlbumFragment : BaseFragment<Album>() {
     }
 
     private fun init() {
-        val sc = if (GeneralUtils.getOrientation(safeActivity) == PORTRAIT) 2 else 5
+        val sc = if (GeneralUtils.getOrientation(requireActivity()) == PORTRAIT) 2 else 5
 
         albumAdapter = AlbumAdapter(context).apply {
             showHeader = true

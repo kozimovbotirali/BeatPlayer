@@ -59,7 +59,7 @@ class FavoriteFragment : BaseFragment<Favorite>() {
     }
 
     private fun init() {
-        val sc = if (GeneralUtils.getOrientation(safeActivity) == GeneralUtils.PORTRAIT) 2 else 5
+        val sc = if (GeneralUtils.getOrientation(requireActivity()) == GeneralUtils.PORTRAIT) 2 else 5
 
         favoriteAdapter = FavoriteAdapter(context).apply {
             itemClickListener = this@FavoriteFragment
