@@ -67,7 +67,7 @@ object GeneralUtils {
         val minutes = (duration / (1000 * 60) % 60).toInt()
         val hours = (duration / (1000 * 60 * 60) % 24).toInt()
         "${timeAddZeros(hours, false)}:${timeAddZeros(minutes)}:${timeAddZeros(seconds)}".apply {
-            return if (this[0] == ':') replaceFirst(":", "") else this
+            return if (startsWith(":")) replaceFirst(":", "") else this
         }
     }
 
@@ -83,14 +83,14 @@ object GeneralUtils {
         return hours * (1000 * 60 * 60) + minutes * (1000 * 60) + seconds * 1000
     }
 
-    fun audio2Raw(context: Context, uri: Uri): ByteArray? {
+    fun audio2Raw(context: Context, uri: Uri, didTry: Boolean = false): ByteArray? {
         val parcelFileDescriptor = uri.toFileDescriptor(context) ?: return null
         val fis = FileInputStream(parcelFileDescriptor.fileDescriptor)
         val data = try {
             fis.readBytes().optimize()
         } catch (ex: Exception) {
             Timber.e(ex)
-            audio2Raw(context, uri)
+            if(didTry) byteArrayOf() else audio2Raw(context, uri, didTry = true)
         }
         fis.close()
         return data
@@ -145,8 +145,7 @@ object GeneralUtils {
     }
 
     @Suppress("DEPRECATION")
-    fun getAlbumArtBitmap(context: Context, albumId: Long?): Bitmap? {
-        if (albumId == null) return null
+    fun getAlbumArtBitmap(context: Context, albumId: Long): Bitmap {
         return try {
             when {
                 SDK_INT >= P -> {

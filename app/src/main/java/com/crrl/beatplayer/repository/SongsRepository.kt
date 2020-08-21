@@ -150,7 +150,7 @@ class SongsRepositoryImplementation(context: Context) : SongsRepository {
         paramArrayOfString: Array<String>?,
         sortOrder: String?
     ): Cursor {
-        val selectionStatement = StringBuilder("is_music=1 AND title != ''")
+        val selectionStatement = StringBuilder("is_music=1 AND title != '' AND duration >= 1000")
         if (!selection.isNullOrEmpty()) {
             selectionStatement.append(" AND $selection")
         }
