@@ -162,11 +162,11 @@ class AlbumFragment : BaseFragment<Album>() {
     }
 
     override fun onPopupMenuClick(view: View, position: Int, item: Album, itemList: List<Album>) {
-        Toast.makeText(context, "Menu of " + item.title, Toast.LENGTH_SHORT).show()
+        context?.shortToast("Menu of ${item.title}")
     }
 
     override fun onPlayAllClick(view: View) {
-        Toast.makeText(context, "Shuffle", Toast.LENGTH_SHORT).show()
+        context?.shortToast("Shuffle")
     }
 
     override fun onSortClick(view: View) {

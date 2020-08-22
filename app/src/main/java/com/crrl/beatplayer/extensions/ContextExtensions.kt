@@ -15,6 +15,8 @@ package com.crrl.beatplayer.extensions
 
 import android.content.Context
 import android.util.TypedValue
+import android.widget.Toast
+import android.widget.Toast.LENGTH_SHORT
 import androidx.annotation.AttrRes
 
 @Suppress("UNCHECKED_CAST")
@@ -30,3 +32,5 @@ fun Context.getColorByTheme(
     theme.resolveAttribute(colorAttr!!, outValue, true)
     return outValue.data
 }
+
+fun Context.shortToast(message: String) = Toast.makeText(this, message, LENGTH_SHORT).show()

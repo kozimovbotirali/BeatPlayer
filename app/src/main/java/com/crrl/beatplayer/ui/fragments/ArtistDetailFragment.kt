@@ -105,7 +105,7 @@ class ArtistDetailFragment : BaseFragment<MediaItem>() {
 
     override fun onItemClick(view: View, position: Int, item: MediaItem) {
         when (item) {
-            is Song -> Toast.makeText(context, "Song: ${item.title}", Toast.LENGTH_SHORT).show()
+            is Song -> context?.shortToast("Song: ${item.title}")
             is Album -> albumClicked(item)
         }
     }
