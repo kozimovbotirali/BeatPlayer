@@ -77,7 +77,7 @@ class PlaylistFragment : BaseFragment<Playlist>() {
             })
         }
 
-        playlistViewModel.playLists().observe(this) {
+        playlistViewModel.playLists().observe(viewLifecycleOwner) {
             playlistAdapter.updateDataSet(it)
         }
 

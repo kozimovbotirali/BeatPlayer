@@ -73,7 +73,7 @@ class SongFragment : BaseFragment<Song>() {
 
         viewModel.getSongList()
             .filter { !songAdapter.songList.deepEquals(it) }
-            .observe(this) {
+            .observe(viewLifecycleOwner) {
                 songAdapter.updateDataSet(it)
                 if (songAdapter.songList.isNotEmpty())
                     mainViewModel.reloadQueueIds(it.toIDList(), getString(R.string.all_songs))
@@ -175,7 +175,7 @@ class SongFragment : BaseFragment<Song>() {
     override fun onPopupMenuClick(view: View, position: Int, item: Song, itemList: List<Song>) {
         super.onPopupMenuClick(view, position, item, itemList)
         powerMenu!!.showAsAnchorRightTop(view)
-        playlistViewModel.playLists().observe(this) {
+        playlistViewModel.playLists().observe(viewLifecycleOwner) {
             buildPlaylistMenu(it, item)
         }
     }

@@ -73,7 +73,7 @@ class FolderDetailFragment : BaseFragment<Song>() {
 
         initNeeded(Song(), emptyList(), id)
 
-        folderViewModel.getSongsByFolder(folder.ids).observe(this) {
+        folderViewModel.getSongsByFolder(folder.ids).observe(viewLifecycleOwner) {
             if (!songAdapter.songList.deepEquals(it)) {
                 mainViewModel.reloadQueueIds(it.toIDList(), binding.folder!!.name)
                 songAdapter.updateDataSet(it)
@@ -116,7 +116,7 @@ class FolderDetailFragment : BaseFragment<Song>() {
     override fun onPopupMenuClick(view: View, position: Int, item: Song, itemList: List<Song>) {
         super.onPopupMenuClick(view, position, item, itemList)
         powerMenu!!.showAsAnchorRightTop(view)
-        playlistViewModel.playLists().observe(this) {
+        playlistViewModel.playLists().observe(viewLifecycleOwner) {
             buildPlaylistMenu(it, item)
         }
     }

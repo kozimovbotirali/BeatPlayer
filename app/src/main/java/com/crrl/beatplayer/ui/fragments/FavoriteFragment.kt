@@ -68,7 +68,7 @@ class FavoriteFragment : BaseFragment<Favorite>() {
 
         viewModel.getFavorites()
             .filter { !favoriteAdapter.favoriteList.deepEquals(it) }
-            .observe(this) {
+            .observe(viewLifecycleOwner) {
             favoriteAdapter.updateDataSet(it)
         }
 

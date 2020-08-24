@@ -65,7 +65,7 @@ class FavoriteDetailFragment : BaseFragment<Song>() {
             itemClickListener = this@FavoriteDetailFragment
         }
 
-        viewModel.songListFavorite(id).observe(this) {
+        viewModel.songListFavorite(id).observe(viewLifecycleOwner) {
             if (it.isEmpty()) {
                 favoriteViewModel.deleteFavorites(longArrayOf(id))
                 requireActivity().onBackPressed()
@@ -111,7 +111,7 @@ class FavoriteDetailFragment : BaseFragment<Song>() {
     override fun onPopupMenuClick(view: View, position: Int, item: Song, itemList: List<Song>) {
         super.onPopupMenuClick(view, position, item, itemList)
         powerMenu!!.showAsAnchorRightTop(view)
-        playlistViewModel.playLists().observe(this) {
+        playlistViewModel.playLists().observe(viewLifecycleOwner) {
             buildPlaylistMenu(it, item)
         }
     }

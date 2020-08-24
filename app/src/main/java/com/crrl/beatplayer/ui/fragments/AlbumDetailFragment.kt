@@ -79,7 +79,7 @@ class AlbumDetailFragment : BaseFragment<Song>() {
 
         albumViewModel.getSongsByAlbum(album.id)
             .filter { !songAdapter.songList.deepEquals(it) }
-            .observe(this) {
+            .observe(viewLifecycleOwner) {
                 songAdapter.updateDataSet(it)
                 mainViewModel.reloadQueueIds(it.toIDList(), album.title)
                 binding.totalDuration = getTotalTime(songAdapter.songList).toInt()
@@ -117,7 +117,7 @@ class AlbumDetailFragment : BaseFragment<Song>() {
     override fun onPopupMenuClick(view: View, position: Int, item: Song, itemList: List<Song>) {
         super.onPopupMenuClick(view, position, item, itemList)
         powerMenu!!.showAsAnchorRightTop(view)
-        playlistViewModel.playLists().observe(this) {
+        playlistViewModel.playLists().observe(viewLifecycleOwner) {
             buildPlaylistMenu(it, item)
         }
     }

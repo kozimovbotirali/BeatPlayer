@@ -55,7 +55,7 @@ class LyricFragment : BaseSongDetailFragment() {
     }
 
     private fun init() {
-        songDetailViewModel.currentData.observe(this) {
+        songDetailViewModel.currentData.observe(viewLifecycleOwner) {
             loadLyrics(it)
         }
 

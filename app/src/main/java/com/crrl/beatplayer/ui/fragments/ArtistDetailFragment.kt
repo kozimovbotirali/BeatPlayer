@@ -80,7 +80,7 @@ class ArtistDetailFragment : BaseFragment<MediaItem>() {
 
         artistViewModel.getArtistAlbums(artist.id)
             .filter { !albumAdapter.albumList.deepEquals(it) }
-            .observe(this) {
+            .observe(viewLifecycleOwner) {
                 albumAdapter.updateDataSet(it)
             }
 
@@ -118,7 +118,7 @@ class ArtistDetailFragment : BaseFragment<MediaItem>() {
     ) {
         item as Song
         powerMenu!!.showAsAnchorRightTop(view)
-        playlistViewModel.playLists().observe(this) {
+        playlistViewModel.playLists().observe(viewLifecycleOwner) {
             buildPlaylistMenu(it, item)
         }
     }

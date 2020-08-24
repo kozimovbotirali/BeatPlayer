@@ -58,7 +58,7 @@ class SongDetailFragment : BaseSongDetailFragment() {
     private fun init() {
         initViewComponents()
 
-        songDetailViewModel.currentData.observe(this) {
+        songDetailViewModel.currentData.observe(viewLifecycleOwner) {
             initNeeded(songViewModel.getSongById(it.id), emptyList(), 0L)
             launch {
                 val raw = withContext(IO) {
@@ -68,7 +68,7 @@ class SongDetailFragment : BaseSongDetailFragment() {
             }
         }
 
-        songDetailViewModel.time.observe(this) {
+        songDetailViewModel.time.observe(viewLifecycleOwner) {
             val total = songDetailViewModel.currentData.value?.duration ?: 0
             binding.seekBar.apply {
                 val t = progress.percentToMs(total).fixToStep(1000)
@@ -83,7 +83,7 @@ class SongDetailFragment : BaseSongDetailFragment() {
             songTitle.isSelected = true
         }
 
-        songDetailViewModel.currentState.observe(this) {
+        songDetailViewModel.currentState.observe(viewLifecycleOwner) {
             songDetailViewModel.update(it.position)
             if (it.state == PlaybackStateCompat.STATE_PLAYING) {
                 songDetailViewModel.update(BIND_STATE_BOUND)
