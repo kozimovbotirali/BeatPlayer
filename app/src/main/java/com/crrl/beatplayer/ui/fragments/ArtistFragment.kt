@@ -79,7 +79,7 @@ class ArtistFragment : BaseFragment<Artist>() {
 
         viewModel.getArtists()
             .filter { !artistAdapter.artistList.deepEquals(it) }
-            .observe(this) { list ->
+            .observe(viewLifecycleOwner) { list ->
                 artistAdapter.updateDataSet(list)
             }
 

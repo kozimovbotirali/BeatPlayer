@@ -80,7 +80,7 @@ class ArtistDetailFragment : BaseFragment<MediaItem>() {
 
         artistViewModel.getArtistAlbums(artist.id)
             .filter { !albumAdapter.albumList.deepEquals(it) }
-            .observe(this) {
+            .observe(viewLifecycleOwner) {
                 albumAdapter.updateDataSet(it)
             }
 
@@ -105,7 +105,7 @@ class ArtistDetailFragment : BaseFragment<MediaItem>() {
 
     override fun onItemClick(view: View, position: Int, item: MediaItem) {
         when (item) {
-            is Song -> Toast.makeText(context, "Song: ${item.title}", Toast.LENGTH_SHORT).show()
+            is Song -> context?.shortToast("Song: ${item.title}")
             is Album -> albumClicked(item)
         }
     }
@@ -118,7 +118,7 @@ class ArtistDetailFragment : BaseFragment<MediaItem>() {
     ) {
         item as Song
         powerMenu!!.showAsAnchorRightTop(view)
-        playlistViewModel.playLists().observe(this) {
+        playlistViewModel.playLists().observe(viewLifecycleOwner) {
             buildPlaylistMenu(it, item)
         }
     }

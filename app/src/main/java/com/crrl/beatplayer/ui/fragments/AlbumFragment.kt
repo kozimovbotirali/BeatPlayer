@@ -79,7 +79,7 @@ class AlbumFragment : BaseFragment<Album>() {
 
         albumViewModel.getAlbums()
             .filter { !albumAdapter.albumList.deepEquals(it) }
-            .observe(this) { list ->
+            .observe(viewLifecycleOwner) { list ->
                 albumAdapter.updateDataSet(list)
             }
 
@@ -98,7 +98,7 @@ class AlbumFragment : BaseFragment<Album>() {
             getString(R.string.sort_msg),
             listOf(
                 AlertItemAction(
-                    context!!.getString(R.string.sort_az),
+                    requireContext().getString(R.string.sort_az),
                     settingsUtility.albumSortOrder == SortModes.AlbumModes.ALBUM_A_Z,
                     AlertItemTheme.DEFAULT
                 ) {
@@ -107,7 +107,7 @@ class AlbumFragment : BaseFragment<Album>() {
                     reloadAdapter()
                 },
                 AlertItemAction(
-                    context!!.getString(R.string.sort_za),
+                    requireContext().getString(R.string.sort_za),
                     settingsUtility.albumSortOrder == SortModes.AlbumModes.ALBUM_Z_A,
                     AlertItemTheme.DEFAULT
                 ) {
@@ -116,7 +116,7 @@ class AlbumFragment : BaseFragment<Album>() {
                     reloadAdapter()
                 },
                 AlertItemAction(
-                    context!!.getString(R.string.sort_year),
+                    requireContext().getString(R.string.sort_year),
                     settingsUtility.albumSortOrder == SortModes.AlbumModes.ALBUM_YEAR,
                     AlertItemTheme.DEFAULT
                 ) {
@@ -126,7 +126,7 @@ class AlbumFragment : BaseFragment<Album>() {
                     reloadAdapter()
                 },
                 AlertItemAction(
-                    context!!.getString(R.string.artist),
+                    requireContext().getString(R.string.artist),
                     settingsUtility.albumSortOrder == SortModes.AlbumModes.ALBUM_ARTIST,
                     AlertItemTheme.DEFAULT
                 ) {
@@ -135,7 +135,7 @@ class AlbumFragment : BaseFragment<Album>() {
                     reloadAdapter()
                 },
                 AlertItemAction(
-                    context!!.getString(R.string.song_count),
+                    requireContext().getString(R.string.song_count),
                     settingsUtility.albumSortOrder == SortModes.AlbumModes.ALBUM_SONG_COUNT,
                     AlertItemTheme.DEFAULT
                 ) {
@@ -152,7 +152,7 @@ class AlbumFragment : BaseFragment<Album>() {
     }
 
     override fun onItemClick(view: View, position: Int, item: Album) {
-        activity!!.addFragment(
+        activity?.addFragment(
             R.id.nav_host_fragment,
             AlbumDetailFragment(),
             BeatConstants.ALBUM_DETAIL,
@@ -162,11 +162,11 @@ class AlbumFragment : BaseFragment<Album>() {
     }
 
     override fun onPopupMenuClick(view: View, position: Int, item: Album, itemList: List<Album>) {
-        Toast.makeText(context, "Menu of " + item.title, Toast.LENGTH_SHORT).show()
+        context?.shortToast("Menu of ${item.title}")
     }
 
     override fun onPlayAllClick(view: View) {
-        Toast.makeText(context, "Shuffle", Toast.LENGTH_SHORT).show()
+        context?.shortToast("Shuffle")
     }
 
     override fun onSortClick(view: View) {

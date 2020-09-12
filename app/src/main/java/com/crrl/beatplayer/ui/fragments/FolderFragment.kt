@@ -62,7 +62,7 @@ class FolderFragment : BaseFragment<Folder>() {
 
         viewModel.getFolders()
             .filter { !folderAdapter.folderList.deepEquals(it) }
-            .observe(this) {
+            .observe(viewLifecycleOwner) {
             folderAdapter.updateDataSet(it)
         }
 

@@ -94,7 +94,7 @@ class SearchFragment : BaseFragment<MediaItem>(), TextWatcher {
             close.setOnClickListener { searchSrcText.text.clear() }
         }
 
-        searchViewModel.searchLiveData().observe(this) {
+        searchViewModel.searchLiveData().observe(viewLifecycleOwner) {
             searchAdapter.updateDataSet(it)
         }
 
@@ -128,7 +128,7 @@ class SearchFragment : BaseFragment<MediaItem>(), TextWatcher {
 
     private fun songPopup(song: Song, view: View) {
         powerMenu!!.showAsAnchorRightTop(view)
-        playlistViewModel.playLists().observe(this) {
+        playlistViewModel.playLists().observe(viewLifecycleOwner) {
             buildPlaylistMenu(it, song)
         }
     }
